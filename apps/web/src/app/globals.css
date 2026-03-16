@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes hex-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hex-pulse {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hex-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-hex-rotate {
+  animation: hex-rotate 60s linear infinite;
+}
+
+.animate-hex-pulse {
+  animation: hex-pulse 4s ease-in-out infinite;
+}
+
+.animate-hex-float {
+  animation: hex-float 6s ease-in-out infinite;
+}
