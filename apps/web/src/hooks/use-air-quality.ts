@@ -16,7 +16,7 @@ export function useAirQuality() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon);
+      const data = await api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
       setAirQuality(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load air quality');

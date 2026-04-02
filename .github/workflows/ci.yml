@@ -1,0 +1,41 @@
+# Required secret: SHARED_PACKAGES_TOKEN
+# Add in GitHub repo → Settings → Secrets and variables → Actions
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Configure GitHub Packages
+        run: |
+          echo "@notifio:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.SHARED_PACKAGES_TOKEN }}" >> .npmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx turbo run typecheck --filter=@notifio/web
+
+      - name: Lint
+        run: npx turbo run lint --filter=@notifio/web
