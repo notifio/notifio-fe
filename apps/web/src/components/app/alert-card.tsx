@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { formatRelativeTime } from '@/lib/format';
+import { RelativeTime } from '@/components/ui/relative-time';
 import { ALERT_TYPE_CONFIG, type AlertSummary } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +34,7 @@ export function AlertCard({ alert, isSelected = false, onClick }: AlertCardProps
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-gray-900">{alert.title}</p>
           <p className="mt-1 text-xs text-gray-500">
-            {config.label} · {alert.source} · {formatRelativeTime(alert.startsAt)}
+            {config.label} · {alert.source} · <RelativeTime iso={alert.startsAt} />
           </p>
         </div>
 

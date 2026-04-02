@@ -1,8 +1,22 @@
 /**
- * Local type stubs for @notifio/shared.
- * These will be replaced by the real package once GitHub Packages auth is configured.
- * Run `npm install` after adding a valid GITHUB_TOKEN to .npmrc.
+ * Re-exports from @notifio/shared.
+ * This file preserves the api-client's import paths during migration.
  */
+
+export type {
+  // Response types
+  WeatherData as WeatherResponse,
+  TrafficData as TrafficResponse,
+  AirQualityData as AirQualityResponse,
+  OutageData as OutageResponse,
+  OutageRecord,
+  UtilityType,
+  // Enums / common
+  ApiResponse,
+} from '@notifio/shared';
+
+// ─── Types not yet in @notifio/shared ────────────────────────────────
+// TODO: Move these to @notifio/shared once the backend publishes them.
 
 export interface Alert {
   id: string;
@@ -12,7 +26,7 @@ export interface Alert {
   severity: 'info' | 'warning' | 'critical';
   h3Cell: string;
   lat: number;
-  lon: number;
+  lng: number;
   startsAt: string;
   endsAt: string | null;
   source: string;
@@ -26,62 +40,64 @@ export interface AlertFilter {
   active?: boolean;
 }
 
-export interface WeatherResponse {
-  temperature: number;
-  feelsLike: number;
-  humidity: number;
-  windSpeed: number;
-  description: string;
-  icon: string;
-  forecast: Array<{
-    date: string;
-    tempMin: number;
-    tempMax: number;
-    description: string;
-    icon: string;
-  }>;
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+  countryCode: string;
+  createdAt: string;
 }
 
-export interface TrafficResponse {
-  congestionLevel: 'free' | 'light' | 'moderate' | 'heavy' | 'severe';
-  incidents: Array<{
-    id: string;
-    type: string;
-    description: string;
-    lat: number;
-    lon: number;
-  }>;
+export interface UserLocation {
+  id: string;
+  label: string;
+  lat: number;
+  lng: number;
+  h3Index: string;
+  isPrimary: boolean;
 }
 
-export interface AirQualityResponse {
-  aqi: number;
-  level: 'good' | 'moderate' | 'unhealthy_sensitive' | 'unhealthy' | 'very_unhealthy' | 'hazardous';
-  pollutants: Record<string, number>;
-  description: string;
+export interface UserLocationsResponse {
+  locations: UserLocation[];
 }
 
-export interface NotificationPreferences {
-  weather: boolean;
-  traffic: boolean;
-  airQuality: boolean;
-  utilityOutage: boolean;
-  events: boolean;
+export interface CreateLocationInput {
+  label: string;
+  lat: number;
+  lng: number;
+  isPrimary?: boolean;
+}
+
+export interface UpdateLocationInput {
+  label?: string;
+  isPrimary?: boolean;
+}
+
+export interface UserPreferencesResponse {
+  alertCategories: string[];
+  minSeverity: 'info' | 'warning' | 'critical';
+  locale: string;
   quietHoursStart: string | null;
   quietHoursEnd: string | null;
-  severityThreshold: 'info' | 'warning' | 'critical';
 }
 
-export type NotificationPreferencesUpdate = Partial<NotificationPreferences>;
+export interface UpdatePreferencesInput {
+  alertCategories?: string[];
+  minSeverity?: 'info' | 'warning' | 'critical';
+  locale?: string;
+  quietHoursStart?: string | null;
+  quietHoursEnd?: string | null;
+}
+
+export interface MembershipDetails {
+  tier: 'FREE' | 'PLUS' | 'PRO';
+  expiresAt: string | null;
+  maxLocations: number;
+}
 
 export interface DeviceRegistrationInput {
   platform: 'ios' | 'android' | 'web';
   pushToken: string;
   locale: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  meta?: Record<string, unknown>;
 }

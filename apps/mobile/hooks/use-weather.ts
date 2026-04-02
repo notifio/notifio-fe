@@ -14,10 +14,8 @@ export function useWeather() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await api.getWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon);
-      if (res.success) {
-        setWeather(res.data.weather);
-      }
+      const data = await api.getWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon);
+      setWeather(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load weather');
     } finally {

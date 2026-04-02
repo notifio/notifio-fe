@@ -1,18 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { SocialAuthButtons } from '@/components/auth/social-auth-buttons';
-import { useAuth } from '@/lib/auth-context';
+import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
-  const { signIn } = useAuth();
-  const router = useRouter();
-
-  const handleAuth = () => {
-    signIn();
-    router.push('/dashboard');
+  const handleGoogleSignIn = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      console.error('Sign-in error:', error.message);
+    }
   };
 
   return (
@@ -27,7 +31,7 @@ export default function SignInPage() {
         </div>
 
         <div className="mt-8">
-          <SocialAuthButtons onAuth={handleAuth} />
+          <SocialAuthButtons onAuth={handleGoogleSignIn} />
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-400">

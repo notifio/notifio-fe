@@ -30,9 +30,6 @@ export const ALERT_TYPE_CONFIG: Record<AlertType, AlertTypeConfig> = {
   event: { icon: CalendarDays, color: '#EC4899', bgColor: '#FDF2F8', label: 'Events' },
 } as const;
 
-const now = Date.now();
-const hour = 60 * 60 * 1000;
-
 export const MOCK_ALERTS: AlertSummary[] = [
   {
     id: '1',
@@ -40,8 +37,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'critical',
     title: 'Severe thunderstorm warning',
     source: 'SHMÚ',
-    startsAt: new Date(now - 1 * hour).toISOString(),
-    expiresAt: new Date(now + 5 * hour).toISOString(),
+    startsAt: '2026-04-02T08:00:00.000Z',
+    expiresAt: '2026-04-02T14:00:00.000Z',
   },
   {
     id: '2',
@@ -49,8 +46,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'info',
     title: 'Road closure on D1 highway',
     source: 'SSC',
-    startsAt: new Date(now - 3 * hour).toISOString(),
-    expiresAt: new Date(now + 12 * hour).toISOString(),
+    startsAt: '2026-04-02T06:00:00.000Z',
+    expiresAt: '2026-04-02T21:00:00.000Z',
   },
   {
     id: '3',
@@ -58,8 +55,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'warning',
     title: 'Elevated PM2.5 levels in your area',
     source: 'SHMÚ Air',
-    startsAt: new Date(now - 2 * hour).toISOString(),
-    expiresAt: new Date(now + 8 * hour).toISOString(),
+    startsAt: '2026-04-02T07:00:00.000Z',
+    expiresAt: '2026-04-02T17:00:00.000Z',
   },
   {
     id: '4',
@@ -67,8 +64,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'warning',
     title: 'Planned power outage — Petržalka',
     source: 'ZSE',
-    startsAt: new Date(now + 2 * hour).toISOString(),
-    expiresAt: new Date(now + 6 * hour).toISOString(),
+    startsAt: '2026-04-02T11:00:00.000Z',
+    expiresAt: '2026-04-02T15:00:00.000Z',
   },
   {
     id: '5',
@@ -76,8 +73,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'warning',
     title: 'Strong wind advisory',
     source: 'SHMÚ',
-    startsAt: new Date(now - 30 * 60 * 1000).toISOString(),
-    expiresAt: new Date(now + 10 * hour).toISOString(),
+    startsAt: '2026-04-02T08:30:00.000Z',
+    expiresAt: '2026-04-02T19:00:00.000Z',
   },
   {
     id: '6',
@@ -85,8 +82,8 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'info',
     title: 'Bratislava Marathon — road closures',
     source: 'City of Bratislava',
-    startsAt: new Date(now + 24 * hour).toISOString(),
-    expiresAt: new Date(now + 36 * hour).toISOString(),
+    startsAt: '2026-04-03T09:00:00.000Z',
+    expiresAt: '2026-04-03T21:00:00.000Z',
   },
   {
     id: '7',
@@ -94,7 +91,7 @@ export const MOCK_ALERTS: AlertSummary[] = [
     severity: 'critical',
     title: 'Hazardous air quality — stay indoors',
     source: 'SHMÚ Air',
-    startsAt: new Date(now - 4 * hour).toISOString(),
-    expiresAt: new Date(now + 2 * hour).toISOString(),
+    startsAt: '2026-04-02T05:00:00.000Z',
+    expiresAt: '2026-04-02T11:00:00.000Z',
   },
 ];

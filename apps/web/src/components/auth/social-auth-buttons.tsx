@@ -33,40 +33,11 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.99 4.388 10.954 10.125 11.854V15.47H7.078V12h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.875V12h3.328l-.532 3.469h-2.796v8.385C19.612 22.954 24 17.99 24 12Z"
-        fill="#1877F2"
-      />
-    </svg>
-  );
-}
-
-function AppleIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z" />
-    </svg>
-  );
-}
-
 const PROVIDERS: SocialProvider[] = [
   {
     name: 'Continue with Google',
     icon: <GoogleIcon />,
     className: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
-  },
-  {
-    name: 'Continue with Facebook',
-    icon: <FacebookIcon />,
-    className: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
-  },
-  {
-    name: 'Continue with Apple',
-    icon: <AppleIcon />,
-    className: 'bg-black text-white hover:bg-gray-900',
   },
 ];
 

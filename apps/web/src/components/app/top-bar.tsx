@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { useAuth } from '@/lib/auth-context';
+import { signOut } from '@/app/(app)/actions';
+import { useSupabaseUser } from '@/hooks/use-supabase-user';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
@@ -12,10 +13,10 @@ const NAV_ITEMS = [
 ] as const;
 
 export function TopBar() {
-  const { user, signOut } = useAuth();
+  const { name } = useSupabaseUser();
   const pathname = usePathname();
 
-  const initial = user?.name.charAt(0).toUpperCase() ?? '?';
+  const initial = name?.charAt(0).toUpperCase() ?? '?';
 
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center border-b border-gray-100 bg-white px-6">
@@ -49,11 +50,11 @@ export function TopBar() {
             {initial}
           </div>
           <span className="hidden text-sm font-medium text-gray-700 md:inline">
-            {user?.name}
+            {name}
           </span>
         </div>
         <button
-          onClick={signOut}
+          onClick={() => signOut()}
           className="hidden rounded-md px-3 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 sm:inline-flex"
         >
           Sign out

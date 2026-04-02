@@ -4,30 +4,41 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { AuthProvider } from '../providers/auth-provider';
 import { OnboardingProvider } from '../providers/onboarding-provider';
 
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
-  const { hasCompletedOnboarding } = useOnboarding();
+  const { session, isLoading: isAuthLoading } = useAuth();
+  const { hasCompletedOnboarding, isOnboardingLoaded } = useOnboarding();
   const segments = useSegments();
   const router = useRouter();
 
-  useEffect(() => {
-    SplashScreen.hideAsync();
-  }, []);
+  const isReady = !isAuthLoading && isOnboardingLoaded;
 
   useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
+  useEffect(() => {
+    if (!isReady) return;
+
     const inAuthGroup = segments[0] === '(auth)';
     const inOnboarding = segments[0] === 'onboarding';
 
-    if (!hasCompletedOnboarding && !inAuthGroup && !inOnboarding) {
+    if (!session && !inAuthGroup) {
       router.replace('/(auth)/welcome');
-    } else if (hasCompletedOnboarding && (inAuthGroup || inOnboarding)) {
+    } else if (session && !hasCompletedOnboarding && !inOnboarding) {
+      router.replace('/onboarding');
+    } else if (session && hasCompletedOnboarding && (inAuthGroup || inOnboarding)) {
       router.replace('/(tabs)');
     }
-  }, [hasCompletedOnboarding, segments]);
+  }, [session, isReady, hasCompletedOnboarding, segments, router]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -40,11 +51,13 @@ function RootNavigator() {
 
 export default function RootLayout() {
   return (
-    <OnboardingProvider>
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <RootNavigator />
-      </SafeAreaProvider>
-    </OnboardingProvider>
+    <AuthProvider>
+      <OnboardingProvider>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <RootNavigator />
+        </SafeAreaProvider>
+      </OnboardingProvider>
+    </AuthProvider>
   );
 }

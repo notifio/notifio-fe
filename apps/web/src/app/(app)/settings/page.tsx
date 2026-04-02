@@ -1,10 +1,11 @@
 'use client';
 
+import { signOut } from '@/app/(app)/actions';
 import { PreferenceSection } from '@/components/app/settings/preference-section';
 import { SelectableOption } from '@/components/ui/selectable-option';
 import { Toggle } from '@/components/ui/toggle';
 import { usePreferences } from '@/hooks/use-preferences';
-import { useAuth } from '@/lib/auth-context';
+import { useSupabaseUser } from '@/hooks/use-supabase-user';
 import { ALERT_TYPE_CONFIG, type AlertType } from '@/lib/mock-data';
 
 const SEVERITY_OPTIONS = [
@@ -19,7 +20,7 @@ const LANGUAGE_OPTIONS = [
 ];
 
 export default function SettingsPage() {
-  const { user, signOut } = useAuth();
+  const { email } = useSupabaseUser();
   const { preferences, toggleAlertType, setMinSeverity, setLocale } = usePreferences();
 
   return (
@@ -76,11 +77,11 @@ export default function SettingsPage() {
         <PreferenceSection title="Account">
           <div className="rounded-lg px-4 py-3">
             <p className="text-sm text-gray-500">Signed in as</p>
-            <p className="mt-0.5 text-sm font-medium text-gray-900">{user?.email}</p>
+            <p className="mt-0.5 text-sm font-medium text-gray-900">{email}</p>
           </div>
           <div className="flex items-center gap-4 px-4 pt-2">
             <button
-              onClick={signOut}
+              onClick={() => signOut()}
               className="rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
             >
               Sign out

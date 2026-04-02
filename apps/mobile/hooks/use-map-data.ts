@@ -29,19 +29,17 @@ export function useMapData() {
       safeFetch(() => api.getTraffic(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon)),
     ]);
 
-    const allFailed = !elec && !water && !heat && !traffic;
-
-    if (allFailed) {
+    if (!elec && !water && !heat && !traffic) {
       setError('Could not load data');
       setIsLoading(false);
       return;
     }
 
     const normalized = normalizeMapPins(
-      elec?.success ? elec.data.outages : [],
-      water?.success ? water.data.outages : [],
-      heat?.success ? heat.data.outages : [],
-      traffic?.success ? traffic.data.traffic.incidents : [],
+      elec ?? [],
+      water ?? [],
+      heat ?? [],
+      traffic?.incidents ?? [],
     );
 
     setPins(normalized);

@@ -1,11 +1,50 @@
-// TODO: Replace with `import type { ... } from '@notifio/shared'` once GitHub Packages auth is configured.
-import { type Alert, type AlertFilter, type WeatherResponse, type TrafficResponse, type AirQualityResponse, type NotificationPreferences, type NotificationPreferencesUpdate, type DeviceRegistrationInput, type ApiResponse } from './shared-types.js';
+import type {
+  Alert,
+  AlertFilter,
+  WeatherResponse,
+  TrafficResponse,
+  AirQualityResponse,
+  OutageResponse,
+  OutageRecord,
+  UtilityType,
+  UserProfile,
+  UserLocation,
+  UserLocationsResponse,
+  CreateLocationInput,
+  UpdateLocationInput,
+  UserPreferencesResponse,
+  UpdatePreferencesInput,
+  MembershipDetails,
+  DeviceRegistrationInput,
+  ApiResponse,
+} from './shared-types.js';
 
-export type { Alert, AlertFilter, WeatherResponse, TrafficResponse, AirQualityResponse, NotificationPreferences, NotificationPreferencesUpdate, DeviceRegistrationInput, ApiResponse };
+export type {
+  Alert,
+  AlertFilter,
+  WeatherResponse,
+  TrafficResponse,
+  AirQualityResponse,
+  OutageResponse,
+  OutageRecord,
+  UtilityType,
+  UserProfile,
+  UserLocation,
+  UserLocationsResponse,
+  CreateLocationInput,
+  UpdateLocationInput,
+  UserPreferencesResponse,
+  UpdatePreferencesInput,
+  MembershipDetails,
+  DeviceRegistrationInput,
+  ApiResponse,
+};
 
 export interface NotifioClientConfig {
   baseUrl: string;
   getToken: () => Promise<string | null>;
+  apiKey?: string;
+  onUnauthorized?: () => void;
 }
 
 export class ApiError extends Error {
@@ -54,6 +93,10 @@ export function createNotifioClient(config: NotifioClientConfig) {
       'Content-Type': 'application/json',
     };
 
+    if (config.apiKey) {
+      headers['x-api-key'] = config.apiKey;
+    }
+
     const token = await config.getToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -65,9 +108,19 @@ export function createNotifioClient(config: NotifioClientConfig) {
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 
+    if (response.status === 401) {
+      config.onUnauthorized?.();
+      const text = await response.text();
+      throw new ApiError(response.status, text);
+    }
+
     if (!response.ok) {
       const text = await response.text();
       throw new ApiError(response.status, text);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
     }
 
     const json = (await response.json()) as ApiResponse<T>;
@@ -80,27 +133,39 @@ export function createNotifioClient(config: NotifioClientConfig) {
   }
 
   return {
-    async getWeather(lat: number, lon: number): Promise<WeatherResponse> {
-      return request<WeatherResponse>('/weather', {
-        params: { lat: String(lat), lon: String(lon) },
+    // ─── Public endpoints ──────────────────────────────────────────
+
+    async getWeather(lat: number, lng: number): Promise<WeatherResponse> {
+      const { weather } = await request<{ weather: WeatherResponse }>('/weather', {
+        params: { lat: String(lat), lng: String(lng) },
       });
+      return weather;
     },
 
-    async getTraffic(lat: number, lon: number): Promise<TrafficResponse> {
-      return request<TrafficResponse>('/traffic', {
-        params: { lat: String(lat), lon: String(lon) },
+    async getTraffic(lat: number, lng: number): Promise<TrafficResponse> {
+      const { traffic } = await request<{ traffic: TrafficResponse }>('/traffic', {
+        params: { lat: String(lat), lng: String(lng) },
       });
+      return traffic;
     },
 
-    async getAirQuality(lat: number, lon: number): Promise<AirQualityResponse> {
-      return request<AirQualityResponse>('/air-quality', {
-        params: { lat: String(lat), lon: String(lon) },
+    async getAirQuality(lat: number, lng: number): Promise<AirQualityResponse> {
+      const { airQuality } = await request<{ airQuality: AirQualityResponse }>('/air-quality', {
+        params: { lat: String(lat), lng: String(lng) },
       });
+      return airQuality;
     },
 
-    async getActiveAlerts(lat: number, lon: number): Promise<Alert[]> {
+    async getOutages(utility: UtilityType): Promise<OutageRecord[]> {
+      const data = await request<{ totalOutages: number; outages: OutageRecord[] }>('/outages', {
+        params: { utility },
+      });
+      return data.outages;
+    },
+
+    async getActiveAlerts(lat: number, lng: number): Promise<Alert[]> {
       return request<Alert[]>('/alerts/active', {
-        params: { lat: String(lat), lon: String(lon) },
+        params: { lat: String(lat), lng: String(lng) },
       });
     },
 
@@ -118,17 +183,6 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<Alert>(`/alerts/${id}`);
     },
 
-    async getPreferences(): Promise<NotificationPreferences> {
-      return request<NotificationPreferences>('/preferences');
-    },
-
-    async updatePreferences(prefs: NotificationPreferencesUpdate): Promise<NotificationPreferences> {
-      return request<NotificationPreferences>('/preferences', {
-        method: 'PATCH',
-        body: prefs,
-      });
-    },
-
     async registerDevice(registration: DeviceRegistrationInput): Promise<{ deviceId: string }> {
       return request<{ deviceId: string }>('/devices', {
         method: 'POST',
@@ -136,10 +190,66 @@ export function createNotifioClient(config: NotifioClientConfig) {
       });
     },
 
-    async updateDeviceLocation(deviceId: string, lat: number, lon: number): Promise<void> {
+    async updateDeviceLocation(deviceId: string, lat: number, lng: number): Promise<void> {
       return request<void>(`/devices/${deviceId}/location`, {
         method: 'PUT',
-        body: { lat, lon },
+        body: { lat, lng },
+      });
+    },
+
+    // ─── /me endpoints (authenticated) ─────────────────────────────
+
+    async getProfile(): Promise<UserProfile> {
+      return request<UserProfile>('/me');
+    },
+
+    async updateProfile(data: { countryCode: string }): Promise<UserProfile> {
+      return request<UserProfile>('/me', { method: 'PATCH', body: data });
+    },
+
+    async deleteAccount(): Promise<void> {
+      await request<void>('/me', { method: 'DELETE' });
+    },
+
+    async getLocations(): Promise<UserLocationsResponse> {
+      return request<UserLocationsResponse>('/me/locations');
+    },
+
+    async createLocation(data: CreateLocationInput): Promise<UserLocation> {
+      return request<UserLocation>('/me/locations', { method: 'POST', body: data });
+    },
+
+    async updateLocation(locationId: string, data: UpdateLocationInput): Promise<UserLocation> {
+      return request<UserLocation>(`/me/locations/${locationId}`, { method: 'PATCH', body: data });
+    },
+
+    async deleteLocation(locationId: string): Promise<void> {
+      await request<void>(`/me/locations/${locationId}`, { method: 'DELETE' });
+    },
+
+    async getPreferences(): Promise<UserPreferencesResponse> {
+      return request<UserPreferencesResponse>('/me/preferences');
+    },
+
+    async updatePreferences(data: UpdatePreferencesInput): Promise<UserPreferencesResponse> {
+      return request<UserPreferencesResponse>('/me/preferences', { method: 'PATCH', body: data });
+    },
+
+    async getMembership(): Promise<MembershipDetails> {
+      return request<MembershipDetails>('/me/membership');
+    },
+
+    async upgradeMembership(targetTier: 'PLUS' | 'PRO'): Promise<MembershipDetails> {
+      return request<MembershipDetails>('/me/membership/upgrade', {
+        method: 'POST',
+        body: { targetTier },
+      });
+    },
+
+    async downgradeMembership(targetTier: 'FREE' | 'PLUS'): Promise<MembershipDetails> {
+      return request<MembershipDetails>('/me/membership/downgrade', {
+        method: 'POST',
+        body: { targetTier },
       });
     },
   };
