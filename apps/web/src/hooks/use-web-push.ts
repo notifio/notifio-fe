@@ -81,11 +81,25 @@ export function useWebPush(): UseWebPushResult {
         return false;
       }
 
-      // 2. Register the service worker explicitly so we can pass it to getToken
+      // 2. Register the service worker at Firebase's expected scope,
+      //    then WAIT for it to fully activate (avoids race condition where
+      //    registration.pushManager is undefined on first-time registration).
       const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/',
+        scope: '/firebase-cloud-messaging-push-scope',
       });
-      await navigator.serviceWorker.ready;
+
+      // Wait for the SW to reach 'activated' state before passing it to Firebase
+      if (registration.installing || registration.waiting) {
+        const worker = registration.installing ?? registration.waiting;
+        await new Promise<void>((resolve) => {
+          worker!.addEventListener('statechange', function onStateChange() {
+            if (worker!.state === 'activated') {
+              worker!.removeEventListener('statechange', onStateChange);
+              resolve();
+            }
+          });
+        });
+      }
 
       // 3. Get FCM token
       const messaging = await getFirebaseMessaging();
