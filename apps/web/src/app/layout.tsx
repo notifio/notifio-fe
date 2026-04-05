@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { FirebaseErrorSuppressor } from '@/components/firebase-error-suppressor';
+
 import './globals.css';
 
 const geistSans = Geist({
@@ -26,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="sk">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <FirebaseErrorSuppressor />
         {children}
       </body>
     </html>
