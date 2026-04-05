@@ -16,6 +16,7 @@ import type {
   UpdatePreferencesInput,
   MembershipDetails,
   DeviceRegistrationInput,
+  DeviceRegistrationResult,
   ApiResponse,
 } from './shared-types.js';
 
@@ -37,6 +38,7 @@ export type {
   UpdatePreferencesInput,
   MembershipDetails,
   DeviceRegistrationInput,
+  DeviceRegistrationResult,
   ApiResponse,
 };
 
@@ -183,17 +185,30 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<Alert>(`/alerts/${id}`);
     },
 
-    async registerDevice(registration: DeviceRegistrationInput): Promise<{ deviceId: string }> {
-      return request<{ deviceId: string }>('/devices', {
+    async registerDevice(registration: DeviceRegistrationInput): Promise<DeviceRegistrationResult> {
+      return request<DeviceRegistrationResult>('/devices/register', {
         method: 'POST',
         body: registration,
       });
     },
 
-    async updateDeviceLocation(deviceId: string, lat: number, lng: number): Promise<void> {
-      return request<void>(`/devices/${deviceId}/location`, {
+    async refreshDeviceToken(deviceId: string, fcmToken: string): Promise<{ updated: boolean }> {
+      return request<{ updated: boolean }>(`/devices/${deviceId}/token`, {
         method: 'PUT',
+        body: { fcmToken },
+      });
+    },
+
+    async submitDeviceLocation(deviceId: string, lat: number, lng: number): Promise<{ h3Res7: string; h3Res8: string; capturedAt: string }> {
+      return request<{ h3Res7: string; h3Res8: string; capturedAt: string }>(`/devices/${deviceId}/location`, {
+        method: 'POST',
         body: { lat, lng },
+      });
+    },
+
+    async deactivateDevice(deviceId: string): Promise<{ deactivated: boolean }> {
+      return request<{ deactivated: boolean }>(`/devices/${deviceId}`, {
+        method: 'DELETE',
       });
     },
 

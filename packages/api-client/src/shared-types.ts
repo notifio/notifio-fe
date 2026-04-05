@@ -98,6 +98,10 @@ export interface MembershipDetails {
 
 export interface DeviceRegistrationInput {
   platform: 'ios' | 'android' | 'web';
-  pushToken: string;
-  locale: string;
+  fcmToken: string;
+}
+
+export interface DeviceRegistrationResult {
+  deviceId: string;
+  linked: boolean;
 }
