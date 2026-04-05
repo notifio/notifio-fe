@@ -48,3 +48,32 @@ export function isFirebaseConfigured(): boolean {
       VAPID_KEY,
   );
 }
+
+/**
+ * Suppress a known harmless Firebase Messaging SDK error that fires as an
+ * uncaught promise rejection during background token management:
+ *
+ *   TypeError: Cannot read properties of undefined (reading 'pushManager')
+ *     at token-manager.ts:102
+ *
+ * This error does NOT prevent getToken() from succeeding — the FCM token
+ * is returned correctly and device registration works. It stems from an
+ * internal Firebase background task whose ServiceWorkerRegistration state
+ * hasn't been populated yet. Suppressing it prevents console noise for
+ * end users.
+ */
+let handlerInstalled = false;
+export function installFirebaseErrorSuppressor(): void {
+  if (handlerInstalled || typeof window === 'undefined') return;
+  handlerInstalled = true;
+  window.addEventListener('unhandledrejection', (event) => {
+    const msg = event.reason?.message ?? '';
+    const stack = event.reason?.stack ?? '';
+    if (
+      msg.includes("reading 'pushManager'") &&
+      (stack.includes('token-manager') || stack.includes('sw-listeners'))
+    ) {
+      event.preventDefault();
+    }
+  });
+}

@@ -4,7 +4,7 @@ import { getToken } from 'firebase/messaging';
 import { useCallback, useEffect, useState } from 'react';
 
 import { api } from '@/lib/api';
-import { getFirebaseMessaging, isFirebaseConfigured, VAPID_KEY } from '@/lib/firebase';
+import { getFirebaseMessaging, installFirebaseErrorSuppressor, isFirebaseConfigured, VAPID_KEY } from '@/lib/firebase';
 
 const DEVICE_ID_KEY = 'notifio_device_id';
 const FCM_TOKEN_KEY = 'notifio_fcm_token';
@@ -29,6 +29,7 @@ export function useWebPush(): UseWebPushResult {
   // Initialize permission state and load persisted deviceId
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    installFirebaseErrorSuppressor();
     if (!isFirebaseConfigured()) {
       setPermission('unconfigured');
       return;
