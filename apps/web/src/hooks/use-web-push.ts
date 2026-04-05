@@ -81,24 +81,44 @@ export function useWebPush(): UseWebPushResult {
         return false;
       }
 
-      // 2. Unregister any stale service workers from previous attempts
-      //    to avoid scope/state conflicts with Firebase's own registration.
+      // 2. Unregister any stale firebase-messaging service workers from previous
+      //    attempts (may be at wrong scope or stuck in a bad state).
       const existing = await navigator.serviceWorker.getRegistrations();
       for (const reg of existing) {
-        if (reg.active?.scriptURL.includes('firebase-messaging-sw.js')) {
+        const scriptUrl = reg.active?.scriptURL ?? reg.installing?.scriptURL ?? reg.waiting?.scriptURL ?? '';
+        if (scriptUrl.includes('firebase-messaging-sw.js')) {
           await reg.unregister();
         }
       }
 
-      // 3. Get messaging instance and let Firebase handle SW registration itself.
-      //    Firebase will register /firebase-messaging-sw.js at its required scope
-      //    and wait for it to activate before subscribing to push.
+      // 3. Register the SW at Firebase's expected scope and poll for activation.
+      //    This is more reliable than navigator.serviceWorker.ready which can
+      //    return the wrong registration when multiple SWs exist.
+      const swScope = '/firebase-cloud-messaging-push-scope';
+      await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: swScope });
+
+      let activeRegistration: ServiceWorkerRegistration | undefined;
+      const deadline = Date.now() + 15_000;
+      while (Date.now() < deadline) {
+        const reg = await navigator.serviceWorker.getRegistration(swScope);
+        if (reg?.active) {
+          activeRegistration = reg;
+          break;
+        }
+        await new Promise<void>((r) => setTimeout(r, 200));
+      }
+      if (!activeRegistration) {
+        throw new Error('Service worker sa nepodarilo aktivovať');
+      }
+
+      // 4. Get FCM token using the fully activated registration
       const messaging = await getFirebaseMessaging();
       if (!messaging) {
         throw new Error('Prehliadač nepodporuje push notifikácie');
       }
       const fcmToken = await getToken(messaging, {
         vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: activeRegistration,
       });
       if (!fcmToken) {
         throw new Error('Nepodarilo sa získať FCM token');
