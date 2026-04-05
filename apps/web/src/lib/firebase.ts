@@ -67,12 +67,11 @@ export function installFirebaseErrorSuppressor(): void {
   if (handlerInstalled || typeof window === 'undefined') return;
   handlerInstalled = true;
   window.addEventListener('unhandledrejection', (event) => {
-    const msg = event.reason?.message ?? '';
-    const stack = event.reason?.stack ?? '';
-    if (
-      msg.includes("reading 'pushManager'") &&
-      (stack.includes('token-manager') || stack.includes('sw-listeners'))
-    ) {
+    const reason = event.reason;
+    const msg = typeof reason === 'string' ? reason : (reason?.message ?? '');
+    // Match any 'pushManager' error — in minified production builds the
+    // stack trace doesn't reliably contain original file names.
+    if (msg.includes('pushManager')) {
       event.preventDefault();
     }
   });
