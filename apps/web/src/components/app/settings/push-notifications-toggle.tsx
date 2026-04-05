@@ -1,7 +1,7 @@
 'use client';
 
 import { Bell, MapPin } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useGeolocationTracker } from '@/hooks/use-geolocation-tracker';
 import { useWebPush } from '@/hooks/use-web-push';
@@ -9,37 +9,40 @@ import { useWebPush } from '@/hooks/use-web-push';
 export function PushNotificationsToggle() {
   const { permission, deviceId, isLoading, error, enable, disable } = useWebPush();
   const geo = useGeolocationTracker(deviceId);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [showGeoPrompt, setShowGeoPrompt] = useState(false);
+  const [showGeoInstructions, setShowGeoInstructions] = useState(false);
+  const [showPushInstructions, setShowPushInstructions] = useState(false);
 
-  // After notifications are enabled, auto-prompt for geolocation (once)
-  useEffect(() => {
-    if (permission === 'granted' && deviceId && !geo.isTracking && geo.permission === 'prompt') {
-      setShowGeoPrompt(true);
-    }
-  }, [permission, deviceId, geo.isTracking, geo.permission]);
-
-  const handleEnableClick = async () => {
+  const handleEnableClick = () => {
     if (permission === 'denied') {
-      setShowInstructions(true);
+      setShowPushInstructions(true);
       return;
     }
-    setShowInstructions(true);
+    setShowGeoInstructions(true);
   };
 
-  const handleConfirmEnable = async () => {
-    setShowInstructions(false);
-    await enable();
+  const handleConfirmGeo = async () => {
+    setShowGeoInstructions(false);
+    const ok = await geo.start();
+    if (ok) {
+      // Location approved → now ask for push notifications
+      setShowPushInstructions(true);
+    } else {
+      // User denied location — still allow push-only mode
+      setShowPushInstructions(true);
+    }
+  };
+
+  const handleConfirmPush = async () => {
+    setShowPushInstructions(false);
+    const ok = await enable();
+    if (!ok && !geo.isTracking) {
+      // Both denied — nothing to do
+    }
   };
 
   const handleDisable = async () => {
     geo.stop();
     await disable();
-  };
-
-  const handleEnableGeo = async () => {
-    setShowGeoPrompt(false);
-    await geo.start();
   };
 
   if (permission === 'unsupported') {
@@ -112,7 +115,7 @@ export function PushNotificationsToggle() {
           </div>
           {geo.permission !== 'granted' && geo.permission !== 'denied' && (
             <button
-              onClick={handleEnableGeo}
+              onClick={() => void geo.start()}
               className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
             >
               Povoliť
@@ -127,8 +130,43 @@ export function PushNotificationsToggle() {
         </div>
       )}
 
-      {/* Instructions modal */}
-      {showInstructions && (
+      {/* Geolocation instructions modal (FIRST STEP) */}
+      {showGeoInstructions && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="max-w-md rounded-xl bg-white p-6 shadow-2xl">
+            <h3 className="text-lg font-semibold text-gray-900">Povoľ prístup k polohe</h3>
+            <p className="mt-3 text-sm text-gray-600">
+              Aby sme ti vedeli posielať <strong>relevantné notifikácie</strong> o udalostiach v
+              tvojom okolí, potrebujeme prístup k tvojej polohe.
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Po kliknutí na <strong>Pokračovať</strong> ti prehliadač zobrazí okno s otázkou —
+              klikni na <strong>&quot;Povoliť pri návšteve&quot;</strong>.
+            </p>
+            <div className="mt-3 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
+              Ak nepovolíš polohu, budeš dostávať notifikácie len pre lokácie, ktoré si manuálne
+              pridáš v nastaveniach.
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowGeoInstructions(false)}
+                className="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+              >
+                Zrušiť
+              </button>
+              <button
+                onClick={handleConfirmGeo}
+                className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+              >
+                Pokračovať
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Push notifications instructions modal (SECOND STEP) */}
+      {showPushInstructions && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="max-w-md rounded-xl bg-white p-6 shadow-2xl">
             <h3 className="text-lg font-semibold text-gray-900">Povoľ notifikácie v prehliadači</h3>
@@ -147,54 +185,19 @@ export function PushNotificationsToggle() {
             )}
             <div className="mt-6 flex gap-3">
               <button
-                onClick={() => setShowInstructions(false)}
+                onClick={() => setShowPushInstructions(false)}
                 className="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
               >
                 Zrušiť
               </button>
               {permission !== 'denied' && (
                 <button
-                  onClick={handleConfirmEnable}
+                  onClick={handleConfirmPush}
                   className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 >
                   Pokračovať
                 </button>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Geolocation prompt modal */}
-      {showGeoPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-w-md rounded-xl bg-white p-6 shadow-2xl">
-            <h3 className="text-lg font-semibold text-gray-900">Povoľ prístup k polohe</h3>
-            <p className="mt-3 text-sm text-gray-600">
-              Aby sme ti vedeli posielať <strong>relevantné notifikácie</strong> o udalostiach v
-              tvojom okolí, potrebujeme prístup k tvojej polohe.
-            </p>
-            <p className="mt-2 text-sm text-gray-600">
-              Po kliknutí na <strong>Pokračovať</strong> ti prehliadač zobrazí ďalšie okno s
-              otázkou — klikni na <strong>&quot;Povoliť&quot;</strong>.
-            </p>
-            <div className="mt-3 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">
-              Ak nepovolíš polohu, budeš dostávať notifikácie len pre lokácie, ktoré si manuálne
-              pridáš v nastaveniach.
-            </div>
-            <div className="mt-6 flex gap-3">
-              <button
-                onClick={() => setShowGeoPrompt(false)}
-                className="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
-              >
-                Nie teraz
-              </button>
-              <button
-                onClick={handleEnableGeo}
-                className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
-              >
-                Pokračovať
-              </button>
             </div>
           </div>
         </div>
