@@ -66,13 +66,14 @@ let handlerInstalled = false;
 export function installFirebaseErrorSuppressor(): void {
   if (handlerInstalled || typeof window === 'undefined') return;
   handlerInstalled = true;
-  window.addEventListener('unhandledrejection', (event) => {
+  const handler = (event: PromiseRejectionEvent): void => {
     const reason = event.reason;
     const msg = typeof reason === 'string' ? reason : (reason?.message ?? '');
-    // Match any 'pushManager' error — in minified production builds the
-    // stack trace doesn't reliably contain original file names.
-    if (msg.includes('pushManager')) {
+    if (msg.includes('pushManager') || msg.includes("'pushManager'")) {
       event.preventDefault();
+      // eslint-disable-next-line no-console
+      console.debug('[firebase] suppressed background pushManager error (harmless)');
     }
-  });
+  };
+  window.addEventListener('unhandledrejection', handler);
 }
