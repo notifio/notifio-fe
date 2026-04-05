@@ -2,6 +2,7 @@
 
 import { signOut } from '@/app/(app)/actions';
 import { PreferenceSection } from '@/components/app/settings/preference-section';
+import { PushNotificationsToggle } from '@/components/app/settings/push-notifications-toggle';
 import { SelectableOption } from '@/components/ui/selectable-option';
 import { Toggle } from '@/components/ui/toggle';
 import { usePreferences } from '@/hooks/use-preferences';
@@ -28,6 +29,10 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
 
       <div className="mt-10 space-y-10">
+        <PreferenceSection title="Push notifikácie" description="Zapni push notifikácie aby si dostával upozornenia aj keď je stránka zatvorená.">
+          <PushNotificationsToggle />
+        </PreferenceSection>
+
         <PreferenceSection title="Notifications" description="Choose which alert types you want to receive.">
           {(Object.entries(ALERT_TYPE_CONFIG) as [AlertType, (typeof ALERT_TYPE_CONFIG)[AlertType]][]).map(
             ([type, config]) => {
