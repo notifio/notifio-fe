@@ -81,34 +81,24 @@ export function useWebPush(): UseWebPushResult {
         return false;
       }
 
-      // 2. Register the service worker at Firebase's expected scope,
-      //    then WAIT for it to fully activate (avoids race condition where
-      //    registration.pushManager is undefined on first-time registration).
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/firebase-cloud-messaging-push-scope',
-      });
-
-      // Wait for the SW to reach 'activated' state before passing it to Firebase
-      if (registration.installing || registration.waiting) {
-        const worker = registration.installing ?? registration.waiting;
-        await new Promise<void>((resolve) => {
-          worker!.addEventListener('statechange', function onStateChange() {
-            if (worker!.state === 'activated') {
-              worker!.removeEventListener('statechange', onStateChange);
-              resolve();
-            }
-          });
-        });
+      // 2. Unregister any stale service workers from previous attempts
+      //    to avoid scope/state conflicts with Firebase's own registration.
+      const existing = await navigator.serviceWorker.getRegistrations();
+      for (const reg of existing) {
+        if (reg.active?.scriptURL.includes('firebase-messaging-sw.js')) {
+          await reg.unregister();
+        }
       }
 
-      // 3. Get FCM token
+      // 3. Get messaging instance and let Firebase handle SW registration itself.
+      //    Firebase will register /firebase-messaging-sw.js at its required scope
+      //    and wait for it to activate before subscribing to push.
       const messaging = await getFirebaseMessaging();
       if (!messaging) {
         throw new Error('Prehliadač nepodporuje push notifikácie');
       }
       const fcmToken = await getToken(messaging, {
         vapidKey: VAPID_KEY,
-        serviceWorkerRegistration: registration,
       });
       if (!fcmToken) {
         throw new Error('Nepodarilo sa získať FCM token');
