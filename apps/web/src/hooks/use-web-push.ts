@@ -1,6 +1,6 @@
 'use client';
 
-import { getToken, onMessage } from 'firebase/messaging';
+import { getToken } from 'firebase/messaging';
 import { useCallback, useEffect, useState } from 'react';
 
 import { api } from '@/lib/api';
@@ -42,30 +42,10 @@ export function useWebPush(): UseWebPushResult {
     if (storedId) setDeviceId(storedId);
   }, []);
 
-  // Foreground message handler — set up AFTER device is registered
-  // (not just after permission granted, to avoid racing with getToken()
-  // which sets messaging.swRegistration)
-  useEffect(() => {
-    if (!deviceId) return;
-    let unsub: (() => void) | null = null;
-
-    (async () => {
-      const messaging = await getFirebaseMessaging();
-      if (!messaging) return;
-      unsub = onMessage(messaging, (payload) => {
-        // Show in-app toast/notification for foreground messages
-        const title = payload.notification?.title || payload.data?.['title'] || 'Notifio';
-        const body = payload.notification?.body || payload.data?.['body'] || '';
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification(title, { body, icon: '/icon-192.png' });
-        }
-      });
-    })();
-
-    return () => {
-      unsub?.();
-    };
-  }, [deviceId]);
+  // Note: foreground messages are intentionally NOT handled via onMessage()
+  // here. onMessage() internally calls Firebase's SW registration logic which
+  // can race with our own getToken() call. Background notifications work via
+  // firebase-messaging-sw.js onBackgroundMessage() handler regardless.
 
   const enable = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
