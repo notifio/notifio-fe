@@ -42,9 +42,11 @@ export function useWebPush(): UseWebPushResult {
     if (storedId) setDeviceId(storedId);
   }, []);
 
-  // Foreground message handler
+  // Foreground message handler — set up AFTER device is registered
+  // (not just after permission granted, to avoid racing with getToken()
+  // which sets messaging.swRegistration)
   useEffect(() => {
-    if (permission !== 'granted') return;
+    if (!deviceId) return;
     let unsub: (() => void) | null = null;
 
     (async () => {
@@ -63,7 +65,7 @@ export function useWebPush(): UseWebPushResult {
     return () => {
       unsub?.();
     };
-  }, [permission]);
+  }, [deviceId]);
 
   const enable = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
@@ -75,9 +77,11 @@ export function useWebPush(): UseWebPushResult {
       }
 
       // 1. Request notification permission
+      //    Don't call setPermission yet — setting React state triggers a
+      //    re-render which can cause useEffects to race with getToken().
       const result = await Notification.requestPermission();
-      setPermission(result as PushPermissionState);
       if (result !== 'granted') {
+        setPermission(result as PushPermissionState);
         return false;
       }
 
@@ -111,28 +115,11 @@ export function useWebPush(): UseWebPushResult {
         throw new Error('Service worker sa nepodarilo aktivovať');
       }
 
-      // DEBUG: inspect registration before passing to Firebase
-      console.log('[web-push] SW registration:', activeRegistration);
-      console.log('[web-push] SW scope:', activeRegistration.scope);
-      console.log('[web-push] SW active:', activeRegistration.active?.state);
-      console.log('[web-push] SW pushManager:', activeRegistration.pushManager);
-      console.log('[web-push] pushManager.getSubscription type:', typeof activeRegistration.pushManager?.getSubscription);
-
-      // Try to manually subscribe to push BEFORE Firebase does its thing
-      // — this also confirms the SW + pushManager are working
-      try {
-        const existingSub = await activeRegistration.pushManager.getSubscription();
-        console.log('[web-push] Existing subscription:', existingSub);
-      } catch (e) {
-        console.error('[web-push] getSubscription failed:', e);
-      }
-
       // 4. Get FCM token using the fully activated registration
       const messaging = await getFirebaseMessaging();
       if (!messaging) {
         throw new Error('Prehliadač nepodporuje push notifikácie');
       }
-      console.log('[web-push] Calling getToken with vapidKey length:', VAPID_KEY.length);
       const fcmToken = await getToken(messaging, {
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: activeRegistration,
@@ -169,6 +156,8 @@ export function useWebPush(): UseWebPushResult {
         setDeviceId(registered.deviceId);
       }
 
+      // Everything succeeded — now safe to update permission state
+      setPermission('granted');
       return true;
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Neznáma chyba';
