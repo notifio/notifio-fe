@@ -1,15 +1,17 @@
 import { BellRing } from 'lucide-react-native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 import { ToggleRow } from '../../components/ui/toggle-row';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { ALERT_TYPE_CONFIG, type AlertType } from '../../lib/alert-config';
+import { NotificationContext } from '../../providers/notification-provider';
 
 const ALL_ALERT_TYPES = Object.keys(ALERT_TYPE_CONFIG) as AlertType[];
 
 export default function NotificationsScreen() {
   const { completeOnboarding } = useOnboarding();
+  const notificationCtx = useContext(NotificationContext);
   const [selectedTypes, setSelectedTypes] = useState<AlertType[]>([...ALL_ALERT_TYPES]);
 
   const toggleType = (type: AlertType) => {
@@ -18,8 +20,11 @@ export default function NotificationsScreen() {
     );
   };
 
-  const handleEnable = () => {
-    // TODO: implement
+  const handleEnable = async () => {
+    // Request push permission — if denied, still complete onboarding.
+    // Device registration happens automatically in NotificationProvider
+    // once both permission and auth are available.
+    await notificationCtx?.requestPermission();
     completeOnboarding();
   };
 

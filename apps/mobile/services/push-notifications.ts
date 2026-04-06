@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 import { api } from '../lib/api';
 
 const DEVICE_ID_KEY = 'notifio_device_id';
+const FCM_TOKEN_KEY = 'notifio_fcm_token';
 
 export async function requestPermissions(): Promise<boolean> {
   if (Platform.OS === 'ios') {
@@ -38,9 +39,23 @@ export async function registerDeviceWithBackend(
       platform: Platform.OS as 'ios' | 'android',
     });
     await AsyncStorage.setItem(DEVICE_ID_KEY, deviceId);
+    await AsyncStorage.setItem(FCM_TOKEN_KEY, fcmToken);
     return deviceId;
   } catch {
     return null;
+  }
+}
+
+export async function refreshToken(newFcmToken: string): Promise<void> {
+  const deviceId = await getStoredDeviceId();
+  if (!deviceId) return;
+
+  try {
+    await api.refreshDeviceToken(deviceId, newFcmToken);
+    await AsyncStorage.setItem(FCM_TOKEN_KEY, newFcmToken);
+  } catch {
+    // Refresh failed — device may have been deleted on backend, re-register
+    await registerDeviceWithBackend(newFcmToken);
   }
 }
 

@@ -7,6 +7,7 @@ import {
   configureForegroundNotifications,
   deactivateDevice,
   getFcmToken,
+  refreshToken,
   registerDeviceWithBackend,
   requestPermissions,
   setupBackgroundMessageHandler,
@@ -70,9 +71,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         setIsRegistered(true);
       }
 
-      // Re-register if FCM token is refreshed
+      // Refresh token on backend when FCM rotates it
       unsubTokenRefresh = setupTokenRefreshListener(async (newToken) => {
-        await registerDeviceWithBackend(newToken);
+        await refreshToken(newToken);
       });
     }
 
