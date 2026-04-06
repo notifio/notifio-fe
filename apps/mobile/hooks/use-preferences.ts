@@ -1,43 +1,49 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import type { AlertType } from '../lib/alert-config';
+import type { UserPreferencesResponse, UpdatePreferencesRequest } from '@notifio/api-client';
 
-// TODO: Import NotificationPreferences from @notifio/shared when wired up
-interface Preferences {
-  alertTypes: AlertType[];
-  minSeverity: 'info' | 'warning' | 'critical';
-  quietHoursEnabled: boolean;
-  locale: 'en' | 'sk';
+import { api } from '../lib/api';
+
+interface UsePreferencesResult {
+  preferences: UserPreferencesResponse | null;
+  isLoading: boolean;
+  error: string | null;
+  updatePreferences: (data: UpdatePreferencesRequest) => Promise<void>;
+  refresh: () => void;
 }
 
-const ALL_ALERT_TYPES: AlertType[] = ['weather', 'traffic', 'air_quality', 'utility_outage', 'event'];
+export function usePreferences(): UsePreferencesResult {
+  const [preferences, setPreferences] = useState<UserPreferencesResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const DEFAULT_PREFERENCES: Preferences = {
-  alertTypes: [...ALL_ALERT_TYPES],
-  minSeverity: 'info',
-  quietHoursEnabled: false,
-  locale: 'en',
-};
-
-export function usePreferences() {
-  const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
-
-  const toggleAlertType = useCallback((type: AlertType) => {
-    setPreferences((prev) => ({
-      ...prev,
-      alertTypes: prev.alertTypes.includes(type)
-        ? prev.alertTypes.filter((t) => t !== type)
-        : [...prev.alertTypes, type],
-    }));
+  const fetch = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await api.getPreferences();
+      setPreferences(data);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to load preferences';
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const setMinSeverity = useCallback((severity: Preferences['minSeverity']) => {
-    setPreferences((prev) => ({ ...prev, minSeverity: severity }));
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  const updatePreferences = useCallback(async (data: UpdatePreferencesRequest) => {
+    try {
+      const updated = await api.updatePreferences(data);
+      setPreferences(updated);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to update preferences';
+      setError(msg);
+    }
   }, []);
 
-  const setLocale = useCallback((locale: Preferences['locale']) => {
-    setPreferences((prev) => ({ ...prev, locale }));
-  }, []);
-
-  return { preferences, toggleAlertType, setMinSeverity, setLocale };
+  return { preferences, isLoading, error, updatePreferences, refresh: fetch };
 }

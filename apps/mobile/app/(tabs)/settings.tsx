@@ -1,8 +1,6 @@
-import { ChevronRight } from 'lucide-react-native';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '../../components/ui/card';
-import { Icon } from '../../components/ui/icon';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
 import { SectionLabel } from '../../components/ui/section-label';
@@ -10,29 +8,36 @@ import { SelectableRow } from '../../components/ui/selectable-row';
 import { ToggleRow } from '../../components/ui/toggle-row';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { usePreferences } from '../../hooks/use-preferences';
-import { ALERT_TYPE_CONFIG, type AlertType } from '../../lib/alert-config';
 import { theme } from '../../lib/theme';
 
-const SEVERITY_OPTIONS = [
-  { value: 'info' as const, label: 'All alerts' },
-  { value: 'warning' as const, label: 'Warnings & critical' },
-  { value: 'critical' as const, label: 'Critical only' },
+const THEME_OPTIONS = [
+  { value: 'system' as const, label: 'System' },
+  { value: 'light' as const, label: 'Light' },
+  { value: 'dark' as const, label: 'Dark' },
 ];
 
-const LANGUAGE_OPTIONS = [
-  { value: 'en' as const, label: 'English' },
-  { value: 'sk' as const, label: 'Slovenčina' },
+const UNITS_OPTIONS = [
+  { value: 'metric' as const, label: 'Metric (°C, km/h)' },
+  { value: 'imperial' as const, label: 'Imperial (°F, mph)' },
 ];
 
 const ABOUT_ROWS = [
   { label: 'Version', value: '0.1.0' },
-  { label: 'Privacy Policy', onPress: () => {} }, // TODO: implement
-  { label: 'Contact', onPress: () => {} }, // TODO: implement
 ];
 
 export default function SettingsScreen() {
   const { resetOnboarding } = useOnboarding();
-  const { preferences, toggleAlertType, setMinSeverity, setLocale } = usePreferences();
+  const { preferences, isLoading, updatePreferences } = usePreferences();
+
+  const handleToggleCategory = async (preferenceId: string, enabled: boolean) => {
+    if (!preferences) return;
+    await updatePreferences({
+      notifications: [{
+        categoryId: preferenceId,
+        enabled,
+      }],
+    });
+  };
 
   return (
     <ScreenLayout
@@ -40,40 +45,58 @@ export default function SettingsScreen() {
       header={<ScreenHeader title="Settings" />}
     >
       <SectionLabel label="Notifications" style={styles.firstSection} />
+      {isLoading ? (
+        <Card>
+          <ActivityIndicator color={theme.colors.primary} />
+        </Card>
+      ) : (
+        <Card>
+          {preferences?.notifications.map((category) => (
+            <View key={category.categoryCode}>
+              <ToggleRow
+                label={category.categoryName}
+                value={category.items.some((item) => item.enabled)}
+                onValueChange={(checked) => {
+                  const firstItem = category.items[0];
+                  if (firstItem) {
+                    handleToggleCategory(firstItem.preferenceId, checked);
+                  }
+                }}
+              />
+              {category.items.length > 1 && category.items.map((item) => (
+                <View key={item.preferenceId} style={styles.subcategoryRow}>
+                  <ToggleRow
+                    label={item.subcategoryCode ?? item.categoryCode}
+                    value={item.enabled}
+                    onValueChange={(checked) => handleToggleCategory(item.preferenceId, checked)}
+                  />
+                </View>
+              ))}
+            </View>
+          ))}
+        </Card>
+      )}
+
+      <SectionLabel label="Theme" />
       <Card>
-        {Object.entries(ALERT_TYPE_CONFIG).map(([type, config]) => (
-          <ToggleRow
-            key={type}
-            icon={config.icon}
-            iconColor={config.color}
-            iconBgColor={config.bgColor}
-            label={config.label}
-            value={preferences.alertTypes.includes(type as AlertType)}
-            onValueChange={() => toggleAlertType(type as AlertType)}
+        {THEME_OPTIONS.map((option) => (
+          <SelectableRow
+            key={option.value}
+            label={option.label}
+            selected={preferences?.display.theme === option.value}
+            onPress={() => updatePreferences({ display: { theme: option.value } })}
           />
         ))}
       </Card>
 
-      <SectionLabel label="Minimum Severity" />
+      <SectionLabel label="Units" />
       <Card>
-        {SEVERITY_OPTIONS.map((option) => (
+        {UNITS_OPTIONS.map((option) => (
           <SelectableRow
             key={option.value}
             label={option.label}
-            selected={preferences.minSeverity === option.value}
-            onPress={() => setMinSeverity(option.value)}
-          />
-        ))}
-      </Card>
-
-      <SectionLabel label="Language" />
-      <Card>
-        {LANGUAGE_OPTIONS.map((option) => (
-          <SelectableRow
-            key={option.value}
-            label={option.label}
-            selected={preferences.locale === option.value}
-            onPress={() => setLocale(option.value)}
+            selected={preferences?.display.units === option.value}
+            onPress={() => updatePreferences({ display: { units: option.value } })}
           />
         ))}
       </Card>
@@ -81,19 +104,10 @@ export default function SettingsScreen() {
       <SectionLabel label="About" />
       <Card>
         {ABOUT_ROWS.map((row) => (
-          <Pressable
-            key={row.label}
-            style={styles.aboutRow}
-            onPress={row.onPress}
-            disabled={!row.onPress}
-          >
+          <View key={row.label} style={styles.aboutRow}>
             <Text style={styles.aboutLabel}>{row.label}</Text>
-            {row.value ? (
-              <Text style={styles.aboutValue}>{row.value}</Text>
-            ) : (
-              <Icon icon={ChevronRight} size={18} color={theme.colors.textMuted} />
-            )}
-          </Pressable>
+            <Text style={styles.aboutValue}>{row.value}</Text>
+          </View>
         ))}
       </Card>
 
@@ -109,6 +123,9 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   firstSection: {
     marginTop: theme.spacing.sm,
+  },
+  subcategoryRow: {
+    paddingLeft: theme.spacing.lg,
   },
   aboutRow: {
     flexDirection: 'row',

@@ -11,7 +11,6 @@ import { useMapData } from '@/hooks/use-map-data';
 import { useWeather } from '@/hooks/use-weather';
 import { DEFAULT_LOCATION } from '@/lib/location';
 import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
-import { MOCK_ALERTS } from '@/lib/mock-data';
 import type { MapPinSource } from '@/lib/normalize-pins';
 
 export default function DashboardPage() {
@@ -50,9 +49,8 @@ export default function DashboardPage() {
           />
         </div>
         <AlertList
-          alerts={MOCK_ALERTS}
           selectedId={selectedAlertId}
-          onSelect={setSelectedAlertId}
+          onSelect={(id) => setSelectedAlertId(String(id))}
         />
       </div>
       <div className="relative min-h-0 flex-1 p-4">

@@ -1,34 +1,50 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ALERT_TYPE_CONFIG } from '../../lib/alert-config';
+import type { AlertCategory, NotificationHistoryItem } from '@notifio/api-client';
+import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared';
+
 import { formatRelativeTime } from '../../lib/format';
-import type { AlertSummary } from '../../lib/mock-data';
 import { theme } from '../../lib/theme';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
-import { Icon } from '../ui/icon';
 
 interface AlertCardProps {
-  alert: AlertSummary;
+  notification: NotificationHistoryItem;
   onPress?: () => void;
 }
 
-export function AlertCard({ alert, onPress }: AlertCardProps) {
-  const config = ALERT_TYPE_CONFIG[alert.type];
+const SEVERITY_VARIANT: Record<string, 'info' | 'warning' | 'critical'> = {
+  info: 'info',
+  warning: 'warning',
+  critical: 'critical',
+};
+
+export function AlertCard({ notification, onPress }: AlertCardProps) {
+  const categoryNames = CATEGORY_DISPLAY_NAMES[notification.category as AlertCategory];
+  const categoryLabel = categoryNames?.en ?? notification.category;
+  const severityVariant = SEVERITY_VARIANT[notification.severity] ?? 'info';
 
   return (
     <Card onPress={onPress}>
       <View style={styles.topRow}>
-        <View style={[styles.iconContainer, { backgroundColor: config.bgColor }]}>
-          <Icon icon={config.icon} size={18} color={config.color} />
+        <View style={styles.textContainer}>
+          <Text style={styles.title} numberOfLines={2}>{notification.title}</Text>
+          {notification.body ? (
+            <Text style={styles.body} numberOfLines={2}>{notification.body}</Text>
+          ) : null}
         </View>
-        <Text style={styles.title} numberOfLines={2}>{alert.title}</Text>
-        <Badge variant={alert.severity} label={alert.severity} />
+        <Badge variant={severityVariant} label={notification.severity} />
       </View>
       <View style={styles.bottomRow}>
-        <Text style={styles.meta}>{alert.source}</Text>
+        <Text style={styles.meta}>{categoryLabel}</Text>
         <Text style={styles.metaDot}>·</Text>
-        <Text style={styles.meta}>{formatRelativeTime(alert.startsAt)}</Text>
+        <Text style={styles.meta}>{formatRelativeTime(notification.createdAt)}</Text>
+        {notification.status !== 'sent' && (
+          <>
+            <Text style={styles.metaDot}>·</Text>
+            <Text style={styles.metaStatus}>{notification.status}</Text>
+          </>
+        )}
       </View>
     </Card>
   );
@@ -37,27 +53,26 @@ export function AlertCard({ alert, onPress }: AlertCardProps) {
 const styles = StyleSheet.create({
   topRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: theme.spacing.md,
   },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: theme.radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
+  textContainer: {
+    flex: 1,
   },
   title: {
-    flex: 1,
     fontSize: theme.fontSize.md,
     color: theme.colors.text,
     ...theme.font.semibold,
+  },
+  body: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.xs,
   },
   bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: theme.spacing.md,
-    paddingLeft: theme.spacing['4xl'],
   },
   meta: {
     fontSize: theme.fontSize.sm,
@@ -67,5 +82,9 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.sm,
     color: theme.colors.textMuted,
     marginHorizontal: theme.spacing.xs,
+  },
+  metaStatus: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.severity.warning.text,
   },
 });
