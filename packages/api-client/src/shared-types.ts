@@ -101,8 +101,9 @@ export interface DeviceRegistrationInput {
   platform: 'ios' | 'android' | 'web';
 }
 
-export interface RefreshTokenInput {
-  fcmToken: string;
+export interface DeviceRegistrationResult {
+  deviceId: string;
+  linked: boolean;
 }
 
 export interface NotificationHistoryItem {

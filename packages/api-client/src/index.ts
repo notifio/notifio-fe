@@ -16,7 +16,7 @@ import type {
   UpdatePreferencesInput,
   MembershipDetails,
   DeviceRegistrationInput,
-  RefreshTokenInput,
+  DeviceRegistrationResult,
   NotificationHistoryItem,
   PaginatedNotifications,
   ApiResponse,
@@ -40,7 +40,7 @@ export type {
   UpdatePreferencesInput,
   MembershipDetails,
   DeviceRegistrationInput,
-  RefreshTokenInput,
+  DeviceRegistrationResult,
   NotificationHistoryItem,
   PaginatedNotifications,
   ApiResponse,
@@ -254,28 +254,30 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<Alert>(`/alerts/${id}`);
     },
 
-    async registerDevice(registration: DeviceRegistrationInput): Promise<{ deviceId: string; linked: boolean }> {
-      return request<{ deviceId: string; linked: boolean }>('/devices/register', {
+    async registerDevice(registration: DeviceRegistrationInput): Promise<DeviceRegistrationResult> {
+      return request<DeviceRegistrationResult>('/devices/register', {
         method: 'POST',
         body: registration,
       });
     },
 
-    async refreshDeviceToken(deviceId: string, data: RefreshTokenInput): Promise<{ updated: boolean }> {
+    async refreshDeviceToken(deviceId: string, fcmToken: string): Promise<{ updated: boolean }> {
       return request<{ updated: boolean }>(`/devices/${deviceId}/token`, {
         method: 'PUT',
-        body: data,
+        body: { fcmToken },
+      });
+    },
+
+    async submitDeviceLocation(deviceId: string, lat: number, lng: number): Promise<{ h3Res7: string; h3Res8: string; capturedAt: string }> {
+      return request<{ h3Res7: string; h3Res8: string; capturedAt: string }>(`/devices/${deviceId}/location`, {
+        method: 'POST',
+        body: { lat, lng },
       });
     },
 
     async deactivateDevice(deviceId: string): Promise<{ deactivated: boolean }> {
-      return request<{ deactivated: boolean }>(`/devices/${deviceId}`, { method: 'DELETE' });
-    },
-
-    async updateDeviceLocation(deviceId: string, lat: number, lng: number): Promise<void> {
-      return request<void>(`/devices/${deviceId}/location`, {
-        method: 'PUT',
-        body: { lat, lng },
+      return request<{ deactivated: boolean }>(`/devices/${deviceId}`, {
+        method: 'DELETE',
       });
     },
 

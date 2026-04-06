@@ -1,13 +1,9 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import './globals.css';
+import { FirebaseErrorSuppressor } from '@/components/firebase-error-suppressor';
 
-const NotificationInitializer = dynamic(
-  () => import('@/components/notification-initializer').then((m) => m.NotificationInitializer),
-  { ssr: false },
-);
+import './globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="sk">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <NotificationInitializer />
+        <FirebaseErrorSuppressor />
         {children}
       </body>
     </html>
