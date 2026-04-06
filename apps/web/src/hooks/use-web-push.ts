@@ -76,23 +76,18 @@ export function useWebPush(): UseWebPushResult {
         }
       }
 
-      // 3. Register the SW at Firebase's expected scope and poll for activation.
-      //    This is more reliable than navigator.serviceWorker.ready which can
-      //    return the wrong registration when multiple SWs exist.
+      // 3. Register the SW at Firebase's expected scope and wait for activation.
       const swScope = '/firebase-cloud-messaging-push-scope';
-      await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: swScope });
+      const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: swScope });
 
-      let activeRegistration: ServiceWorkerRegistration | undefined;
-      const deadline = Date.now() + 15_000;
-      while (Date.now() < deadline) {
-        const reg = await navigator.serviceWorker.getRegistration(swScope);
-        if (reg?.active) {
-          activeRegistration = reg;
-          break;
-        }
-        await new Promise<void>((r) => setTimeout(r, 200));
+      // Wait until the SW is active — ready resolves once any SW controls the page
+      if (!swRegistration.active) {
+        await navigator.serviceWorker.ready;
       }
-      if (!activeRegistration) {
+
+      // Re-fetch the scoped registration to guarantee we have the active one
+      const activeRegistration = await navigator.serviceWorker.getRegistration(swScope);
+      if (!activeRegistration?.active) {
         throw new Error('Service worker sa nepodarilo aktivovať');
       }
 
