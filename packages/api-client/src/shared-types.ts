@@ -97,7 +97,33 @@ export interface MembershipDetails {
 }
 
 export interface DeviceRegistrationInput {
+  fcmToken: string;
   platform: 'ios' | 'android' | 'web';
-  pushToken: string;
-  locale: string;
+}
+
+export interface RefreshTokenInput {
+  fcmToken: string;
+}
+
+export interface NotificationHistoryItem {
+  notificationId: number;
+  eventId: string;
+  status: string;
+  trigger: string;
+  sentAt: string | null;
+  createdAt: string;
+  event: {
+    typeName: string;
+    categoryCode: string;
+    categoryName: string;
+    eventFrom: string | null;
+    eventTo: string | null;
+  };
+}
+
+export interface PaginatedNotifications {
+  items: NotificationHistoryItem[];
+  page: number;
+  limit: number;
+  total: number;
 }

@@ -11,11 +11,12 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@notifio/ui": "*",
     "@notifio/api-client": "*",
+    "@notifio/ui": "*",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
     "clsx": "^2.1.1",
+    "firebase": "^12.10.0",
     "lucide-react": "^0.577.0",
     "maplibre-gl": "^5.19.0",
     "next": "^15.3.0",
