@@ -8,8 +8,8 @@ import { MapFilterBar } from '@/components/app/map-filter-bar';
 import { WeatherCard } from '@/components/app/weather-card';
 import { useAirQuality } from '@/hooks/use-air-quality';
 import { useMapData } from '@/hooks/use-map-data';
+import { useUserLocation } from '@/hooks/use-user-location';
 import { useWeather } from '@/hooks/use-weather';
-import { DEFAULT_LOCATION } from '@/lib/location';
 import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
 import type { MapPinSource } from '@/lib/normalize-pins';
 
@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
+  const { location: userLocation, isGps } = useUserLocation();
   const { weather, isLoading, error, refresh } = useWeather();
   const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
   const { pins, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData();
@@ -42,7 +43,7 @@ export default function DashboardPage() {
             weather={weather}
             isLoading={isLoading}
             error={error}
-            locationLabel={DEFAULT_LOCATION.label}
+            locationLabel={isGps ? 'Your location' : 'Slovakia'}
             onRetry={refresh}
             airQuality={airQuality}
             aqiLoading={aqiIsLoading}
@@ -61,6 +62,8 @@ export default function DashboardPage() {
           isLoading={mapLoading}
           error={mapError}
           onRetry={mapRefresh}
+          center={userLocation}
+          isGpsCenter={isGps}
         />
       </div>
     </div>

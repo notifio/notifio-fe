@@ -14,7 +14,6 @@ import type {
   MembershipDetails,
   RegisterDeviceBody,
   DeviceRegistrationResponse,
-  NotificationHistoryItem,
   PaginatedNotifications,
   UpgradeMembershipBody,
   DowngradeMembershipBody,
@@ -150,71 +149,6 @@ export function createNotifioClient(config: NotifioClientConfig) {
     return json.data as T;
   }
 
-  async function requestWithMeta<T>(
-    path: string,
-    options?: RequestOptions,
-  ): Promise<{ data: T; meta: Record<string, unknown> }> {
-    const { method = 'GET', body, params } = options ?? {};
-
-    let url = `${config.baseUrl}${path}`;
-
-    if (params) {
-      const searchParams = new URLSearchParams();
-      for (const [key, value] of Object.entries(params)) {
-        if (value === undefined) continue;
-        if (Array.isArray(value)) {
-          for (const v of value) {
-            searchParams.append(key, v);
-          }
-        } else {
-          searchParams.set(key, value);
-        }
-      }
-      const qs = searchParams.toString();
-      if (qs) {
-        url += `?${qs}`;
-      }
-    }
-
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    if (config.apiKey) {
-      headers['x-api-key'] = config.apiKey;
-    }
-
-    const token = await config.getToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(url, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-
-    if (response.status === 401) {
-      config.onUnauthorized?.();
-      const text = await response.text();
-      throw new ApiError(response.status, text);
-    }
-
-    if (!response.ok) {
-      const text = await response.text();
-      throw new ApiError(response.status, text);
-    }
-
-    const json = (await response.json()) as ApiResponse<T> & { meta?: Record<string, unknown> };
-
-    if (!json.success) {
-      throw new ApiError(response.status, json.error ?? 'Unknown API error');
-    }
-
-    return { data: json.data as T, meta: json.meta ?? {} };
-  }
-
   return {
     // ─── Public endpoints ──────────────────────────────────────────
 
@@ -335,21 +269,12 @@ export function createNotifioClient(config: NotifioClientConfig) {
       page?: number;
       limit?: number;
     }): Promise<PaginatedNotifications> {
-      const { data, meta } = await requestWithMeta<NotificationHistoryItem[]>(
-        '/me/notifications',
-        {
-          params: {
-            page: params?.page !== undefined ? String(params.page) : undefined,
-            limit: params?.limit !== undefined ? String(params.limit) : undefined,
-          },
+      return request<PaginatedNotifications>('/me/notifications', {
+        params: {
+          page: params?.page !== undefined ? String(params.page) : undefined,
+          limit: params?.limit !== undefined ? String(params.limit) : undefined,
         },
-      );
-      return {
-        items: data,
-        page: (meta.page as number) ?? 1,
-        limit: (meta.limit as number) ?? 20,
-        total: (meta.total as number) ?? 0,
-      };
+      });
     },
   };
 }

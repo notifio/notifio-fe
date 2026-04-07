@@ -1,9 +1,12 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../hooks/use-auth';
+import { api } from '../lib/api';
 import {
+  autoSaveLocationIfNeeded,
   configureForegroundNotifications,
   deactivateDevice,
   getFcmToken,
@@ -56,6 +59,42 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setHasPermission(granted);
   }, []);
 
+  // Sync alert type selections saved during onboarding
+  const syncOnboardingPreferences = useCallback(async () => {
+    try {
+      const saved = await AsyncStorage.getItem('onboarding_alert_types');
+      if (!saved) return;
+      const selectedTypes = JSON.parse(saved) as string[];
+      await AsyncStorage.removeItem('onboarding_alert_types');
+
+      const prefs = await api.getPreferences();
+      const disabledCategories: Array<{
+        categoryCode: string;
+        subcategoryCode: string | null;
+        enabled: boolean;
+      }> = [];
+
+      for (const cat of prefs.notifications) {
+        for (const item of cat.items) {
+          const shouldBeEnabled = selectedTypes.includes(item.categoryCode);
+          if (item.enabled !== shouldBeEnabled) {
+            disabledCategories.push({
+              categoryCode: item.categoryCode,
+              subcategoryCode: item.subcategoryCode,
+              enabled: shouldBeEnabled,
+            });
+          }
+        }
+      }
+
+      if (disabledCategories.length > 0) {
+        await api.updatePreferences({ notifications: disabledCategories });
+      }
+    } catch {
+      // Non-critical — preferences can be adjusted in Settings
+    }
+  }, []);
+
   // Register device when authenticated + has permission
   useEffect(() => {
     if (!isAuthenticated || !hasPermission) return;
@@ -69,6 +108,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const deviceId = await registerDeviceWithBackend(token);
       if (deviceId) {
         setIsRegistered(true);
+        autoSaveLocationIfNeeded();
+        syncOnboardingPreferences();
       }
 
       // Refresh token on backend when FCM rotates it
@@ -82,7 +123,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     return () => {
       unsubTokenRefresh?.();
     };
-  }, [isAuthenticated, hasPermission]);
+  }, [isAuthenticated, hasPermission, syncOnboardingPreferences]);
 
   // Deactivate device on sign-out
   useEffect(() => {

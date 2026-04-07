@@ -27,24 +27,25 @@ const ABOUT_ROWS = [
 
 export default function SettingsScreen() {
   const { resetOnboarding } = useOnboarding();
-  const { preferences, isLoading, updatePreferences } = usePreferences();
-
-  const handleToggleCategory = async (preferenceId: string, enabled: boolean) => {
-    if (!preferences) return;
-    await updatePreferences({
-      notifications: [{
-        categoryId: preferenceId,
-        enabled,
-      }],
-    });
-  };
+  const {
+    preferences,
+    isLoading,
+    saving,
+    error,
+    hasChanges,
+    toggleItem,
+    toggleCategory,
+    setDisplay,
+    savePreferences,
+    cancelChanges,
+  } = usePreferences();
 
   return (
     <ScreenLayout
       scrollable
       header={<ScreenHeader title="Settings" />}
     >
-      <SectionLabel label="Notifications" style={styles.firstSection} />
+      <SectionLabel label="Notification Preferences" style={styles.firstSection} />
       {isLoading ? (
         <Card>
           <ActivityIndicator color={theme.colors.primary} />
@@ -56,19 +57,14 @@ export default function SettingsScreen() {
               <ToggleRow
                 label={category.categoryName}
                 value={category.items.some((item) => item.enabled)}
-                onValueChange={(checked) => {
-                  const firstItem = category.items[0];
-                  if (firstItem) {
-                    handleToggleCategory(firstItem.preferenceId, checked);
-                  }
-                }}
+                onValueChange={(checked) => toggleCategory(category.categoryCode, checked)}
               />
               {category.items.length > 1 && category.items.map((item) => (
                 <View key={item.preferenceId} style={styles.subcategoryRow}>
                   <ToggleRow
                     label={item.subcategoryCode ?? item.categoryCode}
                     value={item.enabled}
-                    onValueChange={(checked) => handleToggleCategory(item.preferenceId, checked)}
+                    onValueChange={(checked) => toggleItem(item.categoryCode, item.subcategoryCode, checked)}
                   />
                 </View>
               ))}
@@ -84,7 +80,7 @@ export default function SettingsScreen() {
             key={option.value}
             label={option.label}
             selected={preferences?.display.theme === option.value}
-            onPress={() => updatePreferences({ display: { theme: option.value } })}
+            onPress={() => setDisplay('theme', option.value)}
           />
         ))}
       </Card>
@@ -96,10 +92,33 @@ export default function SettingsScreen() {
             key={option.value}
             label={option.label}
             selected={preferences?.display.units === option.value}
-            onPress={() => updatePreferences({ display: { units: option.value } })}
+            onPress={() => setDisplay('units', option.value)}
           />
         ))}
       </Card>
+
+      {hasChanges && (
+        <View style={styles.actionButtons}>
+          <Pressable
+            onPress={savePreferences}
+            disabled={saving}
+            style={[styles.saveButton, saving && styles.buttonDisabled]}
+          >
+            {saving && <ActivityIndicator size="small" color={theme.colors.background} style={styles.spinner} />}
+            <Text style={styles.saveButtonText}>{saving ? 'Saving…' : 'Save changes'}</Text>
+          </Pressable>
+          <Pressable
+            onPress={cancelChanges}
+            disabled={saving}
+            style={[styles.cancelButton, saving && styles.buttonDisabled]}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
+          {error ? (
+            <Text style={styles.errorText}>{error}</Text>
+          ) : null}
+        </View>
+      )}
 
       <SectionLabel label="About" />
       <Card>
@@ -126,6 +145,48 @@ const styles = StyleSheet.create({
   },
   subcategoryRow: {
     paddingLeft: theme.spacing.lg,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.md,
+    flexWrap: 'wrap',
+  },
+  saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.lg,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.md,
+  },
+  saveButtonText: {
+    fontSize: theme.fontSize.md,
+    color: theme.colors.background,
+    ...theme.font.medium,
+  },
+  cancelButton: {
+    borderRadius: theme.radius.lg,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.md,
+  },
+  cancelButtonText: {
+    fontSize: theme.fontSize.md,
+    color: theme.colors.textSecondary,
+    ...theme.font.medium,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  spinner: {
+    marginRight: theme.spacing.sm,
+  },
+  errorText: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.danger,
+    flexBasis: '100%',
   },
   aboutRow: {
     flexDirection: 'row',

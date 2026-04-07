@@ -11,8 +11,8 @@ import type { MapPin, MapPinSource } from '@/lib/normalize-pins';
 
 import { MapPinPopup } from './map-pin-popup';
 
-const BRATISLAVA = { lng: 17.1077, lat: 48.1486 };
-const INITIAL_ZOOM = 12;
+const DEFAULT_ZOOM = 13;
+const FALLBACK_ZOOM = 7;
 const TILE_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const SOURCE_ID = 'pins';
 const SCHEDULED_OPACITY = 0.5;
@@ -49,6 +49,8 @@ interface DashboardMapProps {
   isLoading?: boolean;
   error?: string | null;
   onRetry?: () => void;
+  center?: { lat: number; lng: number };
+  isGpsCenter?: boolean;
 }
 
 export function DashboardMap({
@@ -57,11 +59,14 @@ export function DashboardMap({
   isLoading = false,
   error = null,
   onRetry,
+  center,
+  isGpsCenter = false,
 }: DashboardMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const sourceReady = useRef(false);
+  const userMarkerRef = useRef<maplibregl.Marker | null>(null);
 
   const closePopup = useCallback(() => {
     popupRef.current?.remove();
@@ -72,11 +77,14 @@ export function DashboardMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    const mapCenter = center ?? { lat: 48.67, lng: 19.70 };
+    const zoom = center && isGpsCenter ? DEFAULT_ZOOM : (center ? DEFAULT_ZOOM : FALLBACK_ZOOM);
+
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: TILE_STYLE,
-      center: [BRATISLAVA.lng, BRATISLAVA.lat],
-      zoom: INITIAL_ZOOM,
+      center: [mapCenter.lng, mapCenter.lat],
+      zoom,
     });
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
@@ -216,6 +224,35 @@ export function DashboardMap({
       source.setData(pinsToGeoJSON(pins, activeFilters));
     }
   }, [pins, activeFilters]);
+
+  // User location marker — runs when GPS resolves
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !center || !isGpsCenter) return;
+
+    // Remove old marker if any
+    userMarkerRef.current?.remove();
+
+    const dot = document.createElement('div');
+    dot.style.width = '16px';
+    dot.style.height = '16px';
+    dot.style.borderRadius = '50%';
+    dot.style.backgroundColor = '#3B82F6';
+    dot.style.border = '3px solid white';
+    dot.style.boxShadow = '0 0 0 6px rgba(59, 130, 246, 0.3)';
+
+    userMarkerRef.current = new maplibregl.Marker({ element: dot })
+      .setLngLat([center.lng, center.lat])
+      .addTo(map);
+
+    // Fly to user location
+    map.flyTo({ center: [center.lng, center.lat], zoom: DEFAULT_ZOOM });
+
+    return () => {
+      userMarkerRef.current?.remove();
+      userMarkerRef.current = null;
+    };
+  }, [center, isGpsCenter]);
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-xl border border-gray-200">

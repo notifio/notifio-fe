@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 
 const DISMISSED_KEY = 'notifio_banner_dismissed';
 const DEVICE_ID_KEY = 'notifio_device_id';
+const FCM_TOKEN_KEY = 'notifio_fcm_token';
 
 type Status = {
-  hasDevice: boolean;
+  pushFullyEnabled: boolean;
   geoGranted: boolean;
   geoDenied: boolean;
 };
@@ -35,6 +36,9 @@ export function LocationStatusBanner() {
     }
 
     const hasDevice = localStorage.getItem(DEVICE_ID_KEY) !== null;
+    const hasToken = localStorage.getItem(FCM_TOKEN_KEY) !== null;
+    const notifPermission = 'Notification' in window ? Notification.permission : 'default';
+    const pushFullyEnabled = hasDevice && hasToken && notifPermission === 'granted';
 
     // Query geolocation permission state
     let cancelled = false;
@@ -51,7 +55,7 @@ export function LocationStatusBanner() {
         }
       }
       if (!cancelled) {
-        setStatus({ hasDevice, geoGranted, geoDenied });
+        setStatus({ pushFullyEnabled, geoGranted, geoDenied });
       }
     };
     void checkGeo();
@@ -68,7 +72,7 @@ export function LocationStatusBanner() {
 
   if (!status || dismissed) return null;
 
-  const needsPush = !status.hasDevice;
+  const needsPush = !status.pushFullyEnabled;
   const needsGeo = !status.geoGranted;
 
   // Everything is set up — no banner
