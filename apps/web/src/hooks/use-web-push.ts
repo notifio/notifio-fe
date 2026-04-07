@@ -76,23 +76,27 @@ export function useWebPush(): UseWebPushResult {
         }
       }
 
-      // 3. Register the SW at Firebase's expected scope and poll for activation.
-      //    This is more reliable than navigator.serviceWorker.ready which can
-      //    return the wrong registration when multiple SWs exist.
+      // 3. Register the SW at Firebase's expected scope and wait for activation.
       const swScope = '/firebase-cloud-messaging-push-scope';
-      await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: swScope });
+      const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: swScope });
 
-      let activeRegistration: ServiceWorkerRegistration | undefined;
-      const deadline = Date.now() + 15_000;
-      while (Date.now() < deadline) {
-        const reg = await navigator.serviceWorker.getRegistration(swScope);
-        if (reg?.active) {
-          activeRegistration = reg;
-          break;
-        }
-        await new Promise<void>((r) => setTimeout(r, 200));
+      // Wait for the SW to become active. We can't use navigator.serviceWorker.ready
+      // because it resolves for the page's scope (/), not the Firebase scope.
+      if (!swRegistration.active) {
+        await new Promise<void>((resolve) => {
+          const sw = swRegistration.installing ?? swRegistration.waiting;
+          if (!sw) {
+            resolve();
+            return;
+          }
+          sw.addEventListener('statechange', () => {
+            if (sw.state === 'activated') resolve();
+          });
+        });
       }
-      if (!activeRegistration) {
+
+      const activeRegistration = await navigator.serviceWorker.getRegistration(swScope);
+      if (!activeRegistration?.active) {
         throw new Error('Service worker sa nepodarilo aktivovať');
       }
 
@@ -139,8 +143,30 @@ export function useWebPush(): UseWebPushResult {
 
       // Everything succeeded — now safe to update permission state
       setPermission('granted');
+
+      // Auto-save GPS as user location for notification targeting (non-blocking)
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const locResponse = await api.getLocations();
+            if (locResponse.locations.length === 0) {
+              await api.createLocation({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                label: 'home',
+              });
+            }
+          } catch {
+            // Non-critical — don't block the notification flow
+          }
+        },
+        () => { /* GPS denied/unavailable — skip */ },
+        { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+      );
+
       return true;
     } catch (err) {
+      console.error('[use-web-push] enable failed:', err);
       const msg = err instanceof Error ? err.message : 'Neznáma chyba';
       setError(msg);
       return false;
@@ -165,6 +191,7 @@ export function useWebPush(): UseWebPushResult {
       localStorage.removeItem(FCM_TOKEN_KEY);
       setDeviceId(null);
     } catch (err) {
+      console.error('[use-web-push] disable failed:', err);
       const msg = err instanceof Error ? err.message : 'Neznáma chyba';
       setError(msg);
     } finally {

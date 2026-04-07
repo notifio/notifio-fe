@@ -1,46 +1,61 @@
 import type {
-  Alert,
-  AlertFilter,
   WeatherResponse,
   TrafficResponse,
   AirQualityResponse,
-  OutageResponse,
   OutageRecord,
   UtilityType,
   UserProfile,
   UserLocation,
   UserLocationsResponse,
-  CreateLocationInput,
-  UpdateLocationInput,
+  CreateLocationBody,
+  UpdateLocationBody,
   UserPreferencesResponse,
-  UpdatePreferencesInput,
+  UpdatePreferencesRequest,
   MembershipDetails,
-  DeviceRegistrationInput,
-  DeviceRegistrationResult,
+  RegisterDeviceBody,
+  DeviceRegistrationResponse,
+  PaginatedNotifications,
+  UpgradeMembershipBody,
+  DowngradeMembershipBody,
   ApiResponse,
 } from './shared-types.js';
 
 export type {
-  Alert,
-  AlertFilter,
   WeatherResponse,
   TrafficResponse,
   AirQualityResponse,
-  OutageResponse,
   OutageRecord,
   UtilityType,
   UserProfile,
   UserLocation,
   UserLocationsResponse,
-  CreateLocationInput,
-  UpdateLocationInput,
+  CreateLocationBody,
+  UpdateLocationBody,
   UserPreferencesResponse,
-  UpdatePreferencesInput,
+  UpdatePreferencesRequest,
   MembershipDetails,
-  DeviceRegistrationInput,
-  DeviceRegistrationResult,
+  RegisterDeviceBody,
+  DeviceRegistrationResponse,
+  NotificationHistoryItem,
+  PaginatedNotifications,
+  UpgradeMembershipBody,
+  DowngradeMembershipBody,
   ApiResponse,
-};
+} from './shared-types.js';
+
+// Re-export shared enums/types that apps may need
+export type {
+  LocationLabel,
+  MembershipTier,
+  Platform,
+  NotificationPreferenceItem,
+  NotificationCategoryResponse,
+  NotificationDeliveryStatus,
+  NotificationTrigger,
+  AlertCategory,
+  NotificationSeverity,
+  RefreshTokenBody,
+} from './shared-types.js';
 
 export interface NotifioClientConfig {
   baseUrl: string;
@@ -165,28 +180,10 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return data.outages;
     },
 
-    async getActiveAlerts(lat: number, lng: number): Promise<Alert[]> {
-      return request<Alert[]>('/alerts/active', {
-        params: { lat: String(lat), lng: String(lng) },
-      });
-    },
+    // ─── Device endpoints ──────────────────────────────────────────
 
-    async getAlertsByH3(h3Cell: string, filters?: AlertFilter): Promise<Alert[]> {
-      return request<Alert[]>(`/alerts/h3/${h3Cell}`, {
-        params: {
-          type: filters?.type,
-          severity: filters?.severity,
-          active: filters?.active !== undefined ? String(filters.active) : undefined,
-        },
-      });
-    },
-
-    async getAlertById(id: string): Promise<Alert> {
-      return request<Alert>(`/alerts/${id}`);
-    },
-
-    async registerDevice(registration: DeviceRegistrationInput): Promise<DeviceRegistrationResult> {
-      return request<DeviceRegistrationResult>('/devices/register', {
+    async registerDevice(registration: RegisterDeviceBody): Promise<DeviceRegistrationResponse> {
+      return request<DeviceRegistrationResponse>('/devices/register', {
         method: 'POST',
         body: registration,
       });
@@ -230,11 +227,11 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserLocationsResponse>('/me/locations');
     },
 
-    async createLocation(data: CreateLocationInput): Promise<UserLocation> {
+    async createLocation(data: CreateLocationBody): Promise<UserLocation> {
       return request<UserLocation>('/me/locations', { method: 'POST', body: data });
     },
 
-    async updateLocation(locationId: string, data: UpdateLocationInput): Promise<UserLocation> {
+    async updateLocation(locationId: string, data: UpdateLocationBody): Promise<UserLocation> {
       return request<UserLocation>(`/me/locations/${locationId}`, { method: 'PATCH', body: data });
     },
 
@@ -246,7 +243,7 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserPreferencesResponse>('/me/preferences');
     },
 
-    async updatePreferences(data: UpdatePreferencesInput): Promise<UserPreferencesResponse> {
+    async updatePreferences(data: UpdatePreferencesRequest): Promise<UserPreferencesResponse> {
       return request<UserPreferencesResponse>('/me/preferences', { method: 'PATCH', body: data });
     },
 
@@ -254,17 +251,29 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<MembershipDetails>('/me/membership');
     },
 
-    async upgradeMembership(targetTier: 'PLUS' | 'PRO'): Promise<MembershipDetails> {
+    async upgradeMembership(data: UpgradeMembershipBody): Promise<MembershipDetails> {
       return request<MembershipDetails>('/me/membership/upgrade', {
         method: 'POST',
-        body: { targetTier },
+        body: data,
       });
     },
 
-    async downgradeMembership(targetTier: 'FREE' | 'PLUS'): Promise<MembershipDetails> {
+    async downgradeMembership(data: DowngradeMembershipBody): Promise<MembershipDetails> {
       return request<MembershipDetails>('/me/membership/downgrade', {
         method: 'POST',
-        body: { targetTier },
+        body: data,
+      });
+    },
+
+    async getNotificationHistory(params?: {
+      page?: number;
+      limit?: number;
+    }): Promise<PaginatedNotifications> {
+      return request<PaginatedNotifications>('/me/notifications', {
+        params: {
+          page: params?.page !== undefined ? String(params.page) : undefined,
+          limit: params?.limit !== undefined ? String(params.limit) : undefined,
+        },
       });
     },
   };

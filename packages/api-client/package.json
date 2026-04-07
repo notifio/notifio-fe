@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@notifio/shared": "0.10.1"
+  },
   "devDependencies": {
     "typescript": "^5.7.0"
   }

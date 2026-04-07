@@ -16,6 +16,10 @@ jobs:
   ci:
     name: Checks
     runs-on: ubuntu-latest
+    # Turborepo Remote Cache — requires TURBO_TOKEN secret and TURBO_TEAM variable in GitHub repo settings
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

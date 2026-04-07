@@ -1,8 +1,10 @@
+import * as Location from 'expo-location';
 import { RefreshCw } from 'lucide-react-native';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
 import { Callout, Marker } from 'react-native-maps';
+import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MapFilterBar } from '../../components/map/map-filter-bar';
@@ -15,20 +17,47 @@ import type { MapPinSource } from '../../lib/normalize-pins';
 import { shadows, theme } from '../../lib/theme';
 
 const FILTER_BAR_HEIGHT = 44;
+const GPS_DELTA = 0.06;
+const FALLBACK_DELTA = 4.0;
 
-const BRATISLAVA = {
-  latitude: 48.1486,
-  longitude: 17.1077,
-  latitudeDelta: 0.06,
-  longitudeDelta: 0.06,
+const SLOVAKIA_REGION: Region = {
+  latitude: 48.67,
+  longitude: 19.70,
+  latitudeDelta: FALLBACK_DELTA,
+  longitudeDelta: FALLBACK_DELTA,
 };
 
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { pins, isLoading, error, refresh } = useMapData();
+  const [initialRegion, setInitialRegion] = useState<Region | null>(null);
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
+
+  // Resolve initial region before rendering the map
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
+          setInitialRegion({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            latitudeDelta: GPS_DELTA,
+            longitudeDelta: GPS_DELTA,
+          });
+          return;
+        }
+      } catch {
+        // GPS unavailable — use fallback
+      }
+      setInitialRegion(SLOVAKIA_REGION);
+    })();
+  }, []);
 
   const toggleFilter = useCallback((source: MapPinSource) => {
     setActiveFilters((prev) => {
@@ -47,11 +76,20 @@ export default function MapScreen() {
     [pins, activeFilters],
   );
 
+  // Wait until we know the initial region before mounting the map
+  if (!initialRegion) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ClusteredMapView
         style={styles.map}
-        initialRegion={BRATISLAVA}
+        initialRegion={initialRegion}
         showsUserLocation
         showsMyLocationButton
         clusterColor={theme.colors.textMuted}
@@ -102,6 +140,12 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background,
   },
   map: {
     flex: 1,

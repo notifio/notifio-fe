@@ -30,6 +30,11 @@ firebase.initializeApp(${JSON.stringify(config)});
 
 const messaging = firebase.messaging();
 
+// Take control of pages immediately so getToken() can use this registration
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
 // Background message handler — shows native notification when page is closed/backgrounded
 messaging.onBackgroundMessage((payload) => {
   const title = payload.notification?.title || payload.data?.title || 'Notifio';

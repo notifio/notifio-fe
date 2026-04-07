@@ -1,18 +1,27 @@
+import type { AlertCategory, NotificationHistoryItem } from '@notifio/api-client';
+import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared';
+
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { RelativeTime } from '@/components/ui/relative-time';
-import { ALERT_TYPE_CONFIG, type AlertSummary } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 
 interface AlertCardProps {
-  alert: AlertSummary;
+  notification: NotificationHistoryItem;
   isSelected?: boolean;
   onClick?: () => void;
 }
 
-export function AlertCard({ alert, isSelected = false, onClick }: AlertCardProps) {
-  const config = ALERT_TYPE_CONFIG[alert.type];
-  const Icon = config.icon;
+const SEVERITY_VARIANT: Record<string, 'info' | 'warning' | 'critical' | 'default'> = {
+  info: 'info',
+  warning: 'warning',
+  critical: 'critical',
+};
+
+export function AlertCard({ notification, isSelected = false, onClick }: AlertCardProps) {
+  const categoryNames = CATEGORY_DISPLAY_NAMES[notification.category as AlertCategory];
+  const categoryLabel = categoryNames?.en ?? notification.category;
+  const severityVariant = SEVERITY_VARIANT[notification.severity] ?? 'default';
 
   return (
     <Card
@@ -24,22 +33,21 @@ export function AlertCard({ alert, isSelected = false, onClick }: AlertCardProps
       )}
     >
       <button onClick={onClick} className="flex w-full items-start gap-3 text-left">
-        <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-          style={{ backgroundColor: config.bgColor }}
-        >
-          <Icon size={18} color={config.color} />
-        </div>
-
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-gray-900">{alert.title}</p>
+          <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+          {notification.body && (
+            <p className="mt-0.5 text-xs text-gray-600 line-clamp-2">{notification.body}</p>
+          )}
           <p className="mt-1 text-xs text-gray-500">
-            {config.label} · {alert.source} · <RelativeTime iso={alert.startsAt} />
+            {categoryLabel} · <RelativeTime iso={notification.createdAt} />
+            {notification.status !== 'sent' && (
+              <span className="ml-1 text-amber-600">· {notification.status}</span>
+            )}
           </p>
         </div>
 
-        <Badge variant={alert.severity} className="shrink-0">
-          {alert.severity}
+        <Badge variant={severityVariant} className="shrink-0">
+          {notification.severity}
         </Badge>
       </button>
     </Card>

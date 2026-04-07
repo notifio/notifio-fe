@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { AuthProvider } from '../providers/auth-provider';
+import { NotificationProvider } from '../providers/notification-provider';
 import { OnboardingProvider } from '../providers/onboarding-provider';
 
 SplashScreen.preventAutoHideAsync();
@@ -52,12 +53,14 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <OnboardingProvider>
-        <SafeAreaProvider>
-          <StatusBar style="dark" />
-          <RootNavigator />
-        </SafeAreaProvider>
-      </OnboardingProvider>
+      <NotificationProvider>
+        <OnboardingProvider>
+          <SafeAreaProvider>
+            <StatusBar style="dark" />
+            <RootNavigator />
+          </SafeAreaProvider>
+        </OnboardingProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

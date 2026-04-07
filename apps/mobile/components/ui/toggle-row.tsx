@@ -5,9 +5,9 @@ import { Icon } from './icon';
 import { theme } from '../../lib/theme';
 
 interface ToggleRowProps {
-  icon: LucideIcon;
-  iconColor: string;
-  iconBgColor: string;
+  icon?: LucideIcon;
+  iconColor?: string;
+  iconBgColor?: string;
   label: string;
   description?: string;
   value: boolean;
@@ -27,9 +27,11 @@ export function ToggleRow({
 }: ToggleRowProps) {
   return (
     <View style={[styles.container, style]}>
-      <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
-        <Icon icon={icon} size={18} color={iconColor} />
-      </View>
+      {icon && iconBgColor && (
+        <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
+          <Icon icon={icon} size={18} color={iconColor} />
+        </View>
+      )}
       <View style={styles.textContainer}>
         <Text style={styles.label}>{label}</Text>
         {description && <Text style={styles.description}>{description}</Text>}

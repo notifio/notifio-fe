@@ -41,7 +41,7 @@ function trafficToPin(incident: TrafficIncident): MapPin {
     source: 'traffic',
     status: 'active',
     lat: incident.location.lat,
-    lng: incident.location.lon,
+    lng: incident.location.lng,
     title: incident.description,
     description: `${incident.type} — ${incident.severity}`,
     timestamp: new Date().toISOString(),

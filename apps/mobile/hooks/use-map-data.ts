@@ -26,7 +26,7 @@ export function useMapData() {
       safeFetch(() => api.getOutages('electricity')),
       safeFetch(() => api.getOutages('water')),
       safeFetch(() => api.getOutages('heat')),
-      safeFetch(() => api.getTraffic(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon)),
+      safeFetch(() => api.getTraffic(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng)),
     ]);
 
     if (!elec && !water && !heat && !traffic) {

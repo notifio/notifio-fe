@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev:web": "turbo run dev --filter=@notifio/web",
-    "dev:mobile": "cd apps/mobile && npx expo start",
+    "dev:mobile": "cd apps/mobile && npx expo start --dev-client",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
@@ -28,6 +28,6 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
-    "@notifio/shared": "^0.6.0"
+    "@notifio/shared": "^0.10.1"
   }
 }
