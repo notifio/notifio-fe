@@ -1,0 +1,47 @@
+{
+  "pushSetup": {
+    "unsupported": "Your browser does not support push notifications.",
+    "unconfigured": "Push notifications are not configured."
+  },
+  "nav": {
+    "signIn": "Sign in",
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "landing": {
+    "hero": {
+      "title": "Know what's happening around you",
+      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+    },
+    "features": {
+      "title": "Everything that matters, in one place",
+      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "weather": { "title": "Weather Warnings", "description": "Storms, heavy wind, frost and other meteorological warnings." },
+      "traffic": { "title": "Traffic Updates", "description": "Closures, accidents and congestion near you in real time." },
+      "airQuality": { "title": "Air Quality", "description": "Smog, particulates and allergens. Know when to stay indoors." },
+      "outages": { "title": "Utility Outages", "description": "Planned outages of electricity, water, gas and heat in your area." },
+      "location": { "title": "Location-Smart", "description": "Everything works automatically based on where you are right now." }
+    },
+    "howItWorks": {
+      "title": "Get started in 3 steps",
+      "subtitle": "No sign-up forms, no city selection.",
+      "step1": { "title": "Install the app", "description": "Download Notifio from the App Store or Google Play." },
+      "step2": { "title": "Allow your location", "description": "The app detects where you are and filters alerts for your area." },
+      "step3": { "title": "Get notified", "description": "Push notifications alert you about what's happening around you." }
+    },
+    "cta": {
+      "title": "Ready to stay informed?",
+      "subtitle": "Download Notifio and never be caught off guard again."
+    },
+    "download": {
+      "ios": "Download for iOS",
+      "android": "Download for Android"
+    },
+    "footer": {
+      "copyright": "© 2026 Notifio",
+      "privacy": "Privacy Policy",
+      "about": "About",
+      "contact": "Contact"
+    }
+  }
+}

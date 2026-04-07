@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell } from 'lucide-react';
+import { IconBell } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { useNotificationHistory } from '@/hooks/use-notification-history';
@@ -13,6 +14,7 @@ interface AlertListProps {
 }
 
 export function AlertList({ selectedId, onSelect }: AlertListProps) {
+  const t = useTranslations();
   const [activeOnly, setActiveOnly] = useState(false);
   const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory({
     activeOnly,
@@ -20,36 +22,36 @@ export function AlertList({ selectedId, onSelect }: AlertListProps) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-        <h2 className="text-sm font-semibold text-gray-900">
-          Notifications
-          {items.length > 0 && <span className="ml-1.5 text-gray-400">({items.length})</span>}
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="text-sm font-semibold text-text-primary">
+          {t('notifications.title')}
+          {items.length > 0 && <span className="ml-1.5 text-muted">({items.length})</span>}
         </h2>
         <div className="flex gap-1">
           <button
             onClick={() => setActiveOnly(false)}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-              !activeOnly ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'
+              !activeOnly ? 'bg-text-primary text-background' : 'text-muted hover:bg-card'
             }`}
           >
-            All
+            {t('alerts.all')}
           </button>
           <button
             onClick={() => setActiveOnly(true)}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-              activeOnly ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'
+              activeOnly ? 'bg-text-primary text-background' : 'text-muted hover:bg-card'
             }`}
           >
-            Sent
+            {t('alerts.sent')}
           </button>
         </div>
       </div>
 
       {error && (
         <div className="px-4 py-3">
-          <p className="text-xs text-red-600">{error}</p>
-          <button onClick={refresh} className="mt-1 text-xs font-medium text-blue-600 hover:underline">
-            Retry
+          <p className="text-xs text-danger">{error}</p>
+          <button onClick={refresh} className="mt-1 text-xs font-medium text-accent hover:underline">
+            {t('common.retry')}
           </button>
         </div>
       )}
@@ -57,13 +59,13 @@ export function AlertList({ selectedId, onSelect }: AlertListProps) {
       {isLoading && items.length === 0 ? (
         <div className="space-y-2 p-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-card" />
           ))}
         </div>
       ) : items.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-16">
-          <Bell size={32} className="text-gray-300" />
-          <p className="text-sm text-gray-500">No notifications yet</p>
+          <IconBell size={32} className="text-muted" />
+          <p className="text-sm text-muted">{t('alerts.noNotifications')}</p>
         </div>
       ) : (
         <div className="space-y-2 p-4">
@@ -79,9 +81,9 @@ export function AlertList({ selectedId, onSelect }: AlertListProps) {
             <button
               onClick={loadMore}
               disabled={isLoading}
-              className="w-full rounded-lg bg-gray-50 py-2 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50"
+              className="w-full rounded-lg bg-background py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
             >
-              {isLoading ? 'Loading…' : 'Load more'}
+              {isLoading ? t('common.loading') : t('alerts.loadMore')}
             </button>
           )}
         </div>

@@ -1,9 +1,52 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* --- Theme system --- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-muted: var(--muted);
+}
+
+:root {
+  --bg: #FFFFFF;
+  --card: #F5F7FA;
+  --border: #E2E8F0;
+  --accent: #FF7A2F;
+  --danger: #FF3B30;
+  --info: #3A86FF;
+  --success: #34C759;
+  --text-primary: #0E223F;
+  --text-secondary: #4A5568;
+  --muted: #94A3B8;
+}
+
+.dark {
+  --bg: #0E223F;
+  --card: #162A4A;
+  --border: #1F3A5F;
+  --accent: #FF7A2F;
+  --danger: #FF3B30;
+  --info: #3A86FF;
+  --success: #34C759;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A8B3C7;
+  --muted: #6B7A99;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
+/* --- Hex animation keyframes (landing hero) --- */
 @keyframes hex-rotate {
   from {
     transform: rotate(0deg);

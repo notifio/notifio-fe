@@ -1,8 +1,10 @@
 'use client';
 
-import { Loader2, RefreshCw } from 'lucide-react';
+import { IconLoader2, IconRefresh } from '@tabler/icons-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -13,7 +15,8 @@ import { MapPinPopup } from './map-pin-popup';
 
 const DEFAULT_ZOOM = 13;
 const FALLBACK_ZOOM = 7;
-const TILE_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const SOURCE_ID = 'pins';
 const SCHEDULED_OPACITY = 0.5;
 
@@ -62,6 +65,8 @@ export function DashboardMap({
   center,
   isGpsCenter = false,
 }: DashboardMapProps) {
+  const t = useTranslations('map');
+  const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
@@ -80,9 +85,11 @@ export function DashboardMap({
     const mapCenter = center ?? { lat: 48.67, lng: 19.70 };
     const zoom = center && isGpsCenter ? DEFAULT_ZOOM : (center ? DEFAULT_ZOOM : FALLBACK_ZOOM);
 
+    const tileStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
+
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: TILE_STYLE,
+      style: tileStyle,
       center: [mapCenter.lng, mapCenter.lat],
       zoom,
     });
@@ -254,29 +261,93 @@ export function DashboardMap({
     };
   }, [center, isGpsCenter]);
 
+  // Switch map tile style when theme changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const newStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
+    const currentStyle = map.getStyle()?.sprite;
+    const isDark = typeof currentStyle === 'string' && currentStyle.includes('dark-matter');
+    const wantDark = resolvedTheme === 'dark';
+    if (isDark !== wantDark) {
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+      map.setStyle(newStyle);
+      map.once('style.load', () => {
+        map.setCenter(center);
+        map.setZoom(zoom);
+        // Re-add pin source and layers
+        if (!map.getSource(SOURCE_ID)) {
+          map.addSource(SOURCE_ID, {
+            type: 'geojson',
+            data: pinsToGeoJSON(pins, activeFilters),
+            cluster: true,
+            clusterMaxZoom: 14,
+            clusterRadius: 50,
+          });
+          map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: SOURCE_ID,
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': '#94A3B8',
+              'circle-radius': ['step', ['get', 'point_count'], 18, 10, 24, 50, 32],
+              'circle-stroke-width': 2,
+              'circle-stroke-color': resolvedTheme === 'dark' ? '#1F3A5F' : '#FFFFFF',
+            },
+          });
+          map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: SOURCE_ID,
+            filter: ['has', 'point_count'],
+            layout: { 'text-field': '{point_count_abbreviated}', 'text-size': 12 },
+            paint: { 'text-color': '#FFFFFF' },
+          });
+          map.addLayer({
+            id: 'unclustered-pin',
+            type: 'circle',
+            source: SOURCE_ID,
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+              'circle-color': ['get', 'color'],
+              'circle-radius': 7,
+              'circle-stroke-width': 2,
+              'circle-stroke-color': resolvedTheme === 'dark' ? '#1F3A5F' : '#FFFFFF',
+              'circle-opacity': ['get', 'opacity'],
+            },
+          });
+          sourceReady.current = true;
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedTheme]);
+
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-gray-200">
-      <div ref={containerRef} className="h-full w-full" />
+    <div className="relative h-full w-full overflow-hidden rounded-xl border border-border">
+      <div ref={containerRef} className="h-full w-full bg-card" />
 
       {isLoading && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center pt-14">
-          <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur-sm">
-            <Loader2 size={14} className="animate-spin text-gray-400" />
-            <span className="text-xs text-gray-500">Loading map data…</span>
+          <div className="flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 shadow-sm backdrop-blur-sm">
+            <IconLoader2 size={14} className="animate-spin text-muted" />
+            <span className="text-xs text-muted">{t('loadingMapData')}</span>
           </div>
         </div>
       )}
 
       {error && (
         <div className="absolute inset-x-0 top-0 z-20 flex justify-center pt-14">
-          <div className="flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 shadow-sm">
-            <span className="text-xs font-medium text-red-600">{error}</span>
+          <div className="flex items-center gap-2 rounded-full bg-danger/10 px-4 py-2 shadow-sm">
+            <span className="text-xs font-medium text-danger">{error}</span>
             {onRetry && (
               <button
                 onClick={onRetry}
-                className="rounded-full p-1 text-red-400 hover:bg-red-100 hover:text-red-600"
+                className="rounded-full p-1 text-danger hover:bg-danger/20"
               >
-                <RefreshCw size={12} />
+                <IconRefresh size={12} />
               </button>
             )}
           </div>

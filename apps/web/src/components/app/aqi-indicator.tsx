@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import type { AirQualityData } from '@notifio/shared';
@@ -21,7 +21,7 @@ export function AqiIndicator({ airQuality, isLoading }: AqiIndicatorProps) {
   if (!airQuality) return null;
 
   const aqiStyle = getAqiStyle(airQuality.level);
-  const Chevron = expanded ? ChevronUp : ChevronDown;
+  const Chevron = expanded ? IconChevronUp : IconChevronDown;
 
   return (
     <div>

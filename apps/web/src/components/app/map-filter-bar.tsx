@@ -32,7 +32,7 @@ export function MapFilterBar({ activeFilters, onToggle, pins }: MapFilterBarProp
             key={source}
             onClick={() => onToggle(source)}
             className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-colors ${
-              isActive ? 'text-white shadow-sm' : 'bg-white/90 text-gray-500 hover:bg-white'
+              isActive ? 'text-white shadow-sm' : 'bg-background/90 text-muted hover:bg-background'
             }`}
             style={isActive ? { backgroundColor: style.color } : undefined}
           >
@@ -42,7 +42,7 @@ export function MapFilterBar({ activeFilters, onToggle, pins }: MapFilterBarProp
             />
             {style.label}
             {count > 0 && (
-              <span className={isActive ? 'text-white/80' : 'text-gray-400'}>({count})</span>
+              <span className={isActive ? 'text-white/80' : 'text-muted'}>({count})</span>
             )}
           </button>
         );

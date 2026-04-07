@@ -28,17 +28,17 @@ export function AlertCard({ notification, isSelected = false, onClick }: AlertCa
       className={cn(
         'cursor-pointer p-4 transition-all',
         isSelected
-          ? 'border-[#2563EB] ring-1 ring-[#2563EB]'
-          : 'hover:border-gray-300',
+          ? 'border-accent ring-1 ring-accent'
+          : 'hover:border-border',
       )}
     >
       <button onClick={onClick} className="flex w-full items-start gap-3 text-left">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+          <p className="text-sm font-medium text-text-primary">{notification.title}</p>
           {notification.body && (
-            <p className="mt-0.5 text-xs text-gray-600 line-clamp-2">{notification.body}</p>
+            <p className="mt-0.5 text-xs text-text-secondary line-clamp-2">{notification.body}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-muted">
             {categoryLabel} · <RelativeTime iso={notification.createdAt} />
             {notification.status !== 'sent' && (
               <span className="ml-1 text-amber-600">· {notification.status}</span>

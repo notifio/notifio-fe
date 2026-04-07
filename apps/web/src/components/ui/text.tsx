@@ -17,6 +17,6 @@ interface TextProps {
 
 export function Text({ size = 'md', muted = false, children, className }: TextProps) {
   return (
-    <p className={cn(SIZE_STYLES[size], muted && 'text-gray-500', className)}>{children}</p>
+    <p className={cn(SIZE_STYLES[size], muted && 'text-muted', className)}>{children}</p>
   );
 }

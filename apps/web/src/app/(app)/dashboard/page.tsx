@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
 import { AlertList } from '@/components/app/alert-list';
@@ -14,6 +15,7 @@ import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
 import type { MapPinSource } from '@/lib/normalize-pins';
 
 export default function DashboardPage() {
+  const t = useTranslations('map');
   const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
@@ -37,13 +39,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row">
-      <div className="h-1/2 w-full shrink-0 overflow-y-auto border-b border-gray-100 lg:h-full lg:w-[400px] lg:border-b-0 lg:border-r">
+      <div className="h-1/2 w-full shrink-0 overflow-y-auto border-b border-border lg:h-full lg:w-[400px] lg:border-b-0 lg:border-r">
         <div className="p-4">
           <WeatherCard
             weather={weather}
             isLoading={isLoading}
             error={error}
-            locationLabel={isGps ? 'Your location' : 'Slovakia'}
+            locationLabel={isGps ? t('yourLocation') : 'Slovakia'}
             onRetry={refresh}
             airQuality={airQuality}
             aqiLoading={aqiIsLoading}

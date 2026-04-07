@@ -1,0 +1,47 @@
+{
+  "pushSetup": {
+    "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
+    "unconfigured": "Push notifikácie nie sú nakonfigurované."
+  },
+  "nav": {
+    "signIn": "Prihlásiť sa",
+    "dashboard": "Prehľad",
+    "settings": "Nastavenia"
+  },
+  "landing": {
+    "hero": {
+      "title": "Vedz, čo sa deje okolo teba",
+      "subtitle": "Výstrahy počasia, dopravné uzávery, kvalita ovzdušia — doručené na tvoj telefón skôr, ako ťa ovplyvnia."
+    },
+    "features": {
+      "title": "Všetko dôležité na jednom mieste",
+      "subtitle": "Jedna appka nahradí päť. Hyperlokálne upozornenia na základe tvojej presnej polohy.",
+      "weather": { "title": "Výstrahy počasia", "description": "Búrky, silný vietor, mrazy a ďalšie varovania meteorológov." },
+      "traffic": { "title": "Dopravné správy", "description": "Uzávery, nehody a kolóny v tvojom okolí v reálnom čase." },
+      "airQuality": { "title": "Kvalita ovzdušia", "description": "Smog, prachové častice a alergény. Vedz, kedy radšej zostať doma." },
+      "outages": { "title": "Výpadky sietí", "description": "Plánované odstávky elektriny, vody, plynu a tepla vo tvojej oblasti." },
+      "location": { "title": "Podľa polohy", "description": "Všetko funguje automaticky podľa toho, kde sa práve nachádzaš." }
+    },
+    "howItWorks": {
+      "title": "Začni v 3 krokoch",
+      "subtitle": "Žiadne registračné formuláre, žiadny výber mesta.",
+      "step1": { "title": "Nainštaluj appku", "description": "Stiahni si Notifio z App Store alebo Google Play." },
+      "step2": { "title": "Povoľ polohu", "description": "Appka zistí, kde sa nachádzaš, a filtruje upozornenia pre tvoju oblasť." },
+      "step3": { "title": "Dostávaj upozornenia", "description": "Push notifikácie ťa upozornia na to, čo sa deje okolo teba." }
+    },
+    "cta": {
+      "title": "Pripravený zostať informovaný?",
+      "subtitle": "Stiahni si Notifio a už ťa nič neprekvapí."
+    },
+    "download": {
+      "ios": "Stiahnuť pre iOS",
+      "android": "Stiahnuť pre Android"
+    },
+    "footer": {
+      "copyright": "© 2026 Notifio",
+      "privacy": "Ochrana súkromia",
+      "about": "O nás",
+      "contact": "Kontakt"
+    }
+  }
+}
