@@ -11,6 +11,25 @@ export type {
   ApiResponse,
 } from '@notifio/shared';
 
+// Traffic flow types — hand-written to match API contract
+// (not re-exported through @notifio/shared barrel due to Zod v4 resolution issue)
+export type CongestionLevel = 'free' | 'moderate' | 'heavy' | 'severe';
+
+export interface TrafficFlowSegment {
+  coordinates: [number, number][];
+  currentSpeed: number;
+  freeFlowSpeed: number;
+  congestion: CongestionLevel;
+  confidence: number;
+  roadName?: string;
+}
+
+export interface TrafficFlowResponse {
+  segments: TrafficFlowSegment[];
+  bbox: [number, number, number, number];
+  updatedAt: string;
+}
+
 // User types
 export type {
   UserProfile,

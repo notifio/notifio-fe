@@ -1,6 +1,7 @@
 import type {
   WeatherResponse,
   TrafficResponse,
+  TrafficFlowResponse,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -23,6 +24,8 @@ import type {
 export type {
   WeatherResponse,
   TrafficResponse,
+  TrafficFlowResponse,
+  TrafficFlowSegment,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -170,6 +173,10 @@ export function createNotifioClient(config: NotifioClientConfig) {
         params: { lat: String(lat), lng: String(lng) },
       });
       return traffic;
+    },
+
+    async getTrafficFlow(): Promise<TrafficFlowResponse> {
+      return request<TrafficFlowResponse>('/traffic/flow');
     },
 
     async getAirQuality(lat: number, lng: number): Promise<AirQualityResponse> {

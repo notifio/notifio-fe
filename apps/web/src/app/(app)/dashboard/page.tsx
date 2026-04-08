@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const { location: userLocation, isGps } = useUserLocation();
   const { weather, isLoading, error, refresh } = useWeather();
   const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
-  const { pins, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData();
+  const { pins, flowSegments, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData();
 
   const toggleFilter = useCallback((source: MapPinSource) => {
     setActiveFilters((prev) => {
@@ -61,6 +61,7 @@ export default function DashboardPage() {
         <DashboardMap
           pins={pins}
           activeFilters={activeFilters}
+          flowSegments={flowSegments}
           isLoading={mapLoading}
           error={mapError}
           onRetry={mapRefresh}

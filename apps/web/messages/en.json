@@ -1,4 +1,19 @@
 {
+  "map": {
+    "loadingMapData": "Loading map data...",
+    "yourLocation": "Your location",
+    "scheduled": "Scheduled",
+    "active": "Active"
+  },
+  "outages": {
+    "electricity": "Electricity",
+    "water": "Water",
+    "heat": "Heat",
+    "gas": "Gas"
+  },
+  "traffic": {
+    "title": "Traffic"
+  },
   "pushSetup": {
     "unsupported": "Your browser does not support push notifications.",
     "unconfigured": "Push notifications are not configured."

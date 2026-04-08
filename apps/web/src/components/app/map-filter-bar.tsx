@@ -1,6 +1,8 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
+
 
 import { MAP_FILTER_SOURCES, MAP_PIN_STYLES } from '@/lib/map-pin-config';
 import type { MapPin, MapPinSource } from '@/lib/normalize-pins';
@@ -12,6 +14,7 @@ interface MapFilterBarProps {
 }
 
 export function MapFilterBar({ activeFilters, onToggle, pins }: MapFilterBarProps) {
+  const t = useTranslations();
   const counts = useMemo(() => {
     const map = new Map<MapPinSource, number>();
     for (const pin of pins) {
@@ -40,7 +43,7 @@ export function MapFilterBar({ activeFilters, onToggle, pins }: MapFilterBarProp
               className="inline-block size-2 rounded-full"
               style={{ backgroundColor: isActive ? '#FFFFFF' : style.color }}
             />
-            {style.label}
+            {t(style.label)}
             {count > 0 && (
               <span className={isActive ? 'text-white/80' : 'text-muted'}>({count})</span>
             )}

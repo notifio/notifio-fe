@@ -1,4 +1,19 @@
 {
+  "map": {
+    "loadingMapData": "Načítavam údaje mapy...",
+    "yourLocation": "Tvoja poloha",
+    "scheduled": "Plánované",
+    "active": "Aktívne"
+  },
+  "outages": {
+    "electricity": "Elektrina",
+    "water": "Voda",
+    "heat": "Teplo",
+    "gas": "Plyn"
+  },
+  "traffic": {
+    "title": "Doprava"
+  },
   "pushSetup": {
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
     "unconfigured": "Push notifikácie nie sú nakonfigurované."
