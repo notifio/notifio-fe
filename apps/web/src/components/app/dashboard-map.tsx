@@ -327,7 +327,7 @@ export function DashboardMap({
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-xl border border-border">
-      <div ref={containerRef} className="h-full w-full bg-card" />
+      <div ref={containerRef} className="h-full w-full bg-background" />
 
       {isLoading && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center pt-14">

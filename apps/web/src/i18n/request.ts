@@ -49,5 +49,5 @@ export default getRequestConfig(async () => {
 
   const messages = deepMerge(shared, web);
 
-  return { locale, messages };
+  return { locale, messages, timeZone: "Europe/Bratislava" };
 });

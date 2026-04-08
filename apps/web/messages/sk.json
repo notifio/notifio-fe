@@ -3,6 +3,12 @@
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
     "unconfigured": "Push notifikácie nie sú nakonfigurované."
   },
+  "categoryGroups": {
+    "weather": "Počasie",
+    "traffic": "Doprava",
+    "outages": "Výpadky",
+    "events": "Udalosti"
+  },
   "nav": {
     "signIn": "Prihlásiť sa",
     "dashboard": "Prehľad",

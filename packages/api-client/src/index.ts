@@ -61,6 +61,7 @@ export interface NotifioClientConfig {
   baseUrl: string;
   getToken: () => Promise<string | null>;
   apiKey?: string;
+  locale?: string | (() => string);
   onUnauthorized?: () => void;
 }
 
@@ -112,6 +113,11 @@ export function createNotifioClient(config: NotifioClientConfig) {
 
     if (config.apiKey) {
       headers['x-api-key'] = config.apiKey;
+    }
+
+    const locale = typeof config.locale === 'function' ? config.locale() : config.locale;
+    if (locale) {
+      headers['Accept-Language'] = locale;
     }
 
     const token = await config.getToken();

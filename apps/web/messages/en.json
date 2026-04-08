@@ -3,6 +3,12 @@
     "unsupported": "Your browser does not support push notifications.",
     "unconfigured": "Push notifications are not configured."
   },
+  "categoryGroups": {
+    "weather": "Weather",
+    "traffic": "Traffic",
+    "outages": "Outages",
+    "events": "Events"
+  },
   "nav": {
     "signIn": "Sign in",
     "dashboard": "Dashboard",

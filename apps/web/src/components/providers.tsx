@@ -17,7 +17,7 @@ export function Providers({ children, locale, messages }: Props) {
       enableSystem
       disableTransitionOnChange
     >
-      <NextIntlClientProvider locale={locale} messages={messages}>
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Bratislava">
         {children}
       </NextIntlClientProvider>
     </ThemeProvider>
