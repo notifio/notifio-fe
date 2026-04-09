@@ -2,6 +2,9 @@ import type {
   WeatherResponse,
   TrafficResponse,
   TrafficFlowResponse,
+  WeatherWarning,
+  EventDetail,
+  UserVote,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -26,6 +29,11 @@ export type {
   TrafficResponse,
   TrafficFlowResponse,
   TrafficFlowSegment,
+  WeatherWarning,
+  WeatherWarningSeverity,
+  EventDetail,
+  EventVotes,
+  UserVote,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -168,6 +176,13 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return weather;
     },
 
+    async getWeatherWarnings(lat: number, lng: number): Promise<WeatherWarning[]> {
+      const { warnings } = await request<{ warnings: WeatherWarning[] }>('/weather/warnings', {
+        params: { lat: String(lat), lng: String(lng) },
+      });
+      return warnings;
+    },
+
     async getTraffic(lat: number, lng: number): Promise<TrafficResponse> {
       const { traffic } = await request<{ traffic: TrafficResponse }>('/traffic', {
         params: { lat: String(lat), lng: String(lng) },
@@ -193,6 +208,23 @@ export function createNotifioClient(config: NotifioClientConfig) {
         params: { utility },
       });
       return data.outages;
+    },
+
+    // ─── Event endpoints ──────────────────────────────────────────
+
+    async getEventDetail(eventId: string): Promise<EventDetail> {
+      return request<EventDetail>(`/events/${eventId}`);
+    },
+
+    async voteOnEvent(eventId: string, isValid: boolean): Promise<void> {
+      await request<void>(`/events/${eventId}/vote`, {
+        method: 'POST',
+        body: { isValid },
+      });
+    },
+
+    async getUserVote(eventId: string): Promise<UserVote> {
+      return request<UserVote>(`/events/${eventId}/vote`);
     },
 
     // ─── Device endpoints ──────────────────────────────────────────

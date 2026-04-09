@@ -14,16 +14,19 @@ type TabFilter = 'all' | 'active' | 'resolved';
 
 function isResolved(n: NotificationHistoryItem): boolean {
   if (n.status !== 'sent') return true;
+  const nt = (n as Record<string, unknown>).notificationType;
+  if (typeof nt === 'string') return nt === 'all_clear';
   if (n.title.startsWith('Ukončené:') || n.title.startsWith('Resolved:')) return true;
   return false;
 }
 
 interface AlertListProps {
   selectedId?: string | null;
-  onSelect?: (id: number) => void;
+  onSelect?: (eventId: string) => void;
+  isLoadingEvent?: boolean;
 }
 
-export function AlertList({ selectedId, onSelect }: AlertListProps) {
+export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: AlertListProps) {
   const t = useTranslations();
   const [tab, setTab] = useState<TabFilter>('all');
   const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory();
@@ -63,8 +66,8 @@ export function AlertList({ selectedId, onSelect }: AlertListProps) {
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <h2 className="text-sm font-semibold text-text-primary">
           {t('notifications.title')}
-          {grouped.length > 0 && (
-            <span className="ml-1.5 text-muted">({grouped.length})</span>
+          {filtered.length > 0 && (
+            <span className="ml-1.5 text-muted">({filtered.length})</span>
           )}
         </h2>
         <div className="flex gap-1">
@@ -114,8 +117,9 @@ export function AlertList({ selectedId, onSelect }: AlertListProps) {
               key={g.item.id}
               notification={g.item}
               duplicateCount={g.count}
-              isSelected={selectedId === String(g.item.id)}
-              onClick={() => onSelect?.(g.item.id)}
+              isSelected={selectedId === g.item.eventId}
+              isLoading={isLoadingEvent && selectedId === g.item.eventId}
+              onClick={() => onSelect?.(g.item.eventId)}
             />
           ))}
           {hasMore && (
