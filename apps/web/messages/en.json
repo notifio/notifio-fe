@@ -14,6 +14,16 @@
   "traffic": {
     "title": "Traffic"
   },
+  "mapFilters": {
+    "title": "Filters",
+    "accident": "Accidents",
+    "construction": "Construction",
+    "road_closure": "Closures",
+    "congestion": "Congestion",
+    "event": "Events",
+    "weather": "Weather",
+    "other": "Other"
+  },
   "pushSetup": {
     "unsupported": "Your browser does not support push notifications.",
     "unconfigured": "Push notifications are not configured."

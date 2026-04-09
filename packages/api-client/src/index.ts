@@ -175,8 +175,10 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return traffic;
     },
 
-    async getTrafficFlow(): Promise<TrafficFlowResponse> {
-      return request<TrafficFlowResponse>('/traffic/flow');
+    async getTrafficFlow(lat: number, lng: number): Promise<TrafficFlowResponse> {
+      return request<TrafficFlowResponse>('/traffic/flow', {
+        params: { lat: String(lat), lng: String(lng) },
+      });
     },
 
     async getAirQuality(lat: number, lng: number): Promise<AirQualityResponse> {

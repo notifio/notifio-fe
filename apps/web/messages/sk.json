@@ -14,6 +14,16 @@
   "traffic": {
     "title": "Doprava"
   },
+  "mapFilters": {
+    "title": "Filtre",
+    "accident": "Nehody",
+    "construction": "Stavebné práce",
+    "road_closure": "Uzávery",
+    "congestion": "Kolóny",
+    "event": "Udalosti",
+    "weather": "Počasie",
+    "other": "Ostatné"
+  },
   "pushSetup": {
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
     "unconfigured": "Push notifikácie nie sú nakonfigurované."
