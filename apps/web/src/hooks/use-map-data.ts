@@ -58,6 +58,7 @@ interface StaticData {
   elec: OutageRecord[];
   water: OutageRecord[];
   heat: OutageRecord[];
+  gas: OutageRecord[];
 }
 
 interface ViewportCache {
@@ -85,16 +86,18 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     if (staticFetched.current) return;
     staticFetched.current = true;
 
-    const [elec, water, heat] = await Promise.all([
+    const [elec, water, heat, gas] = await Promise.all([
       safeFetch(() => api.getOutages('electricity')),
       safeFetch(() => api.getOutages('water')),
       safeFetch(() => api.getOutages('heat')),
+      safeFetch(() => api.getOutages('gas')),
     ]);
 
     staticData.current = {
       elec: elec ?? [],
       water: water ?? [],
       heat: heat ?? [],
+      gas: gas ?? [],
     };
   }, []);
 
@@ -143,6 +146,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         sd?.elec ?? [],
         sd?.water ?? [],
         sd?.heat ?? [],
+        sd?.gas ?? [],
         traffic?.incidents ?? [],
       );
 

@@ -89,5 +89,5 @@ export const DEFAULT_PIN_STYLE: PinStyle = {
 };
 
 export const MAP_PIN_STYLES = SOURCE_STYLES;
-export const MAP_FILTER_SOURCES: MapPinSource[] = ['electricity', 'water', 'heat', 'traffic'];
+export const MAP_FILTER_SOURCES: MapPinSource[] = ['electricity', 'water', 'heat', 'gas', 'traffic'];
 export { ICON_PATHS, TRAFFIC_TYPE_COLORS, TRAFFIC_ICON_MAP };

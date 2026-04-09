@@ -1,6 +1,6 @@
 'use client';
 
-import { IconLoader2, IconRefresh } from '@tabler/icons-react';
+import { IconLoader2, IconRefresh, IconX } from '@tabler/icons-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTranslations } from 'next-intl';
@@ -85,6 +85,10 @@ interface DashboardMapProps {
   center?: { lat: number; lng: number };
   isGpsCenter?: boolean;
   onCenterChange?: (center: { lat: number; lng: number }) => void;
+  flyTo?: { lat: number; lng: number; zoom: number } | null;
+  onFlyToComplete?: () => void;
+  infoOverlay?: { title: string; category: string; description: string } | null;
+  onCloseOverlay?: () => void;
 }
 
 export function DashboardMap({
@@ -98,6 +102,10 @@ export function DashboardMap({
   center,
   isGpsCenter = false,
   onCenterChange,
+  flyTo,
+  onFlyToComplete,
+  infoOverlay,
+  onCloseOverlay,
 }: DashboardMapProps) {
   const t = useTranslations('map');
   const { resolvedTheme } = useTheme();
@@ -128,6 +136,8 @@ export function DashboardMap({
   tRef.current = t;
   const onCenterChangeRef = useRef(onCenterChange);
   onCenterChangeRef.current = onCenterChange;
+  const onCloseOverlayRef = useRef(onCloseOverlay);
+  onCloseOverlayRef.current = onCloseOverlay;
   const debouncedCenterChange = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Marker sync ──────────────────────────────────────────────────────
@@ -389,9 +399,10 @@ export function DashboardMap({
       }
     });
 
-    // Click map → collapse expanded pin
+    // Click map → collapse expanded pin + close info overlay
     map.on('click', () => {
       setExpandedPinId(null);
+      onCloseOverlayRef.current?.();
     });
 
     mapRef.current = map;
@@ -454,6 +465,20 @@ export function DashboardMap({
       source.setData(flowToGeoJSON(flowSegments));
     }
   }, [flowSegments]);
+
+  // Fly to target when notification is selected
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyTo) return;
+
+    map.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom });
+
+    const handleMoveEnd = () => {
+      onFlyToComplete?.();
+      map.off('moveend', handleMoveEnd);
+    };
+    map.once('moveend', handleMoveEnd);
+  }, [flyTo, onFlyToComplete]);
 
   // User location marker — runs when GPS resolves
   useEffect(() => {
@@ -596,6 +621,30 @@ export function DashboardMap({
                 <IconRefresh size={12} />
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {infoOverlay && (
+        <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-20 flex justify-center p-6" style={{ background: 'rgba(0,0,0,0.3)' }}>
+          <div className="relative max-w-sm rounded-xl border border-border bg-background/95 p-5 shadow-xl backdrop-blur-sm">
+            <button
+              onClick={onCloseOverlay}
+              className="absolute right-3 top-3 rounded p-1 text-muted transition-colors hover:bg-card hover:text-text-primary"
+              aria-label={t('closeOverlay')}
+            >
+              <IconX size={16} />
+            </button>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">
+              {infoOverlay.category}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-text-primary">
+              {infoOverlay.title}
+            </p>
+            {infoOverlay.description && (
+              <p className="mt-2 text-xs text-text-secondary">{infoOverlay.description}</p>
+            )}
+            <p className="mt-3 text-[11px] text-muted">{t('coversYourArea')}</p>
           </div>
         </div>
       )}

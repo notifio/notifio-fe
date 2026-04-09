@@ -8,16 +8,22 @@ import {
   IconCloudStorm,
   IconDroplet,
   IconEye,
+  IconMoon,
   IconSnowflake,
   IconSun,
   IconTemperature,
   IconWind,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared';
 import type { AirQualityData, WeatherData } from '@notifio/shared';
 
-import { AqiIndicator } from './aqi-indicator';
+import { AqiChip, AqiDetailPanel } from './aqi-indicator';
+import { PollenChip, PollenDetailPanel } from './pollen-indicator';
+
+// ── Icon mapping ─────────────────────────────────────────────────────
 
 const WEATHER_ICON_MAP: Record<string, Icon> = {
   Sun: IconSun,
@@ -32,9 +38,38 @@ const WEATHER_ICON_MAP: Record<string, Icon> = {
   Thermometer: IconTemperature,
 };
 
-function getWeatherIcon(iconName: string): Icon {
+function getWeatherIcon(iconName: string, isNight: boolean): Icon {
+  if (isNight && (iconName === 'Sun' || iconName === 'Cloud')) return IconMoon;
   return WEATHER_ICON_MAP[iconName] ?? IconTemperature;
 }
+
+// ── Night detection ──────────────────────────────────────────────────
+
+function isNightTime(weather: WeatherData): boolean {
+  if (weather.icon) return weather.icon.endsWith('n');
+  if (weather.sunrise && weather.sunset) {
+    const now = Date.now();
+    const rise = new Date(weather.sunrise).getTime();
+    const set = new Date(weather.sunset).getTime();
+    return now < rise || now > set;
+  }
+  return false;
+}
+
+const NIGHT_GRADIENT: [string, string] = ['#1E293B', '#334155'];
+
+// ── Pollen types ─────────────────────────────────────────────────────
+
+export interface PollenData {
+  level: string;
+  dominant: string;
+  value: number;
+  unit: string;
+}
+
+// ── Component ────────────────────────────────────────────────────────
+
+type ExpandedChip = 'aqi' | 'pollen' | null;
 
 interface WeatherCardProps {
   weather: WeatherData | null;
@@ -44,9 +79,25 @@ interface WeatherCardProps {
   onRetry?: () => void;
   airQuality?: AirQualityData | null;
   aqiLoading?: boolean;
+  pollen?: PollenData | null;
 }
 
-export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false }: WeatherCardProps) {
+export function WeatherCard({
+  weather,
+  isLoading,
+  error,
+  locationLabel,
+  onRetry,
+  airQuality,
+  aqiLoading = false,
+  pollen,
+}: WeatherCardProps) {
+  const t = useTranslations('weather');
+  const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
+
+  const toggleChip = (chip: ExpandedChip) =>
+    setExpandedChip((prev) => (prev === chip ? null : chip));
+
   if (isLoading) {
     return <div className="h-48 animate-pulse rounded-2xl bg-card" />;
   }
@@ -60,7 +111,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
             onClick={onRetry}
             className="rounded-lg bg-danger/15 px-4 py-2 text-sm font-medium text-danger transition-colors hover:bg-danger/25"
           >
-            Try again
+            {t('feelsLike')}
           </button>
         )}
       </div>
@@ -69,19 +120,35 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
 
   if (!weather) return null;
 
+  const night = isNightTime(weather);
   const style = getWeatherStyle(weather.condition);
-  const WeatherIcon = getWeatherIcon(style.iconName);
+  const WeatherIcon = getWeatherIcon(style.iconName, night);
 
-  const muted80 = `${style.textColor}CC`;
-  const muted60 = `${style.textColor}99`;
-  const muted40 = `${style.textColor}66`;
+  const gradient = night ? NIGHT_GRADIENT : style.gradient;
+  const textColor = night ? '#E2E8F0' : style.textColor;
+
+  const muted80 = `${textColor}CC`;
+  const muted60 = `${textColor}99`;
+  const muted40 = `${textColor}66`;
+
+  let weatherLabel = style.label;
+  if (night) {
+    const cond = weather.condition.toLowerCase();
+    if (cond.includes('clear') || cond === 'sunny') {
+      weatherLabel = t('clearNight');
+    } else if (cond.includes('cloud') || cond.includes('overcast')) {
+      weatherLabel = t('cloudyNight');
+    }
+  }
+
+  const hasChips = airQuality || aqiLoading || pollen;
 
   return (
     <div
       className="overflow-hidden rounded-2xl p-6"
       style={{
-        background: `linear-gradient(135deg, ${style.gradient[0]}, ${style.gradient[1]})`,
-        color: style.textColor,
+        background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
+        color: textColor,
       }}
     >
       <div className="flex items-start justify-between">
@@ -90,7 +157,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
             {locationLabel}
           </p>
           <p className="text-sm" style={{ color: muted60 }}>
-            {style.label}
+            {weatherLabel}
           </p>
         </div>
         <WeatherIcon size={40} style={{ color: muted80 }} />
@@ -99,7 +166,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
       <div className="my-4">
         <p className="text-6xl font-bold">{formatTemp(weather.temperature)}</p>
         <p className="mt-1 text-sm" style={{ color: muted60 }}>
-          Feels like {formatTemp(weather.feelsLike)}
+          {t('feelsLike')} {formatTemp(weather.feelsLike)}
         </p>
       </div>
 
@@ -118,9 +185,34 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
         </span>
       </div>
 
-      {(airQuality || aqiLoading) && (
-        <div className="mt-3 border-t pt-3" style={{ borderColor: `${style.textColor}1A` }}>
-          <AqiIndicator airQuality={airQuality ?? null} isLoading={aqiLoading} />
+      {/* AQI + Pollen chips */}
+      {hasChips && (
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center gap-2">
+            {(airQuality || aqiLoading) && (
+              <AqiChip
+                airQuality={airQuality ?? null}
+                isLoading={aqiLoading}
+                isExpanded={expandedChip === 'aqi'}
+                dimmed={expandedChip !== null && expandedChip !== 'aqi'}
+                onToggle={() => toggleChip('aqi')}
+              />
+            )}
+            {pollen && (
+              <PollenChip
+                pollen={pollen}
+                isExpanded={expandedChip === 'pollen'}
+                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                onToggle={() => toggleChip('pollen')}
+              />
+            )}
+          </div>
+          {expandedChip === 'aqi' && airQuality && (
+            <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
+          )}
+          {expandedChip === 'pollen' && pollen && (
+            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+          )}
         </div>
       )}
 
