@@ -1,6 +1,7 @@
 import type {
   WeatherResponse,
   TrafficResponse,
+  TrafficFlowResponse,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -23,6 +24,8 @@ import type {
 export type {
   WeatherResponse,
   TrafficResponse,
+  TrafficFlowResponse,
+  TrafficFlowSegment,
   AirQualityResponse,
   OutageRecord,
   UtilityType,
@@ -61,6 +64,7 @@ export interface NotifioClientConfig {
   baseUrl: string;
   getToken: () => Promise<string | null>;
   apiKey?: string;
+  locale?: string | (() => string);
   onUnauthorized?: () => void;
 }
 
@@ -114,6 +118,11 @@ export function createNotifioClient(config: NotifioClientConfig) {
       headers['x-api-key'] = config.apiKey;
     }
 
+    const locale = typeof config.locale === 'function' ? config.locale() : config.locale;
+    if (locale) {
+      headers['Accept-Language'] = locale;
+    }
+
     const token = await config.getToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -164,6 +173,12 @@ export function createNotifioClient(config: NotifioClientConfig) {
         params: { lat: String(lat), lng: String(lng) },
       });
       return traffic;
+    },
+
+    async getTrafficFlow(lat: number, lng: number): Promise<TrafficFlowResponse> {
+      return request<TrafficFlowResponse>('/traffic/flow', {
+        params: { lat: String(lat), lng: String(lng) },
+      });
     },
 
     async getAirQuality(lat: number, lng: number): Promise<AirQualityResponse> {

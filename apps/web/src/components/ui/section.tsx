@@ -3,9 +3,9 @@ import { type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const VARIANT_STYLES = {
-  light: 'bg-white text-gray-900',
+  light: 'bg-background text-text-primary',
   dark: 'bg-[#111827] text-white',
-  accent: 'bg-gray-50 text-gray-900',
+  accent: 'bg-background text-text-primary',
 } as const;
 
 interface SectionProps {

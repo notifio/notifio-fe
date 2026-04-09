@@ -71,8 +71,10 @@ export function installFirebaseErrorSuppressor(): void {
     const msg = typeof reason === 'string' ? reason : (reason?.message ?? '');
     if (msg.includes('pushManager') || msg.includes("'pushManager'")) {
       event.preventDefault();
-      // eslint-disable-next-line no-console
-      console.debug('[firebase] suppressed background pushManager error (harmless)');
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.debug('[firebase] suppressed background pushManager error (harmless)');
+      }
     }
   };
   window.addEventListener('unhandledrejection', handler);

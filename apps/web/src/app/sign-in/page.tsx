@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 import { SocialAuthButtons } from '@/components/auth/social-auth-buttons';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
+  const t = useTranslations('auth');
   const handleGoogleSignIn = async () => {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
@@ -20,30 +22,27 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="w-full max-w-sm rounded-xl border border-border bg-background p-8 shadow-sm">
         <div className="text-center">
-          <Link href="/" className="text-xl font-bold text-[#2563EB]">
+          <Link href="/" className="text-xl font-bold text-accent">
             Notifio
           </Link>
-          <h1 className="mt-6 text-2xl font-bold text-gray-900">Sign in to Notifio</h1>
-          <p className="mt-2 text-sm text-gray-500">Get alerts for your area</p>
+          <h1 className="mt-6 text-2xl font-bold text-text-primary">{t('signInTo')}</h1>
+          <p className="mt-2 text-sm text-muted">{t('getAlerts')}</p>
         </div>
 
         <div className="mt-8">
           <SocialAuthButtons onAuth={handleGoogleSignIn} />
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400">
-          By continuing, you agree to our{' '}
-          <a href="#" className="underline hover:text-gray-600">
-            Privacy Policy
-          </a>
+        <p className="mt-6 text-center text-xs text-muted">
+          {t('privacyNotice')}
         </p>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-400 transition-colors hover:text-gray-600">
-            &larr; Back to home
+          <Link href="/" className="text-sm text-muted transition-colors hover:text-text-secondary">
+            &larr; {t('backToHome')}
           </Link>
         </div>
       </div>

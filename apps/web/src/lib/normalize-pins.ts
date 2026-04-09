@@ -3,6 +3,14 @@ import type { OutageRecord, TrafficIncident } from '@notifio/shared';
 
 export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic';
 export type MapPinStatus = 'active' | 'scheduled';
+export type TrafficIncidentType =
+  | 'accident'
+  | 'congestion'
+  | 'construction'
+  | 'event'
+  | 'road_closure'
+  | 'weather'
+  | 'other';
 
 export interface MapPin {
   id: string;
@@ -14,6 +22,7 @@ export interface MapPin {
   description: string;
   locality?: string;
   timestamp: string;
+  incidentType?: TrafficIncidentType;
 }
 
 function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null {
@@ -45,6 +54,7 @@ function trafficToPin(incident: TrafficIncident): MapPin {
     title: incident.description,
     description: `${incident.type} — ${incident.severity}`,
     timestamp: new Date().toISOString(),
+    incidentType: incident.type as TrafficIncidentType,
   };
 }
 

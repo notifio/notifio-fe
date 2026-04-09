@@ -1,27 +1,31 @@
-'use client';
+"use client";
 
-import { Loader2 } from 'lucide-react';
+import { IconBell, IconLoader2 } from "@tabler/icons-react";
+import type { Icon } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
-import { signOut } from '@/app/(app)/actions';
-import { PreferenceSection } from '@/components/app/settings/preference-section';
-import { PushNotificationsToggle } from '@/components/app/settings/push-notifications-toggle';
-import { SelectableOption } from '@/components/ui/selectable-option';
-import { Toggle } from '@/components/ui/toggle';
-import { usePreferences } from '@/hooks/use-preferences';
-import { useSupabaseUser } from '@/hooks/use-supabase-user';
+import type { NotificationCategoryResponse } from "@notifio/api-client";
 
-const THEME_OPTIONS = [
-  { value: 'system' as const, label: 'System', description: 'Follow your device settings' },
-  { value: 'light' as const, label: 'Light' },
-  { value: 'dark' as const, label: 'Dark' },
-];
+import { signOut } from "@/app/(app)/actions";
+import { PreferenceSection } from "@/components/app/settings/preference-section";
+import { PushNotificationsToggle } from "@/components/app/settings/push-notifications-toggle";
+import { Toggle } from "@/components/ui/toggle";
+import { usePreferences } from "@/hooks/use-preferences";
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { CATEGORY_GROUPS } from "@/lib/category-groups";
 
-const UNITS_OPTIONS = [
-  { value: 'metric' as const, label: 'Metric', description: '°C, km/h, mm' },
-  { value: 'imperial' as const, label: 'Imperial', description: '°F, mph, in' },
-];
+interface ResolvedGroup {
+  groupKey: string;
+  groupLabel: string;
+  icon: Icon;
+  categories: NotificationCategoryResponse[];
+}
 
 export default function SettingsPage() {
+  const t = useTranslations("settings");
+  const ta = useTranslations("auth");
+  const tg = useTranslations("categoryGroups");
   const { email } = useSupabaseUser();
   const {
     preferences,
@@ -29,67 +33,188 @@ export default function SettingsPage() {
     saving,
     error,
     hasChanges,
-    toggleItem,
     toggleCategory,
-    setDisplay,
     savePreferences,
     cancelChanges,
   } = usePreferences();
 
-  return (
-    <div className="mx-auto max-w-2xl px-6 py-10 md:px-8">
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+  const { groups, ungrouped } = useMemo(() => {
+    if (!preferences)
+      return {
+        groups: [] as ResolvedGroup[],
+        ungrouped: [] as NotificationCategoryResponse[],
+      };
 
-      <div className="mt-10 space-y-10">
-        <PreferenceSection title="Push Notifications" description="Enable push notifications to receive alerts even when the page is closed.">
-          <PushNotificationsToggle />
+    const matched = new Set<string>();
+    const resolved: ResolvedGroup[] = [];
+
+    for (const def of CATEGORY_GROUPS) {
+      const cats = preferences.notifications.filter((c) =>
+        def.categoryCodes.includes(c.categoryCode),
+      );
+      if (cats.length === 0) continue;
+      for (const c of cats) matched.add(c.categoryCode);
+      resolved.push({
+        groupKey: def.groupKey,
+        groupLabel: tg(def.groupKey),
+        icon: def.icon,
+        categories: cats,
+      });
+    }
+
+    const remaining = preferences.notifications.filter(
+      (c) => !matched.has(c.categoryCode),
+    );
+
+    return { groups: resolved, ungrouped: remaining };
+  }, [preferences, tg]);
+
+  const toggleGroup = (group: ResolvedGroup, enabled: boolean) => {
+    for (const cat of group.categories) {
+      toggleCategory(cat.categoryCode, enabled);
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-8 md:px-8 md:py-10">
+      <h1 className="text-2xl font-bold text-text-primary">{t("title")}</h1>
+
+      <div className="mt-8 space-y-8 md:mt-10">
+        {/* Push Notifications */}
+        <PreferenceSection
+          title={t("pushNotifications")}
+          description={t("pushDescription")}
+        >
+          <div className="rounded-xl bg-card p-4">
+            <PushNotificationsToggle />
+          </div>
         </PreferenceSection>
 
-        <PreferenceSection title="Notification Preferences" description="Choose which alert categories you want to receive.">
+        {/* Notification Preferences */}
+        <PreferenceSection
+          title={t("notificationPreferences")}
+          description={t("notificationPreferencesDescription")}
+        >
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-14 animate-pulse rounded-lg bg-gray-100" />
+                <div
+                  key={i}
+                  className="h-14 animate-pulse rounded-xl bg-card"
+                />
               ))}
             </div>
           ) : error && !preferences ? (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-              Failed to load preferences. Please try again later.
+            <div className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
+              {t("loadError")}
             </div>
-          ) : preferences?.notifications.length === 0 ? (
-            <div className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
-              No notification categories available.
+          ) : groups.length === 0 && ungrouped.length === 0 ? (
+            <div className="rounded-xl bg-card px-4 py-3 text-sm text-muted">
+              {t("noCategories")}
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
-              {preferences?.notifications.map((category) => {
-                const someEnabled = category.items.some((item) => item.enabled);
+            <div className="space-y-3">
+              {groups.map((group) => {
+                const GroupIcon = group.icon;
+                const allItems = group.categories.flatMap((c) => c.items);
+                const someEnabled = allItems.some((i) => i.enabled);
+                const firstCategory = group.categories[0];
+                const isSingleFlat =
+                  group.categories.length === 1 &&
+                  firstCategory != null &&
+                  firstCategory.items.length <= 1;
 
                 return (
-                  <div key={category.categoryCode} className="py-3">
-                    <div className="flex items-center gap-3 px-4">
-                      <span className="flex-1 text-sm font-medium text-gray-900">{category.categoryName}</span>
+                  <div key={group.groupKey} className="rounded-xl bg-card">
+                    {isSingleFlat && firstCategory != null ? (
+                      /* Single-category flat row */
+                      <div className="flex min-h-[44px] items-center gap-3 px-4 py-3">
+                        <GroupIcon
+                          size={20}
+                          className="shrink-0 text-accent"
+                        />
+                        <span className="flex-1 text-sm font-medium text-text-primary">
+                          {firstCategory.categoryName}
+                        </span>
+                        <Toggle
+                          checked={someEnabled}
+                          onChange={(checked) =>
+                            toggleCategory(
+                              firstCategory.categoryCode,
+                              checked,
+                            )
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        {/* Multi-category group header with master toggle */}
+                        <div className="flex min-h-[44px] items-center gap-3 px-4 py-3">
+                          <GroupIcon
+                            size={20}
+                            className="shrink-0 text-accent"
+                          />
+                          <span className="flex-1 text-sm font-semibold text-text-primary">
+                            {group.groupLabel}
+                          </span>
+                          <Toggle
+                            checked={someEnabled}
+                            onChange={(checked) =>
+                              toggleGroup(group, checked)
+                            }
+                          />
+                        </div>
+
+                        {/* Category rows */}
+                        <div className="divide-y divide-border border-t border-border">
+                          {group.categories.map((cat) => {
+                            const catEnabled = cat.items.some(
+                              (i) => i.enabled,
+                            );
+                            return (
+                              <div
+                                key={cat.categoryCode}
+                                className="flex min-h-[44px] items-center gap-3 px-4 py-2 pl-11"
+                              >
+                                <span className="flex-1 text-sm text-text-secondary">
+                                  {cat.categoryName}
+                                </span>
+                                <Toggle
+                                  checked={catEnabled}
+                                  onChange={(checked) =>
+                                    toggleCategory(
+                                      cat.categoryCode,
+                                      checked,
+                                    )
+                                  }
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Ungrouped fallback cards */}
+              {ungrouped.map((cat) => {
+                const catEnabled = cat.items.some((i) => i.enabled);
+                return (
+                  <div key={cat.categoryCode} className="rounded-xl bg-card">
+                    <div className="flex min-h-[44px] items-center gap-3 px-4 py-3">
+                      <IconBell size={20} className="shrink-0 text-accent" />
+                      <span className="flex-1 text-sm font-medium text-text-primary">
+                        {cat.categoryName}
+                      </span>
                       <Toggle
-                        checked={someEnabled}
-                        onChange={(checked) => toggleCategory(category.categoryCode, checked)}
+                        checked={catEnabled}
+                        onChange={(checked) =>
+                          toggleCategory(cat.categoryCode, checked)
+                        }
                       />
                     </div>
-
-                    {category.items.length > 1 && (
-                      <div className="mt-2 space-y-1 pl-8">
-                        {category.items.map((item) => (
-                          <div key={item.preferenceId} className="flex items-center gap-3 px-4 py-1.5">
-                            <span className="flex-1 text-xs text-gray-600">
-                              {item.subcategoryCode ?? item.categoryCode}
-                            </span>
-                            <Toggle
-                              checked={item.enabled}
-                              onChange={(checked) => toggleItem(item.categoryCode, item.subcategoryCode, checked)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -97,65 +222,43 @@ export default function SettingsPage() {
           )}
         </PreferenceSection>
 
-        <PreferenceSection title="Theme">
-          {THEME_OPTIONS.map((option) => (
-            <SelectableOption
-              key={option.value}
-              label={option.label}
-              description={option.description}
-              selected={preferences?.display.theme === option.value}
-              onClick={() => setDisplay('theme', option.value)}
-            />
-          ))}
-        </PreferenceSection>
-
-        <PreferenceSection title="Units">
-          {UNITS_OPTIONS.map((option) => (
-            <SelectableOption
-              key={option.value}
-              label={option.label}
-              description={option.description}
-              selected={preferences?.display.units === option.value}
-              onClick={() => setDisplay('units', option.value)}
-            />
-          ))}
-        </PreferenceSection>
-
+        {/* Save / Cancel */}
         {hasChanges && (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={savePreferences}
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8] disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
             >
-              {saving && <Loader2 size={16} className="animate-spin" />}
-              {saving ? 'Saving…' : 'Save changes'}
+              {saving && <IconLoader2 size={16} className="animate-spin" />}
+              {saving ? t("saving") : t("save")}
             </button>
             <button
               onClick={cancelChanges}
               disabled={saving}
-              className="rounded-lg px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:opacity-50"
+              className="rounded-lg px-5 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
-            {error && (
-              <p className="text-sm text-red-600">{error}</p>
-            )}
+            {error && <p className="w-full text-sm text-danger">{error}</p>}
           </div>
         )}
 
-        <PreferenceSection title="Account">
-          <div className="rounded-lg px-4 py-3">
-            <p className="text-sm text-gray-500">Signed in as</p>
-            <p className="mt-0.5 text-sm font-medium text-gray-900">{email}</p>
-          </div>
-          <div className="flex items-center gap-4 px-4 pt-2">
-            <button
-              onClick={() => signOut()}
-              className="rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-            >
-              Sign out
-            </button>
+        {/* Account */}
+        <PreferenceSection title={t("account")}>
+          <div className="rounded-xl bg-card p-4">
+            <p className="text-sm text-muted">{t("signedInAs")}</p>
+            <p className="mt-0.5 text-sm font-medium text-text-primary">
+              {email}
+            </p>
+            <div className="mt-3">
+              <button
+                onClick={() => signOut()}
+                className="rounded-lg bg-danger/10 px-4 py-2 text-sm font-medium text-danger transition-colors hover:bg-danger/20"
+              >
+                {ta("signOut")}
+              </button>
+            </div>
           </div>
         </PreferenceSection>
       </div>

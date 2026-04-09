@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 import { AnimateOnScroll } from '@/components/ui/animate-on-scroll';
 import { Heading } from '@/components/ui/heading';
 import { Section } from '@/components/ui/section';
@@ -9,24 +13,6 @@ interface StepItem {
   description: string;
 }
 
-const STEPS: StepItem[] = [
-  {
-    number: 1,
-    title: 'Install the app',
-    description: 'Download Notifio from the App Store or Google Play.',
-  },
-  {
-    number: 2,
-    title: 'Allow your location',
-    description: 'So we can send you alerts relevant to where you are.',
-  },
-  {
-    number: 3,
-    title: 'Get notified',
-    description: 'Receive real-time alerts about weather, traffic, and more.',
-  },
-];
-
 interface StepCardProps {
   step: StepItem;
   isLast: boolean;
@@ -35,14 +21,14 @@ interface StepCardProps {
 function StepCard({ step, isLast }: StepCardProps) {
   return (
     <div className="relative flex flex-1 flex-col items-center text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB] text-2xl font-bold text-white">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-2xl font-bold text-white">
         {step.number}
       </div>
 
       {!isLast && (
         <div
           aria-hidden
-          className="absolute left-[calc(50%+2rem)] top-7 hidden h-px w-[calc(100%-4rem)] bg-gray-200 lg:block"
+          className="absolute left-[calc(50%+2rem)] top-7 hidden h-px w-[calc(100%-4rem)] bg-border lg:block"
         />
       )}
 
@@ -57,14 +43,34 @@ function StepCard({ step, isLast }: StepCardProps) {
 }
 
 export function HowItWorksSection() {
+  const t = useTranslations('landing');
+
+  const STEPS: StepItem[] = [
+    {
+      number: 1,
+      title: t('howItWorks.step1.title'),
+      description: t('howItWorks.step1.description'),
+    },
+    {
+      number: 2,
+      title: t('howItWorks.step2.title'),
+      description: t('howItWorks.step2.description'),
+    },
+    {
+      number: 3,
+      title: t('howItWorks.step3.title'),
+      description: t('howItWorks.step3.description'),
+    },
+  ];
+
   return (
     <Section variant="accent" id="how-it-works">
       <AnimateOnScroll className="text-center">
         <Heading as="h2" size="lg">
-          Get started in 3 steps
+          {t('howItWorks.title')}
         </Heading>
         <Text size="lg" muted className="mx-auto mt-4 max-w-2xl">
-          No sign-up forms, no city selection. Just location access and you&apos;re covered.
+          {t('howItWorks.subtitle')}
         </Text>
       </AnimateOnScroll>
 
