@@ -307,6 +307,7 @@ export function MapFilterBar({
             </span>
             <button
               onClick={() => setIsOpen(false)}
+              aria-label={tf('close')}
               style={{
                 background: 'none',
                 border: 'none',
@@ -360,8 +361,8 @@ export function MapFilterBar({
                       path={style.iconPath}
                       color={style.color}
                       isDark={isDark}
-                      size={36}
-                      iconSize={24}
+                      size={44}
+                      iconSize={28}
                       radius={10}
                     />
                     <span
@@ -411,8 +412,8 @@ export function MapFilterBar({
                               path={ICON_PATHS[iconKey]}
                               color={subColor}
                               isDark={isDark}
-                              size={28}
-                              iconSize={18}
+                              size={36}
+                              iconSize={22}
                               radius={6}
                             />
                             <span style={{ flex: 1, fontSize: '13px', opacity: 0.75 }}>

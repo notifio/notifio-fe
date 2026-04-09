@@ -169,12 +169,14 @@ export function MapMarker({
         </>
       ) : (
         // Collapsed: teardrop with icon
-        <div
+        <button
+          type="button"
+          aria-label={pin.title}
           onClick={(e) => {
             e.stopPropagation();
             onToggle();
           }}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
         >
           <TeardropSvg style={style} iconColor={iconColor} />
 
@@ -203,7 +205,7 @@ export function MapMarker({
               {clusterCount}
             </div>
           )}
-        </div>
+        </button>
       )}
     </div>
   );

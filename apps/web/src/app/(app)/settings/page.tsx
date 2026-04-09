@@ -118,13 +118,15 @@ export default function SettingsPage() {
                 const GroupIcon = group.icon;
                 const allItems = group.categories.flatMap((c) => c.items);
                 const someEnabled = allItems.some((i) => i.enabled);
+                const firstCategory = group.categories[0];
                 const isSingleFlat =
                   group.categories.length === 1 &&
-                  group.categories[0]!.items.length <= 1;
+                  firstCategory != null &&
+                  firstCategory.items.length <= 1;
 
                 return (
                   <div key={group.groupKey} className="rounded-xl bg-card">
-                    {isSingleFlat ? (
+                    {isSingleFlat && firstCategory != null ? (
                       /* Single-category flat row */
                       <div className="flex min-h-[44px] items-center gap-3 px-4 py-3">
                         <GroupIcon
@@ -132,13 +134,13 @@ export default function SettingsPage() {
                           className="shrink-0 text-accent"
                         />
                         <span className="flex-1 text-sm font-medium text-text-primary">
-                          {group.categories[0]!.categoryName}
+                          {firstCategory.categoryName}
                         </span>
                         <Toggle
                           checked={someEnabled}
                           onChange={(checked) =>
                             toggleCategory(
-                              group.categories[0]!.categoryCode,
+                              firstCategory.categoryCode,
                               checked,
                             )
                           }

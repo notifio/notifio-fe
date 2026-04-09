@@ -49,5 +49,13 @@ export default getRequestConfig(async () => {
 
   const messages = deepMerge(shared, web);
 
+  if (process.env.NODE_ENV === "development") {
+    const required = ["common", "auth", "settings", "pushSetup", "locationBanner", "map", "alerts", "nav", "landing"];
+    const missing = required.filter((ns) => !(ns in messages));
+    if (missing.length) {
+      console.warn("[i18n] Missing namespaces after merge:", missing);
+    }
+  }
+
   return { locale, messages, timeZone: "Europe/Bratislava" };
 });

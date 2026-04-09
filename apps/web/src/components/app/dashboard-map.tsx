@@ -139,14 +139,6 @@ export function DashboardMap({
     const features = map.querySourceFeatures(SOURCE_ID);
     const clusteredFeatures = features.filter((f) => f.properties?.cluster);
     const unclusteredFeatures = features.filter((f) => !f.properties?.cluster);
-    console.log(
-      'Clusters:',
-      clusteredFeatures.length,
-      'Unclustered:',
-      unclusteredFeatures.length,
-      'Radius:',
-      CLUSTER_RADIUS
-    );
 
     const currentPins = pinsRef.current;
     const themeMode = (themeRef.current === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
@@ -449,9 +441,7 @@ export function DashboardMap({
 
     const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
     if (source) {
-      const geojson = pinsToGeoJSON(pins, activeFilters, activeTrafficTypes);
-      console.log('Set source data:', geojson.features.length, 'features');
-      source.setData(geojson);
+      source.setData(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes));
     }
   }, [pins, activeFilters, activeTrafficTypes]);
 

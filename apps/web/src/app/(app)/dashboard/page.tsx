@@ -88,7 +88,7 @@ export default function DashboardPage() {
             weather={weather}
             isLoading={isLoading}
             error={error}
-            locationLabel={isGps ? t('yourLocation') : 'Slovakia'}
+            locationLabel={isGps ? t('yourLocation') : t('defaultLocation')}
             onRetry={refresh}
             airQuality={airQuality}
             aqiLoading={aqiIsLoading}

@@ -3,7 +3,8 @@
     "loadingMapData": "Loading map data...",
     "yourLocation": "Your location",
     "scheduled": "Scheduled",
-    "active": "Active"
+    "active": "Active",
+    "defaultLocation": "Slovakia"
   },
   "outages": {
     "electricity": "Electricity",
@@ -22,11 +23,31 @@
     "congestion": "Congestion",
     "event": "Events",
     "weather": "Weather",
-    "other": "Other"
+    "other": "Other",
+    "close": "Close"
+  },
+  "notifications": {
+    "title": "Notifications"
+  },
+  "alerts": {
+    "all": "All",
+    "sent": "Sent",
+    "active": "Active",
+    "resolved": "Resolved",
+    "noNotifications": "No notifications yet",
+    "loadMore": "Load more"
+  },
+  "common": {
+    "retry": "Retry",
+    "loading": "Loading..."
   },
   "pushSetup": {
     "unsupported": "Your browser does not support push notifications.",
-    "unconfigured": "Push notifications are not configured."
+    "unconfigured": "Push notifications are not configured.",
+    "locationExplain": "To receive notifications about events in your area. Your browser will ask — click",
+    "locationDenied": "Location access is denied. You can add locations manually in the \"Saved Locations\" section below in Settings.",
+    "pushExplain": "To receive alerts even when the page is closed. Your browser will ask — click",
+    "pushDenied": "Notifications are blocked. Enable them in your browser settings (lock icon in the address bar)."
   },
   "categoryGroups": {
     "weather": "Weather",

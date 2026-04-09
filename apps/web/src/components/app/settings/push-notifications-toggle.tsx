@@ -126,15 +126,13 @@ export function PushNotificationsToggle() {
                   <div className="flex-1">
                     <p className="text-sm font-medium text-text-primary">1. {t('stepLocation')}</p>
                     <p className="mt-1 text-xs text-text-secondary">
-                      Aby si dostával notifikácie o udalostiach vo svojom okolí. Prehliadač sa
-                      opýta — klikni <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
+                      {t('locationExplain')} <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
                     </p>
                     {geoGranted ? (
                       <p className="mt-2 text-xs font-medium text-success">✓ {t('allowed')}</p>
                     ) : geo.permission === 'denied' || geoError ? (
                       <div className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
-                        Poloha je zamietnutá. Môžeš si pridať lokácie manuálne v sekcii
-                        &quot;Uložené lokácie&quot; nižšie v Settings.
+                        {t('locationDenied')}
                       </div>
                     ) : (
                       <button
@@ -161,15 +159,13 @@ export function PushNotificationsToggle() {
                   <div className="flex-1">
                     <p className="text-sm font-medium text-text-primary">2. {t('stepPush')}</p>
                     <p className="mt-1 text-xs text-text-secondary">
-                      Aby si dostával upozornenia aj keď je stránka zatvorená. Prehliadač sa
-                      opýta — klikni <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
+                      {t('pushExplain')} <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
                     </p>
                     {pushGranted ? (
                       <p className="mt-2 text-xs font-medium text-accent">✓ {t('allowed')}</p>
                     ) : permission === 'denied' ? (
                       <div className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
-                        Notifikácie sú zablokované. Povoľ ich v nastaveniach prehliadača (zámok
-                        v adresnom riadku).
+                        {t('pushDenied')}
                       </div>
                     ) : (
                       <button

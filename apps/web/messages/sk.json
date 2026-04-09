@@ -3,7 +3,8 @@
     "loadingMapData": "Načítavam údaje mapy...",
     "yourLocation": "Tvoja poloha",
     "scheduled": "Plánované",
-    "active": "Aktívne"
+    "active": "Aktívne",
+    "defaultLocation": "Slovensko"
   },
   "outages": {
     "electricity": "Elektrina",
@@ -22,11 +23,31 @@
     "congestion": "Kolóny",
     "event": "Udalosti",
     "weather": "Počasie",
-    "other": "Ostatné"
+    "other": "Ostatné",
+    "close": "Zavrieť"
+  },
+  "notifications": {
+    "title": "Notifikácie"
+  },
+  "alerts": {
+    "all": "Všetky",
+    "sent": "Odoslané",
+    "active": "Aktívne",
+    "resolved": "Vyriešené",
+    "noNotifications": "Zatiaľ žiadne notifikácie",
+    "loadMore": "Načítať viac"
+  },
+  "common": {
+    "retry": "Skúsiť znova",
+    "loading": "Načítavam..."
   },
   "pushSetup": {
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
-    "unconfigured": "Push notifikácie nie sú nakonfigurované."
+    "unconfigured": "Push notifikácie nie sú nakonfigurované.",
+    "locationExplain": "Aby si dostával notifikácie o udalostiach vo svojom okolí. Prehliadač sa opýta — klikni",
+    "locationDenied": "Poloha je zamietnutá. Môžeš si pridať lokácie manuálne v sekcii \"Uložené lokácie\" nižšie v Settings.",
+    "pushExplain": "Aby si dostával upozornenia aj keď je stránka zatvorená. Prehliadač sa opýta — klikni",
+    "pushDenied": "Notifikácie sú zablokované. Povoľ ich v nastaveniach prehliadača (zámok v adresnom riadku)."
   },
   "categoryGroups": {
     "weather": "Počasie",
