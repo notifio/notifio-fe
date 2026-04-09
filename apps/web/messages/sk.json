@@ -4,7 +4,37 @@
     "yourLocation": "Tvoja poloha",
     "scheduled": "Plánované",
     "active": "Aktívne",
-    "defaultLocation": "Slovensko"
+    "defaultLocation": "Slovensko",
+    "eventUnavailable": "Detaily udalosti nie sú dostupné",
+    "coversYourArea": "Táto udalosť sa týka tvojej oblasti",
+    "closeOverlay": "Zavrieť"
+  },
+  "weather": {
+    "feelsLike": "Pocitovo",
+    "clearNight": "Jasná noc",
+    "cloudyNight": "Zamračená noc",
+    "details": "Detaily",
+    "pollenLevel": "Peľ"
+  },
+  "aqi": {
+    "good": "Kvalita ovzdušia je uspokojivá.",
+    "fair": "Prijateľná. Citlivé skupiny opatrne.",
+    "moderate": "Citlivé skupiny môžu pociťovať podráždenie.",
+    "poor": "Každý môže pociťovať zdravotné účinky.",
+    "very_poor": "Zdravotné varovanie. Vyhnite sa aktivitám vonku."
+  },
+  "pollen": {
+    "high": "Vysoké hladiny peľu. Alergici obmedzte pobyt vonku.",
+    "moderate": "Stredné hladiny peľu. Citliví jedinci môžu pociťovať príznaky.",
+    "low": "Nízke hladiny peľu. Vo všeobecnosti bezpečné pre alergikov.",
+    "birch": "Breza",
+    "grass": "Trávy",
+    "alder": "Jelša",
+    "ragweed": "Ambrózia"
+  },
+  "weatherWarnings": {
+    "validUntil": "Platné do",
+    "moreWarnings": "ďalšie výstrahy"
   },
   "outages": {
     "electricity": "Elektrina",
@@ -29,6 +59,21 @@
   "notifications": {
     "title": "Notifikácie"
   },
+  "notificationType": {
+    "start": "Začína",
+    "update": "Aktualizované",
+    "expiry": "Končí čoskoro",
+    "all_clear": "Vyriešené",
+    "forecast": "Predpoveď",
+    "reminder": "Stále aktívne"
+  },
+  "locationBanner": {
+    "bothOff": "Push notifikácie a sledovanie polohy sú vypnuté.",
+    "pushOkGeoOff": "Sledovanie polohy je vypnuté — notifikácie používajú len uložené lokácie.",
+    "pushOffGeoOk": "Push notifikácie sú vypnuté — nebudeš dostávať upozornenia.",
+    "pushDenied": "Notifikácie sú zablokované v prehliadači. Klikni na zámok v adresnom riadku.",
+    "geoDenied": "Prístup k polohe zamietnutý. Pridaj lokácie manuálne v Nastaveniach."
+  },
   "alerts": {
     "all": "Všetky",
     "sent": "Odoslané",
@@ -47,7 +92,9 @@
     "locationExplain": "Aby si dostával notifikácie o udalostiach vo svojom okolí. Prehliadač sa opýta — klikni",
     "locationDenied": "Poloha je zamietnutá. Môžeš si pridať lokácie manuálne v sekcii \"Uložené lokácie\" nižšie v Settings.",
     "pushExplain": "Aby si dostával upozornenia aj keď je stránka zatvorená. Prehliadač sa opýta — klikni",
-    "pushDenied": "Notifikácie sú zablokované. Povoľ ich v nastaveniach prehliadača (zámok v adresnom riadku)."
+    "pushDenied": "Notifikácie sú zablokované. Povoľ ich v nastaveniach prehliadača (zámok v adresnom riadku).",
+    "denied": "Zablokované",
+    "geoEnabled": "Sledovanie polohy je aktívne — upozornenia sú cielené na tvoju oblasť."
   },
   "categoryGroups": {
     "weather": "Počasie",
@@ -58,7 +105,10 @@
   "nav": {
     "signIn": "Prihlásiť sa",
     "dashboard": "Prehľad",
-    "settings": "Nastavenia"
+    "map": "Mapa",
+    "notifications": "Notifikácie",
+    "settings": "Nastavenia",
+    "profile": "Profil"
   },
   "landing": {
     "hero": {

@@ -4,7 +4,37 @@
     "yourLocation": "Your location",
     "scheduled": "Scheduled",
     "active": "Active",
-    "defaultLocation": "Slovakia"
+    "defaultLocation": "Slovakia",
+    "eventUnavailable": "Event details not available",
+    "coversYourArea": "This event covers your area",
+    "closeOverlay": "Close"
+  },
+  "weather": {
+    "feelsLike": "Feels like",
+    "clearNight": "Clear night",
+    "cloudyNight": "Cloudy night",
+    "details": "Details",
+    "pollenLevel": "Pollen"
+  },
+  "aqi": {
+    "good": "Air quality is satisfactory.",
+    "fair": "Acceptable. Sensitive groups take care.",
+    "moderate": "Sensitive groups may experience irritation.",
+    "poor": "Everyone may experience health effects.",
+    "very_poor": "Health alert. Avoid outdoor activity."
+  },
+  "pollen": {
+    "high": "High pollen levels. Allergy sufferers limit outdoor exposure.",
+    "moderate": "Moderate pollen. Sensitive individuals may notice symptoms.",
+    "low": "Low pollen levels. Generally safe for allergy sufferers.",
+    "birch": "Birch",
+    "grass": "Grass",
+    "alder": "Alder",
+    "ragweed": "Ragweed"
+  },
+  "weatherWarnings": {
+    "validUntil": "Valid until",
+    "moreWarnings": "more warnings"
   },
   "outages": {
     "electricity": "Electricity",
@@ -29,6 +59,21 @@
   "notifications": {
     "title": "Notifications"
   },
+  "notificationType": {
+    "start": "Starting now",
+    "update": "Updated",
+    "expiry": "Ending soon",
+    "all_clear": "Resolved",
+    "forecast": "Forecast",
+    "reminder": "Still active"
+  },
+  "locationBanner": {
+    "bothOff": "Push notifications and location tracking are off.",
+    "pushOkGeoOff": "Location tracking is off — notifications use saved locations only.",
+    "pushOffGeoOk": "Push notifications are off — you won't receive alerts.",
+    "pushDenied": "Notifications are blocked in your browser. Click the lock icon to allow.",
+    "geoDenied": "Location access denied. Add locations manually in Settings."
+  },
   "alerts": {
     "all": "All",
     "sent": "Sent",
@@ -47,7 +92,9 @@
     "locationExplain": "To receive notifications about events in your area. Your browser will ask — click",
     "locationDenied": "Location access is denied. You can add locations manually in the \"Saved Locations\" section below in Settings.",
     "pushExplain": "To receive alerts even when the page is closed. Your browser will ask — click",
-    "pushDenied": "Notifications are blocked. Enable them in your browser settings (lock icon in the address bar)."
+    "pushDenied": "Notifications are blocked. Enable them in your browser settings (lock icon in the address bar).",
+    "denied": "Blocked",
+    "geoEnabled": "Location tracking is active — alerts are targeted to your area."
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -58,7 +105,10 @@
   "nav": {
     "signIn": "Sign in",
     "dashboard": "Dashboard",
-    "settings": "Settings"
+    "map": "Map",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "profile": "Profile"
   },
   "landing": {
     "hero": {

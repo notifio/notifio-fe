@@ -62,6 +62,7 @@ export function normalizeMapPins(
   electricityOutages: OutageRecord[],
   waterOutages: OutageRecord[],
   heatOutages: OutageRecord[],
+  gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
 ): MapPin[] {
   const pins: MapPin[] = [];
@@ -76,6 +77,10 @@ export function normalizeMapPins(
   }
   for (const o of heatOutages) {
     const pin = outageToPin(o, 'heat');
+    if (pin) pins.push(pin);
+  }
+  for (const o of gasOutages) {
+    const pin = outageToPin(o, 'gas');
     if (pin) pins.push(pin);
   }
   for (const t of trafficIncidents) {

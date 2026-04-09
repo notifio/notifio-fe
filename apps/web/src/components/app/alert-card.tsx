@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
@@ -12,14 +13,55 @@ interface AlertCardProps {
   notification: NotificationHistoryItem;
   duplicateCount?: number;
   isSelected?: boolean;
+  isLoading?: boolean;
   onClick?: () => void;
 }
 
+type NotificationType =
+  | 'creation'
+  | 'start'
+  | 'update'
+  | 'expiry'
+  | 'all_clear'
+  | 'forecast'
+  | 'reminder';
+
 function isResolved(n: NotificationHistoryItem): boolean {
   if (n.status !== 'sent') return true;
+  const nt = (n as Record<string, unknown>).notificationType;
+  if (typeof nt === 'string') return nt === 'all_clear';
   if (n.title.startsWith('Ukončené:') || n.title.startsWith('Resolved:')) return true;
   return false;
 }
+
+/** Use notificationType field if available, otherwise infer from title patterns. */
+function inferType(n: NotificationHistoryItem): NotificationType | null {
+  const nt = (n as Record<string, unknown>).notificationType;
+  if (typeof nt === 'string' && ['creation', 'start', 'update', 'expiry', 'all_clear', 'forecast', 'reminder'].includes(nt)) {
+    return nt as NotificationType;
+  }
+  const t = n.title.toLowerCase();
+  if (t.startsWith('ukončené:') || t.startsWith('resolved:')) return 'all_clear';
+  if (t.includes('predpoveď') || t.includes('forecast')) return 'forecast';
+  if (t.includes('aktualizácia') || t.includes('update')) return 'update';
+  if (t.includes('končí') || t.includes('expir')) return 'expiry';
+  if (t.includes('začína') || t.includes('starting')) return 'start';
+  if (t.includes('stále aktívne') || t.includes('still active') || t.includes('reminder'))
+    return 'reminder';
+  return null;
+}
+
+const TYPE_BADGE_STYLES: Record<
+  string,
+  { bg: string; text: string; border?: string }
+> = {
+  start: { bg: 'rgba(52,199,89,0.15)', text: '#34C759' },
+  update: { bg: 'rgba(58,134,255,0.15)', text: '#3A86FF' },
+  expiry: { bg: 'rgba(245,158,11,0.15)', text: '#D97706' },
+  all_clear: { bg: 'rgba(52,199,89,0.15)', text: '#34C759' },
+  forecast: { bg: 'rgba(107,122,153,0.1)', text: '#6B7A99' },
+  reminder: { bg: 'rgba(107,122,153,0.1)', text: '#6B7A99' },
+};
 
 const SEVERITY_COLORS: Record<string, { bg: string; text: string }> = {
   critical: { bg: 'rgba(255,59,48,0.15)', text: '#FF3B30' },
@@ -44,14 +86,17 @@ export function AlertCard({
   notification,
   duplicateCount,
   isSelected = false,
+  isLoading = false,
   onClick,
 }: AlertCardProps) {
   const { resolvedTheme } = useTheme();
+  const tn = useTranslations('notificationType');
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === 'dark';
 
   const resolved = isResolved(notification);
+  const notifType = inferType(notification);
   const icon = getNotificationIcon(notification.category);
   const accentColor = resolved
     ? '#34C759'
@@ -59,19 +104,19 @@ export function AlertCard({
 
   const iconBgAlpha = isDark ? 0.15 : 0.1;
 
+  const typeBadge = notifType && notifType !== 'creation' ? TYPE_BADGE_STYLES[notifType] : null;
+
   return (
     <button
       onClick={onClick}
-      className={`flex w-full text-left rounded-xl bg-card transition-colors hover:bg-card/80 ${
-        isSelected ? 'ring-1 ring-accent' : ''
-      }`}
+      className={`flex w-full text-left rounded-xl bg-card transition-colors hover:bg-card/80 ${isLoading ? 'animate-pulse' : ''}`}
       style={{ opacity: resolved ? 0.55 : 1 }}
     >
       {/* Accent bar */}
       <div
         style={{
-          width: '3px',
-          borderRadius: '3px 0 0 3px',
+          width: isSelected ? '5px' : '3px',
+          borderRadius: '12px 0 0 12px',
           backgroundColor: accentColor,
           flexShrink: 0,
         }}
@@ -115,7 +160,7 @@ export function AlertCard({
           )}
 
           {/* Meta row */}
-          <div className="mt-1.5 flex items-center gap-1.5">
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             {/* Severity / resolved badge */}
             {resolved ? (
               <span
@@ -125,7 +170,7 @@ export function AlertCard({
                   color: '#34C759',
                 }}
               >
-                resolved
+                {tn('all_clear')}
               </span>
             ) : (
               <span
@@ -138,6 +183,20 @@ export function AlertCard({
                 }}
               >
                 {notification.severity}
+              </span>
+            )}
+
+            {/* Notification type badge */}
+            {typeBadge && notifType && notifType !== 'all_clear' && (
+              <span
+                className="rounded px-2 py-0.5 text-[10px] font-medium"
+                style={{
+                  backgroundColor: typeBadge.bg,
+                  color: typeBadge.text,
+                  border: typeBadge.border,
+                }}
+              >
+                {tn(notifType)}
               </span>
             )}
 

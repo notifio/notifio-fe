@@ -10,28 +10,27 @@ const DISMISSED_KEY = 'notifio_banner_dismissed';
 const DEVICE_ID_KEY = 'notifio_device_id';
 const FCM_TOKEN_KEY = 'notifio_fcm_token';
 
-type Status = {
-  pushFullyEnabled: boolean;
+interface PermissionStatus {
+  pushGranted: boolean;
+  pushDenied: boolean;
   geoGranted: boolean;
   geoDenied: boolean;
-};
+}
 
 export function LocationStatusBanner() {
   const t = useTranslations('locationBanner');
   const pathname = usePathname();
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<PermissionStatus | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Don't show on Settings page itself
     if (pathname?.startsWith('/settings')) {
       setStatus(null);
       return;
     }
 
-    // Respect session dismissal
     if (sessionStorage.getItem(DISMISSED_KEY) === '1') {
       setDismissed(true);
       return;
@@ -39,10 +38,10 @@ export function LocationStatusBanner() {
 
     const hasDevice = localStorage.getItem(DEVICE_ID_KEY) !== null;
     const hasToken = localStorage.getItem(FCM_TOKEN_KEY) !== null;
-    const notifPermission = 'Notification' in window ? Notification.permission : 'default';
-    const pushFullyEnabled = hasDevice && hasToken && notifPermission === 'granted';
+    const notifPerm = 'Notification' in window ? Notification.permission : 'default';
+    const pushGranted = hasDevice && hasToken && notifPerm === 'granted';
+    const pushDenied = notifPerm === 'denied';
 
-    // Query geolocation permission state
     let cancelled = false;
     const checkGeo = async (): Promise<void> => {
       let geoGranted = false;
@@ -53,11 +52,11 @@ export function LocationStatusBanner() {
           geoGranted = result.state === 'granted';
           geoDenied = result.state === 'denied';
         } catch {
-          // Safari may throw — ignore, show banner conservatively
+          // Safari may throw — ignore
         }
       }
       if (!cancelled) {
-        setStatus({ pushFullyEnabled, geoGranted, geoDenied });
+        setStatus({ pushGranted, pushDenied, geoGranted, geoDenied });
       }
     };
     void checkGeo();
@@ -74,19 +73,28 @@ export function LocationStatusBanner() {
 
   if (!status || dismissed) return null;
 
-  const needsPush = !status.pushFullyEnabled;
-  const needsGeo = !status.geoGranted;
+  // Both OK — no banner
+  if (status.pushGranted && status.geoGranted) return null;
 
-  // Everything is set up — no banner
-  if (!needsPush && !needsGeo) return null;
-
-  const message = t('enablePush');
+  // Determine message key based on permission matrix
+  let messageKey: string;
+  if (status.pushDenied) {
+    messageKey = 'pushDenied';
+  } else if (status.geoDenied) {
+    messageKey = 'geoDenied';
+  } else if (!status.pushGranted && !status.geoGranted) {
+    messageKey = 'bothOff';
+  } else if (status.pushGranted && !status.geoGranted) {
+    messageKey = 'pushOkGeoOff';
+  } else {
+    messageKey = 'pushOffGeoOk';
+  }
 
   return (
     <div className="border-b border-amber-200 bg-amber-50">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-3 md:px-8">
         <IconAlertTriangle size={18} className="shrink-0 text-amber-600" />
-        <p className="flex-1 text-sm text-amber-900">{message}</p>
+        <p className="flex-1 text-sm text-amber-900">{t(messageKey)}</p>
         <Link
           href="/settings"
           className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-amber-700"
