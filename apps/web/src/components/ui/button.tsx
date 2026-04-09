@@ -3,10 +3,10 @@ import { type ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const VARIANT_STYLES = {
-  primary: 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:bg-[#1E40AF]',
+  primary: 'bg-accent text-white hover:bg-accent/90 active:bg-accent/80',
   secondary: 'bg-[#1E293B] text-white hover:bg-[#334155] active:bg-[#0F172A]',
-  ghost: 'bg-transparent text-current hover:bg-gray-100 active:bg-gray-200',
-  outline: 'border border-gray-300 bg-transparent text-current hover:bg-gray-50 active:bg-gray-100',
+  ghost: 'bg-transparent text-current hover:bg-card active:bg-card',
+  outline: 'border border-border bg-transparent text-current hover:bg-card active:bg-card',
 } as const;
 
 const SIZE_STYLES = {
@@ -38,7 +38,7 @@ type ButtonProps = ButtonAsButton | ButtonAsAnchor;
 
 export function Button({ variant = 'primary', size = 'md', className, ...props }: ButtonProps) {
   const classes = cn(
-    'inline-flex items-center justify-center font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB] disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50',
     VARIANT_STYLES[variant],
     SIZE_STYLES[size],
     className

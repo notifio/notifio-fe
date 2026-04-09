@@ -1,43 +1,74 @@
 'use client';
 
-import { Loader2, RefreshCw } from 'lucide-react';
+import { IconLoader2, IconRefresh } from '@tabler/icons-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { Root } from 'react-dom/client';
 
-import { MAP_PIN_STYLES } from '@/lib/map-pin-config';
-import type { MapPin, MapPinSource } from '@/lib/normalize-pins';
+import type { TrafficFlowResponse } from '@notifio/api-client';
 
-import { MapPinPopup } from './map-pin-popup';
+import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
+
+import { MapMarker } from './map-marker';
 
 const DEFAULT_ZOOM = 13;
 const FALLBACK_ZOOM = 7;
-const TILE_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const SOURCE_ID = 'pins';
-const SCHEDULED_OPACITY = 0.5;
+const FLOW_SOURCE_ID = 'traffic-flow';
+
+const CLUSTER_MAX_ZOOM = 16;
+const CLUSTER_RADIUS = 80;
+
+function flowToGeoJSON(
+  flow: TrafficFlowResponse | null
+): GeoJSON.FeatureCollection<GeoJSON.LineString> {
+  if (!flow) return { type: 'FeatureCollection', features: [] };
+  return {
+    type: 'FeatureCollection',
+    features: flow.segments
+      .filter((seg) => seg.congestion !== 'free')
+      .map((seg, i) => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: seg.coordinates,
+        },
+        properties: {
+          id: i,
+          congestion: seg.congestion,
+          currentSpeed: seg.currentSpeed,
+          freeFlowSpeed: seg.freeFlowSpeed,
+        },
+      })),
+  };
+}
 
 function pinsToGeoJSON(
   pins: MapPin[],
   activeFilters: Set<MapPinSource>,
+  activeTrafficTypes: Set<TrafficIncidentType>
 ): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: 'FeatureCollection',
     features: pins
-      .filter((p) => activeFilters.has(p.source))
+      .filter((p) => {
+        if (!activeFilters.has(p.source)) return false;
+        if (p.source === 'traffic') {
+          return p.incidentType ? activeTrafficTypes.has(p.incidentType) : false;
+        }
+        return true;
+      })
       .map((p) => ({
         type: 'Feature' as const,
         geometry: { type: 'Point' as const, coordinates: [p.lng, p.lat] },
         properties: {
           id: p.id,
-          source: p.source,
-          status: p.status,
-          title: p.title,
-          description: p.description,
-          locality: p.locality ?? '',
-          timestamp: p.timestamp,
-          color: MAP_PIN_STYLES[p.source].color,
-          opacity: p.status === 'scheduled' ? SCHEDULED_OPACITY : 1,
         },
       })),
   };
@@ -46,43 +77,238 @@ function pinsToGeoJSON(
 interface DashboardMapProps {
   pins?: MapPin[];
   activeFilters?: Set<MapPinSource>;
+  activeTrafficTypes?: Set<TrafficIncidentType>;
+  flowSegments?: TrafficFlowResponse | null;
   isLoading?: boolean;
   error?: string | null;
   onRetry?: () => void;
   center?: { lat: number; lng: number };
   isGpsCenter?: boolean;
+  onCenterChange?: (center: { lat: number; lng: number }) => void;
 }
 
 export function DashboardMap({
   pins = [],
   activeFilters = new Set(),
+  activeTrafficTypes = new Set(),
+  flowSegments = null,
   isLoading = false,
   error = null,
   onRetry,
   center,
   isGpsCenter = false,
+  onCenterChange,
 }: DashboardMapProps) {
+  const t = useTranslations('map');
+  const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-  const popupRef = useRef<maplibregl.Popup | null>(null);
   const sourceReady = useRef(false);
   const userMarkerRef = useRef<maplibregl.Marker | null>(null);
+  const markersRef = useRef<
+    Map<string, { marker: maplibregl.Marker; root: Root; pin: MapPin }>
+  >(new Map());
+  const clusterMarkersRef = useRef<Map<number, { marker: maplibregl.Marker; root: Root }>>(
+    new Map()
+  );
+  const [expandedPinId, setExpandedPinId] = useState<string | null>(null);
 
-  const closePopup = useCallback(() => {
-    popupRef.current?.remove();
-    popupRef.current = null;
-  }, []);
+  // Keep refs in sync so event-driven callbacks see current values
+  const pinsRef = useRef(pins);
+  pinsRef.current = pins;
+  const filtersRef = useRef(activeFilters);
+  filtersRef.current = activeFilters;
+  const trafficTypesRef = useRef(activeTrafficTypes);
+  trafficTypesRef.current = activeTrafficTypes;
+  const themeRef = useRef(resolvedTheme);
+  themeRef.current = resolvedTheme;
+  const expandedPinIdRef = useRef(expandedPinId);
+  expandedPinIdRef.current = expandedPinId;
+  const tRef = useRef(t);
+  tRef.current = t;
+  const onCenterChangeRef = useRef(onCenterChange);
+  onCenterChangeRef.current = onCenterChange;
+  const debouncedCenterChange = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // ── Marker sync ──────────────────────────────────────────────────────
+  // Single function drives BOTH cluster and individual markers from
+  // querySourceFeatures so MapLibre's clustering is the source of truth.
+  const syncMarkers = useRef((map: maplibregl.Map) => {
+    if (!sourceReady.current) return;
+
+    const features = map.querySourceFeatures(SOURCE_ID);
+    const clusteredFeatures = features.filter((f) => f.properties?.cluster);
+    const unclusteredFeatures = features.filter((f) => !f.properties?.cluster);
+
+    const currentPins = pinsRef.current;
+    const themeMode = (themeRef.current === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
+    const expandedId = expandedPinIdRef.current;
+    const translate = tRef.current;
+    const labels = { scheduled: translate('scheduled'), active: translate('active') };
+
+    // ── Cluster markers ──────────────────────────────────────────────
+    const clusters = new Map<number, GeoJSON.Feature>();
+    for (const f of clusteredFeatures) {
+      clusters.set(f.properties!.cluster_id as number, f);
+    }
+
+    // Remove stale cluster markers
+    for (const [id, entry] of clusterMarkersRef.current) {
+      if (!clusters.has(id)) {
+        entry.marker.remove();
+        clusterMarkersRef.current.delete(id);
+      }
+    }
+
+    for (const [clusterId, feature] of clusters) {
+      const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
+      const count = (feature.properties?.point_count as number) ?? 0;
+
+      const existing = clusterMarkersRef.current.get(clusterId);
+      if (existing) {
+        existing.marker.setLngLat(coords);
+      } else {
+        const el = document.createElement('div');
+        el.style.zIndex = '5';
+        const root = createRoot(el);
+
+        const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
+
+        const placeholderPin: MapPin = {
+          id: `cluster-${clusterId}`,
+          source: 'traffic',
+          status: 'active',
+          lat: coords[1],
+          lng: coords[0],
+          title: '',
+          description: '',
+          timestamp: new Date().toISOString(),
+        };
+
+        const zoomToCluster = () => {
+          source.getClusterExpansionZoom(clusterId).then((zoom) => {
+            map.easeTo({ center: coords, zoom });
+          });
+        };
+
+        root.render(
+          <MapMarker
+            pin={placeholderPin}
+            isExpanded={false}
+            theme={themeMode}
+            labels={labels}
+            clusterCount={count}
+            onToggle={zoomToCluster}
+            onClose={() => {}}
+          />
+        );
+
+        const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat(coords)
+          .addTo(map);
+
+        clusterMarkersRef.current.set(clusterId, { marker, root });
+
+        // Async: resolve first leaf for real pin style
+        source
+          .getClusterLeaves(clusterId, 1, 0)
+          .then((leaves) => {
+            const leaf = leaves[0];
+            if (leaf?.properties) {
+              const leafId = leaf.properties.id as string | undefined;
+              const matchedPin = leafId ? currentPins.find((p) => p.id === leafId) : undefined;
+              if (matchedPin) {
+                const styledPin: MapPin = {
+                  ...placeholderPin,
+                  source: matchedPin.source,
+                  incidentType: matchedPin.incidentType,
+                };
+                root.render(
+                  <MapMarker
+                    pin={styledPin}
+                    isExpanded={false}
+                    theme={themeMode}
+                    labels={labels}
+                    clusterCount={count}
+                    onToggle={zoomToCluster}
+                    onClose={() => {}}
+                  />
+                );
+              }
+            }
+          })
+          .catch(() => {
+            // Leaf lookup failed — keep default style
+          });
+      }
+    }
+
+    // ── Individual pin markers (unclustered only) ────────────────────
+    const unclusteredIds = new Set<string>();
+    for (const f of unclusteredFeatures) {
+      const id = f.properties?.id as string | undefined;
+      if (id) unclusteredIds.add(id);
+    }
+
+    // Remove markers for pins that are now clustered or filtered out
+    for (const [id, entry] of markersRef.current) {
+      if (!unclusteredIds.has(id)) {
+        entry.marker.remove();
+        markersRef.current.delete(id);
+      }
+    }
+
+    // Create markers for newly unclustered pins
+    for (const pinId of unclusteredIds) {
+      if (markersRef.current.has(pinId)) continue;
+
+      const pin = currentPins.find((p) => p.id === pinId);
+      if (!pin) continue;
+
+      const el = document.createElement('div');
+      const root = createRoot(el);
+      root.render(
+        <MapMarker
+          pin={pin}
+          isExpanded={expandedId === pin.id}
+          theme={themeMode}
+          labels={labels}
+          onToggle={() => setExpandedPinId((prev) => (prev === pin.id ? null : pin.id))}
+          onClose={() => setExpandedPinId(null)}
+        />
+      );
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([pin.lng, pin.lat])
+        .addTo(map);
+      markersRef.current.set(pinId, { marker, root, pin });
+    }
+  });
 
   // Initialize map
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const mapCenter = center ?? { lat: 48.67, lng: 19.70 };
-    const zoom = center && isGpsCenter ? DEFAULT_ZOOM : (center ? DEFAULT_ZOOM : FALLBACK_ZOOM);
+    // Inject expand animation once
+    if (!document.getElementById('pin-expand-style')) {
+      const style = document.createElement('style');
+      style.id = 'pin-expand-style';
+      style.textContent = `
+        @keyframes pin-expand {
+          from { opacity: 0.8; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const mapCenter = center ?? { lat: 48.67, lng: 19.7 };
+    const zoom = center && isGpsCenter ? DEFAULT_ZOOM : center ? DEFAULT_ZOOM : FALLBACK_ZOOM;
+
+    const tileStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
 
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: TILE_STYLE,
+      style: tileStyle,
       center: [mapCenter.lng, mapCenter.lat],
       zoom,
     });
@@ -90,147 +316,150 @@ export function DashboardMap({
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
     map.on('load', () => {
+      // Traffic flow roads (rendered underneath pins)
+      map.addSource(FLOW_SOURCE_ID, {
+        type: 'geojson',
+        data: flowToGeoJSON(flowSegments),
+      });
+      map.addLayer({
+        id: 'traffic-flow-line',
+        type: 'line',
+        source: FLOW_SOURCE_ID,
+        paint: {
+          'line-color': [
+            'match',
+            ['get', 'congestion'],
+            'moderate',
+            '#EAB308',
+            'heavy',
+            '#FF7A2F',
+            'severe',
+            '#FF3B30',
+            '#EAB308',
+          ],
+          'line-width': ['match', ['get', 'congestion'], 'moderate', 3, 'heavy', 4, 'severe', 5, 3],
+          'line-opacity': 0.75,
+        },
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+      });
+
       map.addSource(SOURCE_ID, {
         type: 'geojson',
-        data: pinsToGeoJSON(pins, activeFilters),
+        data: pinsToGeoJSON(pins, activeFilters, activeTrafficTypes),
         cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50,
+        clusterMaxZoom: CLUSTER_MAX_ZOOM,
+        clusterRadius: CLUSTER_RADIUS,
       });
-
-      // Cluster circles
       map.addLayer({
-        id: 'clusters',
+        id: 'pin-data',
         type: 'circle',
         source: SOURCE_ID,
-        filter: ['has', 'point_count'],
         paint: {
-          'circle-color': '#94A3B8',
-          'circle-radius': ['step', ['get', 'point_count'], 18, 10, 24, 50, 32],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#FFFFFF',
-        },
-      });
-
-      // Cluster count labels
-      map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: SOURCE_ID,
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-size': 12,
-        },
-        paint: {
-          'text-color': '#FFFFFF',
-        },
-      });
-
-      // Individual pin circles
-      map.addLayer({
-        id: 'unclustered-pin',
-        type: 'circle',
-        source: SOURCE_ID,
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-          'circle-color': ['get', 'color'],
-          'circle-radius': 7,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#FFFFFF',
-          'circle-opacity': ['get', 'opacity'],
+          'circle-radius': 0,
+          'circle-opacity': 0,
         },
       });
 
       sourceReady.current = true;
+
+      if (resolvedTheme === 'dark' && map.getLayer('water')) {
+        map.setPaintProperty('water', 'fill-color', '#0E223F');
+      }
+
+      // Initial sync after source is ready
+      syncMarkers.current(map);
     });
 
-    // Click cluster → zoom in
-    map.on('click', 'clusters', (e) => {
-      const feature = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })[0];
-      if (!feature) return;
-      const clusterId = feature.properties?.cluster_id as number;
-      const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
-      source.getClusterExpansionZoom(clusterId).then((zoom) => {
-        const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
-        map.easeTo({ center: coords, zoom });
-      });
+    // Re-sync when viewport changes or source data updates
+    map.on('moveend', () => {
+      syncMarkers.current(map);
+      // Debounced center change callback for dynamic data loading
+      clearTimeout(debouncedCenterChange.current);
+      debouncedCenterChange.current = setTimeout(() => {
+        const c = map.getCenter();
+        onCenterChangeRef.current?.({ lat: c.lat, lng: c.lng });
+      }, 1500);
+    });
+    map.on('sourcedata', (e) => {
+      if (e.sourceId === SOURCE_ID && sourceReady.current) {
+        syncMarkers.current(map);
+      }
     });
 
-    // Click pin → show popup
-    map.on('click', 'unclustered-pin', (e) => {
-      const feature = map.queryRenderedFeatures(e.point, { layers: ['unclustered-pin'] })[0];
-      if (!feature?.properties) return;
-      const props = feature.properties;
-      const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
-
-      const pin: MapPin = {
-        id: props.id as string,
-        source: props.source as MapPinSource,
-        status: props.status as MapPin['status'],
-        lat: coords[1],
-        lng: coords[0],
-        title: props.title as string,
-        description: props.description as string,
-        locality: (props.locality as string) || undefined,
-        timestamp: props.timestamp as string,
-      };
-
-      closePopup();
-
-      const el = document.createElement('div');
-      const root = createRoot(el);
-      const popup = new maplibregl.Popup({ closeButton: false, offset: 12, maxWidth: 'none' })
-        .setLngLat([pin.lng, pin.lat])
-        .setDOMContent(el)
-        .addTo(map);
-
-      root.render(
-        <MapPinPopup
-          pin={pin}
-          onClose={() => {
-            popup.remove();
-            popupRef.current = null;
-          }}
-        />,
-      );
-
-      popupRef.current = popup;
+    // Click map → collapse expanded pin
+    map.on('click', () => {
+      setExpandedPinId(null);
     });
-
-    // Cursors
-    map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
-    map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
-    map.on('mouseenter', 'unclustered-pin', () => { map.getCanvas().style.cursor = 'pointer'; });
-    map.on('mouseleave', 'unclustered-pin', () => { map.getCanvas().style.cursor = ''; });
 
     mapRef.current = map;
 
+    const markers = markersRef.current;
+    const clusterMarkers = clusterMarkersRef.current;
     return () => {
+      clearTimeout(debouncedCenterChange.current);
       sourceReady.current = false;
+      for (const entry of markers.values()) entry.marker.remove();
+      markers.clear();
+      for (const entry of clusterMarkers.values()) entry.marker.remove();
+      clusterMarkers.clear();
       map.remove();
       mapRef.current = null;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update source data when pins or filters change
+  // Re-render existing individual markers when expanded state or theme changes
+  useEffect(() => {
+    if (!sourceReady.current) return;
+
+    const themeMode = (resolvedTheme === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
+    const labels = { scheduled: t('scheduled'), active: t('active') };
+
+    for (const [, entry] of markersRef.current) {
+      entry.root.render(
+        <MapMarker
+          pin={entry.pin}
+          isExpanded={expandedPinId === entry.pin.id}
+          theme={themeMode}
+          labels={labels}
+          onToggle={() =>
+            setExpandedPinId((prev) => (prev === entry.pin.id ? null : entry.pin.id))
+          }
+          onClose={() => setExpandedPinId(null)}
+        />
+      );
+    }
+  }, [expandedPinId, resolvedTheme, t]);
+
+  // Update GeoJSON source data when pins or filters change
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !sourceReady.current) return;
 
     const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
     if (source) {
-      source.setData(pinsToGeoJSON(pins, activeFilters));
+      source.setData(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes));
     }
-  }, [pins, activeFilters]);
+  }, [pins, activeFilters, activeTrafficTypes]);
+
+  // Update traffic flow data
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !sourceReady.current) return;
+    const source = map.getSource(FLOW_SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+    if (source) {
+      source.setData(flowToGeoJSON(flowSegments));
+    }
+  }, [flowSegments]);
 
   // User location marker — runs when GPS resolves
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !center || !isGpsCenter) return;
 
-    // Remove old marker if any
     userMarkerRef.current?.remove();
 
     const dot = document.createElement('div');
@@ -245,7 +474,6 @@ export function DashboardMap({
       .setLngLat([center.lng, center.lat])
       .addTo(map);
 
-    // Fly to user location
     map.flyTo({ center: [center.lng, center.lat], zoom: DEFAULT_ZOOM });
 
     return () => {
@@ -254,29 +482,118 @@ export function DashboardMap({
     };
   }, [center, isGpsCenter]);
 
+  // Switch map tile style when theme changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const newStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
+    const currentStyle = map.getStyle()?.sprite;
+    const isDark = typeof currentStyle === 'string' && currentStyle.includes('dark-matter');
+    const wantDark = resolvedTheme === 'dark';
+    if (isDark !== wantDark) {
+      const savedCenter = map.getCenter();
+      const savedZoom = map.getZoom();
+
+      // Clear all HTML markers before style swap (sources are destroyed)
+      for (const entry of clusterMarkersRef.current.values()) entry.marker.remove();
+      clusterMarkersRef.current.clear();
+      for (const entry of markersRef.current.values()) entry.marker.remove();
+      markersRef.current.clear();
+
+      map.setStyle(newStyle);
+      map.once('style.load', () => {
+        map.setCenter(savedCenter);
+        map.setZoom(savedZoom);
+        // Re-add traffic flow layer
+        if (!map.getSource(FLOW_SOURCE_ID)) {
+          map.addSource(FLOW_SOURCE_ID, {
+            type: 'geojson',
+            data: flowToGeoJSON(flowSegments),
+          });
+          map.addLayer({
+            id: 'traffic-flow-line',
+            type: 'line',
+            source: FLOW_SOURCE_ID,
+            paint: {
+              'line-color': [
+                'match',
+                ['get', 'congestion'],
+                'moderate',
+                '#EAB308',
+                'heavy',
+                '#FF7A2F',
+                'severe',
+                '#FF3B30',
+                '#EAB308',
+              ],
+              'line-width': [
+                'match',
+                ['get', 'congestion'],
+                'moderate',
+                3,
+                'heavy',
+                4,
+                'severe',
+                5,
+                3,
+              ],
+              'line-opacity': 0.75,
+            },
+            layout: {
+              'line-cap': 'round',
+              'line-join': 'round',
+            },
+          });
+        }
+        // Re-add pin source — HTML markers are re-created by syncMarkers
+        if (!map.getSource(SOURCE_ID)) {
+          map.addSource(SOURCE_ID, {
+            type: 'geojson',
+            data: pinsToGeoJSON(pins, activeFilters, activeTrafficTypes),
+            cluster: true,
+            clusterMaxZoom: CLUSTER_MAX_ZOOM,
+            clusterRadius: CLUSTER_RADIUS,
+          });
+          map.addLayer({
+            id: 'pin-data',
+            type: 'circle',
+            source: SOURCE_ID,
+            paint: {
+              'circle-radius': 0,
+              'circle-opacity': 0,
+            },
+          });
+          sourceReady.current = true;
+        }
+        if (resolvedTheme === 'dark' && map.getLayer('water')) {
+          map.setPaintProperty('water', 'fill-color', '#0E223F');
+        }
+        // Markers will be re-created by the next moveend / sourcedata event.
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedTheme]);
+
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-gray-200">
-      <div ref={containerRef} className="h-full w-full" />
+    <div className="border-border relative h-full w-full overflow-hidden rounded-xl border">
+      <div ref={containerRef} className="bg-background h-full w-full" />
 
       {isLoading && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex justify-center pt-14">
-          <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur-sm">
-            <Loader2 size={14} className="animate-spin text-gray-400" />
-            <span className="text-xs text-gray-500">Loading map data…</span>
+          <div className="bg-background/90 flex items-center gap-2 rounded-full px-3 py-1.5 shadow-sm backdrop-blur-sm">
+            <IconLoader2 size={14} className="text-muted animate-spin" />
+            <span className="text-muted text-xs">{t('loadingMapData')}</span>
           </div>
         </div>
       )}
 
       {error && (
         <div className="absolute inset-x-0 top-0 z-20 flex justify-center pt-14">
-          <div className="flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 shadow-sm">
-            <span className="text-xs font-medium text-red-600">{error}</span>
+          <div className="bg-danger/10 flex items-center gap-2 rounded-full px-4 py-2 shadow-sm">
+            <span className="text-danger text-xs font-medium">{error}</span>
             {onRetry && (
-              <button
-                onClick={onRetry}
-                className="rounded-full p-1 text-red-400 hover:bg-red-100 hover:text-red-600"
-              >
-                <RefreshCw size={12} />
+              <button onClick={onRetry} className="text-danger hover:bg-danger/20 rounded-full p-1">
+                <IconRefresh size={12} />
               </button>
             )}
           </div>

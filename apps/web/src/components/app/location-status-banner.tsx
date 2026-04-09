@@ -1,8 +1,9 @@
 'use client';
 
-import { AlertTriangle, X } from 'lucide-react';
+import { IconAlertTriangle, IconX } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 const DISMISSED_KEY = 'notifio_banner_dismissed';
@@ -16,6 +17,7 @@ type Status = {
 };
 
 export function LocationStatusBanner() {
+  const t = useTranslations('locationBanner');
   const pathname = usePathname();
   const [status, setStatus] = useState<Status | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -78,35 +80,25 @@ export function LocationStatusBanner() {
   // Everything is set up — no banner
   if (!needsPush && !needsGeo) return null;
 
-  // Build message based on what's missing
-  let message: string;
-  if (needsPush && needsGeo) {
-    message = 'Zapni push notifikácie a polohu v Settings, aby si dostával relevantné upozornenia.';
-  } else if (needsPush) {
-    message = 'Zapni push notifikácie v Settings, aby si dostával upozornenia aj keď je stránka zatvorená.';
-  } else {
-    message = status.geoDenied
-      ? 'Poloha je zablokovaná — notifikácie dostaneš len pre uložené lokácie. Zapni ju v nastaveniach prehliadača.'
-      : 'Povoľ prístup k polohe v Settings pre relevantné notifikácie vo svojom okolí.';
-  }
+  const message = t('enablePush');
 
   return (
     <div className="border-b border-amber-200 bg-amber-50">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-3 md:px-8">
-        <AlertTriangle size={18} className="shrink-0 text-amber-600" />
+        <IconAlertTriangle size={18} className="shrink-0 text-amber-600" />
         <p className="flex-1 text-sm text-amber-900">{message}</p>
         <Link
           href="/settings"
           className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-amber-700"
         >
-          Otvoriť Settings
+          {t('openSettings')}
         </Link>
         <button
           onClick={handleDismiss}
           className="shrink-0 rounded p-1 text-amber-600 transition-colors hover:bg-amber-100"
-          aria-label="Zavrieť"
+          aria-label={t('close')}
         >
-          <X size={16} />
+          <IconX size={16} />
         </button>
       </div>
     </div>

@@ -1,12 +1,15 @@
 'use client';
 
-import { Bell, Check, MapPin, X } from 'lucide-react';
+import { IconBell, IconCheck, IconMapPin, IconX } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { useGeolocationTracker } from '@/hooks/use-geolocation-tracker';
 import { useWebPush } from '@/hooks/use-web-push';
 
 export function PushNotificationsToggle() {
+  const t = useTranslations('pushSetup');
+  const ts = useTranslations('settings');
   const { permission, deviceId, isLoading, error, enable, disable } = useWebPush();
   const geo = useGeolocationTracker(deviceId);
   const [showModal, setShowModal] = useState(false);
@@ -35,16 +38,16 @@ export function PushNotificationsToggle() {
 
   if (permission === 'unsupported') {
     return (
-      <div className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-        Tvoj prehliadač nepodporuje push notifikácie.
+      <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        {t('unsupported')}
       </div>
     );
   }
 
   if (permission === 'unconfigured') {
     return (
-      <div className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-        Push notifikácie nie sú nakonfigurované.
+      <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        {t('unconfigured')}
       </div>
     );
   }
@@ -56,89 +59,87 @@ export function PushNotificationsToggle() {
     <div className="space-y-3">
       {/* Status row */}
       <div className="flex items-center gap-3 rounded-lg px-4 py-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
-          <Bell size={16} className="text-blue-600" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+          <IconBell size={16} className="text-accent" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-900">Push notifikácie</p>
-          <p className="text-xs text-gray-500">
+          <p className="text-sm font-medium text-text-primary">{ts('pushNotifications')}</p>
+          <p className="text-xs text-muted">
             {pushGranted && geoGranted
-              ? 'Zapnuté s GPS trackingom'
+              ? t('enabledWithGps')
               : pushGranted
-                ? 'Zapnuté (bez GPS — len uložené lokácie)'
-                : 'Vypnuté'}
+                ? t('enabledNoGps')
+                : t('disabled')}
           </p>
         </div>
         {pushGranted ? (
           <button
             onClick={handleDisable}
             disabled={isLoading}
-            className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 disabled:opacity-50"
+            className="rounded-lg bg-card px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-border disabled:opacity-50"
           >
-            {isLoading ? 'Vypínam…' : 'Vypnúť'}
+            {isLoading ? t('disabling') : t('disable')}
           </button>
         ) : (
           <button
             onClick={handleEnableClick}
             disabled={isLoading}
-            className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
           >
-            Zapnúť
+            {t('enable')}
           </button>
         )}
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-          Chyba: {error}
+        <div className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger">
+          {error}
         </div>
       )}
 
       {/* Unified permissions modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-w-md rounded-xl bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-              <h3 className="text-lg font-semibold text-gray-900">Zapni notifikácie</h3>
+          <div className="max-w-md rounded-xl bg-background shadow-2xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
+              <h3 className="text-lg font-semibold text-text-primary">{t('title')}</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-                aria-label="Zavrieť"
+                className="rounded p-1 text-muted transition-colors hover:bg-card hover:text-text-secondary"
+                aria-label={t('close')}
               >
-                <X size={18} />
+                <IconX size={18} />
               </button>
             </div>
 
             <div className="space-y-4 px-6 py-4">
               {/* GEOLOCATION section */}
-              <div className="rounded-lg border border-gray-200 p-4">
+              <div className="rounded-lg border border-border p-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-50">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-success/10">
                     {geoGranted ? (
-                      <Check size={16} className="text-green-600" />
+                      <IconCheck size={16} className="text-success" />
                     ) : (
-                      <MapPin size={16} className="text-green-600" />
+                      <IconMapPin size={16} className="text-success" />
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">1. Prístup k polohe</p>
-                    <p className="mt-1 text-xs text-gray-600">
-                      Aby si dostával notifikácie o udalostiach vo svojom okolí. Prehliadač sa
-                      opýta — klikni <strong>&quot;Povoliť pri návšteve&quot;</strong>.
+                    <p className="text-sm font-medium text-text-primary">1. {t('stepLocation')}</p>
+                    <p className="mt-1 text-xs text-text-secondary">
+                      {t('locationExplain')} <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
                     </p>
                     {geoGranted ? (
-                      <p className="mt-2 text-xs font-medium text-green-700">✓ Povolené</p>
+                      <p className="mt-2 text-xs font-medium text-success">✓ {t('allowed')}</p>
                     ) : geo.permission === 'denied' || geoError ? (
                       <div className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
-                        Poloha je zamietnutá. Môžeš si pridať lokácie manuálne v sekcii
-                        &quot;Uložené lokácie&quot; nižšie v Settings.
+                        {t('locationDenied')}
                       </div>
                     ) : (
                       <button
                         onClick={handleGrantGeo}
                         className="mt-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
                       >
-                        Povoliť polohu
+                        {t('allowLocation')}
                       </button>
                     )}
                   </div>
@@ -146,35 +147,33 @@ export function PushNotificationsToggle() {
               </div>
 
               {/* PUSH section */}
-              <div className="rounded-lg border border-gray-200 p-4">
+              <div className="rounded-lg border border-border p-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10">
                     {pushGranted ? (
-                      <Check size={16} className="text-blue-600" />
+                      <IconCheck size={16} className="text-accent" />
                     ) : (
-                      <Bell size={16} className="text-blue-600" />
+                      <IconBell size={16} className="text-accent" />
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">2. Push notifikácie</p>
-                    <p className="mt-1 text-xs text-gray-600">
-                      Aby si dostával upozornenia aj keď je stránka zatvorená. Prehliadač sa
-                      opýta — klikni <strong>&quot;Povoliť&quot;</strong>.
+                    <p className="text-sm font-medium text-text-primary">2. {t('stepPush')}</p>
+                    <p className="mt-1 text-xs text-text-secondary">
+                      {t('pushExplain')} <strong>&quot;{t('allowOnVisit')}&quot;</strong>.
                     </p>
                     {pushGranted ? (
-                      <p className="mt-2 text-xs font-medium text-blue-700">✓ Povolené</p>
+                      <p className="mt-2 text-xs font-medium text-accent">✓ {t('allowed')}</p>
                     ) : permission === 'denied' ? (
                       <div className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">
-                        Notifikácie sú zablokované. Povoľ ich v nastaveniach prehliadača (zámok
-                        v adresnom riadku).
+                        {t('pushDenied')}
                       </div>
                     ) : (
                       <button
                         onClick={handleGrantPush}
                         disabled={isLoading}
-                        className="mt-2 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+                        className="mt-2 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
                       >
-                        {isLoading ? 'Povoľujem…' : 'Povoliť notifikácie'}
+                        {isLoading ? t('allowing') : t('allowNotifications')}
                       </button>
                     )}
                   </div>
@@ -182,12 +181,12 @@ export function PushNotificationsToggle() {
               </div>
             </div>
 
-            <div className="border-t border-gray-100 px-6 py-3">
+            <div className="border-t border-border px-6 py-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="w-full rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                className="w-full rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-border"
               >
-                {pushGranted ? 'Hotovo' : 'Zavrieť'}
+                {pushGranted ? t('done') : t('close')}
               </button>
             </div>
           </div>

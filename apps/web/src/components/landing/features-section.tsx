@@ -1,4 +1,7 @@
-import { type LucideIcon, CloudLightning, Construction, MapPin, Wind, Zap } from 'lucide-react';
+'use client';
+
+import { type Icon, IconBarrierBlock, IconBolt, IconCloudStorm, IconMapPin, IconWind } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 
 import { AnimateOnScroll } from '@/components/ui/animate-on-scroll';
 import { Card } from '@/components/ui/card';
@@ -7,55 +10,12 @@ import { Section } from '@/components/ui/section';
 import { Text } from '@/components/ui/text';
 
 interface FeatureItem {
-  icon: LucideIcon;
+  icon: Icon;
   iconColor: string;
   iconBgColor: string;
   title: string;
   description: string;
 }
-
-const FEATURES: FeatureItem[] = [
-  {
-    icon: CloudLightning,
-    iconColor: '#0EA5E9',
-    iconBgColor: '#F0F9FF',
-    title: 'Weather Warnings',
-    description:
-      'Severe storms, flash floods, extreme heat — get warned before conditions escalate, not after.',
-  },
-  {
-    icon: Construction,
-    iconColor: '#F97316',
-    iconBgColor: '#FFF7ED',
-    title: 'Traffic Updates',
-    description:
-      'Road closures, accidents, and detours around your location. Skip the gridlock entirely.',
-  },
-  {
-    icon: Wind,
-    iconColor: '#10B981',
-    iconBgColor: '#ECFDF5',
-    title: 'Air Quality',
-    description:
-      'Real-time AQI monitoring so you know when to keep the windows closed or skip the run.',
-  },
-  {
-    icon: Zap,
-    iconColor: '#8B5CF6',
-    iconBgColor: '#F5F3FF',
-    title: 'Utility Outages',
-    description:
-      'Power cuts, water disruptions, and planned maintenance — know before the lights go out.',
-  },
-  {
-    icon: MapPin,
-    iconColor: '#2563EB',
-    iconBgColor: '#EFF6FF',
-    title: 'Location-Smart',
-    description:
-      'Alerts follow you. Move neighborhoods, travel across the country — coverage adapts automatically.',
-  },
-];
 
 interface FeatureCardProps {
   feature: FeatureItem;
@@ -83,15 +43,54 @@ function FeatureCard({ feature }: FeatureCardProps) {
 }
 
 export function FeaturesSection() {
+  const t = useTranslations('landing');
+
+  const FEATURES: FeatureItem[] = [
+    {
+      icon: IconCloudStorm,
+      iconColor: '#0EA5E9',
+      iconBgColor: '#F0F9FF',
+      title: t('features.weather.title'),
+      description: t('features.weather.description'),
+    },
+    {
+      icon: IconBarrierBlock,
+      iconColor: '#F97316',
+      iconBgColor: '#FFF7ED',
+      title: t('features.traffic.title'),
+      description: t('features.traffic.description'),
+    },
+    {
+      icon: IconWind,
+      iconColor: '#10B981',
+      iconBgColor: '#ECFDF5',
+      title: t('features.airQuality.title'),
+      description: t('features.airQuality.description'),
+    },
+    {
+      icon: IconBolt,
+      iconColor: '#8B5CF6',
+      iconBgColor: '#F5F3FF',
+      title: t('features.outages.title'),
+      description: t('features.outages.description'),
+    },
+    {
+      icon: IconMapPin,
+      iconColor: '#2563EB',
+      iconBgColor: '#EFF6FF',
+      title: t('features.location.title'),
+      description: t('features.location.description'),
+    },
+  ];
+
   return (
     <Section variant="light" id="features">
       <AnimateOnScroll className="text-center">
         <Heading as="h2" size="lg">
-          Everything that matters, in one place
+          {t('features.title')}
         </Heading>
         <Text size="lg" muted className="mx-auto mt-4 max-w-2xl">
-          One app replaces five. Hyperlocal alerts powered by your exact location — no city
-          selection, no zip codes.
+          {t('features.subtitle')}
         </Text>
       </AnimateOnScroll>
 

@@ -1,4 +1,4 @@
-import { type LucideIcon, CalendarDays, CloudLightning, Construction, Wind, Zap } from 'lucide-react';
+import { type Icon, IconCalendarEvent, IconCloudStorm, IconBarrierBlock, IconWind, IconBolt } from '@tabler/icons-react';
 
 export type AlertType = 'weather' | 'traffic' | 'air_quality' | 'utility_outage' | 'event';
 
@@ -16,18 +16,18 @@ export interface AlertSummary {
 }
 
 interface AlertTypeConfig {
-  icon: LucideIcon;
+  icon: Icon;
   color: string;
   bgColor: string;
   label: string;
 }
 
 export const ALERT_TYPE_CONFIG: Record<AlertType, AlertTypeConfig> = {
-  weather: { icon: CloudLightning, color: '#0EA5E9', bgColor: '#F0F9FF', label: 'Weather' },
-  traffic: { icon: Construction, color: '#F97316', bgColor: '#FFF7ED', label: 'Traffic' },
-  air_quality: { icon: Wind, color: '#10B981', bgColor: '#ECFDF5', label: 'Air Quality' },
-  utility_outage: { icon: Zap, color: '#8B5CF6', bgColor: '#F5F3FF', label: 'Utility Outages' },
-  event: { icon: CalendarDays, color: '#EC4899', bgColor: '#FDF2F8', label: 'Events' },
+  weather: { icon: IconCloudStorm, color: '#0EA5E9', bgColor: '#F0F9FF', label: 'Weather' },
+  traffic: { icon: IconBarrierBlock, color: '#F97316', bgColor: '#FFF7ED', label: 'Traffic' },
+  air_quality: { icon: IconWind, color: '#10B981', bgColor: '#ECFDF5', label: 'Air Quality' },
+  utility_outage: { icon: IconBolt, color: '#8B5CF6', bgColor: '#F5F3FF', label: 'Utility Outages' },
+  event: { icon: IconCalendarEvent, color: '#EC4899', bgColor: '#FDF2F8', label: 'Events' },
 } as const;
 
 export const MOCK_ALERTS: AlertSummary[] = [

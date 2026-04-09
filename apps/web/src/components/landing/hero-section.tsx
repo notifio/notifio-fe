@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 import { DownloadButtons } from '@/components/landing/download-buttons';
 import { Navbar } from '@/components/landing/navbar';
 import { AnimateOnScroll } from '@/components/ui/animate-on-scroll';
@@ -59,6 +63,7 @@ function HexagonVisual() {
 }
 
 export function HeroSection() {
+  const t = useTranslations('landing');
   return (
     <Section variant="dark" className="relative min-h-[85vh] overflow-hidden pb-32 pt-8 md:pb-40 md:pt-10">
       <Navbar />
@@ -67,16 +72,13 @@ export function HeroSection() {
       <div className="relative z-10 mt-24 max-w-3xl md:mt-32">
         <AnimateOnScroll>
           <Heading as="h1" size="xl">
-            Know what&apos;s happening
-            <br />
-            around you
+            {t('hero.title')}
           </Heading>
         </AnimateOnScroll>
 
         <AnimateOnScroll delay={150}>
-          <Text size="lg" className="mt-6 max-w-xl text-gray-400">
-            Weather warnings, traffic closures, air quality alerts — delivered to your phone before
-            they affect you.
+          <Text size="lg" className="mt-6 max-w-xl text-white/60">
+            {t('hero.subtitle')}
           </Text>
         </AnimateOnScroll>
 

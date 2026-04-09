@@ -37,7 +37,7 @@ const PROVIDERS: SocialProvider[] = [
   {
     name: 'Continue with Google',
     icon: <GoogleIcon />,
-    className: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+    className: 'border border-border bg-background text-text-primary hover:bg-card',
   },
 ];
 
