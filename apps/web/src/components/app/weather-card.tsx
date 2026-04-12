@@ -65,6 +65,7 @@ export interface PollenData {
   dominant: string;
   value: number;
   unit: string;
+  components?: { [key: string]: number | null };
 }
 
 // ── Component ────────────────────────────────────────────────────────

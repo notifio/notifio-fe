@@ -30,7 +30,13 @@
     "birch": "Birch",
     "grass": "Grass",
     "alder": "Alder",
-    "ragweed": "Ragweed"
+    "ragweed": "Ragweed",
+    "mugwort": "Mugwort",
+    "olive": "Olive"
+  },
+  "nameday": {
+    "label": "Today's nameday",
+    "noData": "No nameday data"
   },
   "weatherWarnings": {
     "validUntil": "Valid until",
@@ -59,6 +65,40 @@
   "notifications": {
     "title": "Notifications"
   },
+  "notificationsPage": {
+    "title": "Notifications",
+    "tabs": {
+      "history": "History",
+      "reminders": "Reminders"
+    },
+    "filters": {
+      "all": "All",
+      "weather": "Weather",
+      "traffic": "Traffic",
+      "outages": "Outages",
+      "pollen": "Pollen",
+      "events": "Events"
+    },
+    "history": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "older": "Older",
+      "empty": "No notifications yet",
+      "markAllRead": "Mark all as read"
+    },
+    "reminders": {
+      "viewList": "List",
+      "viewCalendar": "Calendar",
+      "newReminder": "New reminder",
+      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
+      "enabled": "Active",
+      "disabled": "Paused",
+      "daily": "daily",
+      "weekly": "weekly",
+      "monthly": "monthly",
+      "once": "once"
+    }
+  },
   "notificationType": {
     "start": "Starting now",
     "update": "Updated",
@@ -66,6 +106,19 @@
     "all_clear": "Resolved",
     "forecast": "Forecast",
     "reminder": "Still active"
+  },
+  "categoryBadge": {
+    "traffic": "Traffic",
+    "weather": "Weather",
+    "weather_warning": "Warning",
+    "outage_electric": "Outage",
+    "outage_water": "Outage",
+    "outage_heat": "Outage",
+    "outage_gas": "Outage",
+    "planned_events": "Event",
+    "name_day": "Nameday",
+    "pollen": "Pollen",
+    "air_quality": "Air quality"
   },
   "locationBanner": {
     "bothOff": "Push notifications and location tracking are off.",
@@ -102,13 +155,194 @@
     "outages": "Outages",
     "events": "Events"
   },
+  "profile": {
+    "title": "Profile",
+    "memberSince": "Member since {date}",
+    "locations": {
+      "title": "Saved Locations",
+      "description": "Alerts are sent based on your saved locations",
+      "add": "Add location",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Remove this location?",
+      "name": "Location name",
+      "namePlaceholder": "e.g. Home, Work",
+      "useCurrentLocation": "Use current location",
+      "label": "Label",
+      "maxReached": "Location limit reached ({max} for your plan)",
+      "empty": "No saved locations. Add one to start receiving local alerts.",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "myEvents": {
+      "title": "My Reports",
+      "empty": "You haven't reported any events yet",
+      "resolved": "Resolved",
+      "active": "Active",
+      "resolve": "Mark resolved"
+    },
+    "account": {
+      "title": "Account",
+      "signOut": "Sign out",
+      "deleteAccount": "Delete account",
+      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
+      "deleteVerify": "Type DELETE to confirm"
+    }
+  },
   "nav": {
     "signIn": "Sign in",
     "dashboard": "Dashboard",
     "map": "Map",
     "notifications": "Notifications",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "pricing": "Pricing",
+    "reminders": "Reminders"
+  },
+  "membership": {
+    "pricing": "Pricing",
+    "currentPlan": "Current plan",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "features": "Features",
+    "popular": "Most popular",
+    "free": {
+      "name": "Free",
+      "description": "Get started with basic alerts"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "More locations and advanced features"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Full control over your notifications"
+    },
+    "checkout": {
+      "title": "Complete your upgrade",
+      "summary": "Plan summary",
+      "payButton": "Subscribe",
+      "processing": "Processing...",
+      "success": "Welcome to {tier}!",
+      "cardNumber": "Card number",
+      "expiry": "MM/YY",
+      "cvc": "CVC",
+      "testMode": "Test mode — no real charges"
+    },
+    "manage": "Manage subscription",
+    "cancelPlan": "Cancel subscription",
+    "cancelConfirm": "Are you sure? You'll lose access to {tier} features.",
+    "adFree": "Remove ads",
+    "settingsTitle": "Subscription",
+    "settingsDescription": "Manage your plan and billing",
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 saved location",
+          "Weather & air quality alerts",
+          "Traffic incidents",
+          "Utility outage alerts",
+          "Ad-supported"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 saved locations",
+          "All Free features",
+          "Ad-free experience",
+          "Priority notifications",
+          "Custom alert sounds"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Unlimited locations",
+          "All Plus features",
+          "Personal reminders",
+          "Custom weather thresholds",
+          "Source preference control",
+          "Priority support"
+        ]
+      }
+    }
+  },
+  "events": {
+    "reportButton": "Report",
+    "selectCategory": "What happened?",
+    "pinLocation": "Location",
+    "radius": "Affected radius",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Event reported",
+    "myEvents": "My reports",
+    "resolve": "Mark resolved"
+  },
+  "errors": {
+    "rateLimited": "Too many requests. Try again in {seconds} seconds.",
+    "consentRequired": "Permission required. Check Privacy in Settings.",
+    "generic": "Something went wrong. Try again."
+  },
+  "sources": {
+    "title": "Data Sources",
+    "description": "Rate the accuracy and timeliness of our data sources",
+    "accuracy": "Accuracy",
+    "timeliness": "Timeliness",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Share your experience...",
+    "ratings": "{count} ratings",
+    "credibility": "Credibility",
+    "yourRating": "Your rating",
+    "notRated": "Not rated",
+    "save": "Save",
+    "remove": "Remove rating",
+    "noSources": "No sources available"
+  },
+  "reminders": {
+    "title": "My Reminders",
+    "empty": "No reminders yet. Create one to get push notifications at a specific time.",
+    "addButton": "New reminder",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Take medication",
+      "description": "Description (optional)",
+      "dateTime": "Date & Time",
+      "recurrence": "Repeat",
+      "once": "Once",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "weekDays": "Days of week",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit reminder",
+      "create": "New reminder"
+    },
+    "deleteConfirm": "Delete this reminder?",
+    "enabled": "Active",
+    "disabled": "Paused",
+    "nextTrigger": "Next: {time}"
+  },
+  "consent": {
+    "modalTitle": "Privacy Settings",
+    "modalDescription": "Choose which data processing you allow. You can change these anytime in Settings.",
+    "saveButton": "Save preferences",
+    "required": "Required",
+    "granted": "Allowed",
+    "revoked": "Denied",
+    "categories": {
+      "location_tracking": { "name": "Location", "desc": "Share your GPS location for local alerts" },
+      "push_notifications": { "name": "Push Notifications", "desc": "Receive real-time alerts" },
+      "analytics": { "name": "Analytics", "desc": "Help us improve the app" },
+      "personalization": { "name": "Personalization", "desc": "Tailor content to your preferences" },
+      "marketing": { "name": "Marketing", "desc": "Receive promotional content" },
+      "data_sharing": { "name": "Data Sharing", "desc": "Share anonymized data with partners" }
+    },
+    "settingsTitle": "Privacy",
+    "settingsDescription": "Manage your data processing consents"
   },
   "landing": {
     "hero": {
@@ -145,5 +379,22 @@
       "about": "About",
       "contact": "Contact"
     }
+  },
+  "digest": {
+    "title": "Notification delivery",
+    "description": "When do you want to receive routine notifications?",
+    "realTime": "Real-time",
+    "realTimeDesc": "Every event as an immediate push notification",
+    "morning": "Morning summary",
+    "morningDesc": "Overnight events delivered at 7:00",
+    "evening": "Evening summary",
+    "eveningDesc": "Daytime events delivered at 18:00",
+    "both": "Both summaries",
+    "bothDesc": "Morning and evening — no routine pushes in between",
+    "criticalNote": "Critical events (accidents, major outages, severe weather) are always delivered immediately, regardless of this setting.",
+    "dashboardBanner": "Morning summary active — routine notifications at 7:00",
+    "dashboardBannerEvening": "Evening summary active — routine notifications at 18:00",
+    "dashboardBannerBoth": "Digest active — summaries at 7:00 and 18:00",
+    "change": "Change"
   }
 }

@@ -3,6 +3,8 @@
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "next-themes";
 
+import { ToastProvider } from "@/components/ui/toast";
+
 type Props = {
   children: React.ReactNode;
   locale: string;
@@ -18,7 +20,9 @@ export function Providers({ children, locale, messages }: Props) {
       disableTransitionOnChange
     >
       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Bratislava">
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </NextIntlClientProvider>
     </ThemeProvider>
   );
