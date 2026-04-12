@@ -87,6 +87,9 @@ npx turbo run build --filter=@notifio/web
 - Web: `next-intl` with `[locale]` route prefix
 - Mobile: `i18next` with `expo-localization` for detection
 - Never hardcode user-facing strings in components
+- Web i18n merges shared messages (`@notifio/shared/i18n`) with web-local messages (`apps/web/messages/`)
+- Shared namespaces: `common`, `auth`, `settings`, `pushSetup`
+- Web-local namespaces: `map`, `weather`, `aqi`, `pollen`, `outages`, `traffic`, `mapFilters`, `notifications`, `notificationType`, `locationBanner`, `alerts`, `categoryGroups`, `nav`, `landing`, `membership`, `consent`, `reminders`, `sources`, `events`, `errors`
 
 ## Architecture Notes
 
@@ -114,9 +117,57 @@ npx turbo run build --filter=@notifio/web
 ### API
 
 - Base URL configured via env var (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL`)
-- All requests go through `@notifio/api-client`
+- All requests go through `@notifio/api-client` (wraps `fetch` with auth, locale, error handling)
+- `@notifio/shared@^0.17.0` — types, Zod schemas, i18n
 - Response envelope: `{ success: boolean, data?: T, error?: string, meta?: {} }`
-- Auth: Bearer token via Supabase Auth (to be implemented)
+- Auth: Bearer token via Supabase Auth
+
+### API Client Methods (`@notifio/api-client`)
+
+**Public:** `getWeather`, `getWeatherWarnings`, `getTraffic`, `getTrafficFlow`, `getAirQuality`, `getOutages`
+
+**Events:** `getEventDetail`, `voteOnEvent`, `getUserVote`, `getEvents`, `createEvent`, `updateEvent`, `deleteEvent`, `getEventCategories`, `getUserEvents`
+
+**Devices:** `registerDevice`, `refreshDeviceToken`, `submitDeviceLocation`, `deactivateDevice`
+
+**User (/me):** `getProfile`, `updateProfile`, `deleteAccount`, `getLocations`, `createLocation`, `updateLocation`, `deleteLocation`, `getPreferences`, `updatePreferences`, `getMembership`, `upgradeMembership`, `downgradeMembership`, `getNotificationHistory`
+
+**Consents (/me/consents):** `getConsents`, `updateConsent`
+
+**Reminders (/me/reminders — PRO):** `getReminders`, `createReminder`, `updateReminder`, `deleteReminder`
+
+**Sources:** `getSources`, `rateSource`, `deleteSourceRating`
+
+**Source Preferences (PRO):** `getSourcePreferences`, `setSourcePreference`, `deleteSourcePreference`
+
+**Weather Thresholds (PRO):** `getWeatherThresholds`, `setWeatherThreshold`, `deleteWeatherThreshold`
+
+### Membership & Feature Gating
+
+- `useMembership()` hook — fetches tier, exposes `isFree`/`isPlus`/`isPro` booleans
+- API response wraps plan details under `current` (see `MembershipResponse` type in hook)
+- `priceMonthly`/`priceYearly` are strings from the API (not numbers)
+- `<ProGate requiredTier="PLUS"|"PRO">` — wraps features that require a paid tier, shows upsell if not met
+- `<AdPlaceholder variant="banner"|"card"|"inline">` — renders ad slot for FREE users only, null for paid
+- Checkout flow: `/pricing` → `/checkout?tier=X&billing=monthly|yearly` → fake payment form
+- `PaymentForm` component (`components/app/checkout/payment-form.tsx`) is the single swap point for Stripe Elements
+
+### GDPR Consent
+
+- `ConsentGate` wraps `(app)/layout.tsx` — blocks app until consents exist
+- On first launch (empty consents array), shows full-screen `ConsentModal`
+- 6 categories: `location_tracking`, `push_notifications`, `analytics`, `personalization`, `marketing`, `data_sharing`
+- Required categories are toggled ON + disabled
+- API returns 451 for consent-required → dispatches `CONSENT_REQUIRED_EVENT` → modal re-shows
+- Privacy section in settings allows per-toggle instant save
+
+### Error Handling
+
+- `ApiError` class with `status` and `body` properties
+- `CONSENT_REQUIRED_EVENT` (`notifio:consent-required`) — dispatched on 451, handled by ConsentGate
+- `RATE_LIMITED_EVENT` (`notifio:rate-limited`) — dispatched on 429 with `detail.seconds`, handled by ApiErrorToaster
+- Toast system: `<ToastProvider>` in providers, `useToast()` hook with `success`/`error`/`warning`/`info` methods
+- Global `unhandledrejection` listener in `api.ts` intercepts known error codes
 
 ## Environment Variables
 

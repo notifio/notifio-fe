@@ -28,6 +28,7 @@ export function useGeolocationTracker(deviceId: string | null): UseGeolocationTr
   const [lastSentAt, setLastSentAt] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const watchIdRef = useRef<number | null>(null);
+  const isTrackingRef = useRef(false);
   const deviceIdRef = useRef<string | null>(deviceId);
 
   useEffect(() => {
@@ -73,21 +74,23 @@ export function useGeolocationTracker(deviceId: string | null): UseGeolocationTr
 
   // Auto-restart watchPosition when returning to page with previously granted permission
   useEffect(() => {
-    if (permission !== 'granted' || !deviceId || isTracking) return;
+    if (permission !== 'granted' || !deviceId || isTrackingRef.current) return;
     const watchId = navigator.geolocation.watchPosition(
       (p) => { void submitLocation(p.coords.latitude, p.coords.longitude); },
       () => { /* ignore errors on auto-restart */ },
       { enableHighAccuracy: false, maximumAge: MIN_INTERVAL_MS, timeout: 30_000 },
     );
     watchIdRef.current = watchId;
+    isTrackingRef.current = true;
     setIsTracking(true);
 
     return () => {
       navigator.geolocation.clearWatch(watchId);
       watchIdRef.current = null;
+      isTrackingRef.current = false;
       setIsTracking(false);
     };
-  }, [permission, deviceId, isTracking, submitLocation]);
+  }, [permission, deviceId, submitLocation]);
 
   const start = useCallback(async (): Promise<boolean> => {
     if (!('geolocation' in navigator)) {
@@ -118,6 +121,7 @@ export function useGeolocationTracker(deviceId: string | null): UseGeolocationTr
             },
           );
           watchIdRef.current = watchId;
+          isTrackingRef.current = true;
           setIsTracking(true);
           resolve(true);
         },
@@ -143,6 +147,7 @@ export function useGeolocationTracker(deviceId: string | null): UseGeolocationTr
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
+    isTrackingRef.current = false;
     setIsTracking(false);
   }, []);
 

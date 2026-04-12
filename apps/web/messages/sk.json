@@ -30,7 +30,13 @@
     "birch": "Breza",
     "grass": "Trávy",
     "alder": "Jelša",
-    "ragweed": "Ambrózia"
+    "ragweed": "Ambrózia",
+    "mugwort": "Palina",
+    "olive": "Oliva"
+  },
+  "nameday": {
+    "label": "Dnes má meniny",
+    "noData": "Žiadne údaje o meninách"
   },
   "weatherWarnings": {
     "validUntil": "Platné do",
@@ -59,6 +65,40 @@
   "notifications": {
     "title": "Notifikácie"
   },
+  "notificationsPage": {
+    "title": "Notifikácie",
+    "tabs": {
+      "history": "História",
+      "reminders": "Pripomienky"
+    },
+    "filters": {
+      "all": "Všetky",
+      "weather": "Počasie",
+      "traffic": "Doprava",
+      "outages": "Výpadky",
+      "pollen": "Peľ",
+      "events": "Udalosti"
+    },
+    "history": {
+      "today": "Dnes",
+      "yesterday": "Včera",
+      "older": "Staršie",
+      "empty": "Zatiaľ žiadne notifikácie",
+      "markAllRead": "Označiť všetky ako prečítané"
+    },
+    "reminders": {
+      "viewList": "Zoznam",
+      "viewCalendar": "Kalendár",
+      "newReminder": "Nová pripomienka",
+      "empty": "Zatiaľ žiadne pripomienky. Vytvorte si jednu a dostanete notifikáciu v určený čas.",
+      "enabled": "Aktívna",
+      "disabled": "Pozastavená",
+      "daily": "denne",
+      "weekly": "týždenne",
+      "monthly": "mesačne",
+      "once": "jednorazovo"
+    }
+  },
   "notificationType": {
     "start": "Začína",
     "update": "Aktualizované",
@@ -66,6 +106,19 @@
     "all_clear": "Vyriešené",
     "forecast": "Predpoveď",
     "reminder": "Stále aktívne"
+  },
+  "categoryBadge": {
+    "traffic": "Doprava",
+    "weather": "Počasie",
+    "weather_warning": "Výstraha",
+    "outage_electric": "Výpadok",
+    "outage_water": "Výpadok",
+    "outage_heat": "Výpadok",
+    "outage_gas": "Výpadok",
+    "planned_events": "Udalosť",
+    "name_day": "Meniny",
+    "pollen": "Peľ",
+    "air_quality": "Ovzdušie"
   },
   "locationBanner": {
     "bothOff": "Push notifikácie a sledovanie polohy sú vypnuté.",
@@ -102,13 +155,194 @@
     "outages": "Výpadky",
     "events": "Udalosti"
   },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Člen od {date}",
+    "locations": {
+      "title": "Uložené lokácie",
+      "description": "Upozornenia sú odosielané na základe uložených lokácií",
+      "add": "Pridať lokáciu",
+      "edit": "Upraviť",
+      "delete": "Odstrániť",
+      "deleteConfirm": "Odstrániť túto lokáciu?",
+      "name": "Názov lokácie",
+      "namePlaceholder": "napr. Domov, Práca",
+      "useCurrentLocation": "Použiť aktuálnu polohu",
+      "label": "Štítok",
+      "maxReached": "Limit lokácií dosiahnutý ({max} pre váš plán)",
+      "empty": "Žiadne uložené lokácie. Pridajte jednu a začnete dostávať lokálne upozornenia.",
+      "save": "Uložiť",
+      "cancel": "Zrušiť"
+    },
+    "myEvents": {
+      "title": "Moje hlásenia",
+      "empty": "Zatiaľ ste nenahlásili žiadne udalosti",
+      "resolved": "Vyriešené",
+      "active": "Aktívne",
+      "resolve": "Označiť ako vyriešené"
+    },
+    "account": {
+      "title": "Účet",
+      "signOut": "Odhlásiť sa",
+      "deleteAccount": "Zmazať účet",
+      "deleteConfirm": "Toto natrvalo vymaže váš účet a všetky údaje. Túto akciu nie je možné vrátiť.",
+      "deleteVerify": "Napíšte DELETE pre potvrdenie"
+    }
+  },
   "nav": {
-    "signIn": "Prihlásiť sa",
+    "signIn": "Prihl��siť sa",
     "dashboard": "Prehľad",
     "map": "Mapa",
     "notifications": "Notifikácie",
     "settings": "Nastavenia",
-    "profile": "Profil"
+    "profile": "Profil",
+    "pricing": "Cenník",
+    "reminders": "Pripomienky"
+  },
+  "membership": {
+    "pricing": "Cenník",
+    "currentPlan": "Aktuálny plán",
+    "upgrade": "Vylepšiť",
+    "downgrade": "Znížiť",
+    "monthly": "Mesačne",
+    "yearly": "Ročne",
+    "perMonth": "/mesiac",
+    "perYear": "/rok",
+    "features": "Funkcie",
+    "popular": "Najobľúbenejší",
+    "free": {
+      "name": "Free",
+      "description": "Základné upozornenia zadarmo"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Viac lokácií a pokročilé funkcie"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Plná kontrola nad notifikáciami"
+    },
+    "checkout": {
+      "title": "Dokončite objednávku",
+      "summary": "Zhrnutie plánu",
+      "payButton": "Predplatiť",
+      "processing": "Spracovávam...",
+      "success": "Vitajte v {tier}!",
+      "cardNumber": "Číslo karty",
+      "expiry": "MM/RR",
+      "cvc": "CVC",
+      "testMode": "Testovací režim — bez reálnych poplatkov"
+    },
+    "manage": "Spravovať predplatné",
+    "cancelPlan": "Zrušiť predplatné",
+    "cancelConfirm": "Naozaj? Stratíte prístup k funkciám {tier}.",
+    "adFree": "Odstrániť reklamy",
+    "settingsTitle": "Predplatné",
+    "settingsDescription": "Spravujte svoj plán a fakturáciu",
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 uložená lokácia",
+          "Upozornenia na počasie a kvalitu ovzdušia",
+          "Dopravné udalosti",
+          "Výpadky sietí",
+          "S reklamami"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 uložených lokácií",
+          "Všetky funkcie Free",
+          "Bez reklám",
+          "Prioritné notifikácie",
+          "Vlastné zvuky upozornení"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Neobmedzené lokácie",
+          "Všetky funkcie Plus",
+          "Osobné pripomienky",
+          "Vlastné prahové hodnoty počasia",
+          "Voľba preferovaných zdrojov",
+          "Prioritná podpora"
+        ]
+      }
+    }
+  },
+  "events": {
+    "reportButton": "Nahlásiť",
+    "selectCategory": "Čo sa stalo?",
+    "pinLocation": "Poloha",
+    "radius": "Ovplyvnený okruh",
+    "submit": "Odoslať",
+    "cancel": "Zrušiť",
+    "success": "Udalosť nahlásená",
+    "myEvents": "Moje hlásenia",
+    "resolve": "Označiť ako vyriešené"
+  },
+  "errors": {
+    "rateLimited": "Príliš veľa požiadaviek. Skúste znova za {seconds} sekúnd.",
+    "consentRequired": "Vyžaduje sa povolenie. Skontrolujte Súkromie v Nastaveniach.",
+    "generic": "Niečo sa pokazilo. Skúste znova."
+  },
+  "sources": {
+    "title": "Zdroje dát",
+    "description": "Ohodnoťte presnosť a včasnosť našich zdrojov dát",
+    "accuracy": "Presnosť",
+    "timeliness": "Včasnosť",
+    "comment": "Komentár (voliteľný)",
+    "commentPlaceholder": "Podeľte sa o svoju skúsenosť...",
+    "ratings": "{count} hodnotení",
+    "credibility": "Dôveryhodnosť",
+    "yourRating": "Vaše hodnotenie",
+    "notRated": "Nehodnotené",
+    "save": "Uložiť",
+    "remove": "Odstrániť hodnotenie",
+    "noSources": "Žiadne zdroje nie sú dostupné"
+  },
+  "reminders": {
+    "title": "Moje pripomienky",
+    "empty": "Zatiaľ žiadne pripomienky. Vytvorte si jednu a dostanete notifikáciu v určený čas.",
+    "addButton": "Nová pripomienka",
+    "form": {
+      "title": "Názov",
+      "titlePlaceholder": "napr. Vziať lieky",
+      "description": "Popis (voliteľný)",
+      "dateTime": "Dátum a čas",
+      "recurrence": "Opakovanie",
+      "once": "Jednorazovo",
+      "daily": "Denne",
+      "weekly": "Týždenne",
+      "monthly": "Mesačne",
+      "weekDays": "Dni v týždni",
+      "save": "Uložiť",
+      "cancel": "Zrušiť",
+      "edit": "Upraviť pripomienku",
+      "create": "Nová pripomienka"
+    },
+    "deleteConfirm": "Odstrániť túto pripomienku?",
+    "enabled": "Aktívna",
+    "disabled": "Pozastavená",
+    "nextTrigger": "Ďalej: {time}"
+  },
+  "consent": {
+    "modalTitle": "Nastavenia súkromia",
+    "modalDescription": "Vyberte, ktoré spracovanie údajov povolíte. Kedykoľvek to môžete zmeniť v Nastaveniach.",
+    "saveButton": "Uložiť preferencie",
+    "required": "Povinné",
+    "granted": "Povolené",
+    "revoked": "Zamietnuté",
+    "categories": {
+      "location_tracking": { "name": "Poloha", "desc": "Zdieľajte GPS polohu pre lokálne upozornenia" },
+      "push_notifications": { "name": "Push notifikácie", "desc": "Prijímajte upozornenia v reálnom čase" },
+      "analytics": { "name": "Analytika", "desc": "Pomôžte nám vylepšiť aplikáciu" },
+      "personalization": { "name": "Personalizácia", "desc": "Prispôsobte obsah vašim preferenciám" },
+      "marketing": { "name": "Marketing", "desc": "Prijímajte propagačný obsah" },
+      "data_sharing": { "name": "Zdieľanie údajov", "desc": "Zdieľajte anonymizované údaje s partnermi" }
+    },
+    "settingsTitle": "Súkromie",
+    "settingsDescription": "Spravujte súhlasy so spracovaním údajov"
   },
   "landing": {
     "hero": {
@@ -145,5 +379,22 @@
       "about": "O nás",
       "contact": "Kontakt"
     }
+  },
+  "digest": {
+    "title": "Doručovanie notifikácií",
+    "description": "Kedy chcete dostávať bežné upozornenia?",
+    "realTime": "V reálnom čase",
+    "realTimeDesc": "Každá udalosť okamžite ako push notifikácia",
+    "morning": "Ranný súhrn",
+    "morningDesc": "Prehľad nočných udalostí doručený o 7:00",
+    "evening": "Večerný súhrn",
+    "eveningDesc": "Prehľad denných udalostí doručený o 18:00",
+    "both": "Oba súhrny",
+    "bothDesc": "Ranný aj večerný — žiadne bežné push cez deň",
+    "criticalNote": "Kritické udalosti (nehody, veľké výpadky, extrémne počasie) dostanete vždy okamžite, bez ohľadu na toto nastavenie.",
+    "dashboardBanner": "Ranný súhrn aktívny — bežné notifikácie o 7:00",
+    "dashboardBannerEvening": "Večerný súhrn aktívny — bežné notifikácie o 18:00",
+    "dashboardBannerBoth": "Súhrny aktívne — bežné notifikácie o 7:00 a 18:00",
+    "change": "Zmeniť"
   }
 }

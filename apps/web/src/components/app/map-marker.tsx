@@ -29,11 +29,24 @@ function TeardropSvg({ style, iconColor }: { style: PinStyle; iconColor: string 
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* Teardrop shape */}
       <path
         d="M12 0C5.373 0 0 5.373 0 12c0 8 12 20 12 20s12-12 12-20C24 5.373 18.627 0 12 0z"
         fill={style.color}
       />
-      <path d={style.iconPath} fill={iconColor} fillOpacity="0.95" />
+      {/* Tabler icon — scaled from 24x24 to 12x12, centered at (12,12) in the teardrop */}
+      <g
+        transform="translate(6,6) scale(0.5)"
+        fill="none"
+        stroke={iconColor}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {style.iconPaths.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
     </svg>
   );
 }
@@ -98,6 +111,20 @@ export function MapMarker({
               >
                 {pin.title}
               </div>
+              {pin.description && (
+                <div
+                  style={{
+                    fontSize: '10px',
+                    opacity: 0.8,
+                    marginTop: '1px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {pin.description}
+                </div>
+              )}
               <div
                 style={{
                   fontSize: '10px',

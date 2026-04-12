@@ -5,20 +5,13 @@ import { useTranslations } from 'next-intl';
 
 import type { PollenData } from './weather-card';
 
-// TODO: Replace with real pollen endpoint when BE adds GET /api/v1/pollen
-const MOCK_ALLERGENS: { key: string; value: number }[] = [
-  { key: 'birch', value: 85 },
-  { key: 'grass', value: 12 },
-  { key: 'alder', value: 5 },
-  { key: 'ragweed', value: 0 },
-];
-
 const MAX_BAR_VALUE = 100;
 
 const POLLEN_HEALTH_KEYS: Record<string, string> = {
-  High: 'high',
-  Moderate: 'moderate',
-  Low: 'low',
+  high: 'high',
+  very_high: 'high',
+  moderate: 'moderate',
+  low: 'low',
 };
 
 interface PollenChipProps {
@@ -63,6 +56,13 @@ export function PollenDetailPanel({ pollen, onClose }: PollenDetailPanelProps) {
 
   const healthKey = POLLEN_HEALTH_KEYS[pollen.level] ?? 'moderate';
 
+  const allergens = pollen.components
+    ? Object.entries(pollen.components)
+        .filter(([, val]) => val != null && val > 0)
+        .map(([key, val]) => ({ key, value: val as number }))
+        .sort((a, b) => b.value - a.value)
+    : [];
+
   return (
     <div
       style={{
@@ -82,7 +82,7 @@ export function PollenDetailPanel({ pollen, onClose }: PollenDetailPanelProps) {
         </button>
       </div>
       <div className="mt-2 space-y-1.5">
-        {MOCK_ALLERGENS.filter((a) => a.value > 0).map((allergen) => {
+        {allergens.map((allergen) => {
           const pct = Math.min((allergen.value / MAX_BAR_VALUE) * 100, 100);
           const barColor = allergen.value >= 50 ? '#F59E0B' : '#22C55E';
           return (

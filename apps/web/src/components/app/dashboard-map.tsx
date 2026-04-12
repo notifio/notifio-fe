@@ -22,7 +22,7 @@ const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.j
 const SOURCE_ID = 'pins';
 const FLOW_SOURCE_ID = 'traffic-flow';
 
-const CLUSTER_MAX_ZOOM = 16;
+const CLUSTER_MAX_ZOOM = 14;
 const CLUSTER_RADIUS = 80;
 
 function flowToGeoJSON(
@@ -197,7 +197,13 @@ export function DashboardMap({
 
         const zoomToCluster = () => {
           source.getClusterExpansionZoom(clusterId).then((zoom) => {
-            map.easeTo({ center: coords, zoom });
+            // Zoom one level past expansion so cluster fully dissolves
+            map.easeTo({ center: coords, zoom: zoom + 1 });
+            // Force a re-sync after the animation completes to clean up stale cluster markers
+            map.once('moveend', () => {
+              // Small delay for GeoJSON source to re-tile at the new zoom level
+              setTimeout(() => syncMarkers.current(map), 50);
+            });
           });
         };
 

@@ -22,6 +22,22 @@ import type {
   UpgradeMembershipBody,
   DowngradeMembershipBody,
   ApiResponse,
+  ConsentState,
+  CreatePersonalReminderInput,
+  UpdatePersonalReminderInput,
+  PersonalReminder,
+  SourceSummary,
+  UpsertSourceRatingInput,
+  UserEvent,
+  UserEventCategory,
+  CreateUserEventBody,
+  UpdateUserEventBody,
+  UserWeatherThreshold,
+  SetWeatherThresholdBody,
+  SourcePreference,
+  SetSourcePreferenceBody,
+  DigestMode,
+  PollenResponse,
 } from './shared-types.js';
 
 export type {
@@ -66,6 +82,26 @@ export type {
   AlertCategory,
   NotificationSeverity,
   RefreshTokenBody,
+  ConsentState,
+  ConsentCategoryCode,
+  UpsertConsentInput,
+  PersonalReminder,
+  CreatePersonalReminderInput,
+  UpdatePersonalReminderInput,
+  ReminderRecurrence,
+  SourceSummary,
+  UpsertSourceRatingInput,
+  UserEvent,
+  UserEventCategory,
+  CreateUserEventBody,
+  UpdateUserEventBody,
+  UserWeatherThreshold,
+  SetWeatherThresholdBody,
+  SourcePreference,
+  SetSourcePreferenceBody,
+  DigestMode,
+  PollenResponse,
+  PollenComponents,
 } from './shared-types.js';
 
 export interface NotifioClientConfig {
@@ -203,6 +239,12 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return airQuality;
     },
 
+    async getPollen(lat: number, lng: number): Promise<PollenResponse> {
+      return request<PollenResponse>('/pollen', {
+        params: { lat: String(lat), lng: String(lng) },
+      });
+    },
+
     async getOutages(utility: UtilityType): Promise<OutageRecord[]> {
       const data = await request<{ totalOutages: number; outages: OutageRecord[] }>('/outages', {
         params: { utility },
@@ -262,7 +304,7 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserProfile>('/me');
     },
 
-    async updateProfile(data: { countryCode: string }): Promise<UserProfile> {
+    async updateProfile(data: { countryCode?: string; digestMode?: DigestMode }): Promise<UserProfile> {
       return request<UserProfile>('/me', { method: 'PATCH', body: data });
     },
 
@@ -321,6 +363,138 @@ export function createNotifioClient(config: NotifioClientConfig) {
           page: params?.page !== undefined ? String(params.page) : undefined,
           limit: params?.limit !== undefined ? String(params.limit) : undefined,
         },
+      });
+    },
+
+    // ─── Consent endpoints ───────────────────────────────────────────
+
+    async getConsents(): Promise<ConsentState[]> {
+      return request<ConsentState[]>('/me/consents');
+    },
+
+    async updateConsent(categoryCode: string, granted: boolean): Promise<ConsentState> {
+      return request<ConsentState>(`/me/consents/${categoryCode}`, {
+        method: 'PUT',
+        body: { granted },
+      });
+    },
+
+    // ─── Reminder endpoints (PRO) ────────────────────────────────────
+
+    async getReminders(): Promise<PersonalReminder[]> {
+      return request<PersonalReminder[]>('/me/reminders');
+    },
+
+    async createReminder(body: CreatePersonalReminderInput): Promise<PersonalReminder> {
+      return request<PersonalReminder>('/me/reminders', {
+        method: 'POST',
+        body,
+      });
+    },
+
+    async updateReminder(reminderId: string, body: UpdatePersonalReminderInput): Promise<PersonalReminder> {
+      return request<PersonalReminder>(`/me/reminders/${reminderId}`, {
+        method: 'PATCH',
+        body,
+      });
+    },
+
+    async deleteReminder(reminderId: string): Promise<void> {
+      await request<void>(`/me/reminders/${reminderId}`, { method: 'DELETE' });
+    },
+
+    // ─── Source endpoints ────────────────────────────────────────────
+
+    async getSources(): Promise<SourceSummary[]> {
+      return request<SourceSummary[]>('/sources');
+    },
+
+    async rateSource(sourceAdapterId: number, body: UpsertSourceRatingInput): Promise<SourceSummary> {
+      return request<SourceSummary>(`/sources/${sourceAdapterId}/rating`, {
+        method: 'PUT',
+        body,
+      });
+    },
+
+    async deleteSourceRating(sourceAdapterId: number): Promise<void> {
+      await request<void>(`/sources/${sourceAdapterId}/rating`, { method: 'DELETE' });
+    },
+
+    // ─── Event endpoints (extended) ──────────────────────────────────
+
+    async getEvents(params: { lat: number; lng: number; radius?: number }): Promise<UserEvent[]> {
+      return request<UserEvent[]>('/events', {
+        params: {
+          lat: String(params.lat),
+          lng: String(params.lng),
+          radius: params.radius !== undefined ? String(params.radius) : undefined,
+        },
+      });
+    },
+
+    async createEvent(body: CreateUserEventBody): Promise<UserEvent> {
+      return request<UserEvent>('/events', {
+        method: 'POST',
+        body,
+      });
+    },
+
+    async updateEvent(eventId: string, body: UpdateUserEventBody): Promise<UserEvent> {
+      return request<UserEvent>(`/events/${eventId}`, {
+        method: 'PATCH',
+        body,
+      });
+    },
+
+    async deleteEvent(eventId: string): Promise<void> {
+      await request<void>(`/events/${eventId}`, { method: 'DELETE' });
+    },
+
+    async getEventCategories(): Promise<UserEventCategory[]> {
+      return request<UserEventCategory[]>('/events/categories');
+    },
+
+    async getUserEvents(): Promise<UserEvent[]> {
+      return request<UserEvent[]>('/events/mine');
+    },
+
+    // ─── Source preference endpoints (PRO) ───────────────────────────
+
+    async getSourcePreferences(): Promise<SourcePreference[]> {
+      return request<SourcePreference[]>('/me/source-preferences');
+    },
+
+    async setSourcePreference(body: SetSourcePreferenceBody): Promise<SourcePreference> {
+      return request<SourcePreference>('/me/source-preferences', {
+        method: 'PUT',
+        body,
+      });
+    },
+
+    async deleteSourcePreference(categoryCode: string): Promise<void> {
+      await request<void>('/me/source-preferences', {
+        method: 'DELETE',
+        params: { categoryCode },
+      });
+    },
+
+    // ─── Weather threshold endpoints (PRO) ───────────────────────────
+
+    async getWeatherThresholds(): Promise<UserWeatherThreshold[]> {
+      return request<UserWeatherThreshold[]>('/me/weather-thresholds');
+    },
+
+    async setWeatherThreshold(body: SetWeatherThresholdBody): Promise<UserWeatherThreshold> {
+      return request<UserWeatherThreshold>('/me/weather-thresholds', {
+        method: 'PUT',
+        body,
+      });
+    },
+
+    async deleteWeatherThreshold(subcategoryCode: string): Promise<void> {
+      await request<void>('/me/weather-thresholds', {
+        method: 'DELETE',
+        params: { subcategoryCode },
       });
     },
   };
