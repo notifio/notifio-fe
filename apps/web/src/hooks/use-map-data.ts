@@ -123,9 +123,10 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       // Ensure static data is loaded
       await fetchStatic();
 
-      const [traffic, flow] = await Promise.all([
+      const [traffic, flow, events] = await Promise.all([
         safeFetch(() => api.getTraffic(coords.lat, coords.lng)),
         safeFetch(() => api.getTrafficFlow(coords.lat, coords.lng)),
+        safeFetch(() => api.getEvents({ lat: coords.lat, lng: coords.lng, radius: 20000 })),
       ]);
 
       // Stale response — a newer fetch was triggered while this one was in-flight
@@ -135,7 +136,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       }
 
       const sd = staticData.current;
-      if (!sd && !traffic) {
+      if (!sd && !traffic && !events) {
         setError('Could not load data');
         fetchingRef.current = false;
         setIsLoading(false);
@@ -148,6 +149,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         sd?.heat ?? [],
         sd?.gas ?? [],
         traffic?.incidents ?? [],
+        events ?? [],
       );
 
       setPins(normalized);
@@ -176,6 +178,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       lastFetchCenter.current = null;
       staticFetched.current = false;
       staticData.current = null;
+      viewportCache.current.clear();
       fetchViewport(center);
     }
   }, [center, fetchViewport]);

@@ -18,7 +18,7 @@ notifio-fe/
 **Related repos:**
 
 - [`notifio-api`](https://github.com/notifio/notifio-api) — Express/TS backend (Railway)
-- [`notifio-shared`](https://github.com/notifio/notifio-shared) — Published as `@notifio/shared` on GitHub Packages (types, Zod schemas, formatters, i18n)
+- [`notifio-shared`](https://github.com/notifio/notifio-shared) — Published as `@notifio/shared@0.17.0` on GitHub Packages (types, Zod schemas, formatters, i18n)
 
 ## Tech Stack
 
@@ -28,8 +28,8 @@ notifio-fe/
 | Routing       | App Router                   | Expo Router (file-based)              |
 | Styling       | Tailwind CSS 4               | StyleSheet + `theme.ts` tokens        |
 | Maps          | MapLibre GL JS 5.x           | react-native-maps + map-clustering    |
-| Icons         | Lucide React                 | Lucide React Native                   |
-| Auth          | Fake (sessionStorage)        | Onboarding flow (no auth yet)         |
+| Icons         | Tabler Icons React           | Tabler Icons React Native             |
+| Auth          | Supabase Auth                | Onboarding flow (no auth yet)         |
 | State         | React hooks + context        | React hooks + context                 |
 
 **Shared across both apps:** `@notifio/shared` (types, Zod schemas, formatters), Turborepo, TypeScript 5.9 (strict mode), ESLint 9, Prettier.
@@ -92,24 +92,39 @@ npm run clean        # Remove build artifacts
 | Feature                 | Status | Description                                                                |
 | ----------------------- | ------ | -------------------------------------------------------------------------- |
 | Landing page            | Done   | Hero, features grid, how-it-works, CTA, footer                            |
-| Authentication          | Stub   | Fake auth via sessionStorage (`filip@notifio.app`), sign-in/sign-out flow  |
+| Authentication          | Done   | Supabase Auth, sign-in/sign-out flow                                       |
 | Dashboard               | Done   | Split view — left panel (weather + alerts), right panel (interactive map)  |
 | Weather card            | Done   | Gradient card with temp, feels-like, wind, humidity, visibility, timestamp |
 | Air quality indicator   | Done   | Collapsible AQI section on weather card with pollutant grid               |
 | Interactive map         | Done   | MapLibre GL with clustered pins, click-to-zoom, pin popups                |
 | Map filter bar          | Done   | Toggle electricity/water/heat/traffic pins, per-source count badges       |
-| Alert feed              | Mock   | 7 hardcoded alerts with type/severity badges                              |
-| Settings                | Done   | Alert type toggles, severity threshold, language selector                 |
+| Alert feed              | Done   | Notification history with pagination, category badges                     |
+| Event reporting         | Done   | FAB on map → subcategory picker, location, radius slider → submit         |
+| Membership & pricing    | Done   | Pricing page, checkout (fake Stripe-ready), tier badges, ProGate          |
+| GDPR consent            | Done   | First-launch consent modal, privacy section in settings, 451 re-trigger   |
+| Personal reminders      | Done   | PRO-gated CRUD with recurrence, ProGate upsell for non-PRO               |
+| Source ratings           | Done   | Star ratings (accuracy/timeliness), credibility score, comments           |
+| Ad placeholders         | Done   | Banner/card/inline ad slots for FREE tier, "Remove ads" upsell            |
+| Toast notifications     | Done   | Success/error/warning/info toasts, auto-dismiss, stackable               |
+| Settings                | Done   | Subscription, push, notification prefs, privacy, data sources, account    |
+| i18n                    | Done   | SK + EN via next-intl, shared + web-local namespaces                       |
 | Loading/error states    | Done   | Non-blocking spinner overlay on map, error banner with retry              |
 
 **Routes:**
 
-| Path         | Description               |
-| ------------ | ------------------------- |
-| `/`          | Landing page (public)     |
-| `/sign-in`   | Authentication page       |
-| `/dashboard` | Main app (protected)      |
-| `/settings`  | Preferences (protected)   |
+| Path                | Description                           |
+| ------------------- | ------------------------------------- |
+| `/`                 | Landing page (public)                 |
+| `/sign-in`          | Authentication page                   |
+| `/dashboard`        | Main app — weather, alerts, map       |
+| `/map`              | Full-screen map view                  |
+| `/notifications`    | Notification history                  |
+| `/pricing`          | Membership tier comparison            |
+| `/checkout`         | Fake payment form (Stripe-ready)      |
+| `/reminders`        | Personal reminders (PRO-gated)        |
+| `/profile`          | User profile                          |
+| `/settings`         | Preferences hub                       |
+| `/settings/sources` | Data source ratings                   |
 
 ### Mobile App
 
@@ -136,17 +151,27 @@ npm run clean        # Remove build artifacts
 
 ## API Integration
 
-Both apps fetch data from the Notifio backend via direct `fetch()` calls. The `@notifio/api-client` package exists but is not yet wired in.
+Both apps communicate with the Notifio backend via `@notifio/api-client` — a typed HTTP client that handles auth tokens, locale headers, and error parsing.
 
-| Endpoint                               | Data              | Status |
-| -------------------------------------- | ----------------- | ------ |
-| `GET /api/v1/weather?lat=X&lng=Y`      | Weather data      | Live   |
-| `GET /api/v1/air-quality?lat=X&lng=Y`  | AQI + pollutants  | Live   |
-| `GET /api/v1/outages?utility={type}`    | Outage records    | Live   |
-| `GET /api/v1/traffic?lat=X&lng=Y`      | Traffic incidents  | Live   |
-| `GET /api/v1/alerts`                    | Alert feed        | N/A    |
+| Endpoint group                          | Methods                                                    | Status |
+| --------------------------------------- | ---------------------------------------------------------- | ------ |
+| Weather & air quality                   | `getWeather`, `getWeatherWarnings`, `getAirQuality`        | Live   |
+| Traffic                                 | `getTraffic`, `getTrafficFlow`                             | Live   |
+| Outages                                 | `getOutages`                                               | Live   |
+| Events                                  | `getEvents`, `createEvent`, `getEventCategories`, `getUserEvents`, `getEventDetail`, `voteOnEvent` | Live |
+| Devices                                 | `registerDevice`, `refreshDeviceToken`, `submitDeviceLocation`, `deactivateDevice` | Live |
+| User profile & locations                | `getProfile`, `updateProfile`, `getLocations`, `createLocation`, `updateLocation`, `deleteLocation` | Live |
+| Preferences                             | `getPreferences`, `updatePreferences`                      | Live   |
+| Membership                              | `getMembership`, `upgradeMembership`, `downgradeMembership` | Live  |
+| Consents                                | `getConsents`, `updateConsent`                             | Live   |
+| Reminders (PRO)                         | `getReminders`, `createReminder`, `updateReminder`, `deleteReminder` | Live |
+| Sources & ratings                       | `getSources`, `rateSource`, `deleteSourceRating`           | Live   |
+| Notifications                           | `getNotificationHistory`                                   | Live   |
+| Source preferences / weather thresholds | `getSourcePreferences`, `setSourcePreference`, `getWeatherThresholds`, `setWeatherThreshold` | Live |
 
 **Response envelope:** `{ success: boolean, data?: T, error?: string, meta?: {} }`
+
+**Error handling:** `ApiError` with `status` + `body`. Global handlers for 401 (redirect to sign-in), 429 (rate-limit toast), 451 (consent-required modal).
 
 **Partial failure handling:** Each data source is fetched independently. If some sources fail, available data still renders. Only if all sources fail does the error banner appear.
 
@@ -180,41 +205,60 @@ Both platforms display outage and traffic pins on an interactive map centered on
 
 ```
 app/
-├── layout.tsx                      Root layout (Geist fonts, AuthProvider)
+├── layout.tsx                      Root layout (Geist fonts, Providers)
 ├── page.tsx                        Landing page
 ├── sign-in/page.tsx                Sign-in page
 └── (app)/
-    ├── layout.tsx                  AuthGuard + TopBar wrapper
-    ├── dashboard/page.tsx          Dashboard (weather + alerts + map)
-    └── settings/page.tsx           Preferences
+    ├── layout.tsx                  AuthGuard + ConsentGate + TopBar
+    ├── dashboard/page.tsx          Dashboard (weather + alerts + map + event FAB)
+    ├── pricing/page.tsx            Membership tier comparison
+    ├── checkout/page.tsx           Fake payment form (Stripe-ready)
+    ├── reminders/page.tsx          Personal reminders (PRO-gated)
+    └── settings/
+        ├── page.tsx                Subscription, push, prefs, privacy, account
+        └── sources/page.tsx        Data source ratings
 
 components/
-├── app/                            Dashboard components
+├── app/
 │   ├── dashboard-map.tsx           MapLibre GL wrapper
 │   ├── weather-card.tsx            Weather gradient card
-│   ├── aqi-indicator.tsx           Air quality indicator
-│   ├── alert-card.tsx              Alert list item
 │   ├── alert-list.tsx              Scrollable alert feed
 │   ├── map-filter-bar.tsx          Filter toggle bar
-│   ├── map-pin-popup.tsx           Pin click popup
-│   └── top-bar.tsx                 Header navigation
-├── auth/                           Auth components
+│   ├── top-bar.tsx                 Header navigation + dropdown
+│   ├── pro-gate.tsx                Tier gate — shows upsell if tier not met
+│   ├── ad-placeholder.tsx          Ad slot for FREE users (banner/card/inline)
+│   ├── consent-modal.tsx           GDPR consent modal (non-dismissible)
+│   ├── consent-gate.tsx            Blocks app until consents exist
+│   ├── event-report-modal.tsx      Community event reporting
+│   ├── reminder-form-modal.tsx     Create/edit reminder modal
+│   ├── api-error-toaster.tsx       Bridges API error events to toasts
+│   └── checkout/
+│       └── payment-form.tsx        Fake card form (Stripe swap point)
 ├── landing/                        Landing page sections
-└── ui/                             Primitives (button, card, badge, toggle)
+└── ui/
+    ├── toggle.tsx                  Switch toggle
+    ├── star-rating.tsx             1-5 star picker (hover, click, readonly)
+    └── toast.tsx                   Toast system (ToastProvider + useToast)
 
 hooks/
 ├── use-weather.ts                  Weather data + loading/error/refresh
 ├── use-air-quality.ts              AQI data
 ├── use-map-data.ts                 Outages + traffic → MapPin[]
-└── use-preferences.ts              Alert type/severity preferences
+├── use-preferences.ts              Notification preference CRUD
+├── use-membership.ts               Tier checks, upgrade/downgrade
+├── use-consents.ts                 GDPR consent CRUD
+├── use-reminders.ts                Personal reminder CRUD (PRO)
+├── use-sources.ts                  Source ratings CRUD
+├── use-event-categories.ts         Event subcategories (cached)
+└── use-geolocation-tracker.ts      GPS watch + throttled backend submit
 
 lib/
-├── auth-context.tsx                Fake auth (sessionStorage)
-├── api.ts                          Fetch wrapper
+├── api.ts                          API client instance + error event dispatchers
+├── auth.ts                         requireUser() server guard
 ├── location.ts                     DEFAULT_LOCATION (Bratislava)
 ├── normalize-pins.ts               OutageRecord/TrafficIncident → MapPin
 ├── map-pin-config.ts               PIN_STYLES, FILTER_SOURCES
-├── mock-data.ts                    MOCK_ALERTS
+├── category-groups.ts              Notification category groupings
 ├── format.ts                       formatRelativeTime
 └── utils.ts                        cn() (clsx + tailwind-merge)
 ```
@@ -269,14 +313,10 @@ providers/
 
 | Item                        | Current State                                   | Target                                     |
 | --------------------------- | ----------------------------------------------- | ------------------------------------------ |
-| Authentication              | Fake (sessionStorage, hardcoded user)            | Supabase Auth (OAuth + email)              |
-| Alert feed                  | 7 hardcoded mock alerts                          | Real `/api/v1/alerts` endpoint             |
-| i18n                        | Hardcoded English strings                        | next-intl (web), i18next (mobile), SK + EN |
-| User location               | Hardcoded Bratislava (48.1486, 17.1077)          | Device GPS via permissions                 |
-| Push notifications          | Onboarding UI only                               | Expo Push + backend registration           |
-| Preferences persistence     | In-memory state (lost on refresh)                | Backend API + local storage                |
-| `@notifio/api-client`       | Package exists, not integrated                   | Replace direct fetch calls                 |
+| Stripe payments             | Fake card form (any values accepted)             | Stripe Elements integration                |
 | `@notifio/ui` tokens        | Exported, not consumed                           | Single source for web + mobile themes      |
+| Mobile membership/consent   | Not yet ported                                   | Replicate web flows in Expo                |
+| Pollen data                 | Hardcoded placeholder                            | Real `/api/v1/pollen` endpoint             |
 
 ## Key Technical Notes
 
@@ -285,6 +325,10 @@ providers/
 - **No barrel exports:** Component directories use direct imports per CLAUDE.md convention.
 - **Map tiles:** Web uses free CARTO Positron basemap (`basemaps.cartocdn.com`). Mobile uses platform-default (Apple Maps on iOS, Google Maps on Android).
 - **Responsive layout:** Web dashboard flips from vertical (mobile viewport) to horizontal split (desktop) at the `lg` breakpoint.
+- **Membership API response:** `getMembership()` returns `{ current: { tier, name, features, priceMonthly, ... }, usage, availableUpgrades }`. The `priceMonthly`/`priceYearly` are strings (e.g. `"4.99"`), not numbers.
+- **Stripe prep:** `PaymentForm` at `components/app/checkout/payment-form.tsx` is an isolated fake card form. Single file swap to Stripe Elements when ready.
+- **Geolocation tracker:** Uses `isTrackingRef` (not state) in useEffect deps to avoid infinite re-render loop.
+- **i18n merge:** Web messages are a deep merge of `@notifio/shared/i18n` (shared namespaces) + `apps/web/messages/` (web-local namespaces).
 
 ## Scripts Reference
 

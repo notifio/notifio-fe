@@ -123,3 +123,65 @@ export type {
   UpgradeMembershipBody,
   DowngradeMembershipBody,
 } from '@notifio/shared';
+
+// Consent types
+export type {
+  ConsentState,
+  ConsentCategoryCode,
+  UpsertConsentInput,
+} from '@notifio/shared';
+
+// Personal reminder types
+export type {
+  PersonalReminder,
+  CreatePersonalReminderInput,
+  UpdatePersonalReminderInput,
+  ReminderRecurrence,
+} from '@notifio/shared';
+
+// Source types
+export type {
+  SourceSummary,
+  UpsertSourceRatingInput,
+} from '@notifio/shared';
+
+// User event types
+export type {
+  UserEvent,
+  UserEventCategory,
+  CreateUserEventBody,
+  UpdateUserEventBody,
+} from '@notifio/shared';
+
+// Weather threshold types
+export type {
+  UserWeatherThreshold,
+  SetWeatherThresholdBody,
+} from '@notifio/shared';
+
+// Source preference types
+export type {
+  SourcePreference,
+  SetSourcePreferenceBody,
+} from '@notifio/shared';
+
+// Digest mode
+export type { DigestMode } from '@notifio/shared';
+
+// Pollen types — hand-written to match API contract
+export interface PollenComponents {
+  birch: number | null;
+  grass: number | null;
+  ragweed: number | null;
+  alder: number | null;
+  mugwort: number | null;
+  olive: number | null;
+}
+
+export interface PollenResponse {
+  level: string;
+  dominant: string | null;
+  components: PollenComponents;
+  unit: string;
+  updatedAt: string;
+}

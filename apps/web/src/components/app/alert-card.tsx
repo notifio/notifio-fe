@@ -17,15 +17,6 @@ interface AlertCardProps {
   onClick?: () => void;
 }
 
-type NotificationType =
-  | 'creation'
-  | 'start'
-  | 'update'
-  | 'expiry'
-  | 'all_clear'
-  | 'forecast'
-  | 'reminder';
-
 function isResolved(n: NotificationHistoryItem): boolean {
   if (n.status !== 'sent') return true;
   const nt = (n as Record<string, unknown>).notificationType;
@@ -33,35 +24,6 @@ function isResolved(n: NotificationHistoryItem): boolean {
   if (n.title.startsWith('Ukončené:') || n.title.startsWith('Resolved:')) return true;
   return false;
 }
-
-/** Use notificationType field if available, otherwise infer from title patterns. */
-function inferType(n: NotificationHistoryItem): NotificationType | null {
-  const nt = (n as Record<string, unknown>).notificationType;
-  if (typeof nt === 'string' && ['creation', 'start', 'update', 'expiry', 'all_clear', 'forecast', 'reminder'].includes(nt)) {
-    return nt as NotificationType;
-  }
-  const t = n.title.toLowerCase();
-  if (t.startsWith('ukončené:') || t.startsWith('resolved:')) return 'all_clear';
-  if (t.includes('predpoveď') || t.includes('forecast')) return 'forecast';
-  if (t.includes('aktualizácia') || t.includes('update')) return 'update';
-  if (t.includes('končí') || t.includes('expir')) return 'expiry';
-  if (t.includes('začína') || t.includes('starting')) return 'start';
-  if (t.includes('stále aktívne') || t.includes('still active') || t.includes('reminder'))
-    return 'reminder';
-  return null;
-}
-
-const TYPE_BADGE_STYLES: Record<
-  string,
-  { bg: string; text: string; border?: string }
-> = {
-  start: { bg: 'rgba(52,199,89,0.15)', text: '#34C759' },
-  update: { bg: 'rgba(58,134,255,0.15)', text: '#3A86FF' },
-  expiry: { bg: 'rgba(245,158,11,0.15)', text: '#D97706' },
-  all_clear: { bg: 'rgba(52,199,89,0.15)', text: '#34C759' },
-  forecast: { bg: 'rgba(107,122,153,0.1)', text: '#6B7A99' },
-  reminder: { bg: 'rgba(107,122,153,0.1)', text: '#6B7A99' },
-};
 
 const SEVERITY_COLORS: Record<string, { bg: string; text: string }> = {
   critical: { bg: 'rgba(255,59,48,0.15)', text: '#FF3B30' },
@@ -91,12 +53,12 @@ export function AlertCard({
 }: AlertCardProps) {
   const { resolvedTheme } = useTheme();
   const tn = useTranslations('notificationType');
+  const tcb = useTranslations('categoryBadge');
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === 'dark';
 
   const resolved = isResolved(notification);
-  const notifType = inferType(notification);
   const icon = getNotificationIcon(notification.category);
   const accentColor = resolved
     ? '#34C759'
@@ -104,7 +66,10 @@ export function AlertCard({
 
   const iconBgAlpha = isDark ? 0.15 : 0.1;
 
-  const typeBadge = notifType && notifType !== 'creation' ? TYPE_BADGE_STYLES[notifType] : null;
+  // Category badge label — uses the category field directly (no title-string inference)
+  const categoryLabel = tcb.has(notification.category)
+    ? tcb(notification.category)
+    : null;
 
   return (
     <button
@@ -141,10 +106,16 @@ export function AlertCard({
             width={28}
             height={28}
             viewBox="0 0 24 24"
-            fill={icon.color}
+            fill="none"
+            stroke={icon.color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d={icon.path} />
+            {icon.paths.map((d, i) => (
+              <path key={i} d={d} />
+            ))}
           </svg>
         </div>
 
@@ -186,17 +157,16 @@ export function AlertCard({
               </span>
             )}
 
-            {/* Notification type badge */}
-            {typeBadge && notifType && notifType !== 'all_clear' && (
+            {/* Category badge */}
+            {categoryLabel && !resolved && (
               <span
                 className="rounded px-2 py-0.5 text-[10px] font-medium"
                 style={{
-                  backgroundColor: typeBadge.bg,
-                  color: typeBadge.text,
-                  border: typeBadge.border,
+                  backgroundColor: hexToRgba(icon.color, 0.15),
+                  color: icon.color,
                 }}
               >
-                {tn(notifType)}
+                {categoryLabel}
               </span>
             )}
 

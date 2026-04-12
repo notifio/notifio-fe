@@ -103,21 +103,21 @@ function Toggle({
 
 // ── Icon in tinted square ────────────────────────────────────────────
 function CategoryIcon({
-  path,
+  paths,
   color,
   isDark,
   size,
   iconSize,
   radius,
 }: {
-  path: string;
+  paths: string[];
   color: string;
   isDark: boolean;
   size: number;
   iconSize: number;
   radius: number;
 }) {
-  const fill = isDark ? color : (LIGHT_ICON_COLORS[color] ?? color);
+  const strokeColor = isDark ? color : (LIGHT_ICON_COLORS[color] ?? color);
   const bgAlpha = isDark ? 0.15 : 0.12;
 
   return (
@@ -137,10 +137,16 @@ function CategoryIcon({
         width={iconSize}
         height={iconSize}
         viewBox="0 0 24 24"
-        fill={fill}
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d={path} />
+        {paths.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
       </svg>
     </div>
   );
@@ -265,7 +271,7 @@ export function MapFilterBar({
       <div
         style={{
           opacity: isOpen ? 1 : 0,
-          maxHeight: isOpen ? '500px' : '0px',
+          maxHeight: isOpen ? '800px' : '0px',
           overflow: 'hidden',
           transition: 'opacity 200ms ease, max-height 200ms ease',
           pointerEvents: isOpen ? 'auto' : 'none',
@@ -280,7 +286,7 @@ export function MapFilterBar({
             minWidth: '260px',
             color: textColor,
             overflowY: 'auto',
-            maxHeight: '70vh',
+            maxHeight: '85vh',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
           }}
@@ -358,7 +364,7 @@ export function MapFilterBar({
                     }}
                   >
                     <CategoryIcon
-                      path={style.iconPath}
+                      paths={style.iconPaths}
                       color={style.color}
                       isDark={isDark}
                       size={44}
@@ -409,7 +415,7 @@ export function MapFilterBar({
                             }}
                           >
                             <CategoryIcon
-                              path={ICON_PATHS[iconKey]}
+                              paths={ICON_PATHS[iconKey]}
                               color={subColor}
                               isDark={isDark}
                               size={36}
