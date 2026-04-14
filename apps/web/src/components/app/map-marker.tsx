@@ -16,38 +16,45 @@ interface MapMarkerProps {
 
 // The pin SVG dimensions — used as the fixed wrapper size so MapLibre's
 // anchor: 'bottom' always resolves to the same pixel regardless of state.
-const PIN_W = 30;
-const PIN_H = 40;
+const PIN_W = 38;
+const PIN_H = 50;
 const TRIANGLE_H = 6;
 
 function TeardropSvg({ style, iconColor }: { style: PinStyle; iconColor: string }) {
+  const Icon = style.icon;
   return (
-    <svg
-      width={PIN_W}
-      height={PIN_H}
-      viewBox="0 0 24 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Teardrop shape */}
-      <path
-        d="M12 0C5.373 0 0 5.373 0 12c0 8 12 20 12 20s12-12 12-20C24 5.373 18.627 0 12 0z"
-        fill={style.color}
-      />
-      {/* Tabler icon — scaled from 24x24 to 12x12, centered at (12,12) in the teardrop */}
-      <g
-        transform="translate(6,6) scale(0.5)"
+    <div style={{ position: 'relative', width: `${PIN_W}px`, height: `${PIN_H}px` }}>
+      {/* Teardrop background shape */}
+      <svg
+        width={PIN_W}
+        height={PIN_H}
+        viewBox="0 0 24 32"
         fill="none"
-        stroke={iconColor}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ position: 'absolute', top: 0, left: 0 }}
       >
-        {style.iconPaths.map((d, i) => (
-          <path key={i} d={d} />
-        ))}
-      </g>
-    </svg>
+        <path
+          d="M12 0C5.373 0 0 5.373 0 12c0 8 12 20 12 20s12-12 12-20C24 5.373 18.627 0 12 0z"
+          fill={style.color}
+        />
+      </svg>
+      {/* Tabler icon centered in the circle part of the teardrop */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '7px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '18px',
+          height: '18px',
+        }}
+      >
+        <Icon size={18} color={iconColor} strokeWidth={2.5} />
+      </div>
+    </div>
   );
 }
 

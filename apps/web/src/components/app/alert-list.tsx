@@ -10,17 +10,10 @@ import { useNotificationHistory } from '@/hooks/use-notification-history';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 
 import { AlertCard } from './alert-card';
+import { isResolved } from './alert-card-utils';
 import { SetupPromptCard } from './setup-prompt-card';
 
 type TabFilter = 'all' | 'active' | 'resolved';
-
-function isResolved(n: NotificationHistoryItem): boolean {
-  if (n.status !== 'sent') return true;
-  const nt = (n as Record<string, unknown>).notificationType;
-  if (typeof nt === 'string') return nt === 'all_clear';
-  if (n.title.startsWith('Ukončené:') || n.title.startsWith('Resolved:')) return true;
-  return false;
-}
 
 interface AlertListProps {
   selectedId?: string | null;

@@ -1,12 +1,12 @@
 'use client';
 
-import { IconAdjustments, IconX } from '@tabler/icons-react';
+import type { Icon } from '@tabler/icons-react';
+import { IconAdjustments, IconInfoCircle, IconX } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
-  ICON_PATHS,
   MAP_FILTER_SOURCES,
   MAP_PIN_STYLES,
   TRAFFIC_ICON_MAP,
@@ -103,14 +103,14 @@ function Toggle({
 
 // ── Icon in tinted square ────────────────────────────────────────────
 function CategoryIcon({
-  paths,
+  icon: IconComponent,
   color,
   isDark,
   size,
   iconSize,
   radius,
 }: {
-  paths: string[];
+  icon: Icon;
   color: string;
   isDark: boolean;
   size: number;
@@ -133,21 +133,7 @@ function CategoryIcon({
         flexShrink: 0,
       }}
     >
-      <svg
-        width={iconSize}
-        height={iconSize}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {paths.map((d, i) => (
-          <path key={i} d={d} />
-        ))}
-      </svg>
+      <IconComponent size={iconSize} color={strokeColor} strokeWidth={2} />
     </div>
   );
 }
@@ -364,7 +350,7 @@ export function MapFilterBar({
                     }}
                   >
                     <CategoryIcon
-                      paths={style.iconPaths}
+                      icon={style.icon}
                       color={style.color}
                       isDark={isDark}
                       size={44}
@@ -397,7 +383,7 @@ export function MapFilterBar({
                       {trafficSubsWithData.map((type) => {
                         const subCount = trafficTypeCounts.get(type) ?? 0;
                         const subActive = activeTrafficTypes.has(type);
-                        const iconKey = TRAFFIC_ICON_MAP[type] ?? 'other';
+                        const SubIcon = TRAFFIC_ICON_MAP[type] ?? IconInfoCircle;
                         const subColor = TRAFFIC_TYPE_COLORS[type] ?? '#6B7A99';
 
                         return (
@@ -415,7 +401,7 @@ export function MapFilterBar({
                             }}
                           >
                             <CategoryIcon
-                              paths={ICON_PATHS[iconKey]}
+                              icon={SubIcon}
                               color={subColor}
                               isDark={isDark}
                               size={36}
