@@ -1,4 +1,5 @@
 import { ApiErrorToaster } from "@/components/app/api-error-toaster";
+import { BottomTabBar } from "@/components/app/bottom-tab-bar";
 import { ConsentGate } from "@/components/app/consent-gate";
 import { LocationStatusBanner } from "@/components/app/location-status-banner";
 import { TopBar } from "@/components/app/top-bar";
@@ -17,7 +18,8 @@ export default async function AppLayout({
         <TopBar />
         <LocationStatusBanner />
         <ApiErrorToaster />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        <BottomTabBar />
       </div>
     </ConsentGate>
   );

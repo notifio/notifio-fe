@@ -380,6 +380,18 @@
       "contact": "Kontakt"
     }
   },
+  "setupPrompt": {
+    "title": "Začnite s notifikáciami",
+    "descriptionBoth": "Povoľte prístup k polohe a push notifikácie, aby ste dostávali upozornenia o počasí, doprave a výpadkoch vo vašej oblasti.",
+    "descriptionPushOnly": "Povoľte push notifikácie, aby ste dostávali upozornenia pre vaše uložené lokácie.",
+    "descriptionGeoOnly": "Pridajte lokáciu, aby sme vedeli, kam vám posielať upozornenia.",
+    "enablePush": "Povoliť notifikácie",
+    "addLocation": "Pridať lokáciu",
+    "setup": "Nastaviť",
+    "compactBoth": "Povoľte polohu a notifikácie pre zobrazenie upozornení",
+    "compactPushOnly": "Povoľte push notifikácie pre zobrazenie upozornení",
+    "compactGeoOnly": "Pridajte lokáciu pre zobrazenie upozornení"
+  },
   "digest": {
     "title": "Doručovanie notifikácií",
     "description": "Kedy chcete dostávať bežné upozornenia?",

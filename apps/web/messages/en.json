@@ -380,6 +380,18 @@
       "contact": "Contact"
     }
   },
+  "setupPrompt": {
+    "title": "Get started with notifications",
+    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
+    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
+    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
+    "enablePush": "Enable notifications",
+    "addLocation": "Add a location",
+    "setup": "Set up",
+    "compactBoth": "Enable location & notifications to see alerts here",
+    "compactPushOnly": "Enable push notifications to see alerts here",
+    "compactGeoOnly": "Add a location to see alerts here"
+  },
   "digest": {
     "title": "Notification delivery",
     "description": "When do you want to receive routine notifications?",

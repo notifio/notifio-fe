@@ -7,8 +7,10 @@ import { useMemo, useState } from 'react';
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
 import { useNotificationHistory } from '@/hooks/use-notification-history';
+import { usePermissionStatus } from '@/hooks/use-permission-status';
 
 import { AlertCard } from './alert-card';
+import { SetupPromptCard } from './setup-prompt-card';
 
 type TabFilter = 'all' | 'active' | 'resolved';
 
@@ -30,6 +32,7 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
   const t = useTranslations();
   const [tab, setTab] = useState<TabFilter>('all');
   const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory();
+  const { fullyConfigured } = usePermissionStatus();
 
   // Group by eventId — keep most recent, track count
   const grouped = useMemo(() => {
@@ -106,10 +109,16 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-16">
-          <IconBell size={32} className="text-muted" />
-          <p className="text-sm text-muted">{t('alerts.noNotifications')}</p>
-        </div>
+        fullyConfigured ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-16">
+            <IconBell size={32} className="text-muted" />
+            <p className="text-sm text-muted">{t('alerts.noNotifications')}</p>
+          </div>
+        ) : (
+          <div className="p-4">
+            <SetupPromptCard variant="compact" />
+          </div>
+        )
       ) : (
         <div className="space-y-2 p-4">
           {filtered.map((g) => (

@@ -6,85 +6,40 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-const DISMISSED_KEY = 'notifio_banner_dismissed';
-const DEVICE_ID_KEY = 'notifio_device_id';
-const FCM_TOKEN_KEY = 'notifio_fcm_token';
+import { usePermissionStatus } from '@/hooks/use-permission-status';
 
-interface PermissionStatus {
-  pushGranted: boolean;
-  pushDenied: boolean;
-  geoGranted: boolean;
-  geoDenied: boolean;
-}
+const DISMISSED_KEY = 'notifio_banner_dismissed';
 
 export function LocationStatusBanner() {
   const t = useTranslations('locationBanner');
   const pathname = usePathname();
-  const [status, setStatus] = useState<PermissionStatus | null>(null);
+  const { pushGranted, pushDenied, geoGranted, geoDenied, loading } = usePermissionStatus();
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    if (pathname?.startsWith('/settings')) {
-      setStatus(null);
-      return;
-    }
-
-    if (sessionStorage.getItem(DISMISSED_KEY) === '1') {
+    if (typeof window !== 'undefined' && sessionStorage.getItem(DISMISSED_KEY) === '1') {
       setDismissed(true);
-      return;
     }
-
-    const hasDevice = localStorage.getItem(DEVICE_ID_KEY) !== null;
-    const hasToken = localStorage.getItem(FCM_TOKEN_KEY) !== null;
-    const notifPerm = 'Notification' in window ? Notification.permission : 'default';
-    const pushGranted = hasDevice && hasToken && notifPerm === 'granted';
-    const pushDenied = notifPerm === 'denied';
-
-    let cancelled = false;
-    const checkGeo = async (): Promise<void> => {
-      let geoGranted = false;
-      let geoDenied = false;
-      if ('permissions' in navigator) {
-        try {
-          const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
-          geoGranted = result.state === 'granted';
-          geoDenied = result.state === 'denied';
-        } catch {
-          // Safari may throw — ignore
-        }
-      }
-      if (!cancelled) {
-        setStatus({ pushGranted, pushDenied, geoGranted, geoDenied });
-      }
-    };
-    void checkGeo();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
+  }, []);
 
   const handleDismiss = (): void => {
     sessionStorage.setItem(DISMISSED_KEY, '1');
     setDismissed(true);
   };
 
-  if (!status || dismissed) return null;
-
-  // Both OK — no banner
-  if (status.pushGranted && status.geoGranted) return null;
+  // Hide while loading, on settings page, if dismissed, or if fully configured
+  if (loading || pathname?.startsWith('/settings') || dismissed) return null;
+  if (pushGranted && geoGranted) return null;
 
   // Determine message key based on permission matrix
   let messageKey: string;
-  if (status.pushDenied) {
+  if (pushDenied) {
     messageKey = 'pushDenied';
-  } else if (status.geoDenied) {
+  } else if (geoDenied) {
     messageKey = 'geoDenied';
-  } else if (!status.pushGranted && !status.geoGranted) {
+  } else if (!pushGranted && !geoGranted) {
     messageKey = 'bothOff';
-  } else if (status.pushGranted && !status.geoGranted) {
+  } else if (pushGranted && !geoGranted) {
     messageKey = 'pushOkGeoOff';
   } else {
     messageKey = 'pushOffGeoOk';

@@ -18,9 +18,11 @@ import type { NotificationHistoryItem, PersonalReminder } from '@notifio/api-cli
 import { AlertCard } from '@/components/app/alert-card';
 import { ProGate } from '@/components/app/pro-gate';
 import { ReminderFormModal } from '@/components/app/reminder-form-modal';
+import { SetupPromptCard } from '@/components/app/setup-prompt-card';
 import { Toggle } from '@/components/ui/toggle';
 import { useMembership } from '@/hooks/use-membership';
 import { useNotificationHistory } from '@/hooks/use-notification-history';
+import { usePermissionStatus } from '@/hooks/use-permission-status';
 import { useReminders } from '@/hooks/use-reminders';
 import { cn } from '@/lib/utils';
 
@@ -135,6 +137,7 @@ const RECURRENCE_KEYS: Record<string, string> = {
 export default function NotificationsPage() {
   const t = useTranslations('notificationsPage');
   const { isPro } = useMembership();
+  const { fullyConfigured } = usePermissionStatus();
 
   // Tab state
   const [activeTab, setActiveTab] = useState<Tab>('history');
@@ -322,10 +325,14 @@ export default function NotificationsPage() {
                 <IconLoader2 size={28} className="animate-spin text-accent" />
               </div>
             ) : filteredItems.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
-                <IconBell size={36} className="mx-auto text-muted" />
-                <p className="mt-3 text-sm text-muted">{t('history.empty')}</p>
-              </div>
+              fullyConfigured ? (
+                <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+                  <IconBell size={36} className="mx-auto text-muted" />
+                  <p className="mt-3 text-sm text-muted">{t('history.empty')}</p>
+                </div>
+              ) : (
+                <SetupPromptCard variant="full" />
+              )
             ) : (
               <div className="space-y-6">
                 {dayGroups.map((group) => (

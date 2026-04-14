@@ -210,8 +210,8 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row">
-      <div className="scrollbar-hidden h-1/2 w-full shrink-0 overflow-y-auto border-b border-border lg:h-full lg:w-[480px] lg:border-b-0 lg:border-r">
+    <div className="flex h-[calc(100vh-3.5rem-4rem)] flex-col md:h-[calc(100vh-3.5rem)] lg:flex-row">
+      <div className="scrollbar-hidden h-full w-full shrink-0 overflow-y-auto md:h-1/2 md:border-b md:border-border lg:h-full lg:w-[480px] lg:border-b-0 lg:border-r">
         <div className="p-4">
           <WeatherCard
             weather={weather}
@@ -268,7 +268,7 @@ export default function DashboardPage() {
           <AdPlaceholder variant="banner" />
         </div>
       </div>
-      <div className="relative min-h-0 flex-1 p-4">
+      <div className="relative hidden min-h-0 flex-1 p-4 md:block">
         <MapFilterBar
           activeFilters={activeFilters}
           activeTrafficTypes={activeTrafficTypes}
