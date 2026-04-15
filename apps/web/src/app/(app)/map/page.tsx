@@ -1,8 +1,11 @@
 'use client';
 
+import { IconPlus } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 
 import { DashboardMap } from '@/components/app/dashboard-map';
+import { EventReportModal } from '@/components/app/event-report-modal';
+import { MapAdBanner } from '@/components/app/map-ad-banner';
 import { MapFilterBar } from '@/components/app/map-filter-bar';
 import { useMapData } from '@/hooks/use-map-data';
 import { useUserLocation } from '@/hooks/use-user-location';
@@ -16,7 +19,6 @@ const ALL_TRAFFIC_TYPES: TrafficIncidentType[] = [
   'construction',
   'event',
   'road_closure',
-  'weather',
   'other',
 ];
 
@@ -28,6 +30,7 @@ export default function MapPage() {
     () => new Set(ALL_TRAFFIC_TYPES),
   );
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
   const { location: userLocation, isGps } = useUserLocation();
 
   const effectiveCenter = mapCenter ?? userLocation ?? DEFAULT_LOCATION;
@@ -84,6 +87,26 @@ export default function MapPage() {
         isGpsCenter={isGps}
         onCenterChange={setMapCenter}
       />
+      <MapAdBanner />
+
+      {/* Report event FAB */}
+      <button
+        onClick={() => setReportOpen(true)}
+        className="absolute bottom-24 right-8 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+      >
+        <IconPlus size={24} />
+      </button>
+
+      {reportOpen && (
+        <EventReportModal
+          lat={effectiveCenter.lat}
+          lng={effectiveCenter.lng}
+          onClose={() => {
+            setReportOpen(false);
+            refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

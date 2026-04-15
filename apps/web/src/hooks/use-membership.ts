@@ -39,6 +39,15 @@ interface UseMembershipResult {
   refetch: () => void;
 }
 
+/**
+ * The api-client types getMembership() as the flat MembershipDetails, but the
+ * API actually returns the nested MembershipResponse shape after envelope
+ * unwrapping. This helper bridges the type gap.
+ */
+function parseMembershipResponse(data: unknown): MembershipResponse {
+  return data as MembershipResponse;
+}
+
 export function useMembership(): UseMembershipResult {
   const [membership, setMembership] = useState<MembershipResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,9 +57,8 @@ export function useMembership(): UseMembershipResult {
     setLoading(true);
     setError(null);
     try {
-      // The API returns a nested shape that doesn't match the flat MembershipDetails type
-      const data = await api.getMembership() as unknown as MembershipResponse;
-      setMembership(data);
+      const data = await api.getMembership();
+      setMembership(parseMembershipResponse(data));
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Failed to load membership';
       setError(msg);

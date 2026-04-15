@@ -1,0 +1,127 @@
+{
+  "tabs": {
+    "overview": "Prehľad",
+    "alerts": "Notifikácie",
+    "map": "Mapa",
+    "profile": "Profil"
+  },
+  "screens": {
+    "overview": { "title": "Prehľad", "subtitle": "Tvoja oblasť" },
+    "alerts": { "title": "Upozornenia", "subtitle": "Pre tvoju oblasť" },
+    "settings": { "title": "Nastavenia" },
+    "profile": { "title": "Profil" }
+  },
+  "alertTypes": {
+    "weather": "Výstrahy počasia",
+    "traffic": "Dopravné správy",
+    "airQuality": "Kvalita ovzdušia",
+    "utilityOutage": "Výpadky sietí",
+    "event": "Udalosti"
+  },
+  "common": {
+    "tryAgain": "Skúsiť znova",
+    "comingSoon": "Čoskoro",
+    "ok": "OK",
+    "units": "Jednotky"
+  },
+  "categoryGroups": {
+    "weather": "Počasie",
+    "traffic": "Doprava",
+    "outages": "Výpadky",
+    "events": "Udalosti"
+  },
+  "profile": {
+    "free": "Zadarmo",
+    "notificationPreferences": "Nastavenia notifikácií",
+    "language": "Jazyk",
+    "languageSk": "Slovenčina",
+    "languageEn": "English",
+    "theme": "Téma",
+    "themeSystem": "Systém",
+    "signOut": "Odhlásiť sa",
+    "version": "Verzia"
+  },
+  "permissions": {
+    "pushNotifications": "Push notifikácie",
+    "locationTracking": "Sledovanie polohy",
+    "enabled": "Zapnuté",
+    "disabled": "Vypnuté",
+    "denied": "Zamietnuté",
+    "pushDenied": "Notifikácie sú zablokované. Otvor Nastavenia pre povolenie.",
+    "locationDenied": "Prístup k polohe zamietnutý. Otvor Nastavenia pre povolenie.",
+    "openSettings": "Otvoriť Nastavenia"
+  },
+  "weatherCard": {
+    "feelsLike": "Pocitovo",
+    "clearNight": "Jasná noc",
+    "cloudyNight": "Zamračená noc",
+    "trafficSummary": "Dopravný prehľad"
+  },
+  "settingsOptions": {
+    "system": "Systém",
+    "light": "Svetlý",
+    "dark": "Tmavý",
+    "metric": "Metrické (°C, km/h)",
+    "imperial": "Imperiálne (°F, mph)"
+  },
+  "auth": {
+    "welcomeTitle": "Vitaj v Notifio",
+    "welcomeDescription": "Upozornenia v reálnom čase pre tvoju oblasť — počasie, doprava, výpadky a ďalšie.",
+    "getStarted": "Začať",
+    "existingAccount": "Už mám účet",
+    "welcomeBack": "Vitaj späť",
+    "signInDescription": "Prihlás sa do svojho Notifio účtu.",
+    "signInButton": "Prihlásiť sa",
+    "signInError": "Chyba prihlásenia",
+    "goBack": "Späť"
+  },
+  "onboarding": {
+    "locationTitle": "Tvoja poloha",
+    "locationDescription": "Používame tvoju polohu na zasielanie relevantných upozornení o počasí, doprave a výpadkoch v tvojom okolí.",
+    "allowLocation": "Povoliť polohu",
+    "skipForNow": "Preskočiť",
+    "notificationsTitle": "Čo ťa zaujíma?",
+    "notificationsDescription": "Vyber si typy upozornení, ktoré chceš dostávať.",
+    "enableNotifications": "Zapnúť notifikácie",
+    "notificationsDisabledTitle": "Notifikácie vypnuté",
+    "notificationsDisabledMessage": "Notifikácie môžeš zapnúť neskôr v Nastaveniach."
+  },
+  "aqi": {
+    "good": "Kvalita ovzdušia je uspokojivá.",
+    "fair": "Prijateľná. Citlivé skupiny opatrne.",
+    "moderate": "Citlivé skupiny môžu pociťovať podráždenie.",
+    "poor": "Každý môže pociťovať zdravotné účinky.",
+    "very_poor": "Zdravotné varovanie. Vyhnite sa aktivitám vonku."
+  },
+  "pollen": {
+    "high": "Vysoké hladiny peľu. Obmedzte pobyt vonku.",
+    "moderate": "Stredné hladiny peľu. Citliví jedinci môžu pociťovať príznaky.",
+    "low": "Nízke hladiny peľu. Vo všeobecnosti bezpečné.",
+    "birch": "Breza",
+    "grass": "Trávy",
+    "alder": "Jelša",
+    "ragweed": "Ambrózia"
+  },
+  "weatherWarnings": {
+    "validUntil": "Platné do",
+    "moreWarnings": "výstrahy"
+  },
+  "events": {
+    "coversYourArea": "Táto udalosť sa týka tvojej oblasti.",
+    "unavailable": "Detaily udalosti nie sú dostupné."
+  },
+  "notificationType": {
+    "start": "Začína",
+    "update": "Aktualizované",
+    "expiry": "Končí čoskoro",
+    "all_clear": "Vyriešené",
+    "forecast": "Predpoveď",
+    "reminder": "Stále aktívne"
+  },
+  "alertFilters": {
+    "all": "Všetky",
+    "active": "Aktívne",
+    "resolved": "Vyriešené",
+    "noNotifications": "Zatiaľ žiadne notifikácie"
+  }
+}
