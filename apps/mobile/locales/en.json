@@ -1,0 +1,127 @@
+{
+  "tabs": {
+    "overview": "Dashboard",
+    "alerts": "Notifications",
+    "map": "Map",
+    "profile": "Profile"
+  },
+  "screens": {
+    "overview": { "title": "Overview", "subtitle": "Your area" },
+    "alerts": { "title": "Alerts", "subtitle": "For your area" },
+    "settings": { "title": "Settings" },
+    "profile": { "title": "Profile" }
+  },
+  "alertTypes": {
+    "weather": "Weather Warnings",
+    "traffic": "Traffic Updates",
+    "airQuality": "Air Quality",
+    "utilityOutage": "Utility Outages",
+    "event": "Events"
+  },
+  "common": {
+    "tryAgain": "Try again",
+    "comingSoon": "Coming soon",
+    "ok": "OK",
+    "units": "Units"
+  },
+  "categoryGroups": {
+    "weather": "Weather",
+    "traffic": "Traffic",
+    "outages": "Outages",
+    "events": "Events"
+  },
+  "profile": {
+    "free": "Free",
+    "notificationPreferences": "Notification preferences",
+    "language": "Language",
+    "languageSk": "Slovenčina",
+    "languageEn": "English",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "signOut": "Sign out",
+    "version": "Version"
+  },
+  "permissions": {
+    "pushNotifications": "Push notifications",
+    "locationTracking": "Location tracking",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "denied": "Denied",
+    "pushDenied": "Notifications are blocked. Open Settings to enable.",
+    "locationDenied": "Location access denied. Open Settings to enable.",
+    "openSettings": "Open Settings"
+  },
+  "weatherCard": {
+    "feelsLike": "Feels like",
+    "clearNight": "Clear night",
+    "cloudyNight": "Cloudy night",
+    "trafficSummary": "Traffic Summary"
+  },
+  "settingsOptions": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "metric": "Metric (°C, km/h)",
+    "imperial": "Imperial (°F, mph)"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to Notifio",
+    "welcomeDescription": "Real-time alerts for your area — weather, traffic, outages, and more.",
+    "getStarted": "Get Started",
+    "existingAccount": "I already have an account",
+    "welcomeBack": "Welcome back",
+    "signInDescription": "Sign in to your Notifio account to continue.",
+    "signInButton": "Sign In",
+    "signInError": "Sign In Error",
+    "goBack": "Go back"
+  },
+  "onboarding": {
+    "locationTitle": "Your location",
+    "locationDescription": "We use your location to send you relevant alerts about weather, traffic, and outages near you.",
+    "allowLocation": "Allow Location",
+    "skipForNow": "Skip for now",
+    "notificationsTitle": "What matters to you?",
+    "notificationsDescription": "Choose the types of alerts you want to receive.",
+    "enableNotifications": "Enable Notifications",
+    "notificationsDisabledTitle": "Notifications Disabled",
+    "notificationsDisabledMessage": "You can enable notifications later in Settings."
+  },
+  "aqi": {
+    "good": "Air quality is satisfactory.",
+    "fair": "Acceptable. Sensitive groups take care.",
+    "moderate": "Sensitive groups may experience irritation.",
+    "poor": "Everyone may experience health effects.",
+    "very_poor": "Health alert. Avoid outdoor activity."
+  },
+  "pollen": {
+    "high": "High pollen levels. Limit outdoor exposure.",
+    "moderate": "Moderate pollen. Sensitive individuals may notice symptoms.",
+    "low": "Low pollen levels. Generally safe.",
+    "birch": "Birch",
+    "grass": "Grass",
+    "alder": "Alder",
+    "ragweed": "Ragweed"
+  },
+  "weatherWarnings": {
+    "validUntil": "Valid until",
+    "moreWarnings": "warnings"
+  },
+  "events": {
+    "coversYourArea": "This event covers your area.",
+    "unavailable": "Event details not available."
+  },
+  "notificationType": {
+    "start": "Starting now",
+    "update": "Updated",
+    "expiry": "Ending soon",
+    "all_clear": "Resolved",
+    "forecast": "Forecast",
+    "reminder": "Still active"
+  },
+  "alertFilters": {
+    "all": "All",
+    "active": "Active",
+    "resolved": "Resolved",
+    "noNotifications": "No notifications yet"
+  }
+}

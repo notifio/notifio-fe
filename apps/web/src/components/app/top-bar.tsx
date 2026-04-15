@@ -52,7 +52,7 @@ export function TopBar() {
         Notifio
       </Link>
 
-      <nav className="ml-4 flex items-center gap-1 md:ml-8">
+      <nav className="ml-4 hidden items-center gap-1 md:flex md:ml-8">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -73,8 +73,10 @@ export function TopBar() {
       </nav>
 
       <div className="ml-auto flex items-center gap-2">
-        <LanguageSwitcher />
-        <ThemeToggle />
+        <div className="hidden lg:flex lg:items-center lg:gap-2">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
 
         {/* Profile dropdown */}
         <div className="relative" ref={menuRef}>
@@ -100,6 +102,12 @@ export function TopBar() {
                     <p className="truncate text-xs text-muted">{email}</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Language & theme — visible below lg */}
+              <div className="flex items-center justify-between border-b border-border px-4 py-3 lg:hidden">
+                <LanguageSwitcher />
+                <ThemeToggle />
               </div>
 
               {/* Menu items */}

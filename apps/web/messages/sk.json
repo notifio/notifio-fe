@@ -274,6 +274,7 @@
     "reportButton": "Nahlásiť",
     "selectCategory": "Čo sa stalo?",
     "pinLocation": "Poloha",
+    "pickLocation": "Poloha (kliknite na mapu alebo presuňte špendlík)",
     "radius": "Ovplyvnený okruh",
     "submit": "Odoslať",
     "cancel": "Zrušiť",
@@ -378,6 +379,33 @@
       "privacy": "Ochrana súkromia",
       "about": "O nás",
       "contact": "Kontakt"
+    }
+  },
+  "setupPrompt": {
+    "title": "Začnite s notifikáciami",
+    "descriptionBoth": "Povoľte prístup k polohe a push notifikácie, aby ste dostávali upozornenia o počasí, doprave a výpadkoch vo vašej oblasti.",
+    "descriptionPushOnly": "Povoľte push notifikácie, aby ste dostávali upozornenia pre vaše uložené lokácie.",
+    "descriptionGeoOnly": "Pridajte lokáciu, aby sme vedeli, kam vám posielať upozornenia.",
+    "enablePush": "Povoliť notifikácie",
+    "addLocation": "Pridať lokáciu",
+    "setup": "Nastaviť",
+    "compactBoth": "Povoľte polohu a notifikácie pre zobrazenie upozornení",
+    "compactPushOnly": "Povoľte push notifikácie pre zobrazenie upozornení",
+    "compactGeoOnly": "Pridajte lokáciu pre zobrazenie upozornení"
+  },
+  "upsell": {
+    "upgrade": "Vylepšiť",
+    "reminder": {
+      "title": "Nastavte si osobné pripomienky",
+      "description": "Pro používatelia môžu vytvárať vlastné upozornenia na udalosti a termíny."
+    },
+    "locations": {
+      "title": "Sledujte viac lokácií",
+      "description": "Plus používatelia môžu sledovať až 3 lokácie. Pro až 10."
+    },
+    "pollen": {
+      "title": "Pokročilé peľové predpovede",
+      "description": "Plus používatelia dostávajú podrobný rozbor peľových informácií."
     }
   },
   "digest": {

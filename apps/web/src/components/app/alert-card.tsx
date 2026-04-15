@@ -9,39 +9,14 @@ import type { NotificationHistoryItem } from '@notifio/api-client';
 import { RelativeTime } from '@/components/ui/relative-time';
 import { getNotificationIcon } from '@/lib/notification-icons';
 
+import { ACCENT_COLORS, SEVERITY_COLORS, hexToRgba, isResolved } from './alert-card-utils';
+
 interface AlertCardProps {
   notification: NotificationHistoryItem;
   duplicateCount?: number;
   isSelected?: boolean;
   isLoading?: boolean;
   onClick?: () => void;
-}
-
-function isResolved(n: NotificationHistoryItem): boolean {
-  if (n.status !== 'sent') return true;
-  const nt = (n as Record<string, unknown>).notificationType;
-  if (typeof nt === 'string') return nt === 'all_clear';
-  if (n.title.startsWith('Ukončené:') || n.title.startsWith('Resolved:')) return true;
-  return false;
-}
-
-const SEVERITY_COLORS: Record<string, { bg: string; text: string }> = {
-  critical: { bg: 'rgba(255,59,48,0.15)', text: '#FF3B30' },
-  warning: { bg: 'rgba(255,122,47,0.15)', text: '#FF7A2F' },
-  info: { bg: 'rgba(58,134,255,0.15)', text: '#3A86FF' },
-};
-
-const ACCENT_COLORS: Record<string, string> = {
-  critical: '#FF3B30',
-  warning: '#FF7A2F',
-  info: '#3A86FF',
-};
-
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 export function AlertCard({
@@ -74,19 +49,9 @@ export function AlertCard({
   return (
     <button
       onClick={onClick}
-      className={`flex w-full text-left rounded-xl bg-card transition-colors hover:bg-card/80 ${isLoading ? 'animate-pulse' : ''}`}
-      style={{ opacity: resolved ? 0.55 : 1 }}
+      className={`flex w-full text-left rounded-xl ${isSelected ? 'border-l-[5px]' : 'border-l-[3px]'} bg-card transition-colors hover:bg-card/80 ${isLoading ? 'animate-pulse' : ''}`}
+      style={{ borderLeftColor: accentColor, opacity: resolved ? 0.55 : 1 }}
     >
-      {/* Accent bar */}
-      <div
-        style={{
-          width: isSelected ? '5px' : '3px',
-          borderRadius: '12px 0 0 12px',
-          backgroundColor: accentColor,
-          flexShrink: 0,
-        }}
-      />
-
       {/* Content */}
       <div className="flex min-w-0 flex-1 gap-3 p-3">
         {/* Category icon */}
@@ -102,21 +67,7 @@ export function AlertCard({
             flexShrink: 0,
           }}
         >
-          <svg
-            width={28}
-            height={28}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={icon.color}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {icon.paths.map((d, i) => (
-              <path key={i} d={d} />
-            ))}
-          </svg>
+          <icon.icon size={28} color={icon.color} strokeWidth={2} />
         </div>
 
         {/* Text */}

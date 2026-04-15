@@ -2,76 +2,23 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ApiError } from '@notifio/api-client';
 import type { TrafficFlowResponse } from '@notifio/api-client';
-import type { OutageRecord } from '@notifio/shared';
 
 import { api } from '@/lib/api';
 import { type MapPin, normalizeMapPins } from '@/lib/normalize-pins';
 
-// ── Helpers ──────────────────────────────────────────────────────────
+import { safeFetch } from './use-map-data/fetch-utils';
+import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from './use-map-data/geo-utils';
+import type { StaticData, ViewportCache } from './use-map-data/types';
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/** Fetch with a single 429 retry after 2 s. */
-async function safeFetch<T>(fn: () => Promise<T>): Promise<T | null> {
-  try {
-    return await fn();
-  } catch (err) {
-    if (err instanceof ApiError && err.status === 429) {
-      await delay(2000);
-      try {
-        return await fn();
-      } catch (retryErr) {
-        console.error('[useMapData] retry failed:', retryErr);
-        return null;
-      }
-    }
-    console.error('[useMapData] fetch failed:', err);
-    return null;
-  }
-}
-
-function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
-  const R = 6371;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-  const sinLat = Math.sin(dLat / 2);
-  const sinLng = Math.sin(dLng / 2);
-  const a2 =
-    sinLat * sinLat +
-    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * sinLng * sinLng;
-  return R * 2 * Math.atan2(Math.sqrt(a2), Math.sqrt(1 - a2));
-}
-
-function areaKey(lat: number, lng: number): string {
-  return `${Math.round(lat * 100) / 100}:${Math.round(lng * 100) / 100}`;
-}
-
-const REFETCH_THRESHOLD_KM = 5;
-
-// ── Types ────────────────────────────────────────────────────────────
-
-interface StaticData {
-  elec: OutageRecord[];
-  water: OutageRecord[];
-  heat: OutageRecord[];
-  gas: OutageRecord[];
-}
-
-interface ViewportCache {
-  pins: MapPin[];
-  flow: TrafficFlowResponse | null;
-}
-
-// ── Hook ─────────────────────────────────────────────────────────────
+const VIEWPORT_REFRESH_MS = 2 * 60 * 1000;
+const STATIC_REFRESH_MS = 10 * 60 * 1000;
 
 export function useMapData(center: { lat: number; lng: number } | null) {
   const [pins, setPins] = useState<MapPin[]>([]);
   const [flowSegments, setFlowSegments] = useState<TrafficFlowResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const staticData = useRef<StaticData | null>(null);
@@ -81,7 +28,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
   const viewportFetchId = useRef(0);
   const viewportCache = useRef<Map<string, ViewportCache>>(new Map());
 
-  // ── Static data: outages (fetch once on mount) ─────────────────────
+  // ── Static data: outages ──────────────────────────────────────────
   const fetchStatic = useCallback(async () => {
     if (staticFetched.current) return;
     staticFetched.current = true;
@@ -101,13 +48,13 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     };
   }, []);
 
-  // ── Viewport data: traffic + flow (refetch on significant pan) ─────
+  // ── Viewport data: traffic + flow + events ────────────────────────
   const fetchViewport = useCallback(
-    async (coords: { lat: number; lng: number }) => {
+    async (coords: { lat: number; lng: number }, auto = false) => {
       // Check viewport cache
       const key = areaKey(coords.lat, coords.lng);
       const cached = viewportCache.current.get(key);
-      if (cached) {
+      if (cached && !auto) {
         setPins(cached.pins);
         setFlowSegments(cached.flow);
         lastFetchCenter.current = coords;
@@ -117,10 +64,13 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       const id = ++viewportFetchId.current;
 
       fetchingRef.current = true;
-      setIsLoading(true);
+      if (auto) {
+        setIsAutoRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
       setError(null);
 
-      // Ensure static data is loaded
       await fetchStatic();
 
       const [traffic, flow, events] = await Promise.all([
@@ -129,7 +79,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         safeFetch(() => api.getEvents({ lat: coords.lat, lng: coords.lng, radius: 20000 })),
       ]);
 
-      // Stale response — a newer fetch was triggered while this one was in-flight
+      // Stale response
       if (id !== viewportFetchId.current) {
         fetchingRef.current = false;
         return;
@@ -140,6 +90,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         setError('Could not load data');
         fetchingRef.current = false;
         setIsLoading(false);
+        setIsAutoRefreshing(false);
         return;
       }
 
@@ -158,6 +109,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       lastFetchCenter.current = coords;
       fetchingRef.current = false;
       setIsLoading(false);
+      setIsAutoRefreshing(false);
     },
     [fetchStatic],
   );
@@ -173,6 +125,26 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     fetchViewport(center);
   }, [center, fetchViewport]);
 
+  // Auto-refresh viewport data every 2 minutes
+  useEffect(() => {
+    if (!center) return;
+    const interval = setInterval(() => {
+      viewportCache.current.clear();
+      lastFetchCenter.current = null;
+      fetchViewport(center, true);
+    }, VIEWPORT_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, [center, fetchViewport]);
+
+  // Auto-refresh static (outage) data every 10 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      staticFetched.current = false;
+      staticData.current = null;
+    }, STATIC_REFRESH_MS);
+    return () => clearInterval(interval);
+  }, []);
+
   const refresh = useCallback(() => {
     if (center) {
       lastFetchCenter.current = null;
@@ -183,5 +155,5 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     }
   }, [center, fetchViewport]);
 
-  return { pins, flowSegments, isLoading, error, refresh };
+  return { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh };
 }

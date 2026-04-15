@@ -4,10 +4,11 @@ import {
   IconCheck,
   IconChevronDown,
   IconLoader2,
-  IconMapPin,
   IconX,
 } from '@tabler/icons-react';
+import maplibregl from 'maplibre-gl';
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import {
   type FormEvent,
   useCallback,
@@ -28,6 +29,8 @@ interface EventReportModalProps {
   onClose: () => void;
 }
 
+const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const RADIUS_STEPS = [100, 250, 500, 1000, 2000, 5000, 10000, 20000];
 
 function formatRadius(m: number): string {
@@ -38,6 +41,7 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const t = useTranslations('events');
   const te = useTranslations('errors');
   const tc = useTranslations('common');
+  const { resolvedTheme } = useTheme();
   const { categories, loading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
   const { success, error: showError } = useToast();
 
@@ -46,8 +50,12 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [focusedIdx, setFocusedIdx] = useState(-1);
+  const [selectedLat, setSelectedLat] = useState(lat);
+  const [selectedLng, setSelectedLng] = useState(lng);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const pickerContainerRef = useRef<HTMLDivElement>(null);
+  const pickerMapRef = useRef<maplibregl.Map | null>(null);
 
   // Group subcategories by parent categoryCode
   const grouped = useMemo(() => {
@@ -119,6 +127,43 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
     el?.scrollIntoView({ block: 'nearest' });
   }, [focusedIdx, dropdownOpen]);
 
+  // Initialize location picker map
+  useEffect(() => {
+    if (!pickerContainerRef.current) return;
+
+    const tileStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
+    const map = new maplibregl.Map({
+      container: pickerContainerRef.current,
+      style: tileStyle,
+      center: [selectedLng, selectedLat],
+      zoom: 14,
+    });
+
+    const marker = new maplibregl.Marker({ color: '#FF7A2F', draggable: true })
+      .setLngLat([selectedLng, selectedLat])
+      .addTo(map);
+
+    marker.on('dragend', () => {
+      const lngLat = marker.getLngLat();
+      setSelectedLat(lngLat.lat);
+      setSelectedLng(lngLat.lng);
+    });
+
+    map.on('click', (e) => {
+      marker.setLngLat(e.lngLat);
+      setSelectedLat(e.lngLat.lat);
+      setSelectedLng(e.lngLat.lng);
+    });
+
+    pickerMapRef.current = map;
+
+    return () => {
+      map.remove();
+      pickerMapRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const selectCategory = useCallback((code: string) => {
     setSubcategoryCode(code);
     setDropdownOpen(false);
@@ -133,8 +178,8 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
       // Only send fields the BE accepts — title is auto-generated server-side
       await api.createEvent({
         subcategoryCode,
-        lat,
-        lng,
+        lat: selectedLat,
+        lng: selectedLng,
         radiusM: RADIUS_STEPS[radiusIdx],
       } as Parameters<typeof api.createEvent>[0]);
       success(t('success'));
@@ -262,15 +307,17 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
               )}
             </div>
 
-            {/* Location pill */}
+            {/* Location picker */}
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted">
-                {t('pinLocation')}
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
+                {t('pickLocation')}
               </label>
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-card px-3.5 py-2 text-xs font-medium text-text-secondary">
-                <IconMapPin size={14} className="text-accent" />
-                {lat.toFixed(5)}, {lng.toFixed(5)}
+              <div className="h-[200px] overflow-hidden rounded-xl border border-border">
+                <div ref={pickerContainerRef} className="h-full w-full" />
               </div>
+              <p className="mt-1 text-[11px] text-muted">
+                {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+              </p>
             </div>
 
             {/* Radius */}

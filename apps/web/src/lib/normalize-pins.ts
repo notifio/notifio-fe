@@ -11,7 +11,6 @@ export type TrafficIncidentType =
   | 'event'
   | 'flooding'
   | 'road_closure'
-  | 'weather'
   | 'other';
 
 export interface MapPin {
@@ -107,7 +106,6 @@ const EVENT_SUBCATEGORY_TO_INCIDENT: Record<string, TrafficIncidentType> = {
   road_works: 'construction',
   road_closure_planned: 'road_closure',
   transport_disruption: 'congestion',
-  wind_warning: 'weather',
   flooding: 'flooding',
 };
 
@@ -165,10 +163,7 @@ function eventToPin(event: UserEvent): MapPin | null {
   }
 
   // Category-level fallback
-  let fallbackType: TrafficIncidentType = 'event';
-  if (categoryCode === 'pollen' || categoryCode === 'weather_warning') {
-    fallbackType = 'weather';
-  }
+  const fallbackType: TrafficIncidentType = 'event';
 
   return {
     id: event.eventId,
