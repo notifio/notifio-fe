@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DashboardMap } from '@/components/app/dashboard-map';
 import { EventReportModal } from '@/components/app/event-report-modal';
+import { MapAdBanner } from '@/components/app/map-ad-banner';
 import { MapFilterBar } from '@/components/app/map-filter-bar';
 import { useMapData } from '@/hooks/use-map-data';
 import { api } from '@/lib/api';
@@ -20,7 +21,6 @@ const ALL_TRAFFIC_TYPES: TrafficIncidentType[] = [
   'event',
   'flooding',
   'road_closure',
-  'weather',
   'other',
 ];
 
@@ -217,10 +217,12 @@ export function MapPanel({
         onCloseOverlay={handleCloseOverlay}
       />
 
-      {/* Report event FAB — positioned above map attribution */}
+      <MapAdBanner />
+
+      {/* Report event FAB — positioned above map attribution + ad banner */}
       <button
         onClick={() => setReportOpen(true)}
-        className="absolute bottom-16 right-16 z-20 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="absolute bottom-24 right-16 z-20 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
       >
         <IconPlus size={26} />
       </button>

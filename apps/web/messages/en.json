@@ -274,6 +274,7 @@
     "reportButton": "Report",
     "selectCategory": "What happened?",
     "pinLocation": "Location",
+    "pickLocation": "Location (click map or drag pin)",
     "radius": "Affected radius",
     "submit": "Submit",
     "cancel": "Cancel",
@@ -391,6 +392,21 @@
     "compactBoth": "Enable location & notifications to see alerts here",
     "compactPushOnly": "Enable push notifications to see alerts here",
     "compactGeoOnly": "Add a location to see alerts here"
+  },
+  "upsell": {
+    "upgrade": "Upgrade",
+    "reminder": {
+      "title": "Set personal reminders",
+      "description": "Pro users can create custom alerts for events, deadlines, and more."
+    },
+    "locations": {
+      "title": "Monitor more locations",
+      "description": "Plus users can track up to 3 locations. Pro gets 10."
+    },
+    "pollen": {
+      "title": "Advanced pollen forecasts",
+      "description": "Plus users get detailed pollen breakdowns and daily forecasts."
+    }
   },
   "digest": {
     "title": "Notification delivery",

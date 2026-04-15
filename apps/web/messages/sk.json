@@ -274,6 +274,7 @@
     "reportButton": "Nahlásiť",
     "selectCategory": "Čo sa stalo?",
     "pinLocation": "Poloha",
+    "pickLocation": "Poloha (kliknite na mapu alebo presuňte špendlík)",
     "radius": "Ovplyvnený okruh",
     "submit": "Odoslať",
     "cancel": "Zrušiť",
@@ -391,6 +392,21 @@
     "compactBoth": "Povoľte polohu a notifikácie pre zobrazenie upozornení",
     "compactPushOnly": "Povoľte push notifikácie pre zobrazenie upozornení",
     "compactGeoOnly": "Pridajte lokáciu pre zobrazenie upozornení"
+  },
+  "upsell": {
+    "upgrade": "Vylepšiť",
+    "reminder": {
+      "title": "Nastavte si osobné pripomienky",
+      "description": "Pro používatelia môžu vytvárať vlastné upozornenia na udalosti a termíny."
+    },
+    "locations": {
+      "title": "Sledujte viac lokácií",
+      "description": "Plus používatelia môžu sledovať až 3 lokácie. Pro až 10."
+    },
+    "pollen": {
+      "title": "Pokročilé peľové predpovede",
+      "description": "Plus používatelia dostávajú podrobný rozbor peľových informácií."
+    }
   },
   "digest": {
     "title": "Doručovanie notifikácií",

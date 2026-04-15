@@ -3,7 +3,6 @@
 import { IconClock } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
-import { AdPlaceholder } from '@/components/app/ad-placeholder';
 import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
@@ -95,10 +94,6 @@ export function LeftPanel({
         onSelect={onAlertSelect}
         isLoadingEvent={isLoadingEvent}
       />
-
-      <div className="px-4 pb-4">
-        <AdPlaceholder variant="banner" />
-      </div>
     </div>
   );
 }

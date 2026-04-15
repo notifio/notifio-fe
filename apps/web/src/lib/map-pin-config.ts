@@ -5,7 +5,6 @@ import {
   IconCalendarEvent,
   IconCar,
   IconCarCrash,
-  IconCloud,
   IconDroplet,
   IconDropletFilled,
   IconFlame,
@@ -29,7 +28,6 @@ const TRAFFIC_ICON_MAP: Record<string, Icon> = {
   congestion: IconCar,
   flooding: IconDropletFilled,
   event: IconCalendarEvent,
-  weather: IconCloud,
   other: IconInfoCircle,
 };
 
@@ -48,7 +46,6 @@ const TRAFFIC_TYPE_COLORS: Record<string, string> = {
   congestion: '#EAB308',
   flooding: '#3A86FF',
   event: '#3A86FF',
-  weather: '#6B7A99',
   other: '#6B7A99',
 };
 

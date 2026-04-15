@@ -23,7 +23,7 @@ export function AdPlaceholder({ variant, className }: AdPlaceholderProps) {
         'relative overflow-hidden rounded-xl border border-dashed border-border bg-card/50',
         variant === 'banner' && 'flex items-center justify-between px-4 py-3',
         variant === 'card' && 'flex flex-col items-center justify-center p-6',
-        variant === 'inline' && 'flex items-center gap-3 px-3 py-2',
+        variant === 'inline' && 'flex items-center gap-3 px-4 py-3',
         className,
       )}
     >

@@ -2,16 +2,18 @@
 
 import { IconBell } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
 import { useNotificationHistory } from '@/hooks/use-notification-history';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 
+import { AdPlaceholder } from './ad-placeholder';
 import { AlertCard } from './alert-card';
 import { isResolved } from './alert-card-utils';
 import { SetupPromptCard } from './setup-prompt-card';
+import { UpsellCard } from './upsell-card';
 
 type TabFilter = 'all' | 'active' | 'resolved';
 
@@ -114,15 +116,18 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
         )
       ) : (
         <div className="space-y-2 p-4">
-          {filtered.map((g) => (
-            <AlertCard
-              key={g.item.id}
-              notification={g.item}
-              duplicateCount={g.count}
-              isSelected={selectedId === g.item.eventId}
-              isLoading={isLoadingEvent && selectedId === g.item.eventId}
-              onClick={() => onSelect?.(g.item.eventId)}
-            />
+          {filtered.map((g, index) => (
+            <Fragment key={g.item.id}>
+              <AlertCard
+                notification={g.item}
+                duplicateCount={g.count}
+                isSelected={selectedId === g.item.eventId}
+                isLoading={isLoadingEvent && selectedId === g.item.eventId}
+                onClick={() => onSelect?.(g.item.eventId)}
+              />
+              {index === 2 && <AdPlaceholder variant="inline" />}
+              {index === 6 && <UpsellCard />}
+            </Fragment>
           ))}
           {hasMore && (
             <button

@@ -2,12 +2,14 @@
 
 import { IconBell, IconLoader2 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
+import { AdPlaceholder } from '@/components/app/ad-placeholder';
 import { AlertCard } from '@/components/app/alert-card';
 import { SetupPromptCard } from '@/components/app/setup-prompt-card';
+import { UpsellCard } from '@/components/app/upsell-card';
 import { useNotificationHistory } from '@/hooks/use-notification-history';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 import { cn } from '@/lib/utils';
@@ -144,35 +146,42 @@ export function HistorySection() {
           )
         ) : (
           <div className="space-y-6">
-            {dayGroups.map((group) => (
-              <div key={group.label}>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">
-                  {group.label}
-                </p>
-                <div className="space-y-1.5">
-                  {group.grouped.map((g) => {
-                    const isRead = g.item.status !== 'sent';
-                    return (
-                      <div
-                        key={g.item.id}
-                        className={cn(
-                          'relative rounded-xl',
-                          !isRead && 'bg-accent/[0.03]',
-                        )}
-                      >
-                        <AlertCard
-                          notification={g.item}
-                          duplicateCount={g.count}
-                        />
-                        {!isRead && (
-                          <div className="absolute right-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent" />
-                        )}
-                      </div>
-                    );
-                  })}
+            {(() => {
+              let itemCount = 0;
+              return dayGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">
+                    {group.label}
+                  </p>
+                  <div className="space-y-1.5">
+                    {group.grouped.map((g) => {
+                      itemCount++;
+                      const isRead = g.item.status !== 'sent';
+                      return (
+                        <Fragment key={g.item.id}>
+                          <div
+                            className={cn(
+                              'relative rounded-xl',
+                              !isRead && 'bg-accent/[0.03]',
+                            )}
+                          >
+                            <AlertCard
+                              notification={g.item}
+                              duplicateCount={g.count}
+                            />
+                            {!isRead && (
+                              <div className="absolute right-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent" />
+                            )}
+                          </div>
+                          {itemCount === 3 && <AdPlaceholder variant="inline" />}
+                          {itemCount === 7 && <UpsellCard />}
+                        </Fragment>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })()}
 
             {hasMore && (
               <button

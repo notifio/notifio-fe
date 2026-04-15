@@ -14,13 +14,14 @@ import {
 } from '@/lib/map-pin-config';
 import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
+import { AdPlaceholder } from './ad-placeholder';
+
 const TRAFFIC_SUBCATEGORIES: TrafficIncidentType[] = [
   'accident',
   'construction',
   'road_closure',
   'congestion',
   'event',
-  'weather',
   'other',
 ];
 
@@ -319,7 +320,7 @@ export function MapFilterBar({
           </div>
 
           {/* Filter rows */}
-          <div style={{ paddingBottom: '12px' }}>
+          <div style={{ paddingBottom: '4px' }}>
             {MAP_FILTER_SOURCES.map((source) => {
               const style = MAP_PIN_STYLES[source];
               const isActive = activeFilters.has(source);
@@ -434,6 +435,11 @@ export function MapFilterBar({
                 </div>
               );
             })}
+          </div>
+
+          {/* Ad placement */}
+          <div style={{ padding: '0 12px 12px' }}>
+            <AdPlaceholder variant="inline" />
           </div>
         </div>
       </div>
