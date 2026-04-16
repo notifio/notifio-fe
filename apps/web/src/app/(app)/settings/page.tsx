@@ -15,6 +15,7 @@ import { useConsents } from "@/hooks/use-consents";
 import { useDigestMode } from "@/hooks/use-digest-mode";
 import { useMembership } from "@/hooks/use-membership";
 import { usePreferences } from "@/hooks/use-preferences";
+import { api } from "@/lib/api";
 import { CATEGORY_GROUPS } from "@/lib/category-groups";
 
 interface ResolvedGroup {
@@ -34,9 +35,23 @@ export default function SettingsPage() {
   const { digestMode, loading: digestLoading, saving: digestSaving, updateDigestMode } = useDigestMode();
   const { consents, loading: consentsLoading, updateConsent: apiUpdateConsent } = useConsents();
   const [savingConsent, setSavingConsent] = useState<string | null>(null);
-  const { membership, loading: membershipLoading, isFree, downgrade } = useMembership();
-  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
+  const { membership, loading: membershipLoading, isFree } = useMembership();
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const handleOpenPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const response = await api.createPortalSession({
+        returnUrl: window.location.href,
+      });
+      if (!response?.url) {
+        throw new Error('No portal URL returned');
+      }
+      window.location.href = response.url;
+    } catch {
+      setPortalLoading(false);
+    }
+  };
   const {
     preferences,
     isLoading,
@@ -108,9 +123,11 @@ export default function SettingsPage() {
                     <span className="text-sm font-semibold text-text-primary">
                       {membership.current.name}
                     </span>
-                    <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
-                      {membership.current.tier}
-                    </span>
+                    {!isFree && (
+                      <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600">
+                        {tm("active")}
+                      </span>
+                    )}
                   </div>
                   {membership.current.priceMonthly !== "0.00" && (
                     <p className="text-xs text-muted">
@@ -136,52 +153,30 @@ export default function SettingsPage() {
               })()}
 
               <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-3">
-                <Link
-                  href="/pricing"
-                  className="rounded-lg bg-accent/10 px-4 py-2 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
-                >
-                  {tm("manage")}
-                </Link>
-                {!isFree && (
+                {isFree ? (
+                  <Link
+                    href="/pricing"
+                    className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+                  >
+                    {tm("upgrade")}
+                  </Link>
+                ) : (
                   <>
-                    {!cancelConfirmOpen ? (
-                      <button
-                        onClick={() => setCancelConfirmOpen(true)}
-                        className="rounded-lg px-4 py-2 text-sm font-medium text-danger transition-colors hover:bg-danger/10"
-                      >
-                        {tm("cancelPlan")}
-                      </button>
-                    ) : (
-                      <div className="flex w-full flex-col gap-2 rounded-lg bg-danger/5 p-3">
-                        <p className="text-sm text-danger">
-                          {tm("cancelConfirm", { tier: membership.current.name })}
-                        </p>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={async () => {
-                              setCancelling(true);
-                              try {
-                                await downgrade("FREE");
-                              } finally {
-                                setCancelling(false);
-                                setCancelConfirmOpen(false);
-                              }
-                            }}
-                            disabled={cancelling}
-                            className="inline-flex items-center gap-2 rounded-lg bg-danger px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-danger/90 disabled:opacity-50"
-                          >
-                            {cancelling && <IconLoader2 size={14} className="animate-spin" />}
-                            {tm("cancelPlan")}
-                          </button>
-                          <button
-                            onClick={() => setCancelConfirmOpen(false)}
-                            className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-card"
-                          >
-                            {t("cancel")}
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <button
+                      onClick={handleOpenPortal}
+                      disabled={portalLoading}
+                      className="inline-flex items-center gap-2 rounded-lg bg-accent/10 px-4 py-2 text-sm font-medium text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
+                    >
+                      {portalLoading && <IconLoader2 size={14} className="animate-spin" />}
+                      {tm("manage")}
+                    </button>
+                    <button
+                      onClick={handleOpenPortal}
+                      disabled={portalLoading}
+                      className="rounded-lg px-4 py-2 text-sm font-medium text-danger transition-colors hover:bg-danger/10 disabled:opacity-50"
+                    >
+                      {tm("cancelPlan")}
+                    </button>
                   </>
                 )}
               </div>
@@ -478,16 +473,40 @@ export default function SettingsPage() {
           title={ts("title")}
           description={ts("description")}
         >
-          <Link
-            href="/settings/sources"
-            className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
-          >
-            <IconDatabase size={20} className="shrink-0 text-accent" />
-            <span className="flex-1 text-sm font-medium text-text-primary">
-              {ts("title")}
-            </span>
-            <IconChevronRight size={16} className="text-muted" />
-          </Link>
+          <div className="space-y-1">
+            <Link
+              href="/settings/sources"
+              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
+            >
+              <IconDatabase size={20} className="shrink-0 text-accent" />
+              <span className="flex-1 text-sm font-medium text-text-primary">
+                {ts("title")}
+              </span>
+              <IconChevronRight size={16} className="text-muted" />
+            </Link>
+            <Link
+              href="/settings/sources/preferences"
+              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
+            >
+              <IconDatabase size={20} className="shrink-0 text-accent" />
+              <span className="flex-1 text-sm font-medium text-text-primary">
+                {t("sourcePreferences")}
+              </span>
+              <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium text-accent">PRO</span>
+              <IconChevronRight size={16} className="text-muted" />
+            </Link>
+            <Link
+              href="/settings/weather-thresholds"
+              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
+            >
+              <IconAlertTriangle size={20} className="shrink-0 text-accent" />
+              <span className="flex-1 text-sm font-medium text-text-primary">
+                {t("weatherThresholds")}
+              </span>
+              <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium text-accent">PRO</span>
+              <IconChevronRight size={16} className="text-muted" />
+            </Link>
+          </div>
         </PreferenceSection>
       </div>
     </div>

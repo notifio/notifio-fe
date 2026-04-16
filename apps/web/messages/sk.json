@@ -36,6 +36,7 @@
   },
   "nameday": {
     "label": "Dnes má meniny",
+    "tomorrow": "Zajtra",
     "noData": "Žiadne údaje o meninách"
   },
   "weatherWarnings": {
@@ -137,7 +138,8 @@
   },
   "common": {
     "retry": "Skúsiť znova",
-    "loading": "Načítavam..."
+    "loading": "Načítavam...",
+    "back": "Späť"
   },
   "pushSetup": {
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
@@ -158,6 +160,8 @@
   "profile": {
     "title": "Profil",
     "memberSince": "Člen od {date}",
+    "manageBilling": "Spravovať fakturáciu",
+    "upgradePlan": "Vylepšiť",
     "locations": {
       "title": "Uložené lokácie",
       "description": "Upozornenia sú odosielané na základe uložených lokácií",
@@ -187,6 +191,22 @@
       "deleteAccount": "Zmazať účet",
       "deleteConfirm": "Toto natrvalo vymaže váš účet a všetky údaje. Túto akciu nie je možné vrátiť.",
       "deleteVerify": "Napíšte DELETE pre potvrdenie"
+    },
+    "yourData": {
+      "title": "Vaše údaje",
+      "description": "Stiahnite si kópiu všetkých vašich údajov z Notifio.",
+      "download": "Stiahnuť moje údaje",
+      "preparing": "Pripravujem export...",
+      "ready": "Váš export je pripravený. Odkaz na stiahnutie vyprší za 24 hodín.",
+      "downloadZip": "Stiahnuť ZIP",
+      "expiresIn": "Vyprší za {time}",
+      "failed": "Export zlyhal. Skúste to znova."
+    },
+    "deletion": {
+      "pending": "Čaká na vymazanie",
+      "description": "Všetky údaje budú odstránené za {time}. Zmenili ste názor?",
+      "cancel": "Zrušiť vymazanie",
+      "cancelled": "Vymazanie zrušené"
     }
   },
   "nav": {
@@ -223,16 +243,15 @@
       "description": "Plná kontrola nad notifikáciami"
     },
     "checkout": {
-      "title": "Dokončite objednávku",
-      "summary": "Zhrnutie plánu",
-      "payButton": "Predplatiť",
-      "processing": "Spracovávam...",
-      "success": "Vitajte v {tier}!",
-      "cardNumber": "Číslo karty",
-      "expiry": "MM/RR",
-      "cvc": "CVC",
-      "testMode": "Testovací režim — bez reálnych poplatkov"
+      "successTitle": "Vitajte v {tier}!",
+      "successSubtitle": "Vaše členstvo je teraz aktívne.",
+      "trialStarted": "Vaša 14-dňová skúšobná doba začala.",
+      "unlocked": "Teraz odomknuté:",
+      "goToDashboard": "Prejsť na dashboard",
+      "manageInSettings": "Spravujte predplatné v nastaveniach"
     },
+    "active": "Aktívne",
+    "checkoutError": "Nepodarilo sa spustiť platbu. Skúste to znova.",
     "manage": "Spravovať predplatné",
     "cancelPlan": "Zrušiť predplatné",
     "cancelConfirm": "Naozaj? Stratíte prístup k funkciám {tier}.",
@@ -280,7 +299,37 @@
     "cancel": "Zrušiť",
     "success": "Udalosť nahlásená",
     "myEvents": "Moje hlásenia",
-    "resolve": "Označiť ako vyriešené"
+    "resolve": "Vyriešiť",
+    "credibility": "Dôveryhodnosť",
+    "votes": "{count} hlasov",
+    "validVotes": "{count} platných",
+    "invalidVotes": "{count} neplatných",
+    "notEnoughVotes": "Zatiaľ nedostatok hlasov ({current}/5 potrebných)",
+    "stillHappening": "Stále prebieha?",
+    "confirm": "Potvrdiť",
+    "deny": "Zamietnuť",
+    "yes": "Áno",
+    "no": "Nie",
+    "alreadyVoted": "Už ste hlasovali",
+    "upgradeToVote": "Vylepšite pre hlasovanie",
+    "delete": "Odstrániť",
+    "deleteConfirm": "Odstrániť túto udalosť? Táto akcia je nevratná.",
+    "deleted": "Udalosť odstránená",
+    "detail": {
+      "title": "Detail udalosti",
+      "source": "Zdroj",
+      "reported": "Nahlásené",
+      "radius": "Okruh",
+      "activeSince": "Aktívne od",
+      "ends": "Končí",
+      "ongoing": "Prebieha",
+      "communityReport": "Komunitné hlásenie",
+      "active": "Aktívne",
+      "resolved": "Vyriešené",
+      "notFound": "Udalosť sa nenašla",
+      "backToDashboard": "Späť na dashboard"
+    },
+    "resolveFailed": "Nepodarilo sa vyriešiť udalosť"
   },
   "errors": {
     "rateLimited": "Príliš veľa požiadaviek. Skúste znova za {seconds} sekúnd.",
@@ -424,5 +473,30 @@
     "dashboardBannerEvening": "Večerný súhrn aktívny — bežné notifikácie o 18:00",
     "dashboardBannerBoth": "Súhrny aktívne — bežné notifikácie o 7:00 a 18:00",
     "change": "Zmeniť"
+  },
+  "settings": {
+    "sourcePreferences": "Preferované zdroje",
+    "weatherThresholds": "Prahové hodnoty počasia"
+  },
+  "sourcePreferences": {
+    "title": "Preferované zdroje",
+    "description": "Nastavte preferovaný zdroj dát pre každú kategóriu. Zdroj s najvyššou prioritou bude použitý prednostne.",
+    "onlySource": "Jediný dostupný zdroj",
+    "auto": "Auto (podľa hodnotení komunity)",
+    "saved": "Uložené",
+    "dragToReorder": "Presuňte pre zmenu priority"
+  },
+  "weatherThresholds": {
+    "title": "Prahové hodnoty počasia",
+    "description": "Nastavte si vlastné prahové hodnoty pre upozornenia na počasie. Dostanete upozornenie keď hodnoty prekročia nastavený prah.",
+    "addThreshold": "Pridať prahovú hodnotu",
+    "selectType": "Vyberte typ prahovej hodnoty",
+    "saved": "Uložené",
+    "tempHigh": "Vysoká teplota",
+    "tempLow": "Nízka teplota",
+    "windSpeed": "Rýchlosť vetra",
+    "humidity": "Vlhkosť",
+    "pressure": "Atmosférický tlak",
+    "deleteConfirm": "Odstrániť túto prahovú hodnotu?"
   }
 }
