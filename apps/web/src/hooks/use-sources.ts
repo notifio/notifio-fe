@@ -1,65 +1,35 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 import type { SourceSummary, UpsertSourceRatingInput } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
-interface UseSourcesResult {
-  sources: SourceSummary[];
-  isLoading: boolean;
-  error: string | null;
-  rateSource: (sourceAdapterId: number, body: UpsertSourceRatingInput) => Promise<void>;
-  deleteRating: (sourceAdapterId: number) => Promise<void>;
-  refetch: () => Promise<void>;
-}
+import { useApiQuery } from './use-api-query';
 
-export function useSources(): UseSourcesResult {
-  const [sources, setSources] = useState<SourceSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSources = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.getSources();
-      setSources(data);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to load sources';
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSources();
-  }, [fetchSources]);
+export function useSources() {
+  const { data, isLoading, error, refetch } = useApiQuery<SourceSummary[]>(
+    () => api.getSources(),
+    [],
+  );
 
   const rateSource = useCallback(async (sourceAdapterId: number, body: UpsertSourceRatingInput) => {
-    const updated = await api.rateSource(sourceAdapterId, body);
-    setSources((prev) =>
-      prev.map((s) => (s.sourceAdapterId === sourceAdapterId ? updated : s)),
-    );
-  }, []);
+    await api.rateSource(sourceAdapterId, body);
+    await refetch();
+  }, [refetch]);
 
   const deleteRating = useCallback(async (sourceAdapterId: number) => {
     await api.deleteSourceRating(sourceAdapterId);
-    setSources((prev) =>
-      prev.map((s) =>
-        s.sourceAdapterId === sourceAdapterId ? { ...s, ownRating: null } : s,
-      ),
-    );
-  }, []);
+    await refetch();
+  }, [refetch]);
 
   return {
-    sources,
-    isLoading: loading,
+    sources: data ?? [],
+    isLoading,
     error,
     rateSource,
     deleteRating,
-    refetch: fetchSources,
+    refetch,
   };
 }
