@@ -1,10 +1,13 @@
 'use client';
 
+import { IconLoader2 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import { useMembership } from '@/hooks/use-membership';
 import { useSupabaseUser } from '@/hooks/use-supabase-user';
+import { api } from '@/lib/api';
 
 import { AccountSection } from './account-section';
 import { EventsSection } from './events-section';
@@ -13,7 +16,8 @@ import { LocationsSection } from './locations-section';
 export default function ProfilePage() {
   const t = useTranslations('profile');
   const { name, email, avatar, user } = useSupabaseUser();
-  const { tier } = useMembership();
+  const { tier, isFree } = useMembership();
+  const [portalLoading, setPortalLoading] = useState(false);
 
   const initial = name?.charAt(0).toUpperCase() ?? '?';
   const createdAt = user?.created_at
@@ -42,13 +46,40 @@ export default function ProfilePage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-text-primary">{name}</h1>
             {tier && (
+              <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                {tier}
+              </span>
+            )}
+            {tier && !isFree ? (
+              <button
+                onClick={async () => {
+                  setPortalLoading(true);
+                  try {
+                    const response = await api.createPortalSession({
+                      returnUrl: window.location.href,
+                    });
+                    if (!response?.url) {
+                      throw new Error('No portal URL returned');
+                    }
+                    window.location.href = response.url;
+                  } catch {
+                    setPortalLoading(false);
+                  }
+                }}
+                disabled={portalLoading}
+                className="inline-flex items-center gap-1 text-xs text-accent transition-colors hover:text-accent/80 disabled:opacity-50"
+              >
+                {portalLoading && <IconLoader2 size={12} className="animate-spin" />}
+                {t('manageBilling')}
+              </button>
+            ) : tier ? (
               <Link
                 href="/pricing"
-                className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent transition-colors hover:bg-accent/20"
+                className="text-xs text-accent transition-colors hover:text-accent/80"
               >
-                {tier}
+                {t('upgradePlan')}
               </Link>
-            )}
+            ) : null}
           </div>
           {email && (
             <p className="mt-0.5 text-sm text-muted">{email}</p>

@@ -28,6 +28,6 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
-    "@notifio/shared": "^0.17.0"
+    "@notifio/shared": "^0.18.0"
   }
 }

@@ -4,21 +4,29 @@ import {
   IconAlertTriangle,
   IconCheck,
   IconLoader2,
+  IconTrash,
 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
+import { useToast } from '@/components/ui/toast';
 import { useUserEvents } from '@/hooks/use-user-events';
+import { api } from '@/lib/api';
 
 export function EventsSection() {
   const t = useTranslations('profile');
+  const te = useTranslations('events');
+  const toast = useToast();
   const {
     events,
     loading: eventsLoading,
     updateEvent,
+    refetch,
   } = useUserEvents();
 
   const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const handleResolve = useCallback(
     async (eventId: string) => {
@@ -30,6 +38,23 @@ export function EventsSection() {
       }
     },
     [updateEvent],
+  );
+
+  const handleDelete = useCallback(
+    async (eventId: string) => {
+      setDeletingId(eventId);
+      try {
+        await api.deleteEvent(eventId);
+        toast.success(te('deleted'));
+        await refetch();
+      } catch {
+        // stay on page
+      } finally {
+        setDeletingId(null);
+        setDeleteConfirmId(null);
+      }
+    },
+    [refetch, toast, te],
   );
 
   return (
@@ -78,20 +103,47 @@ export function EventsSection() {
                     })}
                   </p>
                 </div>
-                {!event.isResolved && (
-                  <button
-                    onClick={() => handleResolve(event.eventId)}
-                    disabled={resolvingId === event.eventId}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-background disabled:opacity-50"
-                  >
-                    {resolvingId === event.eventId ? (
-                      <IconLoader2 size={14} className="animate-spin" />
-                    ) : (
-                      <IconCheck size={14} />
-                    )}
-                    {t('myEvents.resolve')}
-                  </button>
-                )}
+                <div className="flex shrink-0 items-center gap-1">
+                  {!event.isResolved && (
+                    <button
+                      onClick={() => handleResolve(event.eventId)}
+                      disabled={resolvingId === event.eventId}
+                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-background disabled:opacity-50"
+                    >
+                      {resolvingId === event.eventId ? (
+                        <IconLoader2 size={14} className="animate-spin" />
+                      ) : (
+                        <IconCheck size={14} />
+                      )}
+                      {t('myEvents.resolve')}
+                    </button>
+                  )}
+                  {deleteConfirmId === event.eventId ? (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleDelete(event.eventId)}
+                        disabled={deletingId === event.eventId}
+                        className="inline-flex items-center gap-1 rounded-lg bg-danger px-2.5 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+                      >
+                        {deletingId === event.eventId && <IconLoader2 size={12} className="animate-spin" />}
+                        {te('delete')}
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirmId(null)}
+                        className="rounded-lg px-2 py-1.5 text-xs text-muted hover:bg-card"
+                      >
+                        {te('cancel')}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setDeleteConfirmId(event.eventId)}
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+                    >
+                      <IconTrash size={12} />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
