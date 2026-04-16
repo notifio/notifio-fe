@@ -1,12 +1,10 @@
 'use client';
 
-import type { Icon } from '@tabler/icons-react';
 import { IconAdjustments, IconInfoCircle, IconX } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { hexToRgba } from '@/lib/color';
 import {
   MAP_FILTER_SOURCES,
   MAP_PIN_STYLES,
@@ -16,6 +14,8 @@ import {
 import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
 import { AdPlaceholder } from './ad-placeholder';
+import { CategoryIcon } from './category-icon';
+import { MapToggle } from './map-toggle';
 
 const TRAFFIC_SUBCATEGORIES: TrafficIncidentType[] = [
   'accident',
@@ -26,118 +26,12 @@ const TRAFFIC_SUBCATEGORIES: TrafficIncidentType[] = [
   'other',
 ];
 
-// Darker shades for light-mode icons
-const LIGHT_ICON_COLORS: Record<string, string> = {
-  '#EAB308': '#B8930A',
-  '#3A86FF': '#2B6BCC',
-  '#FF3B30': '#CC2E25',
-  '#8B5CF6': '#6D48C4',
-  '#FF7A2F': '#CC6125',
-  '#991B1B': '#7A1515',
-  '#6B7A99': '#55627A',
-};
-
 interface MapFilterBarProps {
   activeFilters: Set<MapPinSource>;
   activeTrafficTypes: Set<TrafficIncidentType>;
   onToggle: (source: MapPinSource) => void;
   onToggleTrafficType: (type: TrafficIncidentType) => void;
   pins: MapPin[];
-}
-
-// ── Toggle ───────────────────────────────────────────────────────────
-function Toggle({
-  on,
-  onToggle,
-  partial,
-  isDark,
-  small,
-}: {
-  on: boolean;
-  onToggle: () => void;
-  partial?: boolean;
-  isDark: boolean;
-  small?: boolean;
-}) {
-  const w = small ? 30 : 36;
-  const h = small ? 16 : 20;
-  const knob = small ? 12 : 16;
-  const pad = 2;
-
-  return (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggle();
-      }}
-      style={{
-        position: 'relative',
-        width: `${w}px`,
-        height: `${h}px`,
-        borderRadius: `${h / 2}px`,
-        backgroundColor: on
-          ? '#FF7A2F'
-          : isDark
-            ? 'rgba(255,255,255,0.15)'
-            : 'rgba(14,34,63,0.15)',
-        border: 'none',
-        cursor: 'pointer',
-        transition: 'background-color 200ms',
-        flexShrink: 0,
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: `${pad}px`,
-          left: on ? `${w - knob - pad}px` : `${pad}px`,
-          width: `${knob}px`,
-          height: `${knob}px`,
-          borderRadius: '50%',
-          backgroundColor: '#FFFFFF',
-          opacity: partial ? 0.6 : 1,
-          transition: 'left 200ms, opacity 200ms',
-        }}
-      />
-    </button>
-  );
-}
-
-// ── Icon in tinted square ────────────────────────────────────────────
-function CategoryIcon({
-  icon: IconComponent,
-  color,
-  isDark,
-  size,
-  iconSize,
-  radius,
-}: {
-  icon: Icon;
-  color: string;
-  isDark: boolean;
-  size: number;
-  iconSize: number;
-  radius: number;
-}) {
-  const strokeColor = isDark ? color : (LIGHT_ICON_COLORS[color] ?? color);
-  const bgAlpha = isDark ? 0.15 : 0.12;
-
-  return (
-    <div
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: `${radius}px`,
-        backgroundColor: hexToRgba(color, bgAlpha),
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-      }}
-    >
-      <IconComponent size={iconSize} color={strokeColor} strokeWidth={2} />
-    </div>
-  );
 }
 
 // ── Main component ───────────────────────────────────────────────────
@@ -364,7 +258,7 @@ export function MapFilterBar({
                     <span style={{ fontSize: '12px', color: countColor, marginRight: '8px' }}>
                       {count}
                     </span>
-                    <Toggle
+                    <MapToggle
                       on={isActive}
                       onToggle={() => onToggle(source)}
                       partial={isTraffic && trafficIsPartial}
@@ -415,7 +309,7 @@ export function MapFilterBar({
                             >
                               {subCount}
                             </span>
-                            <Toggle
+                            <MapToggle
                               on={subActive}
                               onToggle={() => onToggleTrafficType(type)}
                               isDark={isDark}
