@@ -3,6 +3,7 @@ import { AdSidebarRight } from "@/components/app/ad-sidebar-right";
 import { ApiErrorToaster } from "@/components/app/api-error-toaster";
 import { BottomTabBar } from "@/components/app/bottom-tab-bar";
 import { ConsentGate } from "@/components/app/consent-gate";
+import { DeletionBanner } from "@/components/app/deletion-banner";
 import { LocationStatusBanner } from "@/components/app/location-status-banner";
 import { TopBar } from "@/components/app/top-bar";
 import { requireUser } from "@/lib/auth";
@@ -19,6 +20,7 @@ export default async function AppLayout({
       <div className="flex min-h-screen flex-col bg-background text-text-primary">
         <TopBar />
         <LocationStatusBanner />
+        <DeletionBanner />
         <ApiErrorToaster />
         <div className="flex flex-1">
           <AdSidebarLeft />

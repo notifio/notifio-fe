@@ -37,7 +37,7 @@ export function LeftPanel({
   const { weather, isLoading, error, refresh } = useWeather();
   const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
-  const { name: namedayName, loading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
+  const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
 
@@ -64,7 +64,7 @@ export function LeftPanel({
           <WeatherWarningsBanner warnings={warnings} />
         </div>
         <div className="mt-3">
-          <NamedayCard name={namedayName} loading={namedayLoading} />
+          <NamedayCard todayNames={todayNames} upcomingNames={upcomingNames} loading={namedayLoading} />
         </div>
 
         {digestMode !== 'REAL_TIME' && (

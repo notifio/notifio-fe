@@ -1,11 +1,14 @@
 'use client';
 
 import { IconCheck, IconLoader2 } from '@tabler/icons-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import type { PaymentPlan } from '@notifio/api-client';
+
+import { useToast } from '@/components/ui/toast';
 import { useMembership } from '@/hooks/use-membership';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -25,11 +28,37 @@ const TIERS: TierDef[] = [
 
 const TIER_ORDER: Record<string, number> = { FREE: 0, PLUS: 1, PRO: 2 };
 
+function getPlan(tier: 'PLUS' | 'PRO', billing: BillingCycle): PaymentPlan {
+  return `${tier}_${billing.toUpperCase()}` as PaymentPlan;
+}
+
 export default function PricingPage() {
   const t = useTranslations('membership');
   const { loading, tier: currentTier, downgrade } = useMembership();
+  const toast = useToast();
   const [billing, setBilling] = useState<BillingCycle>('monthly');
   const [downgrading, setDowngrading] = useState<string | null>(null);
+  const [upgrading, setUpgrading] = useState<string | null>(null);
+
+  const handleUpgrade = async (targetTier: 'PLUS' | 'PRO') => {
+    setUpgrading(targetTier);
+    try {
+      // API returns { checkoutUrl, sessionId } — @notifio/shared types this as `url`,
+      // but the actual field is `checkoutUrl`. Cast until shared is updated.
+      const response = await api.createCheckoutSession({
+        plan: getPlan(targetTier, billing),
+        successUrl: `${window.location.origin}/checkout/success`,
+        cancelUrl: `${window.location.origin}/pricing`,
+      }) as unknown as { sessionId: string; checkoutUrl: string };
+      if (!response?.checkoutUrl) {
+        throw new Error('No checkout URL returned');
+      }
+      window.location.href = response.checkoutUrl;
+    } catch {
+      toast.error(t('checkoutError'));
+      setUpgrading(null);
+    }
+  };
 
   const handleDowngrade = async (targetTier: 'FREE' | 'PLUS') => {
     setDowngrading(targetTier);
@@ -144,12 +173,16 @@ export default function PricingPage() {
                   {t('currentPlan')}
                 </div>
               ) : isUpgrade ? (
-                <Link
-                  href={`/checkout?tier=${tierDef.key}&billing=${billing}`}
-                  className="flex h-11 items-center justify-center rounded-xl bg-accent text-sm font-medium text-white transition-colors hover:bg-accent/90"
+                <button
+                  onClick={() => handleUpgrade(tierDef.key as 'PLUS' | 'PRO')}
+                  disabled={upgrading !== null}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl bg-accent text-sm font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
                 >
+                  {upgrading === tierDef.key && (
+                    <IconLoader2 size={16} className="animate-spin" />
+                  )}
                   {t('upgrade')}
-                </Link>
+                </button>
               ) : isDowngrade ? (
                 <button
                   onClick={() => handleDowngrade(tierDef.key as 'FREE' | 'PLUS')}

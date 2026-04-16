@@ -36,6 +36,7 @@
   },
   "nameday": {
     "label": "Today's nameday",
+    "tomorrow": "Tomorrow",
     "noData": "No nameday data"
   },
   "weatherWarnings": {
@@ -137,7 +138,8 @@
   },
   "common": {
     "retry": "Retry",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "back": "Back"
   },
   "pushSetup": {
     "unsupported": "Your browser does not support push notifications.",
@@ -158,6 +160,8 @@
   "profile": {
     "title": "Profile",
     "memberSince": "Member since {date}",
+    "manageBilling": "Manage billing",
+    "upgradePlan": "Upgrade",
     "locations": {
       "title": "Saved Locations",
       "description": "Alerts are sent based on your saved locations",
@@ -187,6 +191,22 @@
       "deleteAccount": "Delete account",
       "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
       "deleteVerify": "Type DELETE to confirm"
+    },
+    "yourData": {
+      "title": "Your data",
+      "description": "Download a copy of all your Notifio data.",
+      "download": "Download my data",
+      "preparing": "Preparing export...",
+      "ready": "Your export is ready. The download link expires in 24 hours.",
+      "downloadZip": "Download ZIP",
+      "expiresIn": "Expires in {time}",
+      "failed": "Export failed. Please try again."
+    },
+    "deletion": {
+      "pending": "Deletion pending",
+      "description": "All data will be removed in {time}. Changed your mind?",
+      "cancel": "Cancel deletion",
+      "cancelled": "Deletion cancelled"
     }
   },
   "nav": {
@@ -223,16 +243,15 @@
       "description": "Full control over your notifications"
     },
     "checkout": {
-      "title": "Complete your upgrade",
-      "summary": "Plan summary",
-      "payButton": "Subscribe",
-      "processing": "Processing...",
-      "success": "Welcome to {tier}!",
-      "cardNumber": "Card number",
-      "expiry": "MM/YY",
-      "cvc": "CVC",
-      "testMode": "Test mode — no real charges"
+      "successTitle": "Welcome to {tier}!",
+      "successSubtitle": "Your membership is now active.",
+      "trialStarted": "Your 14-day free trial has started.",
+      "unlocked": "Now unlocked:",
+      "goToDashboard": "Go to dashboard",
+      "manageInSettings": "Manage your subscription in settings"
     },
+    "active": "Active",
+    "checkoutError": "Could not start checkout. Please try again.",
     "manage": "Manage subscription",
     "cancelPlan": "Cancel subscription",
     "cancelConfirm": "Are you sure? You'll lose access to {tier} features.",
@@ -280,7 +299,37 @@
     "cancel": "Cancel",
     "success": "Event reported",
     "myEvents": "My reports",
-    "resolve": "Mark resolved"
+    "resolve": "Resolve",
+    "credibility": "Credibility",
+    "votes": "{count} votes",
+    "validVotes": "{count} valid",
+    "invalidVotes": "{count} invalid",
+    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
+    "stillHappening": "Still happening?",
+    "confirm": "Confirm",
+    "deny": "Deny",
+    "yes": "Yes",
+    "no": "No",
+    "alreadyVoted": "You already voted",
+    "upgradeToVote": "Upgrade to vote",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this event? This cannot be undone.",
+    "deleted": "Event deleted",
+    "detail": {
+      "title": "Event detail",
+      "source": "Source",
+      "reported": "Reported",
+      "radius": "Radius",
+      "activeSince": "Active since",
+      "ends": "Ends",
+      "ongoing": "Ongoing",
+      "communityReport": "Community report",
+      "active": "Active",
+      "resolved": "Resolved",
+      "notFound": "Event not found",
+      "backToDashboard": "Back to dashboard"
+    },
+    "resolveFailed": "Failed to resolve event"
   },
   "errors": {
     "rateLimited": "Too many requests. Try again in {seconds} seconds.",
@@ -424,5 +473,30 @@
     "dashboardBannerEvening": "Evening summary active — routine notifications at 18:00",
     "dashboardBannerBoth": "Digest active — summaries at 7:00 and 18:00",
     "change": "Change"
+  },
+  "settings": {
+    "sourcePreferences": "Preferred sources",
+    "weatherThresholds": "Weather thresholds"
+  },
+  "sourcePreferences": {
+    "title": "Preferred sources",
+    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
+    "onlySource": "Only available source",
+    "auto": "Auto (by community rating)",
+    "saved": "Saved",
+    "dragToReorder": "Drag to reorder priority"
+  },
+  "weatherThresholds": {
+    "title": "Weather thresholds",
+    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
+    "addThreshold": "Add threshold",
+    "selectType": "Select threshold type",
+    "saved": "Saved",
+    "tempHigh": "High temperature",
+    "tempLow": "Low temperature",
+    "windSpeed": "Wind speed",
+    "humidity": "Humidity",
+    "pressure": "Atmospheric pressure",
+    "deleteConfirm": "Remove this threshold?"
   }
 }

@@ -38,6 +38,13 @@ import type {
   SetSourcePreferenceBody,
   DigestMode,
   PollenResponse,
+  CheckoutBody,
+  CheckoutResponse,
+  PortalBody,
+  PortalResponse,
+  DataExportJob,
+  DataExportResult,
+  NamedayResponse,
 } from './shared-types.js';
 
 export type {
@@ -102,6 +109,17 @@ export type {
   DigestMode,
   PollenResponse,
   PollenComponents,
+  PaymentPlan,
+  CheckoutBody,
+  CheckoutResponse,
+  PortalBody,
+  PortalResponse,
+  DataExportJob,
+  DataExportResult,
+  DataExportStatus,
+  NamedayResponse,
+  NamedayDay,
+  NamedayQuery,
 } from './shared-types.js';
 
 export interface NotifioClientConfig {
@@ -242,6 +260,17 @@ export function createNotifioClient(config: NotifioClientConfig) {
     async getPollen(lat: number, lng: number): Promise<PollenResponse> {
       return request<PollenResponse>('/pollen', {
         params: { lat: String(lat), lng: String(lng) },
+      });
+    },
+
+    async getNameday(params: { lat: number; lng: number; date?: string; upcoming?: number }): Promise<NamedayResponse> {
+      return request<NamedayResponse>('/nameday', {
+        params: {
+          lat: String(params.lat),
+          lng: String(params.lng),
+          date: params.date,
+          upcoming: params.upcoming !== undefined ? String(params.upcoming) : undefined,
+        },
       });
     },
 
@@ -495,6 +524,42 @@ export function createNotifioClient(config: NotifioClientConfig) {
       await request<void>('/me/weather-thresholds', {
         method: 'DELETE',
         params: { subcategoryCode },
+      });
+    },
+
+    // ─── Payment endpoints ──────────────────────────────────────────
+
+    async createCheckoutSession(body: CheckoutBody): Promise<CheckoutResponse> {
+      return request<CheckoutResponse>('/payments/checkout', {
+        method: 'POST',
+        body,
+      });
+    },
+
+    async createPortalSession(body: PortalBody): Promise<PortalResponse> {
+      return request<PortalResponse>('/payments/portal', {
+        method: 'POST',
+        body,
+      });
+    },
+
+    // ─── Data export endpoints ──────────────────────────────────────
+
+    async requestDataExport(): Promise<DataExportJob> {
+      return request<DataExportJob>('/me/data-export', {
+        method: 'POST',
+      });
+    },
+
+    async getDataExportStatus(jobId: string): Promise<DataExportResult> {
+      return request<DataExportResult>(`/me/data-export/${jobId}`);
+    },
+
+    // ─── Account deletion endpoints ─────────────────────────────────
+
+    async cancelAccountDeletion(): Promise<void> {
+      await request<void>('/me/cancel-deletion', {
+        method: 'POST',
       });
     },
   };

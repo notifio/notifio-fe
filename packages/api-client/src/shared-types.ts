@@ -168,6 +168,29 @@ export type {
 // Digest mode
 export type { DigestMode } from '@notifio/shared';
 
+// Payment types
+export type {
+  PaymentPlan,
+  CheckoutBody,
+  CheckoutResponse,
+  PortalBody,
+  PortalResponse,
+} from '@notifio/shared';
+
+// Nameday types
+export type {
+  NamedayResponse,
+  NamedayDay,
+  NamedayQuery,
+} from '@notifio/shared';
+
+// Data export types
+export type {
+  DataExportJob,
+  DataExportResult,
+  DataExportStatus,
+} from '@notifio/shared';
+
 // Pollen types — hand-written to match API contract
 export interface PollenComponents {
   birch: number | null;
