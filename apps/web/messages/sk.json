@@ -248,7 +248,10 @@
       "trialStarted": "Vaša 14-dňová skúšobná doba začala.",
       "unlocked": "Teraz odomknuté:",
       "goToDashboard": "Prejsť na dashboard",
-      "manageInSettings": "Spravujte predplatné v nastaveniach"
+      "manageInSettings": "Spravujte predplatné v nastaveniach",
+      "processingTitle": "Vaše vylepšenie sa spracováva...",
+      "processingSubtitle": "Platba prebehla úspešne. Zvyčajne to trvá menej ako minútu, niekedy pár minút.",
+      "refresh": "Obnoviť"
     },
     "active": "Aktívne",
     "checkoutError": "Nepodarilo sa spustiť platbu. Skúste to znova.",
