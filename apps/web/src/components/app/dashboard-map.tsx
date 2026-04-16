@@ -11,18 +11,22 @@ import type { Root } from 'react-dom/client';
 
 import type { TrafficFlowResponse } from '@notifio/api-client';
 
-import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
+import {
+  FLOW_SOURCE_ID,
+  PIN_DATA_LAYER,
+  PIN_SOURCE_ID,
+  TILE_DARK,
+  TILE_LIGHT,
+  TRAFFIC_FLOW_LAYER,
+  createFlowSource,
+  createPinSource,
+} from '@/lib/map-config';
 import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
 import { MapMarker } from './map-marker';
 
 const DEFAULT_ZOOM = 13;
 const FALLBACK_ZOOM = 7;
-const SOURCE_ID = 'pins';
-const FLOW_SOURCE_ID = 'traffic-flow';
-
-const CLUSTER_MAX_ZOOM = 14;
-const CLUSTER_RADIUS = 80;
 
 function flowToGeoJSON(
   flow: TrafficFlowResponse | null
@@ -145,7 +149,7 @@ export function DashboardMap({
   const syncMarkers = useRef((map: maplibregl.Map) => {
     if (!sourceReady.current) return;
 
-    const features = map.querySourceFeatures(SOURCE_ID);
+    const features = map.querySourceFeatures(PIN_SOURCE_ID);
     const clusteredFeatures = features.filter((f) => f.properties?.cluster);
     const unclusteredFeatures = features.filter((f) => !f.properties?.cluster);
 
@@ -181,7 +185,7 @@ export function DashboardMap({
         el.style.zIndex = '5';
         const root = createRoot(el);
 
-        const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
+        const source = map.getSource(PIN_SOURCE_ID) as maplibregl.GeoJSONSource;
 
         const placeholderPin: MapPin = {
           id: `cluster-${clusterId}`,
@@ -332,51 +336,11 @@ export function DashboardMap({
 
     map.on('load', () => {
       // Traffic flow roads (rendered underneath pins)
-      map.addSource(FLOW_SOURCE_ID, {
-        type: 'geojson',
-        data: flowToGeoJSON(flowSegments),
-      });
-      map.addLayer({
-        id: 'traffic-flow-line',
-        type: 'line',
-        source: FLOW_SOURCE_ID,
-        paint: {
-          'line-color': [
-            'match',
-            ['get', 'congestion'],
-            'moderate',
-            '#EAB308',
-            'heavy',
-            '#FF7A2F',
-            'severe',
-            '#FF3B30',
-            '#EAB308',
-          ],
-          'line-width': ['match', ['get', 'congestion'], 'moderate', 3, 'heavy', 4, 'severe', 5, 3],
-          'line-opacity': 0.75,
-        },
-        layout: {
-          'line-cap': 'round',
-          'line-join': 'round',
-        },
-      });
+      map.addSource(FLOW_SOURCE_ID, createFlowSource(flowToGeoJSON(flowSegments)));
+      map.addLayer(TRAFFIC_FLOW_LAYER);
 
-      map.addSource(SOURCE_ID, {
-        type: 'geojson',
-        data: pinsToGeoJSON(pins, activeFilters, activeTrafficTypes),
-        cluster: true,
-        clusterMaxZoom: CLUSTER_MAX_ZOOM,
-        clusterRadius: CLUSTER_RADIUS,
-      });
-      map.addLayer({
-        id: 'pin-data',
-        type: 'circle',
-        source: SOURCE_ID,
-        paint: {
-          'circle-radius': 0,
-          'circle-opacity': 0,
-        },
-      });
+      map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes)));
+      map.addLayer(PIN_DATA_LAYER);
 
       sourceReady.current = true;
 
@@ -399,7 +363,7 @@ export function DashboardMap({
       }, 1500);
     });
     map.on('sourcedata', (e) => {
-      if (e.sourceId === SOURCE_ID && sourceReady.current) {
+      if (e.sourceId === PIN_SOURCE_ID && sourceReady.current) {
         syncMarkers.current(map);
       }
     });
@@ -455,7 +419,7 @@ export function DashboardMap({
     const map = mapRef.current;
     if (!map || !sourceReady.current) return;
 
-    const source = map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
+    const source = map.getSource(PIN_SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
     if (source) {
       source.setData(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes));
     }
@@ -536,63 +500,13 @@ export function DashboardMap({
         map.setZoom(savedZoom);
         // Re-add traffic flow layer
         if (!map.getSource(FLOW_SOURCE_ID)) {
-          map.addSource(FLOW_SOURCE_ID, {
-            type: 'geojson',
-            data: flowToGeoJSON(flowSegments),
-          });
-          map.addLayer({
-            id: 'traffic-flow-line',
-            type: 'line',
-            source: FLOW_SOURCE_ID,
-            paint: {
-              'line-color': [
-                'match',
-                ['get', 'congestion'],
-                'moderate',
-                '#EAB308',
-                'heavy',
-                '#FF7A2F',
-                'severe',
-                '#FF3B30',
-                '#EAB308',
-              ],
-              'line-width': [
-                'match',
-                ['get', 'congestion'],
-                'moderate',
-                3,
-                'heavy',
-                4,
-                'severe',
-                5,
-                3,
-              ],
-              'line-opacity': 0.75,
-            },
-            layout: {
-              'line-cap': 'round',
-              'line-join': 'round',
-            },
-          });
+          map.addSource(FLOW_SOURCE_ID, createFlowSource(flowToGeoJSON(flowSegments)));
+          map.addLayer(TRAFFIC_FLOW_LAYER);
         }
         // Re-add pin source — HTML markers are re-created by syncMarkers
-        if (!map.getSource(SOURCE_ID)) {
-          map.addSource(SOURCE_ID, {
-            type: 'geojson',
-            data: pinsToGeoJSON(pins, activeFilters, activeTrafficTypes),
-            cluster: true,
-            clusterMaxZoom: CLUSTER_MAX_ZOOM,
-            clusterRadius: CLUSTER_RADIUS,
-          });
-          map.addLayer({
-            id: 'pin-data',
-            type: 'circle',
-            source: SOURCE_ID,
-            paint: {
-              'circle-radius': 0,
-              'circle-opacity': 0,
-            },
-          });
+        if (!map.getSource(PIN_SOURCE_ID)) {
+          map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes)));
+          map.addLayer(PIN_DATA_LAYER);
           sourceReady.current = true;
         }
         if (resolvedTheme === 'dark' && map.getLayer('water')) {
