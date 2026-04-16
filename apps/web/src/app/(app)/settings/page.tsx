@@ -33,9 +33,9 @@ export default function SettingsPage() {
   const ts = useTranslations("sources");
   const td = useTranslations("digest");
   const { digestMode, loading: digestLoading, saving: digestSaving, updateDigestMode } = useDigestMode();
-  const { consents, loading: consentsLoading, updateConsent: apiUpdateConsent } = useConsents();
+  const { consents, isLoading: consentsLoading, updateConsent: apiUpdateConsent } = useConsents();
   const [savingConsent, setSavingConsent] = useState<string | null>(null);
-  const { membership, loading: membershipLoading, isFree } = useMembership();
+  const { membership, isLoading: membershipLoading, isFree } = useMembership();
   const [portalLoading, setPortalLoading] = useState(false);
 
   const handleOpenPortal = async () => {

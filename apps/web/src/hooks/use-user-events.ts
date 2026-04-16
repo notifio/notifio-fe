@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 
 interface UseUserEventsResult {
   events: UserEvent[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   updateEvent: (eventId: string, body: UpdateUserEventBody) => Promise<void>;
   refetch: () => Promise<void>;
@@ -44,7 +44,7 @@ export function useUserEvents(): UseUserEventsResult {
 
   return {
     events,
-    loading,
+    isLoading: loading,
     error,
     updateEvent,
     refetch: fetchEvents,

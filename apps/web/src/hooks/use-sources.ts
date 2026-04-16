@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 
 interface UseSourcesResult {
   sources: SourceSummary[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   rateSource: (sourceAdapterId: number, body: UpsertSourceRatingInput) => Promise<void>;
   deleteRating: (sourceAdapterId: number) => Promise<void>;
@@ -56,7 +56,7 @@ export function useSources(): UseSourcesResult {
 
   return {
     sources,
-    loading,
+    isLoading: loading,
     error,
     rateSource,
     deleteRating,

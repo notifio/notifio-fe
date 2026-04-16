@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 
 interface UseConsentsResult {
   consents: ConsentState[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   updateConsent: (categoryCode: string, granted: boolean) => Promise<void>;
   refetch: () => Promise<void>;
@@ -51,7 +51,7 @@ export function useConsents(): UseConsentsResult {
 
   return {
     consents,
-    loading,
+    isLoading: loading,
     error,
     updateConsent,
     refetch: fetchConsents,

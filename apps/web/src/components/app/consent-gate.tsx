@@ -13,7 +13,7 @@ interface ConsentGateProps {
 }
 
 export function ConsentGate({ children }: ConsentGateProps) {
-  const { consents, loading, refetch } = useConsents();
+  const { consents, isLoading: loading, refetch } = useConsents();
   const [forceShow, setForceShow] = useState(false);
 
   // Listen for CONSENT_REQUIRED events from the API layer

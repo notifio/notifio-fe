@@ -15,7 +15,7 @@ interface UseLocationsResult {
   locations: UserLocation[];
   limit: number;
   used: number;
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   create: (body: CreateLocationBody) => Promise<UserLocation>;
   update: (locationId: string, body: UpdateLocationBody) => Promise<UserLocation>;
@@ -84,7 +84,7 @@ export function useLocations(): UseLocationsResult {
     locations: data?.locations ?? [],
     limit: data?.limit ?? 1,
     used: data?.used ?? 0,
-    loading,
+    isLoading: loading,
     error,
     create,
     update,

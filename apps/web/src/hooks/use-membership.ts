@@ -28,7 +28,7 @@ export interface MembershipResponse {
 
 interface UseMembershipResult {
   membership: MembershipResponse | null;
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
   tier: MembershipTier | null;
   isFree: boolean;
@@ -91,7 +91,7 @@ export function useMembership(): UseMembershipResult {
 
   return {
     membership,
-    loading,
+    isLoading: loading,
     error,
     tier,
     isFree,

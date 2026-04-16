@@ -7,7 +7,7 @@ import { useMembership } from '@/hooks/use-membership';
 import { AdPlaceholder } from './ad-placeholder';
 
 export function AdSidebarLeft() {
-  const { isFree, loading } = useMembership();
+  const { isFree, isLoading: loading } = useMembership();
   const pathname = usePathname();
 
   if (loading || !isFree) return null;

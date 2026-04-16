@@ -34,7 +34,7 @@ function getPlan(tier: 'PLUS' | 'PRO', billing: BillingCycle): PaymentPlan {
 
 export default function PricingPage() {
   const t = useTranslations('membership');
-  const { loading, tier: currentTier, downgrade } = useMembership();
+  const { isLoading: loading, tier: currentTier, downgrade } = useMembership();
   const toast = useToast();
   const [billing, setBilling] = useState<BillingCycle>('monthly');
   const [downgrading, setDowngrading] = useState<string | null>(null);
