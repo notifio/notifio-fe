@@ -6,11 +6,11 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { PreferenceSection } from "@/components/app/settings/preference-section";
-import { PushNotificationsToggle } from "@/components/app/settings/push-notifications-toggle";
 import { DataSourcesSection } from "@/components/settings/data-sources-section";
 import { DigestSection } from "@/components/settings/digest-section";
 import { NotificationPreferencesSection } from "@/components/settings/notification-preferences-section";
 import { PrivacySection } from "@/components/settings/privacy-section";
+import { PushNotificationsSection } from "@/components/settings/push-notifications-section";
 import { useMembership } from "@/hooks/use-membership";
 import { api } from "@/lib/api";
 
@@ -119,15 +119,7 @@ export default function SettingsPage() {
           ) : null}
         </PreferenceSection>
 
-        {/* Push Notifications */}
-        <PreferenceSection
-          title={t("pushNotifications")}
-          description={t("pushDescription")}
-        >
-          <div className="rounded-xl bg-card p-4">
-            <PushNotificationsToggle />
-          </div>
-        </PreferenceSection>
+        <PushNotificationsSection />
 
         <DigestSection />
 
