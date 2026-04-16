@@ -1,52 +1,29 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 import type { UserEvent, UpdateUserEventBody } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
-interface UseUserEventsResult {
-  events: UserEvent[];
-  isLoading: boolean;
-  error: string | null;
-  updateEvent: (eventId: string, body: UpdateUserEventBody) => Promise<void>;
-  refetch: () => Promise<void>;
-}
+import { useApiQuery } from './use-api-query';
 
-export function useUserEvents(): UseUserEventsResult {
-  const [events, setEvents] = useState<UserEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.getUserEvents();
-      setEvents(data);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to load events';
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+export function useUserEvents() {
+  const { data, isLoading, error, refetch } = useApiQuery<UserEvent[]>(
+    () => api.getUserEvents(),
+    [],
+  );
 
   const updateEvent = useCallback(async (eventId: string, body: UpdateUserEventBody) => {
-    const updated = await api.updateEvent(eventId, body);
-    setEvents((prev) => prev.map((e) => (e.eventId === eventId ? updated : e)));
-  }, []);
+    await api.updateEvent(eventId, body);
+    await refetch();
+  }, [refetch]);
 
   return {
-    events,
-    isLoading: loading,
+    events: data ?? [],
+    isLoading,
     error,
     updateEvent,
-    refetch: fetchEvents,
+    refetch,
   };
 }
