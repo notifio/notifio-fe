@@ -1,15 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import type { MembershipTier } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
+import { useApiQuery } from './use-api-query';
+
 /**
  * Actual shape returned by GET /me/membership.
  * The @notifio/shared MembershipDetails type is flat, but the API nests
  * plan details under `current`.
+ * TODO: Fix this type gap in @notifio/shared so the cast isn't needed.
  */
 export interface MembershipResponse {
   current: {
@@ -26,51 +29,20 @@ export interface MembershipResponse {
   availableUpgrades: MembershipTier[];
 }
 
-interface UseMembershipResult {
-  membership: MembershipResponse | null;
-  isLoading: boolean;
-  error: string | null;
-  tier: MembershipTier | null;
-  isFree: boolean;
-  isPlus: boolean;
-  isPro: boolean;
-  upgrade: (targetTier: 'PLUS' | 'PRO') => Promise<void>;
-  downgrade: (targetTier: 'FREE' | 'PLUS') => Promise<void>;
-  refetch: () => void;
-}
-
-/**
- * The api-client types getMembership() as the flat MembershipDetails, but the
- * API actually returns the nested MembershipResponse shape after envelope
- * unwrapping. This helper bridges the type gap.
- */
 function parseMembershipResponse(data: unknown): MembershipResponse {
   return data as MembershipResponse;
 }
 
-export function useMembership(): UseMembershipResult {
-  const [membership, setMembership] = useState<MembershipResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMembership = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
+export function useMembership() {
+  const { data: rawData, isLoading, error, refetch } = useApiQuery(
+    async () => {
       const data = await api.getMembership();
-      setMembership(parseMembershipResponse(data));
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to load membership';
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return parseMembershipResponse(data);
+    },
+    [],
+  );
 
-  useEffect(() => {
-    fetchMembership();
-  }, [fetchMembership]);
-
+  const membership = rawData;
   const tier = membership?.current?.tier ?? null;
 
   const { isFree, isPlus, isPro } = useMemo(() => ({
@@ -81,17 +53,17 @@ export function useMembership(): UseMembershipResult {
 
   const upgrade = useCallback(async (targetTier: 'PLUS' | 'PRO') => {
     await api.upgradeMembership({ targetTier });
-    await fetchMembership();
-  }, [fetchMembership]);
+    await refetch();
+  }, [refetch]);
 
   const downgrade = useCallback(async (targetTier: 'FREE' | 'PLUS') => {
     await api.downgradeMembership({ targetTier });
-    await fetchMembership();
-  }, [fetchMembership]);
+    await refetch();
+  }, [refetch]);
 
   return {
     membership,
-    isLoading: loading,
+    isLoading,
     error,
     tier,
     isFree,
@@ -99,6 +71,6 @@ export function useMembership(): UseMembershipResult {
     isPro,
     upgrade,
     downgrade,
-    refetch: fetchMembership,
+    refetch,
   };
 }
