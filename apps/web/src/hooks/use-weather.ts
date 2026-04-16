@@ -1,33 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-
 import type { WeatherData } from '@notifio/shared';
 
 import { api } from '@/lib/api';
 import { DEFAULT_LOCATION } from '@/lib/location';
 
+import { useApiQuery } from './use-api-query';
+
 export function useWeather() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
-      setWeather(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load weather');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+  const { data: weather, isLoading, error, refetch: refresh } = useApiQuery<WeatherData>(
+    () => api.getWeather(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng),
+    [],
+  );
 
   return { weather, isLoading, error, refresh };
 }
