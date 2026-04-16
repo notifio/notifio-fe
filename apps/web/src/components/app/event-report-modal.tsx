@@ -4,14 +4,10 @@ import {
   IconLoader2,
   IconX,
 } from '@tabler/icons-react';
-import maplibregl from 'maplibre-gl';
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 import {
   type FormEvent,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -19,7 +15,8 @@ import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useToast } from '@/components/ui/toast';
 import { useEventCategories } from '@/hooks/use-event-categories';
 import { api } from '@/lib/api';
-import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
+
+import { LocationPicker } from './location-picker';
 
 interface EventReportModalProps {
   lat: number;
@@ -43,17 +40,13 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const t = useTranslations('events');
   const te = useTranslations('errors');
   const tc = useTranslations('common');
-  const { resolvedTheme } = useTheme();
   const { categories, loading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
   const { success, error: showError } = useToast();
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryOption | null>(null);
   const [radiusIdx, setRadiusIdx] = useState(3);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedLat, setSelectedLat] = useState(lat);
-  const [selectedLng, setSelectedLng] = useState(lng);
-  const pickerContainerRef = useRef<HTMLDivElement>(null);
-  const pickerMapRef = useRef<maplibregl.Map | null>(null);
+  const [pickerCoords, setPickerCoords] = useState({ lat, lng });
 
   const flatOptions: CategoryOption[] = useMemo(
     () => categories.map((c) => ({ code: c.code, name: c.name, categoryCode: c.categoryCode })),
@@ -76,43 +69,6 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
 
   const isValid = selectedCategory !== null;
 
-  // Initialize location picker map
-  useEffect(() => {
-    if (!pickerContainerRef.current) return;
-
-    const tileStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
-    const map = new maplibregl.Map({
-      container: pickerContainerRef.current,
-      style: tileStyle,
-      center: [selectedLng, selectedLat],
-      zoom: 14,
-    });
-
-    const marker = new maplibregl.Marker({ color: '#FF7A2F', draggable: true })
-      .setLngLat([selectedLng, selectedLat])
-      .addTo(map);
-
-    marker.on('dragend', () => {
-      const lngLat = marker.getLngLat();
-      setSelectedLat(lngLat.lat);
-      setSelectedLng(lngLat.lng);
-    });
-
-    map.on('click', (e) => {
-      marker.setLngLat(e.lngLat);
-      setSelectedLat(e.lngLat.lat);
-      setSelectedLng(e.lngLat.lng);
-    });
-
-    pickerMapRef.current = map;
-
-    return () => {
-      map.remove();
-      pickerMapRef.current = null;
-    };
-    // eslint-disable-next-line
-  }, []);
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!isValid || submitting) return;
@@ -121,8 +77,8 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
     try {
       await api.createEvent({
         subcategoryCode: selectedCategory.code,
-        lat: selectedLat,
-        lng: selectedLng,
+        lat: pickerCoords.lat,
+        lng: pickerCoords.lng,
         radiusM: RADIUS_STEPS[radiusIdx],
       } as Parameters<typeof api.createEvent>[0]);
       success(t('success'));
@@ -191,11 +147,13 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
                 {t('pickLocation')}
               </label>
-              <div className="h-[200px] overflow-hidden rounded-xl border border-border">
-                <div ref={pickerContainerRef} className="h-full w-full" />
-              </div>
+              <LocationPicker
+                value={pickerCoords}
+                onChange={setPickerCoords}
+                initialCenter={{ lat, lng }}
+              />
               <p className="mt-1 text-[11px] text-muted">
-                {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+                {pickerCoords.lat.toFixed(5)}, {pickerCoords.lng.toFixed(5)}
               </p>
             </div>
 
