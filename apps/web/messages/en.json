@@ -248,7 +248,10 @@
       "trialStarted": "Your 14-day free trial has started.",
       "unlocked": "Now unlocked:",
       "goToDashboard": "Go to dashboard",
-      "manageInSettings": "Manage your subscription in settings"
+      "manageInSettings": "Manage your subscription in settings",
+      "processingTitle": "Your upgrade is being processed...",
+      "processingSubtitle": "Payment successful. This usually takes under a minute, but can sometimes take a few minutes.",
+      "refresh": "Refresh"
     },
     "active": "Active",
     "checkoutError": "Could not start checkout. Please try again.",
