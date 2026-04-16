@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  IconCheck,
-  IconChevronDown,
   IconLoader2,
   IconX,
 } from '@tabler/icons-react';
@@ -11,17 +9,17 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import {
   type FormEvent,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useToast } from '@/components/ui/toast';
 import { useEventCategories } from '@/hooks/use-event-categories';
 import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
 
 interface EventReportModalProps {
   lat: number;
@@ -29,12 +27,16 @@ interface EventReportModalProps {
   onClose: () => void;
 }
 
-const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
-const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const RADIUS_STEPS = [100, 250, 500, 1000, 2000, 5000, 10000, 20000];
 
 function formatRadius(m: number): string {
   return m >= 1000 ? `${m / 1000} km` : `${m} m`;
+}
+
+interface CategoryOption {
+  code: string;
+  name: string;
+  categoryCode: string;
 }
 
 export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
@@ -45,87 +47,34 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const { categories, loading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
   const { success, error: showError } = useToast();
 
-  const [subcategoryCode, setSubcategoryCode] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryOption | null>(null);
   const [radiusIdx, setRadiusIdx] = useState(3);
   const [submitting, setSubmitting] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [focusedIdx, setFocusedIdx] = useState(-1);
   const [selectedLat, setSelectedLat] = useState(lat);
   const [selectedLng, setSelectedLng] = useState(lng);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
   const pickerContainerRef = useRef<HTMLDivElement>(null);
   const pickerMapRef = useRef<maplibregl.Map | null>(null);
 
-  // Group subcategories by parent categoryCode
-  const grouped = useMemo(() => {
-    const map = new Map<string, typeof categories>();
-    for (const cat of categories) {
-      const group = map.get(cat.categoryCode) ?? [];
-      group.push(cat);
-      map.set(cat.categoryCode, group);
-    }
-    return map;
-  }, [categories]);
-
-  // Flat list for keyboard navigation
-  const flatItems = useMemo(
+  const flatOptions: CategoryOption[] = useMemo(
     () => categories.map((c) => ({ code: c.code, name: c.name, categoryCode: c.categoryCode })),
     [categories],
   );
 
-  const selectedItem = flatItems.find((c) => c.code === subcategoryCode);
-  const isValid = subcategoryCode.length > 0;
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
+  const groups = useMemo(() => {
+    const map = new Map<string, CategoryOption[]>();
+    for (const opt of flatOptions) {
+      const group = map.get(opt.categoryCode) ?? [];
+      group.push(opt);
+      map.set(opt.categoryCode, group);
     }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [dropdownOpen]);
+    return [...map.entries()].map(([key, items]) => ({
+      key,
+      label: key,
+      items,
+    }));
+  }, [flatOptions]);
 
-  // Keyboard nav
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!dropdownOpen) {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-          e.preventDefault();
-          setDropdownOpen(true);
-          setFocusedIdx(0);
-        }
-        return;
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setDropdownOpen(false);
-        return;
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setFocusedIdx((prev) => Math.min(prev + 1, flatItems.length - 1));
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setFocusedIdx((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === 'Enter' && focusedIdx >= 0 && focusedIdx < flatItems.length) {
-        e.preventDefault();
-        setSubcategoryCode(flatItems[focusedIdx]!.code);
-        setDropdownOpen(false);
-      }
-    },
-    [dropdownOpen, flatItems, focusedIdx],
-  );
-
-  // Scroll focused item into view
-  useEffect(() => {
-    if (!dropdownOpen || focusedIdx < 0) return;
-    const el = listRef.current?.querySelector(`[data-idx="${focusedIdx}"]`);
-    el?.scrollIntoView({ block: 'nearest' });
-  }, [focusedIdx, dropdownOpen]);
+  const isValid = selectedCategory !== null;
 
   // Initialize location picker map
   useEffect(() => {
@@ -161,12 +110,7 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
       map.remove();
       pickerMapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const selectCategory = useCallback((code: string) => {
-    setSubcategoryCode(code);
-    setDropdownOpen(false);
+    // eslint-disable-next-line
   }, []);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -175,9 +119,8 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
 
     setSubmitting(true);
     try {
-      // Only send fields the BE accepts — title is auto-generated server-side
       await api.createEvent({
-        subcategoryCode,
+        subcategoryCode: selectedCategory.code,
         lat: selectedLat,
         lng: selectedLng,
         radiusM: RADIUS_STEPS[radiusIdx],
@@ -231,79 +174,15 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
                   </button>
                 </div>
               ) : (
-                <div ref={dropdownRef} className="relative">
-                  {/* Trigger */}
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen((v) => !v)}
-                    onKeyDown={handleKeyDown}
-                    className={cn(
-                      'flex h-11 w-full items-center justify-between rounded-xl border px-4 text-left text-sm transition-colors',
-                      dropdownOpen
-                        ? 'border-accent ring-1 ring-accent'
-                        : 'border-border hover:border-border/80',
-                      selectedItem ? 'text-text-primary' : 'text-muted',
-                    )}
-                  >
-                    <span className="truncate">
-                      {selectedItem ? selectedItem.name : t('selectCategory')}
-                    </span>
-                    <IconChevronDown
-                      size={16}
-                      className={cn(
-                        'shrink-0 text-muted transition-transform',
-                        dropdownOpen && 'rotate-180',
-                      )}
-                    />
-                  </button>
-
-                  {/* Dropdown list */}
-                  {dropdownOpen && (
-                    <div
-                      ref={listRef}
-                      className="absolute left-0 top-full z-10 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-border bg-background shadow-xl"
-                      role="listbox"
-                    >
-                      {[...grouped.entries()].map(([groupCode, items]) => (
-                        <div key={groupCode}>
-                          {/* Group header */}
-                          <div className="sticky top-0 border-b border-border bg-card/80 px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest text-muted backdrop-blur-sm">
-                            {groupCode}
-                          </div>
-                          {/* Items */}
-                          {items.map((item) => {
-                            const globalIdx = flatItems.findIndex((f) => f.code === item.code);
-                            const isSelected = subcategoryCode === item.code;
-                            const isFocused = focusedIdx === globalIdx;
-                            return (
-                              <button
-                                key={item.code}
-                                type="button"
-                                role="option"
-                                aria-selected={isSelected}
-                                data-idx={globalIdx}
-                                onClick={() => selectCategory(item.code)}
-                                onMouseEnter={() => setFocusedIdx(globalIdx)}
-                                className={cn(
-                                  'flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm transition-colors',
-                                  isFocused && 'bg-card',
-                                  isSelected
-                                    ? 'font-medium text-accent'
-                                    : 'text-text-secondary',
-                                )}
-                              >
-                                <span className="flex-1 truncate">{item.name}</span>
-                                {isSelected && (
-                                  <IconCheck size={15} className="shrink-0 text-accent" />
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <SearchableSelect<CategoryOption>
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  options={flatOptions}
+                  getLabel={(o) => o.name}
+                  getKey={(o) => o.code}
+                  groups={groups}
+                  placeholder={t('selectCategory')}
+                />
               )}
             </div>
 

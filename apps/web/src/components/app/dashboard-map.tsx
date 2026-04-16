@@ -11,14 +11,13 @@ import type { Root } from 'react-dom/client';
 
 import type { TrafficFlowResponse } from '@notifio/api-client';
 
+import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
 import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
 import { MapMarker } from './map-marker';
 
 const DEFAULT_ZOOM = 13;
 const FALLBACK_ZOOM = 7;
-const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
-const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const SOURCE_ID = 'pins';
 const FLOW_SOURCE_ID = 'traffic-flow';
 
