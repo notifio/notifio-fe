@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { hexToRgba } from '@/lib/color';
 import {
   MAP_FILTER_SOURCES,
   MAP_PIN_STYLES,
@@ -137,13 +138,6 @@ function CategoryIcon({
       <IconComponent size={iconSize} color={strokeColor} strokeWidth={2} />
     </div>
   );
-}
-
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 // ── Main component ───────────────────────────────────────────────────
