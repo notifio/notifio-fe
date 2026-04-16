@@ -1,31 +1,20 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-
 import type { WeatherWarning } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
+import { useApiQuery } from './use-api-query';
+
 export function useWeatherWarnings(center: { lat: number; lng: number } | null) {
-  const [warnings, setWarnings] = useState<WeatherWarning[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const lat = center?.lat ?? 0;
+  const lng = center?.lng ?? 0;
 
-  const refresh = useCallback(async (coords: { lat: number; lng: number }) => {
-    setIsLoading(true);
-    try {
-      const data = await api.getWeatherWarnings(coords.lat, coords.lng);
-      setWarnings(data);
-    } catch (err) {
-      console.error('[useWeatherWarnings] fetch failed:', err);
-      setWarnings([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const { data, isLoading } = useApiQuery<WeatherWarning[]>(
+    () => api.getWeatherWarnings(lat, lng),
+    [lat, lng],
+    { enabled: center !== null },
+  );
 
-  useEffect(() => {
-    if (center) refresh(center);
-  }, [center, refresh]);
-
-  return { warnings, isLoading };
+  return { warnings: data ?? [], isLoading };
 }
