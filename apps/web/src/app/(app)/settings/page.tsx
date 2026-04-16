@@ -1,6 +1,6 @@
 "use client";
 
-import { IconAlertTriangle, IconBell, IconCheck, IconChevronRight, IconClock, IconCrown, IconDatabase, IconLoader2 } from "@tabler/icons-react";
+import { IconAlertTriangle, IconBell, IconCheck, IconClock, IconCrown, IconLoader2 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import type { DigestMode, NotificationCategoryResponse } from "@notifio/api-clie
 
 import { PreferenceSection } from "@/components/app/settings/preference-section";
 import { PushNotificationsToggle } from "@/components/app/settings/push-notifications-toggle";
+import { DataSourcesSection } from "@/components/settings/data-sources-section";
 import { PrivacySection } from "@/components/settings/privacy-section";
 import { Toggle } from "@/components/ui/toggle";
 import { useDigestMode } from "@/hooks/use-digest-mode";
@@ -29,7 +30,6 @@ export default function SettingsPage() {
   const t = useTranslations("settings");
   const tg = useTranslations("categoryGroups");
   const tm = useTranslations("membership");
-  const ts = useTranslations("sources");
   const td = useTranslations("digest");
   const { digestMode, loading: digestLoading, saving: digestSaving, updateDigestMode } = useDigestMode();
   const { membership, isLoading: membershipLoading, isFree } = useMembership();
@@ -404,46 +404,7 @@ export default function SettingsPage() {
 
         <PrivacySection />
 
-        {/* Data Sources */}
-        <PreferenceSection
-          title={ts("title")}
-          description={ts("description")}
-        >
-          <div className="space-y-1">
-            <Link
-              href="/settings/sources"
-              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
-            >
-              <IconDatabase size={20} className="shrink-0 text-accent" />
-              <span className="flex-1 text-sm font-medium text-text-primary">
-                {ts("title")}
-              </span>
-              <IconChevronRight size={16} className="text-muted" />
-            </Link>
-            <Link
-              href="/settings/sources/preferences"
-              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
-            >
-              <IconDatabase size={20} className="shrink-0 text-accent" />
-              <span className="flex-1 text-sm font-medium text-text-primary">
-                {t("sourcePreferences")}
-              </span>
-              <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium text-accent">PRO</span>
-              <IconChevronRight size={16} className="text-muted" />
-            </Link>
-            <Link
-              href="/settings/weather-thresholds"
-              className="flex items-center gap-3 rounded-xl bg-card px-4 py-3 transition-colors hover:bg-card/80"
-            >
-              <IconAlertTriangle size={20} className="shrink-0 text-accent" />
-              <span className="flex-1 text-sm font-medium text-text-primary">
-                {t("weatherThresholds")}
-              </span>
-              <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium text-accent">PRO</span>
-              <IconChevronRight size={16} className="text-muted" />
-            </Link>
-          </div>
-        </PreferenceSection>
+        <DataSourcesSection />
       </div>
     </div>
   );
