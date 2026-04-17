@@ -22,6 +22,7 @@ import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyl
 import { AqiIndicator } from './aqi-indicator';
 import { commonStyles } from '../../lib/common-styles';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 const WEATHER_ICON_MAP: Record<string, Icon> = {
   Sun: IconSun,
@@ -58,17 +59,19 @@ interface WeatherCardProps {
 }
 
 export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false }: WeatherCardProps) {
+  const { colors } = useAppTheme();
+
   if (isLoading) {
-    return <View style={styles.skeleton} />;
+    return <View style={[styles.skeleton, { backgroundColor: colors.surface }]} />;
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.severity.critical.bg }]}>
+        <Text style={[styles.errorText, { color: colors.severity.critical.text }]}>{error}</Text>
         {onRetry && (
-          <Pressable onPress={onRetry} style={styles.retryButton}>
-            <Text style={styles.retryText}>Try again</Text>
+          <Pressable onPress={onRetry} style={[styles.retryButton, { backgroundColor: colors.severity.critical.border }]}>
+            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>Try again</Text>
           </Pressable>
         )}
       </View>
@@ -145,12 +148,10 @@ const styles = StyleSheet.create({
   skeleton: {
     height: 200,
     borderRadius: theme.radius.xl,
-    backgroundColor: theme.colors.surface,
   },
   errorContainer: {
     height: 200,
     borderRadius: theme.radius.xl,
-    backgroundColor: theme.colors.severity.critical.bg,
     alignItems: 'center',
     justifyContent: 'center',
     gap: theme.spacing.md,
@@ -158,18 +159,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.severity.critical.text,
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: theme.colors.severity.critical.border,
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.md,
   },
   retryText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.severity.critical.text,
     ...theme.font.medium,
   },
   gradient: {

@@ -9,6 +9,7 @@ import { useOnboarding } from '../hooks/use-onboarding';
 import { AuthProvider } from '../providers/auth-provider';
 import { NotificationProvider } from '../providers/notification-provider';
 import { OnboardingProvider } from '../providers/onboarding-provider';
+import { ThemeProvider, useIsDark } from '../providers/theme-provider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,17 +51,24 @@ function RootNavigator() {
   );
 }
 
+function DynamicStatusBar() {
+  const isDark = useIsDark();
+  return <StatusBar style={isDark ? 'light' : 'dark'} />;
+}
+
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <OnboardingProvider>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </SafeAreaProvider>
-        </OnboardingProvider>
-      </NotificationProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <OnboardingProvider>
+              <DynamicStatusBar />
+              <RootNavigator />
+            </OnboardingProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

@@ -52,6 +52,37 @@ export const alertTypeColors = {
   event: '#EC4899',
 } as const;
 
+// ── Severity & alert-type background/border tints (mode-dependent) ─
+export const severityTints = {
+  light: {
+    info: { bg: '#EFF6FF', border: '#BFDBFE' },
+    warning: { bg: '#FFFBEB', border: '#FDE68A' },
+    critical: { bg: '#FEF2F2', border: '#FECACA' },
+  },
+  dark: {
+    info: { bg: '#1A2A4A', border: '#2A3F6A' },
+    warning: { bg: '#2A2415', border: '#4A3F2A' },
+    critical: { bg: '#2A1A1A', border: '#4A2A2A' },
+  },
+} as const;
+
+export const alertTypeTints = {
+  light: {
+    weather: '#F0F9FF',
+    traffic: '#FFF7ED',
+    air_quality: '#ECFDF5',
+    utility_outage: '#F5F3FF',
+    event: '#FDF2F8',
+  },
+  dark: {
+    weather: '#1A2840',
+    traffic: '#2A2218',
+    air_quality: '#1A2A22',
+    utility_outage: '#221A2E',
+    event: '#2A1A24',
+  },
+} as const;
+
 // ── Composite type ─────────────────────────────────────────────────
 export type ThemeColors = typeof lightColors & typeof sharedColors & typeof tierColors;
 

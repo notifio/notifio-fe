@@ -15,6 +15,7 @@ import { useMapData } from '../../hooks/use-map-data';
 import { MAP_FILTER_SOURCES } from '../../lib/map-pin-config';
 import type { MapPinSource } from '../../lib/normalize-pins';
 import { shadows, theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 const FILTER_BAR_HEIGHT = 44;
 const GPS_DELTA = 0.06;
@@ -28,6 +29,7 @@ const SLOVAKIA_REGION: Region = {
 };
 
 export default function MapScreen() {
+  const { colors, isDark } = useAppTheme();
   const insets = useSafeAreaInsets();
   const { pins, isLoading, error, refresh } = useMapData();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
@@ -76,11 +78,13 @@ export default function MapScreen() {
     [pins, activeFilters],
   );
 
+  const loadingPillBg = isDark ? 'rgba(14, 34, 63, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+
   // Wait until we know the initial region before mounting the map
   if (!initialRegion) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -92,7 +96,7 @@ export default function MapScreen() {
         initialRegion={initialRegion}
         showsUserLocation
         showsMyLocationButton
-        clusterColor={theme.colors.textMuted}
+        clusterColor={colors.textMuted}
         radius={50}
         extent={512}
       >
@@ -114,19 +118,19 @@ export default function MapScreen() {
 
       {isLoading && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]} pointerEvents="none">
-          <View style={styles.loadingPill}>
-            <ActivityIndicator size="small" color={theme.colors.textMuted} />
-            <Text style={styles.loadingText}>Loading map data…</Text>
+          <View style={[styles.loadingPill, { backgroundColor: loadingPillBg }]}>
+            <ActivityIndicator size="small" color={colors.textMuted} />
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading map data...</Text>
           </View>
         </View>
       )}
 
       {error && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]}>
-          <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>{error}</Text>
+          <View style={[styles.errorBanner, { backgroundColor: colors.severity.critical.bg }]}>
+            <Text style={[styles.errorText, { color: colors.danger }]}>{error}</Text>
             <Pressable onPress={refresh} style={styles.retryButton}>
-              <IconRefresh size={14} color={theme.colors.danger} />
+              <IconRefresh size={14} color={colors.danger} />
             </Pressable>
           </View>
         </View>
@@ -145,7 +149,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.background,
   },
   map: {
     flex: 1,
@@ -161,7 +164,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.full,
@@ -169,13 +171,11 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: theme.fontSize.xs,
-    color: theme.colors.textMuted,
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.sm,
-    backgroundColor: '#FEF2F2',
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.full,
@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: theme.fontSize.xs,
-    color: theme.colors.danger,
     ...theme.font.medium,
   },
   retryButton: {

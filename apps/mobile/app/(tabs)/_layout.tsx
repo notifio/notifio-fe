@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { Icon, type TablerIcon } from '../../components/ui/icon';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 const TAB_SCREENS: { name: string; title: string; icon: TablerIcon }[] = [
   { name: 'index', title: 'Overview', icon: IconLayoutDashboard },
@@ -13,13 +14,15 @@ const TAB_SCREENS: { name: string; title: string; icon: TablerIcon }[] = [
 ];
 
 export default function TabLayout() {
+  const { colors } = useAppTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: [styles.tabBar, { backgroundColor: colors.background, borderTopColor: colors.border }],
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: styles.tabBarLabel,
       }}
     >
@@ -39,9 +42,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: theme.colors.background,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
     elevation: 0,
     shadowOpacity: 0,
   },

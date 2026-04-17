@@ -5,6 +5,7 @@ import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared/constants';
 
 import { formatRelativeTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 
@@ -20,6 +21,7 @@ const SEVERITY_VARIANT: Record<string, 'info' | 'warning' | 'critical'> = {
 };
 
 export function AlertCard({ notification, onPress }: AlertCardProps) {
+  const { colors } = useAppTheme();
   const categoryNames = CATEGORY_DISPLAY_NAMES[notification.category as AlertCategory];
   const categoryLabel = categoryNames?.en ?? notification.category;
   const severityVariant = SEVERITY_VARIANT[notification.severity] ?? 'info';
@@ -28,21 +30,21 @@ export function AlertCard({ notification, onPress }: AlertCardProps) {
     <Card onPress={onPress}>
       <View style={styles.topRow}>
         <View style={styles.textContainer}>
-          <Text style={styles.title} numberOfLines={2}>{notification.title}</Text>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>{notification.title}</Text>
           {notification.body ? (
-            <Text style={styles.body} numberOfLines={2}>{notification.body}</Text>
+            <Text style={[styles.body, { color: colors.textSecondary }]} numberOfLines={2}>{notification.body}</Text>
           ) : null}
         </View>
         <Badge variant={severityVariant} label={notification.severity} />
       </View>
       <View style={styles.bottomRow}>
-        <Text style={styles.meta}>{categoryLabel}</Text>
-        <Text style={styles.metaDot}>·</Text>
-        <Text style={styles.meta}>{formatRelativeTime(notification.createdAt)}</Text>
+        <Text style={[styles.meta, { color: colors.textMuted }]}>{categoryLabel}</Text>
+        <Text style={[styles.metaDot, { color: colors.textMuted }]}>·</Text>
+        <Text style={[styles.meta, { color: colors.textMuted }]}>{formatRelativeTime(notification.createdAt)}</Text>
         {notification.status !== 'sent' && (
           <>
-            <Text style={styles.metaDot}>·</Text>
-            <Text style={styles.metaStatus}>{notification.status}</Text>
+            <Text style={[styles.metaDot, { color: colors.textMuted }]}>·</Text>
+            <Text style={[styles.metaStatus, { color: colors.severity.warning.text }]}>{notification.status}</Text>
           </>
         )}
       </View>
@@ -61,12 +63,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.text,
     ...theme.font.semibold,
   },
   body: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
     marginTop: theme.spacing.xs,
   },
   bottomRow: {
@@ -76,15 +76,12 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
   },
   metaDot: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
     marginHorizontal: theme.spacing.xs,
   },
   metaStatus: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.severity.warning.text,
   },
 });

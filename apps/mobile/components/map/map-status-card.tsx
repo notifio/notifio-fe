@@ -2,6 +2,7 @@ import { IconBell } from '@tabler/icons-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { shadows, theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 import { Card } from '../ui/card';
 import { Icon } from '../ui/icon';
 
@@ -10,6 +11,7 @@ interface MapStatusCardProps {
 }
 
 export function MapStatusCard({ alertCount }: MapStatusCardProps) {
+  const { colors } = useAppTheme();
   const hasAlerts = alertCount > 0;
 
   return (
@@ -17,11 +19,11 @@ export function MapStatusCard({ alertCount }: MapStatusCardProps) {
       <Card style={styles.card}>
         <View style={styles.row}>
           {hasAlerts ? (
-            <View style={styles.dot} />
+            <View style={[styles.dot, { backgroundColor: colors.danger }]} />
           ) : (
-            <Icon icon={IconBell} size={18} color={theme.colors.textMuted} />
+            <Icon icon={IconBell} size={18} color={colors.textMuted} />
           )}
-          <Text style={[styles.text, hasAlerts && styles.textActive]}>
+          <Text style={[styles.text, { color: hasAlerts ? colors.text : colors.textMuted }]}>
             {hasAlerts
               ? `${alertCount} active incident${alertCount === 1 ? '' : 's'} nearby`
               : 'No active incidents in this area'}
@@ -51,14 +53,9 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.danger,
   },
   text: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.textMuted,
     ...theme.font.medium,
-  },
-  textActive: {
-    color: theme.colors.text,
   },
 });

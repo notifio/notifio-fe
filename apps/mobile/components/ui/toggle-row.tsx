@@ -2,6 +2,7 @@ import { type StyleProp, StyleSheet, Switch, Text, View, type ViewStyle } from '
 
 import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface ToggleRowProps {
   icon?: TablerIcon;
@@ -24,6 +25,8 @@ export function ToggleRow({
   onValueChange,
   style,
 }: ToggleRowProps) {
+  const { colors } = useAppTheme();
+
   return (
     <View style={[styles.container, style]}>
       {icon && iconBgColor && (
@@ -32,14 +35,14 @@ export function ToggleRow({
         </View>
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {description && <Text style={styles.description}>{description}</Text>}
+        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+        {description && <Text style={[styles.description, { color: colors.textMuted }]}>{description}</Text>}
       </View>
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-        thumbColor={theme.colors.background}
+        trackColor={{ false: colors.border, true: colors.primary }}
+        thumbColor={colors.background}
       />
     </View>
   );
@@ -64,12 +67,10 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.text,
     ...theme.font.medium,
   },
   description: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
     marginTop: theme.spacing.xs,
   },
 });

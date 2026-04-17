@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MAP_FILTER_SOURCES, MAP_PIN_STYLES } from '../../lib/map-pin-config';
 import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface MapFilterBarProps {
   activeFilters: Set<MapPinSource>;
@@ -13,6 +14,8 @@ interface MapFilterBarProps {
 }
 
 export function MapFilterBar({ activeFilters, onToggle, pins, topInset = 0 }: MapFilterBarProps) {
+  const { colors, isDark } = useAppTheme();
+
   const counts = useMemo(() => {
     const map = new Map<MapPinSource, number>();
     for (const pin of pins) {
@@ -20,6 +23,8 @@ export function MapFilterBar({ activeFilters, onToggle, pins, topInset = 0 }: Ma
     }
     return map;
   }, [pins]);
+
+  const inactiveBg = isDark ? 'rgba(14, 34, 63, 0.9)' : 'rgba(255, 255, 255, 0.9)';
 
   return (
     <View style={[styles.container, { top: topInset + theme.spacing.sm }]}>
@@ -41,7 +46,7 @@ export function MapFilterBar({ activeFilters, onToggle, pins, topInset = 0 }: Ma
                 styles.pill,
                 isActive
                   ? { backgroundColor: pinStyle.color }
-                  : styles.pillInactive,
+                  : { backgroundColor: inactiveBg },
               ]}
             >
               <View
@@ -53,7 +58,7 @@ export function MapFilterBar({ activeFilters, onToggle, pins, topInset = 0 }: Ma
               <Text
                 style={[
                   styles.label,
-                  { color: isActive ? '#FFFFFF' : theme.colors.textMuted },
+                  { color: isActive ? '#FFFFFF' : colors.textMuted },
                 ]}
               >
                 {pinStyle.label}
@@ -84,9 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.full,
-  },
-  pillInactive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   dot: {
     width: 8,

@@ -11,7 +11,7 @@ export default function WelcomeScreen() {
       icon={IconBroadcast}
       title="Welcome to Notifio"
       description="Real-time alerts for your area — weather, traffic, outages, and more."
-      primaryAction={{ title: 'Get Started', onPress: () => router.push('/onboarding/location') }}
+      primaryAction={{ title: 'Get Started', onPress: () => router.push('/(auth)/login') }}
       secondaryAction={{ title: 'I already have an account', onPress: () => router.push('/(auth)/login') }}
     />
   );

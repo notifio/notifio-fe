@@ -7,6 +7,7 @@ import type { NotificationHistoryItem } from '@notifio/api-client';
 import { AlertCard } from './alert-card';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 import { Icon } from '../ui/icon';
 
 interface AlertListProps {
@@ -18,6 +19,7 @@ function ItemSeparator() {
 }
 
 export function AlertList({ onAlertPress }: AlertListProps) {
+  const { colors } = useAppTheme();
   const [activeOnly, setActiveOnly] = useState(false);
   const { items, isLoading, hasMore, loadMore, refresh } = useNotificationHistory({
     activeOnly,
@@ -35,15 +37,15 @@ export function AlertList({ onAlertPress }: AlertListProps) {
       <View style={styles.filterBar}>
         <Pressable
           onPress={() => setActiveOnly(false)}
-          style={[styles.filterButton, !activeOnly && styles.filterButtonActive]}
+          style={[styles.filterButton, !activeOnly && { backgroundColor: colors.text }]}
         >
-          <Text style={[styles.filterText, !activeOnly && styles.filterTextActive]}>All</Text>
+          <Text style={[styles.filterText, { color: colors.textMuted }, !activeOnly && { color: colors.background }]}>All</Text>
         </Pressable>
         <Pressable
           onPress={() => setActiveOnly(true)}
-          style={[styles.filterButton, activeOnly && styles.filterButtonActive]}
+          style={[styles.filterButton, activeOnly && { backgroundColor: colors.text }]}
         >
-          <Text style={[styles.filterText, activeOnly && styles.filterTextActive]}>Sent</Text>
+          <Text style={[styles.filterText, { color: colors.textMuted }, activeOnly && { color: colors.background }]}>Sent</Text>
         </Pressable>
       </View>
 
@@ -55,22 +57,22 @@ export function AlertList({ onAlertPress }: AlertListProps) {
         contentContainerStyle={[styles.list, items.length === 0 && styles.emptyList]}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isLoading && items.length > 0} onRefresh={refresh} tintColor={theme.colors.primary} />
+          <RefreshControl refreshing={isLoading && items.length > 0} onRefresh={refresh} tintColor={colors.primary} />
         }
         onEndReached={hasMore ? loadMore : undefined}
         onEndReachedThreshold={0.3}
         ListFooterComponent={
           isLoading && items.length > 0 ? (
-            <ActivityIndicator style={styles.footer} color={theme.colors.primary} />
+            <ActivityIndicator style={styles.footer} color={colors.primary} />
           ) : null
         }
         ListEmptyComponent={
           isLoading ? (
-            <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loading} />
+            <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
           ) : (
             <View style={styles.emptyContainer}>
-              <Icon icon={IconBell} size={48} color={theme.colors.textMuted} />
-              <Text style={styles.emptyText}>No notifications yet</Text>
+              <Icon icon={IconBell} size={48} color={colors.textMuted} />
+              <Text style={[styles.emptyText, { color: colors.textMuted }]}>No notifications yet</Text>
             </View>
           )
         }
@@ -94,16 +96,9 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.md,
   },
-  filterButtonActive: {
-    backgroundColor: theme.colors.text,
-  },
   filterText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
     ...theme.font.medium,
-  },
-  filterTextActive: {
-    color: theme.colors.background,
   },
   list: {
     paddingHorizontal: theme.spacing.xl,
@@ -123,7 +118,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.textMuted,
   },
   footer: {
     paddingVertical: theme.spacing.lg,

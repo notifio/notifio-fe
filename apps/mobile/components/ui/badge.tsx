@@ -1,6 +1,7 @@
 import { type StyleProp, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 type BadgeVariant = 'info' | 'warning' | 'critical';
 
@@ -11,11 +12,12 @@ interface BadgeProps {
 }
 
 export function Badge({ variant, label, style }: BadgeProps) {
-  const colors = theme.colors.severity[variant];
+  const { colors } = useAppTheme();
+  const severity = colors.severity[variant];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg, borderColor: colors.border }, style]}>
-      <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+    <View style={[styles.container, { backgroundColor: severity.bg, borderColor: severity.border }, style]}>
+      <Text style={[styles.label, { color: severity.text }]}>{label}</Text>
     </View>
   );
 }

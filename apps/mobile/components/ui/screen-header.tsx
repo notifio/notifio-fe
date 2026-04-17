@@ -2,6 +2,7 @@ import { Pressable, type StyleProp, StyleSheet, Text, View, type ViewStyle } fro
 
 import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface ScreenHeaderProps {
   title: string;
@@ -11,15 +12,17 @@ interface ScreenHeaderProps {
 }
 
 export function ScreenHeader({ title, subtitle, rightAction, style }: ScreenHeaderProps) {
+  const { colors } = useAppTheme();
+
   return (
     <View style={[styles.container, style]}>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+        {subtitle && <Text style={[styles.subtitle, { color: colors.textMuted }]}>{subtitle}</Text>}
       </View>
       {rightAction && (
         <Pressable onPress={rightAction.onPress} hitSlop={theme.spacing.sm}>
-          <Icon icon={rightAction.icon} color={theme.colors.text} />
+          <Icon icon={rightAction.icon} color={colors.text} />
         </Pressable>
       )}
     </View>
@@ -39,12 +42,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: theme.fontSize['2xl'],
-    color: theme.colors.text,
     ...theme.font.bold,
   },
   subtitle: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
     marginTop: theme.spacing.xs,
   },
 });

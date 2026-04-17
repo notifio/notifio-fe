@@ -1,6 +1,7 @@
 import { Pressable, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { shadows, theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface CardProps {
   children: React.ReactNode;
@@ -9,26 +10,26 @@ interface CardProps {
 }
 
 export function Card({ children, style, onPress }: CardProps) {
+  const { colors } = useAppTheme();
+
   if (onPress) {
     return (
       <Pressable
         onPress={onPress}
-        style={({ pressed }) => [styles.card, pressed && styles.pressed, style]}
+        style={({ pressed }) => [styles.card, { backgroundColor: colors.background, borderColor: colors.border }, pressed && styles.pressed, style]}
       >
         {children}
       </Pressable>
     );
   }
 
-  return <View style={[styles.card, style]}>{children}</View>;
+  return <View style={[styles.card, { backgroundColor: colors.background, borderColor: colors.border }, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
   card: {
     borderRadius: theme.radius.xl,
-    backgroundColor: theme.colors.background,
     borderWidth: 1,
-    borderColor: theme.colors.border,
     padding: theme.spacing.lg,
     ...shadows.sm,
   },

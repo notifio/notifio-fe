@@ -9,6 +9,7 @@ import { ToggleRow } from '../../components/ui/toggle-row';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { usePreferences } from '../../hooks/use-preferences';
 import { theme } from '../../lib/theme';
+import { type ThemeMode, useAppTheme } from '../../providers/theme-provider';
 
 const THEME_OPTIONS = [
   { value: 'system' as const, label: 'System' },
@@ -26,6 +27,7 @@ const ABOUT_ROWS = [
 ];
 
 export default function SettingsScreen() {
+  const { colors, mode, setMode } = useAppTheme();
   const { resetOnboarding } = useOnboarding();
   const {
     preferences,
@@ -48,7 +50,7 @@ export default function SettingsScreen() {
       <SectionLabel label="Notification Preferences" style={styles.firstSection} />
       {isLoading ? (
         <Card>
-          <ActivityIndicator color={theme.colors.primary} />
+          <ActivityIndicator color={colors.primary} />
         </Card>
       ) : (
         <Card>
@@ -79,8 +81,11 @@ export default function SettingsScreen() {
           <SelectableRow
             key={option.value}
             label={option.label}
-            selected={preferences?.display.theme === option.value}
-            onPress={() => setDisplay('theme', option.value)}
+            selected={mode === option.value}
+            onPress={() => {
+              setMode(option.value as ThemeMode);
+              setDisplay('theme', option.value);
+            }}
           />
         ))}
       </Card>
@@ -102,20 +107,20 @@ export default function SettingsScreen() {
           <Pressable
             onPress={savePreferences}
             disabled={saving}
-            style={[styles.saveButton, saving && styles.buttonDisabled]}
+            style={[styles.saveButton, { backgroundColor: colors.primary }, saving && styles.buttonDisabled]}
           >
-            {saving && <ActivityIndicator size="small" color={theme.colors.background} style={styles.spinner} />}
-            <Text style={styles.saveButtonText}>{saving ? 'Saving…' : 'Save changes'}</Text>
+            {saving && <ActivityIndicator size="small" color={colors.background} style={styles.spinner} />}
+            <Text style={[styles.saveButtonText, { color: colors.background }]}>{saving ? 'Saving...' : 'Save changes'}</Text>
           </Pressable>
           <Pressable
             onPress={cancelChanges}
             disabled={saving}
             style={[styles.cancelButton, saving && styles.buttonDisabled]}
           >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
           </Pressable>
           {error ? (
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={[styles.errorText, { color: colors.danger }]}>{error}</Text>
           ) : null}
         </View>
       )}
@@ -124,15 +129,15 @@ export default function SettingsScreen() {
       <Card>
         {ABOUT_ROWS.map((row) => (
           <View key={row.label} style={styles.aboutRow}>
-            <Text style={styles.aboutLabel}>{row.label}</Text>
-            <Text style={styles.aboutValue}>{row.value}</Text>
+            <Text style={[styles.aboutLabel, { color: colors.text }]}>{row.label}</Text>
+            <Text style={[styles.aboutValue, { color: colors.textMuted }]}>{row.value}</Text>
           </View>
         ))}
       </Card>
 
       <View style={styles.resetContainer}>
         <Pressable onPress={resetOnboarding}>
-          <Text style={styles.resetText}>Reset Onboarding</Text>
+          <Text style={[styles.resetText, { color: colors.danger }]}>Reset Onboarding</Text>
         </Pressable>
       </View>
     </ScreenLayout>
@@ -157,14 +162,12 @@ const styles = StyleSheet.create({
   saveButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.lg,
     paddingHorizontal: theme.spacing.xl,
     paddingVertical: theme.spacing.md,
   },
   saveButtonText: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.background,
     ...theme.font.medium,
   },
   cancelButton: {
@@ -174,7 +177,6 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
     ...theme.font.medium,
   },
   buttonDisabled: {
@@ -185,7 +187,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.danger,
     flexBasis: '100%',
   },
   aboutRow: {
@@ -196,11 +197,9 @@ const styles = StyleSheet.create({
   aboutLabel: {
     flex: 1,
     fontSize: theme.fontSize.md,
-    color: theme.colors.text,
   },
   aboutValue: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.textMuted,
   },
   resetContainer: {
     alignItems: 'center',
@@ -209,7 +208,6 @@ const styles = StyleSheet.create({
   },
   resetText: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.danger,
     ...theme.font.medium,
   },
 });
