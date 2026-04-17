@@ -1,4 +1,4 @@
-import { Car } from 'lucide-react-native';
+import { IconCar } from '@tabler/icons-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { PlaceholderCard } from '../../components/ui/placeholder-card';
@@ -18,7 +18,7 @@ export default function OverviewScreen() {
     <ScreenLayout scrollable header={<ScreenHeader title="Overview" subtitle={DEFAULT_LOCATION.label} />}>
       <View style={styles.content}>
         <WeatherCard weather={weather} isLoading={isLoading} error={error} locationLabel={DEFAULT_LOCATION.label} onRetry={refresh} airQuality={airQuality} aqiLoading={aqiIsLoading} />
-        <PlaceholderCard icon={Car} title="Traffic Summary" subtitle="Coming soon" />
+        <PlaceholderCard icon={IconCar} title="Traffic Summary" subtitle="Coming soon" />
       </View>
     </ScreenLayout>
   );

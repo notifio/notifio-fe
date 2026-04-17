@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { IconChevronDown, IconChevronUp } from '@tabler/icons-react-native';
 import { useState } from 'react';
 import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -30,7 +30,7 @@ export function AqiIndicator({ airQuality, isLoading, textColor }: AqiIndicatorP
   if (!airQuality) return null;
 
   const aqiStyle = getAqiStyle(airQuality.level);
-  const Chevron = expanded ? ChevronUp : ChevronDown;
+  const Chevron = expanded ? IconChevronUp : IconChevronDown;
   const muted70 = withOpacity(textColor, 0.7);
   const muted50 = withOpacity(textColor, 0.5);
 

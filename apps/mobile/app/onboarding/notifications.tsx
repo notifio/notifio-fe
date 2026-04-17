@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BellRing } from 'lucide-react-native';
+import { IconBellRinging } from '@tabler/icons-react-native';
 import { useContext, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -53,7 +53,7 @@ export default function NotificationsScreen() {
 
   return (
     <OnboardingScreen
-      icon={BellRing}
+      icon={IconBellRinging}
       title="What matters to you?"
       description="Choose the types of alerts you want to receive."
       primaryAction={{ title: 'Enable Notifications', onPress: handleEnable }}

@@ -10,6 +10,20 @@ import {
 // Re-export raw palettes for I3 dark mode support
 export { darkColors, lightColors, sharedColors, tierColors };
 
+// Minimal stubs for theme-provider.tsx (will be properly built in I3)
+export type ThemeColors = Record<
+  keyof typeof lightColors | keyof typeof sharedColors | keyof typeof tierColors,
+  string
+>;
+
+export function getColors(isDark: boolean): ThemeColors {
+  return {
+    ...(isDark ? darkColors : lightColors),
+    ...sharedColors,
+    ...tierColors,
+  };
+}
+
 export const theme = {
   colors: {
     primary: sharedColors.accent,

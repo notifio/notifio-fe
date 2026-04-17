@@ -1,9 +1,11 @@
-import type { LucideIcon } from 'lucide-react-native';
+import type { Icon as TablerIcon } from '@tabler/icons-react-native';
 
 import { theme } from '../../lib/theme';
 
+export type { TablerIcon };
+
 interface IconProps {
-  icon: LucideIcon;
+  icon: TablerIcon;
   size?: number;
   color?: string;
   style?: object;

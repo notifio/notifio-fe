@@ -1,11 +1,10 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { type StyleProp, StyleSheet, Switch, Text, View, type ViewStyle } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
 
 interface ToggleRowProps {
-  icon?: LucideIcon;
+  icon?: TablerIcon;
   iconColor?: string;
   iconBgColor?: string;
   label: string;

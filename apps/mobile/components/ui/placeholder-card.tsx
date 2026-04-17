@@ -1,11 +1,10 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
 
 interface PlaceholderCardProps {
-  icon: LucideIcon;
+  icon: TablerIcon;
   title: string;
   subtitle: string;
 }

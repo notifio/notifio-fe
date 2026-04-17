@@ -1,5 +1,5 @@
+import { IconMapPin } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
-import { MapPin } from 'lucide-react-native';
 
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 
@@ -10,7 +10,7 @@ export default function LocationScreen() {
 
   return (
     <OnboardingScreen
-      icon={MapPin}
+      icon={IconMapPin}
       title="Your location"
       description="We use your location to send you relevant alerts about weather, traffic, and outages near you."
       primaryAction={{ title: 'Allow Location', onPress: goToNotifications }}

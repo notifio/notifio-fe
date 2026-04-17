@@ -1,5 +1,5 @@
+import { IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
-import { RefreshCw } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
@@ -126,7 +126,7 @@ export default function MapScreen() {
           <View style={styles.errorBanner}>
             <Text style={styles.errorText}>{error}</Text>
             <Pressable onPress={refresh} style={styles.retryButton}>
-              <RefreshCw size={14} color={theme.colors.danger} />
+              <IconRefresh size={14} color={theme.colors.danger} />
             </Pressable>
           </View>
         </View>

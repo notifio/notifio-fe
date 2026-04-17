@@ -1,19 +1,18 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import type { Icon } from '@tabler/icons-react-native';
 import {
-  type LucideIcon,
-  Cloud,
-  CloudDrizzle,
-  CloudFog,
-  CloudLightning,
-  CloudRain,
-  Droplets,
-  Eye,
-  Haze,
-  Snowflake,
-  Sun,
-  Thermometer,
-  Wind,
-} from 'lucide-react-native';
+  IconCloud,
+  IconCloudFog,
+  IconCloudRain,
+  IconCloudStorm,
+  IconDroplet,
+  IconEye,
+  IconMist,
+  IconSnowflake,
+  IconSun,
+  IconTemperature,
+  IconWind,
+} from '@tabler/icons-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // Use subpath imports to avoid barrel export pulling in h3-js (Hermes incompatible)
@@ -24,21 +23,21 @@ import { AqiIndicator } from './aqi-indicator';
 import { commonStyles } from '../../lib/common-styles';
 import { theme } from '../../lib/theme';
 
-const WEATHER_ICON_MAP: Record<string, LucideIcon> = {
-  Sun,
-  Cloud,
-  CloudRain,
-  CloudDrizzle,
-  CloudLightning,
-  Snowflake,
-  CloudFog,
-  Haze,
-  Wind,
-  Thermometer,
+const WEATHER_ICON_MAP: Record<string, Icon> = {
+  Sun: IconSun,
+  Cloud: IconCloud,
+  CloudRain: IconCloudRain,
+  CloudDrizzle: IconCloudRain,
+  CloudLightning: IconCloudStorm,
+  Snowflake: IconSnowflake,
+  CloudFog: IconCloudFog,
+  Haze: IconMist,
+  Wind: IconWind,
+  Thermometer: IconTemperature,
 };
 
-function getWeatherIcon(iconName: string): LucideIcon {
-  return WEATHER_ICON_MAP[iconName] ?? Thermometer;
+function getWeatherIcon(iconName: string): Icon {
+  return WEATHER_ICON_MAP[iconName] ?? IconTemperature;
 }
 
 function withOpacity(hexColor: string, opacity: number): string {
@@ -112,17 +111,17 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
 
       <View style={styles.detailsRow}>
         <View style={commonStyles.row}>
-          <Wind size={14} color={color60} />
+          <IconWind size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>
             {formatWind(weather.windSpeed, weather.windDirection)}
           </Text>
         </View>
         <View style={commonStyles.row}>
-          <Droplets size={14} color={color60} />
+          <IconDroplet size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
         </View>
         <View style={commonStyles.row}>
-          <Eye size={14} color={color60} />
+          <IconEye size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>
             {formatVisibility(weather.visibility)}
           </Text>

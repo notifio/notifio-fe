@@ -1,7 +1,6 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { PrimaryButton } from './primary-button';
 import { ScreenLayout } from './screen-layout';
 import { theme } from '../../lib/theme';
@@ -12,7 +11,7 @@ interface ActionConfig {
 }
 
 interface OnboardingScreenProps {
-  icon: LucideIcon;
+  icon: TablerIcon;
   title: string;
   description: string;
   primaryAction: ActionConfig;

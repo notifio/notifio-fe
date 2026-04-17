@@ -1,11 +1,11 @@
-import { type LucideIcon, Check } from 'lucide-react-native';
+import { IconCheck } from '@tabler/icons-react-native';
 import { Pressable, type StyleProp, StyleSheet, Text, type ViewStyle } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
 
 interface SelectableRowProps {
-  icon?: LucideIcon;
+  icon?: TablerIcon;
   label: string;
   selected: boolean;
   onPress: () => void;
@@ -20,7 +20,7 @@ export function SelectableRow({ icon, label, selected, onPress, style }: Selecta
     >
       {icon && <Icon icon={icon} color={theme.colors.textSecondary} style={styles.icon} />}
       <Text style={styles.label}>{label}</Text>
-      {selected && <Icon icon={Check} size={20} color={theme.colors.primary} />}
+      {selected && <Icon icon={IconCheck} size={20} color={theme.colors.primary} />}
     </Pressable>
   );
 }

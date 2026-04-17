@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react-native';
+import { IconBell } from '@tabler/icons-react-native';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
@@ -69,7 +69,7 @@ export function AlertList({ onAlertPress }: AlertListProps) {
             <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loading} />
           ) : (
             <View style={styles.emptyContainer}>
-              <Icon icon={Bell} size={48} color={theme.colors.textMuted} />
+              <Icon icon={IconBell} size={48} color={theme.colors.textMuted} />
               <Text style={styles.emptyText}>No notifications yet</Text>
             </View>
           )

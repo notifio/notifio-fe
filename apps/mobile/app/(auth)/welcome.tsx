@@ -1,5 +1,5 @@
+import { IconBroadcast } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
-import { Radio } from 'lucide-react-native';
 
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 
@@ -8,7 +8,7 @@ export default function WelcomeScreen() {
 
   return (
     <OnboardingScreen
-      icon={Radio}
+      icon={IconBroadcast}
       title="Welcome to Notifio"
       description="Real-time alerts for your area — weather, traffic, outages, and more."
       primaryAction={{ title: 'Get Started', onPress: () => router.push('/onboarding/location') }}

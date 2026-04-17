@@ -1,5 +1,5 @@
-import { Car, Droplets, Flame, Thermometer, Zap } from 'lucide-react-native';
-import type { LucideIcon } from 'lucide-react-native';
+import type { Icon } from '@tabler/icons-react-native';
+import { IconBolt, IconCar, IconDroplet, IconFlame, IconTemperature } from '@tabler/icons-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
@@ -8,12 +8,12 @@ import { shadows } from '../../lib/theme';
 
 const SCHEDULED_OPACITY = 0.5;
 
-const ICON_MAP: Record<MapPinSource, LucideIcon> = {
-  electricity: Zap,
-  water: Droplets,
-  gas: Flame,
-  heat: Thermometer,
-  traffic: Car,
+const ICON_MAP: Record<MapPinSource, Icon> = {
+  electricity: IconBolt,
+  water: IconDroplet,
+  gas: IconFlame,
+  heat: IconTemperature,
+  traffic: IconCar,
 };
 
 interface OutageMarkerProps {

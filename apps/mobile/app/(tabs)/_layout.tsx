@@ -1,15 +1,15 @@
+import { IconBell, IconLayoutDashboard, IconMap, IconSettings } from '@tabler/icons-react-native';
 import { Tabs } from 'expo-router';
-import { type LucideIcon, Bell, LayoutDashboard, Map, Settings } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 
-import { Icon } from '../../components/ui/icon';
+import { Icon, type TablerIcon } from '../../components/ui/icon';
 import { theme } from '../../lib/theme';
 
-const TAB_SCREENS: { name: string; title: string; icon: LucideIcon }[] = [
-  { name: 'index', title: 'Overview', icon: LayoutDashboard },
-  { name: 'alerts', title: 'Alerts', icon: Bell },
-  { name: 'map', title: 'Map', icon: Map },
-  { name: 'settings', title: 'Settings', icon: Settings },
+const TAB_SCREENS: { name: string; title: string; icon: TablerIcon }[] = [
+  { name: 'index', title: 'Overview', icon: IconLayoutDashboard },
+  { name: 'alerts', title: 'Alerts', icon: IconBell },
+  { name: 'map', title: 'Map', icon: IconMap },
+  { name: 'settings', title: 'Settings', icon: IconSettings },
 ];
 
 export default function TabLayout() {

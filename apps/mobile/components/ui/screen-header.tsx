@@ -1,13 +1,12 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { Pressable, type StyleProp, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
 
 interface ScreenHeaderProps {
   title: string;
   subtitle?: string;
-  rightAction?: { icon: LucideIcon; onPress: () => void };
+  rightAction?: { icon: TablerIcon; onPress: () => void };
   style?: StyleProp<ViewStyle>;
 }
 

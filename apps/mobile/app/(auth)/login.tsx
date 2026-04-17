@@ -1,5 +1,5 @@
+import { IconKey } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
-import { KeyRound } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -12,7 +12,7 @@ export default function LoginScreen() {
 
   return (
     <OnboardingScreen
-      icon={KeyRound}
+      icon={IconKey}
       title="Welcome back"
       description="Sign in to your Notifio account to continue."
       primaryAction={{

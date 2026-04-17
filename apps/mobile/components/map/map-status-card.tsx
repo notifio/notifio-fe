@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react-native';
+import { IconBell } from '@tabler/icons-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { shadows, theme } from '../../lib/theme';
@@ -19,7 +19,7 @@ export function MapStatusCard({ alertCount }: MapStatusCardProps) {
           {hasAlerts ? (
             <View style={styles.dot} />
           ) : (
-            <Icon icon={Bell} size={18} color={theme.colors.textMuted} />
+            <Icon icon={IconBell} size={18} color={theme.colors.textMuted} />
           )}
           <Text style={[styles.text, hasAlerts && styles.textActive]}>
             {hasAlerts
