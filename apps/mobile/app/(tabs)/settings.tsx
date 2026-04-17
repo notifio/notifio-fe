@@ -82,7 +82,7 @@ export default function SettingsScreen() {
       <SectionLabel label="Account" />
       <Card>
         <SettingsRow icon={IconCrown} label="Subscription" value={tier} onPress={() => pushPlaceholder('Subscription')} />
-        <SettingsRow icon={IconMapPin} label="Locations" onPress={() => pushPlaceholder('Locations')} />
+        <SettingsRow icon={IconMapPin} label="Locations" onPress={() => router.push('/settings/locations')} />
       </Card>
 
       {/* Preferences */}

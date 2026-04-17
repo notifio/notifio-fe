@@ -198,5 +198,25 @@
     "downloadButton": "Download",
     "timeout": "Export is taking longer than expected. Please try again later.",
     "error": "Failed to create export"
+  },
+  "locations": {
+    "title": "Locations",
+    "count": "{{current}} of {{max}} locations",
+    "addLocation": "Add location",
+    "editLocation": "Edit location",
+    "deleteLocation": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this location?",
+    "deleteConfirmTitle": "Delete location",
+    "emptyTitle": "No locations saved",
+    "emptyMessage": "Add a location to receive local alerts",
+    "limitReached": "Location limit reached. Upgrade for more.",
+    "labelPlaceholder": "Custom name (e.g., Mom's house)",
+    "useCurrentLocation": "Use current location",
+    "save": "Save location",
+    "saving": "Saving...",
+    "saved": "Location saved",
+    "updated": "Location updated",
+    "deleted": "Location deleted",
+    "error": "Failed to save location"
   }
 }

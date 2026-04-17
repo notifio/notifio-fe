@@ -198,5 +198,25 @@
     "downloadButton": "Stiahnuť",
     "timeout": "Export trvá dlhšie ako sa očakávalo. Skúste to prosím neskôr.",
     "error": "Nepodarilo sa vytvoriť export"
+  },
+  "locations": {
+    "title": "Lokácie",
+    "count": "{{current}} z {{max}} lokácií",
+    "addLocation": "Pridať lokáciu",
+    "editLocation": "Upraviť lokáciu",
+    "deleteLocation": "Vymazať",
+    "deleteConfirm": "Naozaj chcete vymazať túto lokáciu?",
+    "deleteConfirmTitle": "Vymazať lokáciu",
+    "emptyTitle": "Žiadne uložené lokácie",
+    "emptyMessage": "Pridajte lokáciu pre príjem lokálnych upozornení",
+    "limitReached": "Limit lokácií dosiahnutý. Upgradnite pre viac.",
+    "labelPlaceholder": "Vlastný názov (napr. Mamkin dom)",
+    "useCurrentLocation": "Použiť aktuálnu polohu",
+    "save": "Uložiť lokáciu",
+    "saving": "Ukladám...",
+    "saved": "Lokácia uložená",
+    "updated": "Lokácia aktualizovaná",
+    "deleted": "Lokácia vymazaná",
+    "error": "Nepodarilo sa uložiť lokáciu"
   }
 }
