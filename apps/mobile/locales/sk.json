@@ -123,5 +123,18 @@
     "active": "Aktívne",
     "resolved": "Vyriešené",
     "noNotifications": "Zatiaľ žiadne notifikácie"
+  },
+  "toast": {
+    "rateLimitTitle": "Príliš veľa požiadaviek",
+    "rateLimitMessage": "Počkajte {{seconds}} sekúnd a skúste znova",
+    "rateLimitMessageGeneric": "Počkajte chvíľu a skúste znova"
+  },
+  "banners": {
+    "enableBoth": "Zapnite notifikácie a polohu pre najlepší zážitok",
+    "enablePush": "Zapnite notifikácie pre príjem upozornení",
+    "enableLocation": "Zapnite polohu pre lokálne upozornenia",
+    "enable": "Zapnúť",
+    "deletionCountdown": "Váš účet bude vymazaný o {{time}}",
+    "cancelDeletion": "Zrušiť vymazanie"
   }
 }

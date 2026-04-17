@@ -3,7 +3,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
+import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { AuthProvider } from '../providers/auth-provider';
@@ -68,6 +70,7 @@ export default function RootLayout() {
             </OnboardingProvider>
           </NotificationProvider>
         </AuthProvider>
+        <Toast config={toastConfig} />
       </ThemeProvider>
     </SafeAreaProvider>
   );

@@ -123,5 +123,18 @@
     "active": "Active",
     "resolved": "Resolved",
     "noNotifications": "No notifications yet"
+  },
+  "toast": {
+    "rateLimitTitle": "Too many requests",
+    "rateLimitMessage": "Please wait {{seconds}} seconds and try again",
+    "rateLimitMessageGeneric": "Please wait a moment and try again"
+  },
+  "banners": {
+    "enableBoth": "Enable notifications and location for the best experience",
+    "enablePush": "Enable notifications to receive alerts",
+    "enableLocation": "Enable location for local alerts",
+    "enable": "Enable",
+    "deletionCountdown": "Your account will be deleted in {{time}}",
+    "cancelDeletion": "Cancel deletion"
   }
 }
