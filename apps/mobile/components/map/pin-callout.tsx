@@ -111,9 +111,9 @@ const styles = StyleSheet.create({
     ...theme.font.medium,
   },
   statusTextScheduled: {
-    color: '#2563EB',
+    color: theme.colors.severity.info.text,
   },
   statusTextActive: {
-    color: '#DC2626',
+    color: theme.colors.severity.critical.text,
   },
 });

@@ -15,7 +15,7 @@ const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
 };
 
 const SEVERITY_GRADIENTS: Record<WeatherWarningSeverity, [string, string]> = {
-  red: ['#DC2626', '#EF4444'],
+  red: ['#E5352B', theme.colors.danger],
   orange: ['#EA580C', '#F97316'],
   yellow: ['#D97706', '#F59E0B'],
 };

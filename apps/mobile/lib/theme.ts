@@ -1,28 +1,38 @@
-// TODO: Import colors, spacing, borderRadius from @notifio/ui when wired up
+import {
+  alertTypeColors,
+  darkColors,
+  lightColors,
+  severityColors,
+  sharedColors,
+  tierColors,
+} from '@notifio/ui';
+
+// Re-export raw palettes for I3 dark mode support
+export { darkColors, lightColors, sharedColors, tierColors };
 
 export const theme = {
   colors: {
-    primary: '#2563EB',
-    primaryDark: '#1D4ED8',
-    background: '#FFFFFF',
-    surface: '#F9FAFB',
-    border: '#F3F4F6',
-    text: '#111827',
-    textSecondary: '#4B5563',
-    textMuted: '#9CA3AF',
+    primary: sharedColors.accent,
+    primaryDark: sharedColors.accentHover,
+    background: lightColors.background,
+    surface: lightColors.card,
+    border: lightColors.border,
+    text: lightColors.textPrimary,
+    textSecondary: lightColors.textSecondary,
+    textMuted: lightColors.muted,
     textInverse: '#FFFFFF',
-    danger: '#EF4444',
+    danger: sharedColors.danger,
     severity: {
-      info: { bg: '#EFF6FF', text: '#2563EB', border: '#BFDBFE' },
+      info: { bg: '#EFF6FF', text: severityColors.info, border: '#BFDBFE' },
       warning: { bg: '#FFFBEB', text: '#D97706', border: '#FDE68A' },
-      critical: { bg: '#FEF2F2', text: '#DC2626', border: '#FECACA' },
+      critical: { bg: '#FEF2F2', text: severityColors.critical, border: '#FECACA' },
     },
     alertType: {
-      weather: { icon: '#0EA5E9', bg: '#F0F9FF' },
-      traffic: { icon: '#F97316', bg: '#FFF7ED' },
-      air_quality: { icon: '#10B981', bg: '#ECFDF5' },
-      utility_outage: { icon: '#8B5CF6', bg: '#F5F3FF' },
-      event: { icon: '#EC4899', bg: '#FDF2F8' },
+      weather: { icon: alertTypeColors.weather, bg: '#F0F9FF' },
+      traffic: { icon: alertTypeColors.traffic, bg: '#FFF7ED' },
+      air_quality: { icon: alertTypeColors.air_quality, bg: '#ECFDF5' },
+      utility_outage: { icon: alertTypeColors.utility_outage, bg: '#F5F3FF' },
+      event: { icon: alertTypeColors.event, bg: '#FDF2F8' },
     },
   },
   spacing: {
