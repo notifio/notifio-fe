@@ -13,6 +13,8 @@ import type {
 
 import { cn } from '@/lib/utils';
 
+import { LocationPicker } from './location-picker';
+
 interface LocationModalProps {
   location?: UserLocation;
   onSave: (body: CreateLocationBody | UpdateLocationBody) => Promise<void>;
@@ -35,21 +37,21 @@ export function LocationModal({ location, onSave, onClose }: LocationModalProps)
   const [label, setLabel] = useState<LocationLabel>(
     (location?.label?.code as LocationLabel) ?? 'home',
   );
-  const [lat, setLat] = useState(location?.lat ?? 0);
-  const [lng, setLng] = useState(location?.lng ?? 0);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    location ? { lat: location.lat, lng: location.lng } : null,
+  );
   const [geoLoading, setGeoLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasCoords = lat !== 0 || lng !== 0;
+  const hasCoords = coords !== null;
 
   const useCurrentLocation = () => {
     if (!('geolocation' in navigator)) return;
     setGeoLoading(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLat(pos.coords.latitude);
-        setLng(pos.coords.longitude);
+        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setGeoLoading(false);
       },
       () => {
@@ -61,7 +63,7 @@ export function LocationModal({ location, onSave, onClose }: LocationModalProps)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (saving || !hasCoords) return;
+    if (saving || (!isEdit && !hasCoords)) return;
 
     setSaving(true);
     setError(null);
@@ -74,8 +76,8 @@ export function LocationModal({ location, onSave, onClose }: LocationModalProps)
         await onSave(body);
       } else {
         const body: CreateLocationBody = {
-          lat,
-          lng,
+          lat: coords!.lat,
+          lng: coords!.lng,
           label,
           ...(customLabel.trim() ? { customLabel: customLabel.trim() } : {}),
         };
@@ -142,30 +144,35 @@ export function LocationModal({ location, onSave, onClose }: LocationModalProps)
             />
           </div>
 
-          {/* Location */}
+          {/* Location — map picker for new, read-only for edit */}
           {!isEdit && (
             <div>
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-sm font-medium text-text-secondary">
                   {t('useCurrentLocation')}
                 </span>
+                <button
+                  type="button"
+                  onClick={useCurrentLocation}
+                  disabled={geoLoading}
+                  className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs text-accent transition-colors hover:bg-accent/10 disabled:opacity-50"
+                >
+                  {geoLoading ? (
+                    <IconLoader2 size={14} className="animate-spin" />
+                  ) : (
+                    <IconCurrentLocation size={14} />
+                  )}
+                  GPS
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={useCurrentLocation}
-                disabled={geoLoading}
-                className="flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
-              >
-                {geoLoading ? (
-                  <IconLoader2 size={16} className="animate-spin" />
-                ) : (
-                  <IconCurrentLocation size={16} className="text-accent" />
-                )}
-                {t('useCurrentLocation')}
-              </button>
+              <LocationPicker
+                value={coords}
+                onChange={setCoords}
+                height="180px"
+              />
               {hasCoords && (
-                <p className="mt-1.5 text-xs text-muted">
-                  {lat.toFixed(5)}, {lng.toFixed(5)}
+                <p className="mt-1 text-[11px] text-muted">
+                  {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
                 </p>
               )}
             </div>

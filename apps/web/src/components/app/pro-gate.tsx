@@ -17,7 +17,7 @@ interface ProGateProps {
 
 export function ProGate({ requiredTier, children, fallback }: ProGateProps) {
   const t = useTranslations('membership');
-  const { tier, loading } = useMembership();
+  const { tier, isLoading: loading } = useMembership();
 
   if (loading) return null;
 

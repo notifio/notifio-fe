@@ -7,7 +7,7 @@ import { useMembership } from '@/hooks/use-membership';
 import { UpsellCard } from './upsell-card';
 
 export function AdSidebarRight() {
-  const { isFree, loading } = useMembership();
+  const { isFree, isLoading: loading } = useMembership();
   const pathname = usePathname();
 
   if (loading || !isFree) return null;

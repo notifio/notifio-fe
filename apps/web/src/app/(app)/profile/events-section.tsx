@@ -19,7 +19,7 @@ export function EventsSection() {
   const toast = useToast();
   const {
     events,
-    loading: eventsLoading,
+    isLoading: eventsLoading,
     updateEvent,
     refetch,
   } = useUserEvents();

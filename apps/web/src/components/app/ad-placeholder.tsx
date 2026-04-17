@@ -13,7 +13,7 @@ interface AdPlaceholderProps {
 
 export function AdPlaceholder({ variant, className }: AdPlaceholderProps) {
   const t = useTranslations('membership');
-  const { isFree, loading } = useMembership();
+  const { isFree, isLoading: loading } = useMembership();
 
   if (loading || !isFree) return null;
 

@@ -1,33 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-
 import type { AirQualityData } from '@notifio/shared';
 
 import { api } from '@/lib/api';
 import { DEFAULT_LOCATION } from '@/lib/location';
 
+import { useApiQuery } from './use-api-query';
+
 export function useAirQuality() {
-  const [airQuality, setAirQuality] = useState<AirQualityData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
-      setAirQuality(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load air quality');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+  const { data: airQuality, isLoading, error, refetch: refresh } = useApiQuery<AirQualityData>(
+    () => api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng),
+    [],
+  );
 
   return { airQuality, isLoading, error, refresh };
 }

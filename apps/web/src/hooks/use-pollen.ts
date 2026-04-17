@@ -1,40 +1,20 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-
 import type { PollenResponse } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
-interface UsePollenResult {
-  pollen: PollenResponse | null;
-  isLoading: boolean;
-  error: string | null;
-  refresh: () => Promise<void>;
-}
+import { useApiQuery } from './use-api-query';
 
-export function usePollen(location: { lat: number; lng: number } | null): UsePollenResult {
-  const [pollen, setPollen] = useState<PollenResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function usePollen(location: { lat: number; lng: number } | null) {
+  const lat = location?.lat ?? 0;
+  const lng = location?.lng ?? 0;
 
-  const refresh = useCallback(async () => {
-    if (!location) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getPollen(location.lat, location.lng);
-      setPollen(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load pollen data');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [location?.lat, location?.lng]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+  const { data: pollen, isLoading, error, refetch: refresh } = useApiQuery<PollenResponse>(
+    () => api.getPollen(lat, lng),
+    [lat, lng],
+    { enabled: location !== null },
+  );
 
   return { pollen, isLoading, error, refresh };
 }
