@@ -1,5 +1,5 @@
 // TODO: Move to @notifio/shared when stable
-import { sharedColors } from '@notifio/ui';
+import { alertTypeColors, sharedColors } from '@notifio/ui';
 
 import type { MapPinSource } from './normalize-pins';
 
@@ -15,6 +15,7 @@ export const MAP_PIN_STYLES: Record<MapPinSource, MapPinStyle> = {
   gas: { label: 'Gas', color: '#F97316', iconName: 'Flame' },
   heat: { label: 'Heat', color: sharedColors.danger, iconName: 'Thermometer' },
   traffic: { label: 'Traffic', color: '#8B5CF6', iconName: 'Car' },
+  event: { label: 'Events', color: alertTypeColors.event, iconName: 'CalendarEvent' },
 };
 
-export const MAP_FILTER_SOURCES: MapPinSource[] = ['electricity', 'water', 'heat', 'traffic'];
+export const MAP_FILTER_SOURCES: MapPinSource[] = ['electricity', 'water', 'gas', 'heat', 'traffic', 'event'];

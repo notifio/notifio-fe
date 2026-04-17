@@ -1,5 +1,5 @@
 import type { Icon } from '@tabler/icons-react-native';
-import { IconBolt, IconCar, IconDroplet, IconFlame, IconTemperature } from '@tabler/icons-react-native';
+import { IconBolt, IconCalendarEvent, IconCar, IconDroplet, IconFlame, IconTemperature } from '@tabler/icons-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
@@ -14,6 +14,7 @@ const ICON_MAP: Record<MapPinSource, Icon> = {
   gas: IconFlame,
   heat: IconTemperature,
   traffic: IconCar,
+  event: IconCalendarEvent,
 };
 
 interface OutageMarkerProps {

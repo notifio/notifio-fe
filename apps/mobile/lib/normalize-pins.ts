@@ -1,7 +1,8 @@
 // TODO: Move MapPin types to @notifio/shared when stable
+import type { UserEvent } from '@notifio/api-client';
 import type { OutageRecord, TrafficIncident } from '@notifio/shared/types';
 
-export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic';
+export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic' | 'event';
 export type MapPinStatus = 'active' | 'scheduled';
 
 export interface MapPin {
@@ -14,6 +15,7 @@ export interface MapPin {
   description: string;
   locality?: string;
   timestamp: string;
+  incidentType?: string;
 }
 
 function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null {
@@ -44,7 +46,21 @@ function trafficToPin(incident: TrafficIncident): MapPin {
     lng: incident.location.lng,
     title: incident.description,
     description: `${incident.type} — ${incident.severity}`,
+    incidentType: incident.type,
     timestamp: new Date().toISOString(),
+  };
+}
+
+function eventToPin(event: UserEvent): MapPin {
+  return {
+    id: event.eventId,
+    source: 'event',
+    status: event.isResolved ? 'scheduled' : 'active',
+    lat: event.lat,
+    lng: event.lng,
+    title: event.title,
+    description: event.subcategoryName,
+    timestamp: event.createdAt,
   };
 }
 
@@ -52,7 +68,9 @@ export function normalizeMapPins(
   electricityOutages: OutageRecord[],
   waterOutages: OutageRecord[],
   heatOutages: OutageRecord[],
+  gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
+  events: UserEvent[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
@@ -68,8 +86,17 @@ export function normalizeMapPins(
     const pin = outageToPin(o, 'heat');
     if (pin) pins.push(pin);
   }
+  for (const o of gasOutages) {
+    const pin = outageToPin(o, 'gas');
+    if (pin) pins.push(pin);
+  }
   for (const t of trafficIncidents) {
     pins.push(trafficToPin(t));
+  }
+  for (const e of events) {
+    if (!e.isResolved) {
+      pins.push(eventToPin(e));
+    }
   }
 
   return pins;

@@ -1,6 +1,6 @@
 import { IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
 import { Callout, Marker } from 'react-native-maps';
@@ -20,6 +20,7 @@ import { useAppTheme } from '../../providers/theme-provider';
 const FILTER_BAR_HEIGHT = 44;
 const GPS_DELTA = 0.06;
 const FALLBACK_DELTA = 4.0;
+const DEBOUNCE_MS = 1500;
 
 const SLOVAKIA_REGION: Region = {
   latitude: 48.67,
@@ -31,8 +32,12 @@ const SLOVAKIA_REGION: Region = {
 export default function MapScreen() {
   const { colors, isDark } = useAppTheme();
   const insets = useSafeAreaInsets();
-  const { pins, isLoading, error, refresh } = useMapData();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { pins, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
+
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
@@ -40,25 +45,40 @@ export default function MapScreen() {
   // Resolve initial region before rendering the map
   useEffect(() => {
     (async () => {
+      let region = SLOVAKIA_REGION;
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
           const loc = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Balanced,
           });
-          setInitialRegion({
+          region = {
             latitude: loc.coords.latitude,
             longitude: loc.coords.longitude,
             latitudeDelta: GPS_DELTA,
             longitudeDelta: GPS_DELTA,
-          });
-          return;
+          };
         }
       } catch {
         // GPS unavailable — use fallback
       }
-      setInitialRegion(SLOVAKIA_REGION);
+      setInitialRegion(region);
+      setMapCenter({ lat: region.latitude, lng: region.longitude });
     })();
+  }, []);
+
+  // Debounced region change handler — 1.5s after pan stops
+  const handleRegionChange = useCallback((region: Region) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setMapCenter({ lat: region.latitude, lng: region.longitude });
+    }, DEBOUNCE_MS);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
   }, []);
 
   const toggleFilter = useCallback((source: MapPinSource) => {
@@ -79,6 +99,7 @@ export default function MapScreen() {
   );
 
   const loadingPillBg = isDark ? 'rgba(14, 34, 63, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+  const showLoadingPill = isLoading || isAutoRefreshing;
 
   // Wait until we know the initial region before mounting the map
   if (!initialRegion) {
@@ -94,6 +115,7 @@ export default function MapScreen() {
       <ClusteredMapView
         style={styles.map}
         initialRegion={initialRegion}
+        onRegionChangeComplete={handleRegionChange}
         showsUserLocation
         showsMyLocationButton
         clusterColor={colors.textMuted}
@@ -116,11 +138,13 @@ export default function MapScreen() {
 
       <MapFilterBar activeFilters={activeFilters} onToggle={toggleFilter} pins={pins} topInset={insets.top} />
 
-      {isLoading && (
+      {showLoadingPill && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]} pointerEvents="none">
           <View style={[styles.loadingPill, { backgroundColor: loadingPillBg }]}>
             <ActivityIndicator size="small" color={colors.textMuted} />
-            <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading map data...</Text>
+            <Text style={[styles.loadingText, { color: colors.textMuted }]}>
+              {isAutoRefreshing ? 'Refreshing...' : 'Loading map data...'}
+            </Text>
           </View>
         </View>
       )}
