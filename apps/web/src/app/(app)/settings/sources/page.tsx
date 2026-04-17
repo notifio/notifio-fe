@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 
 export default function SourcesPage() {
   const t = useTranslations('sources');
-  const { sources, loading, error, rateSource, deleteRating } = useSources();
+  const { sources, isLoading: loading, error, rateSource, deleteRating } = useSources();
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   // Local draft state for the expanded source's rating form

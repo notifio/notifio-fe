@@ -22,7 +22,7 @@ export function LocationsSection() {
   const {
     locations,
     limit,
-    loading: locsLoading,
+    isLoading: locsLoading,
     create: createLocation,
     update: updateLocation,
     remove: removeLocation,

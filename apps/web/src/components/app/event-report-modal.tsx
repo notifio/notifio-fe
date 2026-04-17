@@ -1,27 +1,22 @@
 'use client';
 
 import {
-  IconCheck,
-  IconChevronDown,
   IconLoader2,
   IconX,
 } from '@tabler/icons-react';
-import maplibregl from 'maplibre-gl';
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 import {
   type FormEvent,
-  useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useToast } from '@/components/ui/toast';
 import { useEventCategories } from '@/hooks/use-event-categories';
 import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+
+import { LocationPicker } from './location-picker';
 
 interface EventReportModalProps {
   lat: number;
@@ -29,145 +24,50 @@ interface EventReportModalProps {
   onClose: () => void;
 }
 
-const TILE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
-const TILE_DARK = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 const RADIUS_STEPS = [100, 250, 500, 1000, 2000, 5000, 10000, 20000];
 
 function formatRadius(m: number): string {
   return m >= 1000 ? `${m / 1000} km` : `${m} m`;
 }
 
+interface CategoryOption {
+  code: string;
+  name: string;
+  categoryCode: string;
+}
+
 export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const t = useTranslations('events');
   const te = useTranslations('errors');
   const tc = useTranslations('common');
-  const { resolvedTheme } = useTheme();
   const { categories, loading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
   const { success, error: showError } = useToast();
 
-  const [subcategoryCode, setSubcategoryCode] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryOption | null>(null);
   const [radiusIdx, setRadiusIdx] = useState(3);
   const [submitting, setSubmitting] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [focusedIdx, setFocusedIdx] = useState(-1);
-  const [selectedLat, setSelectedLat] = useState(lat);
-  const [selectedLng, setSelectedLng] = useState(lng);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  const pickerContainerRef = useRef<HTMLDivElement>(null);
-  const pickerMapRef = useRef<maplibregl.Map | null>(null);
+  const [pickerCoords, setPickerCoords] = useState({ lat, lng });
 
-  // Group subcategories by parent categoryCode
-  const grouped = useMemo(() => {
-    const map = new Map<string, typeof categories>();
-    for (const cat of categories) {
-      const group = map.get(cat.categoryCode) ?? [];
-      group.push(cat);
-      map.set(cat.categoryCode, group);
-    }
-    return map;
-  }, [categories]);
-
-  // Flat list for keyboard navigation
-  const flatItems = useMemo(
+  const flatOptions: CategoryOption[] = useMemo(
     () => categories.map((c) => ({ code: c.code, name: c.name, categoryCode: c.categoryCode })),
     [categories],
   );
 
-  const selectedItem = flatItems.find((c) => c.code === subcategoryCode);
-  const isValid = subcategoryCode.length > 0;
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
+  const groups = useMemo(() => {
+    const map = new Map<string, CategoryOption[]>();
+    for (const opt of flatOptions) {
+      const group = map.get(opt.categoryCode) ?? [];
+      group.push(opt);
+      map.set(opt.categoryCode, group);
     }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [dropdownOpen]);
+    return [...map.entries()].map(([key, items]) => ({
+      key,
+      label: key,
+      items,
+    }));
+  }, [flatOptions]);
 
-  // Keyboard nav
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!dropdownOpen) {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-          e.preventDefault();
-          setDropdownOpen(true);
-          setFocusedIdx(0);
-        }
-        return;
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        setDropdownOpen(false);
-        return;
-      }
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setFocusedIdx((prev) => Math.min(prev + 1, flatItems.length - 1));
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setFocusedIdx((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === 'Enter' && focusedIdx >= 0 && focusedIdx < flatItems.length) {
-        e.preventDefault();
-        setSubcategoryCode(flatItems[focusedIdx]!.code);
-        setDropdownOpen(false);
-      }
-    },
-    [dropdownOpen, flatItems, focusedIdx],
-  );
-
-  // Scroll focused item into view
-  useEffect(() => {
-    if (!dropdownOpen || focusedIdx < 0) return;
-    const el = listRef.current?.querySelector(`[data-idx="${focusedIdx}"]`);
-    el?.scrollIntoView({ block: 'nearest' });
-  }, [focusedIdx, dropdownOpen]);
-
-  // Initialize location picker map
-  useEffect(() => {
-    if (!pickerContainerRef.current) return;
-
-    const tileStyle = resolvedTheme === 'dark' ? TILE_DARK : TILE_LIGHT;
-    const map = new maplibregl.Map({
-      container: pickerContainerRef.current,
-      style: tileStyle,
-      center: [selectedLng, selectedLat],
-      zoom: 14,
-    });
-
-    const marker = new maplibregl.Marker({ color: '#FF7A2F', draggable: true })
-      .setLngLat([selectedLng, selectedLat])
-      .addTo(map);
-
-    marker.on('dragend', () => {
-      const lngLat = marker.getLngLat();
-      setSelectedLat(lngLat.lat);
-      setSelectedLng(lngLat.lng);
-    });
-
-    map.on('click', (e) => {
-      marker.setLngLat(e.lngLat);
-      setSelectedLat(e.lngLat.lat);
-      setSelectedLng(e.lngLat.lng);
-    });
-
-    pickerMapRef.current = map;
-
-    return () => {
-      map.remove();
-      pickerMapRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const selectCategory = useCallback((code: string) => {
-    setSubcategoryCode(code);
-    setDropdownOpen(false);
-  }, []);
+  const isValid = selectedCategory !== null;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -175,11 +75,10 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
 
     setSubmitting(true);
     try {
-      // Only send fields the BE accepts — title is auto-generated server-side
       await api.createEvent({
-        subcategoryCode,
-        lat: selectedLat,
-        lng: selectedLng,
+        subcategoryCode: selectedCategory.code,
+        lat: pickerCoords.lat,
+        lng: pickerCoords.lng,
         radiusM: RADIUS_STEPS[radiusIdx],
       } as Parameters<typeof api.createEvent>[0]);
       success(t('success'));
@@ -231,79 +130,15 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
                   </button>
                 </div>
               ) : (
-                <div ref={dropdownRef} className="relative">
-                  {/* Trigger */}
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen((v) => !v)}
-                    onKeyDown={handleKeyDown}
-                    className={cn(
-                      'flex h-11 w-full items-center justify-between rounded-xl border px-4 text-left text-sm transition-colors',
-                      dropdownOpen
-                        ? 'border-accent ring-1 ring-accent'
-                        : 'border-border hover:border-border/80',
-                      selectedItem ? 'text-text-primary' : 'text-muted',
-                    )}
-                  >
-                    <span className="truncate">
-                      {selectedItem ? selectedItem.name : t('selectCategory')}
-                    </span>
-                    <IconChevronDown
-                      size={16}
-                      className={cn(
-                        'shrink-0 text-muted transition-transform',
-                        dropdownOpen && 'rotate-180',
-                      )}
-                    />
-                  </button>
-
-                  {/* Dropdown list */}
-                  {dropdownOpen && (
-                    <div
-                      ref={listRef}
-                      className="absolute left-0 top-full z-10 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-border bg-background shadow-xl"
-                      role="listbox"
-                    >
-                      {[...grouped.entries()].map(([groupCode, items]) => (
-                        <div key={groupCode}>
-                          {/* Group header */}
-                          <div className="sticky top-0 border-b border-border bg-card/80 px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest text-muted backdrop-blur-sm">
-                            {groupCode}
-                          </div>
-                          {/* Items */}
-                          {items.map((item) => {
-                            const globalIdx = flatItems.findIndex((f) => f.code === item.code);
-                            const isSelected = subcategoryCode === item.code;
-                            const isFocused = focusedIdx === globalIdx;
-                            return (
-                              <button
-                                key={item.code}
-                                type="button"
-                                role="option"
-                                aria-selected={isSelected}
-                                data-idx={globalIdx}
-                                onClick={() => selectCategory(item.code)}
-                                onMouseEnter={() => setFocusedIdx(globalIdx)}
-                                className={cn(
-                                  'flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm transition-colors',
-                                  isFocused && 'bg-card',
-                                  isSelected
-                                    ? 'font-medium text-accent'
-                                    : 'text-text-secondary',
-                                )}
-                              >
-                                <span className="flex-1 truncate">{item.name}</span>
-                                {isSelected && (
-                                  <IconCheck size={15} className="shrink-0 text-accent" />
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <SearchableSelect<CategoryOption>
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  options={flatOptions}
+                  getLabel={(o) => o.name}
+                  getKey={(o) => o.code}
+                  groups={groups}
+                  placeholder={t('selectCategory')}
+                />
               )}
             </div>
 
@@ -312,11 +147,13 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted">
                 {t('pickLocation')}
               </label>
-              <div className="h-[200px] overflow-hidden rounded-xl border border-border">
-                <div ref={pickerContainerRef} className="h-full w-full" />
-              </div>
+              <LocationPicker
+                value={pickerCoords}
+                onChange={setPickerCoords}
+                initialCenter={{ lat, lng }}
+              />
               <p className="mt-1 text-[11px] text-muted">
-                {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+                {pickerCoords.lat.toFixed(5)}, {pickerCoords.lng.toFixed(5)}
               </p>
             </div>
 

@@ -13,7 +13,7 @@ interface UpsellCardProps {
 
 export function UpsellCard({ variant = 'inline' }: UpsellCardProps) {
   const t = useTranslations('upsell');
-  const { isFree, loading } = useMembership();
+  const { isFree, isLoading: loading } = useMembership();
 
   // Rotate between messages based on day of week
   const messageIndex = useMemo(() => new Date().getDay() % 3, []);
