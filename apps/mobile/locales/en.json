@@ -173,5 +173,30 @@
         "desc": "Share anonymized data with partners"
       }
     }
+  },
+  "deletion": {
+    "title": "Delete Account",
+    "warning": "Your account and all data will be permanently deleted",
+    "graceperiod": "You have 24 hours to cancel after requesting deletion.",
+    "whatDeleted": "This will permanently delete:",
+    "items": "Your profile, locations, notification preferences, alert history, and all personal data.",
+    "confirmLabel": "Type DELETE to confirm",
+    "confirmPlaceholder": "DELETE",
+    "deleteButton": "Delete my account",
+    "deleting": "Scheduling deletion...",
+    "scheduled": "Deletion scheduled",
+    "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
+    "error": "Failed to process request"
+  },
+  "dataExport": {
+    "title": "Export My Data",
+    "description": "Request a copy of all your personal data. We'll prepare a downloadable archive.",
+    "requestButton": "Request export",
+    "preparing": "Preparing your data...",
+    "preparingMessage": "This may take a few minutes.",
+    "complete": "Your data is ready",
+    "downloadButton": "Download",
+    "timeout": "Export is taking longer than expected. Please try again later.",
+    "error": "Failed to create export"
   }
 }

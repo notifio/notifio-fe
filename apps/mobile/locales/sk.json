@@ -173,5 +173,30 @@
         "desc": "Zdieľajte anonymizované údaje s partnermi"
       }
     }
+  },
+  "deletion": {
+    "title": "Vymazať účet",
+    "warning": "Váš účet a všetky údaje budú natrvalo vymazané",
+    "graceperiod": "Máte 24 hodín na zrušenie po požiadaní o vymazanie.",
+    "whatDeleted": "Toto natrvalo vymaže:",
+    "items": "Váš profil, lokácie, nastavenia notifikácií, históriu upozornení a všetky osobné údaje.",
+    "confirmLabel": "Napíšte DELETE pre potvrdenie",
+    "confirmPlaceholder": "DELETE",
+    "deleteButton": "Vymazať môj účet",
+    "deleting": "Plánujem vymazanie...",
+    "scheduled": "Vymazanie naplánované",
+    "scheduledMessage": "Váš účet bude vymazaný o 24 hodín. Kedykoľvek to môžete zrušiť z banneru na vrchu aplikácie.",
+    "error": "Nepodarilo sa spracovať požiadavku"
+  },
+  "dataExport": {
+    "title": "Exportovať moje údaje",
+    "description": "Požiadajte o kópiu všetkých vašich osobných údajov. Pripravíme stiahnuteľný archív.",
+    "requestButton": "Požiadať o export",
+    "preparing": "Pripravujeme vaše údaje...",
+    "preparingMessage": "Môže to trvať niekoľko minút.",
+    "complete": "Vaše údaje sú pripravené",
+    "downloadButton": "Stiahnuť",
+    "timeout": "Export trvá dlhšie ako sa očakávalo. Skúste to prosím neskôr.",
+    "error": "Nepodarilo sa vytvoriť export"
   }
 }

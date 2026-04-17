@@ -105,8 +105,8 @@ export default function SettingsScreen() {
       <SectionLabel label="Privacy" />
       <Card>
         <SettingsRow icon={IconShieldLock} label="Privacy & Consents" onPress={() => router.push('/settings/privacy')} />
-        <SettingsRow icon={IconDownload} label="Export My Data" onPress={() => pushPlaceholder('Export My Data')} />
-        <SettingsRow icon={IconTrash} label="Delete Account" danger onPress={() => pushPlaceholder('Delete Account')} />
+        <SettingsRow icon={IconDownload} label="Export My Data" onPress={() => router.push('/settings/data-export')} />
+        <SettingsRow icon={IconTrash} label="Delete Account" danger onPress={() => router.push('/settings/delete-account')} />
       </Card>
 
       {/* App */}
