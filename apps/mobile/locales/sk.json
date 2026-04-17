@@ -218,5 +218,12 @@
     "updated": "Lokácia aktualizovaná",
     "deleted": "Lokácia vymazaná",
     "error": "Nepodarilo sa uložiť lokáciu"
+  },
+  "notificationPreferences": {
+    "title": "Nastavenia notifikácií",
+    "saveChanges": "Uložiť zmeny",
+    "saving": "Ukladám...",
+    "saved": "Preferencie uložené",
+    "error": "Nepodarilo sa uložiť preferencie"
   }
 }

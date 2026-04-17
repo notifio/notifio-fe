@@ -13,6 +13,7 @@ interface ToggleRowProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
 export function ToggleRow({
@@ -24,11 +25,12 @@ export function ToggleRow({
   value,
   onValueChange,
   style,
+  disabled,
 }: ToggleRowProps) {
   const { colors } = useAppTheme();
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, style, disabled && styles.disabled]}>
       {icon && iconBgColor && (
         <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
           <Icon icon={icon} size={18} color={iconColor} />
@@ -41,6 +43,7 @@ export function ToggleRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
+        disabled={disabled}
         trackColor={{ false: colors.border, true: colors.primary }}
         thumbColor={colors.background}
       />
@@ -68,6 +71,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: theme.fontSize.md,
     ...theme.font.medium,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   description: {
     fontSize: theme.fontSize.sm,

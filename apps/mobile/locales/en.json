@@ -218,5 +218,12 @@
     "updated": "Location updated",
     "deleted": "Location deleted",
     "error": "Failed to save location"
+  },
+  "notificationPreferences": {
+    "title": "Notification Preferences",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "saved": "Preferences saved",
+    "error": "Failed to save preferences"
   }
 }

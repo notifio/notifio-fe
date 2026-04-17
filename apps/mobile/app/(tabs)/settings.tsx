@@ -88,7 +88,7 @@ export default function SettingsScreen() {
       {/* Preferences */}
       <SectionLabel label="Preferences" />
       <Card>
-        <SettingsRow icon={IconBell} label="Notifications" onPress={() => pushPlaceholder('Notifications')} />
+        <SettingsRow icon={IconBell} label="Notifications" onPress={() => router.push('/settings/notifications')} />
         <SettingsRow icon={IconPalette} label="Appearance" onPress={() => router.push('/settings/appearance')} />
         <SettingsRow icon={IconClock} label="Digest" onPress={() => pushPlaceholder('Digest')} />
       </Card>
