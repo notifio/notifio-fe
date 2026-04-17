@@ -2,41 +2,29 @@ import { IconPlant2, IconX } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { theme } from '../../lib/theme';
+import type { PollenResponse } from '@notifio/api-client';
 
-// TODO: Replace with real pollen endpoint when BE adds GET /api/v1/pollen
-const MOCK_ALLERGENS: { key: string; value: number }[] = [
-  { key: 'birch', value: 85 },
-  { key: 'grass', value: 12 },
-  { key: 'alder', value: 5 },
-  { key: 'ragweed', value: 0 },
-];
+import { theme } from '../../lib/theme';
 
 const MAX_BAR_VALUE = 100;
 
-export interface PollenData {
-  level: string;
-  dominant: string;
-  value: number;
-  unit: string;
-}
-
 const POLLEN_HEALTH_KEYS: Record<string, string> = {
-  High: 'pollen.high',
-  Moderate: 'pollen.moderate',
-  Low: 'pollen.low',
+  high: 'pollen.high',
+  very_high: 'pollen.high',
+  moderate: 'pollen.moderate',
+  low: 'pollen.low',
 };
 
+const COMPONENT_KEYS = ['birch', 'grass', 'alder', 'ragweed', 'mugwort', 'olive'] as const;
+
 interface PollenChipProps {
-  pollen: PollenData;
+  pollen: PollenResponse;
   isExpanded: boolean;
   dimmed: boolean;
   onToggle: () => void;
 }
 
 export function PollenChip({ pollen, isExpanded, dimmed, onToggle }: PollenChipProps) {
-  
-
   return (
     <Pressable
       onPress={onToggle}
@@ -48,20 +36,28 @@ export function PollenChip({ pollen, isExpanded, dimmed, onToggle }: PollenChipP
     >
       <IconPlant2 size={14} color="#FFFFFF" />
       <Text style={styles.chipText}>
-        {pollen.dominant} {pollen.value} {pollen.unit}
+        {pollen.dominant ?? pollen.level} {pollen.unit}
       </Text>
     </Pressable>
   );
 }
 
 interface PollenDetailPanelProps {
-  pollen: PollenData;
+  pollen: PollenResponse;
   onClose: () => void;
 }
 
 export function PollenDetailPanel({ pollen, onClose }: PollenDetailPanelProps) {
   const { t } = useTranslation();
   const healthKey = POLLEN_HEALTH_KEYS[pollen.level] ?? 'pollen.moderate';
+
+  const allergens: { key: string; value: number }[] = [];
+  for (const key of COMPONENT_KEYS) {
+    const value = pollen.components[key];
+    if (value != null && value > 0) {
+      allergens.push({ key, value });
+    }
+  }
 
   return (
     <View style={styles.panel}>
@@ -72,7 +68,7 @@ export function PollenDetailPanel({ pollen, onClose }: PollenDetailPanelProps) {
         </Pressable>
       </View>
       <View style={styles.bars}>
-        {MOCK_ALLERGENS.filter((a) => a.value > 0).map((allergen) => {
+        {allergens.map((allergen) => {
           const pct = Math.min((allergen.value / MAX_BAR_VALUE) * 100, 100);
           const barColor = allergen.value >= 50 ? '#F59E0B' : '#22C55E';
           return (
