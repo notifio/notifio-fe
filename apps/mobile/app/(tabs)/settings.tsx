@@ -1,213 +1,159 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  IconBell,
+  IconChevronRight,
+  IconClock,
+  IconCrown,
+  IconDatabase,
+  IconDownload,
+  IconInfoCircle,
+  IconLogout,
+  IconMapPin,
+  IconPalette,
+  IconShieldLock,
+  IconStar,
+  IconTemperature,
+  IconTrash,
+} from '@tabler/icons-react-native';
+import { useRouter } from 'expo-router';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '../../components/ui/card';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
 import { SectionLabel } from '../../components/ui/section-label';
-import { SelectableRow } from '../../components/ui/selectable-row';
-import { ToggleRow } from '../../components/ui/toggle-row';
-import { useOnboarding } from '../../hooks/use-onboarding';
-import { usePreferences } from '../../hooks/use-preferences';
+import { SettingsRow } from '../../components/ui/settings-row';
+import { TierBadge } from '../../components/ui/tier-badge';
+import { useAuth } from '../../hooks/use-auth';
+import { useMembership } from '../../hooks/use-membership';
 import { theme } from '../../lib/theme';
-import { type ThemeMode, useAppTheme } from '../../providers/theme-provider';
-
-const THEME_OPTIONS = [
-  { value: 'system' as const, label: 'System' },
-  { value: 'light' as const, label: 'Light' },
-  { value: 'dark' as const, label: 'Dark' },
-];
-
-const UNITS_OPTIONS = [
-  { value: 'metric' as const, label: 'Metric (°C, km/h)' },
-  { value: 'imperial' as const, label: 'Imperial (°F, mph)' },
-];
-
-const ABOUT_ROWS = [
-  { label: 'Version', value: '0.1.0' },
-];
+import { useAppTheme } from '../../providers/theme-provider';
 
 export default function SettingsScreen() {
-  const { colors, mode, setMode } = useAppTheme();
-  const { resetOnboarding } = useOnboarding();
-  const {
-    preferences,
-    isLoading,
-    saving,
-    error,
-    hasChanges,
-    toggleItem,
-    toggleCategory,
-    setDisplay,
-    savePreferences,
-    cancelChanges,
-  } = usePreferences();
+  const { colors } = useAppTheme();
+  const { user, signOut } = useAuth();
+  const { tier } = useMembership();
+  const router = useRouter();
+
+  const displayName =
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
+    user?.email?.split('@')[0] ??
+    '';
+  const email = user?.email ?? '';
+  const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
+
+  const handleSignOut = () => {
+    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign Out', style: 'destructive', onPress: signOut },
+    ]);
+  };
+
+  const pushPlaceholder = (title: string) =>
+    router.push({ pathname: '/settings/placeholder', params: { title } });
 
   return (
-    <ScreenLayout
-      scrollable
-      header={<ScreenHeader title="Settings" />}
-    >
-      <SectionLabel label="Notification Preferences" style={styles.firstSection} />
-      {isLoading ? (
+    <ScreenLayout scrollable header={<ScreenHeader title="Settings" />}>
+      {/* Profile summary */}
+      <Pressable
+        onPress={() => router.push('/settings/profile')}
+        style={({ pressed }) => pressed && styles.pressed}
+      >
         <Card>
-          <ActivityIndicator color={colors.primary} />
-        </Card>
-      ) : (
-        <Card>
-          {preferences?.notifications.map((category) => (
-            <View key={category.categoryCode}>
-              <ToggleRow
-                label={category.categoryName}
-                value={category.items.some((item) => item.enabled)}
-                onValueChange={(checked) => toggleCategory(category.categoryCode, checked)}
-              />
-              {category.items.length > 1 && category.items.map((item) => (
-                <View key={item.preferenceId} style={styles.subcategoryRow}>
-                  <ToggleRow
-                    label={item.subcategoryCode ?? item.categoryCode}
-                    value={item.enabled}
-                    onValueChange={(checked) => toggleItem(item.categoryCode, item.subcategoryCode, checked)}
-                  />
-                </View>
-              ))}
+          <View style={styles.profileRow}>
+            <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+              <Text style={styles.avatarText}>{initial}</Text>
             </View>
-          ))}
-        </Card>
-      )}
-
-      <SectionLabel label="Theme" />
-      <Card>
-        {THEME_OPTIONS.map((option) => (
-          <SelectableRow
-            key={option.value}
-            label={option.label}
-            selected={mode === option.value}
-            onPress={() => {
-              setMode(option.value as ThemeMode);
-              setDisplay('theme', option.value);
-            }}
-          />
-        ))}
-      </Card>
-
-      <SectionLabel label="Units" />
-      <Card>
-        {UNITS_OPTIONS.map((option) => (
-          <SelectableRow
-            key={option.value}
-            label={option.label}
-            selected={preferences?.display.units === option.value}
-            onPress={() => setDisplay('units', option.value)}
-          />
-        ))}
-      </Card>
-
-      {hasChanges && (
-        <View style={styles.actionButtons}>
-          <Pressable
-            onPress={savePreferences}
-            disabled={saving}
-            style={[styles.saveButton, { backgroundColor: colors.primary }, saving && styles.buttonDisabled]}
-          >
-            {saving && <ActivityIndicator size="small" color={colors.background} style={styles.spinner} />}
-            <Text style={[styles.saveButtonText, { color: colors.background }]}>{saving ? 'Saving...' : 'Save changes'}</Text>
-          </Pressable>
-          <Pressable
-            onPress={cancelChanges}
-            disabled={saving}
-            style={[styles.cancelButton, saving && styles.buttonDisabled]}
-          >
-            <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
-          </Pressable>
-          {error ? (
-            <Text style={[styles.errorText, { color: colors.danger }]}>{error}</Text>
-          ) : null}
-        </View>
-      )}
-
-      <SectionLabel label="About" />
-      <Card>
-        {ABOUT_ROWS.map((row) => (
-          <View key={row.label} style={styles.aboutRow}>
-            <Text style={[styles.aboutLabel, { color: colors.text }]}>{row.label}</Text>
-            <Text style={[styles.aboutValue, { color: colors.textMuted }]}>{row.value}</Text>
+            <View style={styles.profileText}>
+              <Text style={[styles.profileName, { color: colors.text }]} numberOfLines={1}>
+                {displayName}
+              </Text>
+              <Text style={[styles.profileEmail, { color: colors.textMuted }]} numberOfLines={1}>
+                {email}
+              </Text>
+            </View>
+            <TierBadge tier={tier} />
+            <IconChevronRight size={18} color={colors.textMuted} />
           </View>
-        ))}
+        </Card>
+      </Pressable>
+
+      {/* Account */}
+      <SectionLabel label="Account" />
+      <Card>
+        <SettingsRow icon={IconCrown} label="Subscription" value={tier} onPress={() => pushPlaceholder('Subscription')} />
+        <SettingsRow icon={IconMapPin} label="Locations" onPress={() => pushPlaceholder('Locations')} />
       </Card>
 
-      <View style={styles.resetContainer}>
-        <Pressable onPress={resetOnboarding}>
-          <Text style={[styles.resetText, { color: colors.danger }]}>Reset Onboarding</Text>
-        </Pressable>
-      </View>
+      {/* Preferences */}
+      <SectionLabel label="Preferences" />
+      <Card>
+        <SettingsRow icon={IconBell} label="Notifications" onPress={() => pushPlaceholder('Notifications')} />
+        <SettingsRow icon={IconPalette} label="Appearance" onPress={() => router.push('/settings/appearance')} />
+        <SettingsRow icon={IconClock} label="Digest" onPress={() => pushPlaceholder('Digest')} />
+      </Card>
+
+      {/* Data */}
+      <SectionLabel label="Data" />
+      <Card>
+        <SettingsRow icon={IconDatabase} label="Data Sources" onPress={() => pushPlaceholder('Data Sources')} />
+        <SettingsRow icon={IconStar} label="Source Preferences" badge="PRO" onPress={() => pushPlaceholder('Source Preferences')} />
+        <SettingsRow icon={IconTemperature} label="Weather Thresholds" badge="PRO" onPress={() => pushPlaceholder('Weather Thresholds')} />
+      </Card>
+
+      {/* Privacy */}
+      <SectionLabel label="Privacy" />
+      <Card>
+        <SettingsRow icon={IconShieldLock} label="Privacy & Consents" onPress={() => pushPlaceholder('Privacy & Consents')} />
+        <SettingsRow icon={IconDownload} label="Export My Data" onPress={() => pushPlaceholder('Export My Data')} />
+        <SettingsRow icon={IconTrash} label="Delete Account" danger onPress={() => pushPlaceholder('Delete Account')} />
+      </Card>
+
+      {/* App */}
+      <SectionLabel label="App" />
+      <Card>
+        <SettingsRow icon={IconInfoCircle} label="About" value="0.1.0" onPress={() => pushPlaceholder('About')} />
+        <SettingsRow icon={IconLogout} label="Sign Out" danger onPress={handleSignOut} />
+      </Card>
+
+      <View style={styles.bottomSpacer} />
     </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  firstSection: {
-    marginTop: theme.spacing.sm,
+  pressed: {
+    opacity: 0.7,
   },
-  subcategoryRow: {
-    paddingLeft: theme.spacing.lg,
-  },
-  actionButtons: {
+  profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.md,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
-    flexWrap: 'wrap',
   },
-  saveButton: {
-    flexDirection: 'row',
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
-    borderRadius: theme.radius.lg,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
+    justifyContent: 'center',
   },
-  saveButtonText: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
+  avatarText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    ...theme.font.bold,
   },
-  cancelButton: {
-    borderRadius: theme.radius.lg,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
-  },
-  cancelButtonText: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  spinner: {
-    marginRight: theme.spacing.sm,
-  },
-  errorText: {
-    fontSize: theme.fontSize.sm,
-    flexBasis: '100%',
-  },
-  aboutRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-  },
-  aboutLabel: {
+  profileText: {
     flex: 1,
-    fontSize: theme.fontSize.md,
   },
-  aboutValue: {
+  profileName: {
     fontSize: theme.fontSize.md,
+    ...theme.font.semibold,
   },
-  resetContainer: {
-    alignItems: 'center',
-    marginTop: theme.spacing['3xl'],
-    paddingBottom: theme.spacing['2xl'],
+  profileEmail: {
+    fontSize: theme.fontSize.sm,
+    marginTop: 1,
   },
-  resetText: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
+  bottomSpacer: {
+    height: theme.spacing['2xl'],
   },
 });
