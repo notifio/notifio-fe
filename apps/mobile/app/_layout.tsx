@@ -9,6 +9,7 @@ import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { AuthProvider } from '../providers/auth-provider';
+import { ConsentProvider } from '../providers/consent-provider';
 import { NotificationProvider } from '../providers/notification-provider';
 import { OnboardingProvider } from '../providers/onboarding-provider';
 import { ThemeProvider, useIsDark } from '../providers/theme-provider';
@@ -64,12 +65,14 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <AuthProvider>
-          <NotificationProvider>
-            <OnboardingProvider>
-              <DynamicStatusBar />
-              <RootNavigator />
-            </OnboardingProvider>
-          </NotificationProvider>
+          <ConsentProvider>
+            <NotificationProvider>
+              <OnboardingProvider>
+                <DynamicStatusBar />
+                <RootNavigator />
+              </OnboardingProvider>
+            </NotificationProvider>
+          </ConsentProvider>
         </AuthProvider>
         <Toast config={toastConfig} />
       </ThemeProvider>

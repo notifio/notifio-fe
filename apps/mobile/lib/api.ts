@@ -16,8 +16,21 @@ const rawApi = createNotifioClient({
   },
 });
 
+// Module-level callback for 451 consent-required responses.
+// ConsentProvider registers its handler on mount.
+let onConsentRequired: (() => void) | null = null;
+
+export function setConsentRequiredHandler(handler: (() => void) | null): void {
+  onConsentRequired = handler;
+}
+
 function handleApiError(error: unknown): void {
   if (!(error instanceof ApiError)) return;
+
+  if (error.status === 451) {
+    onConsentRequired?.();
+    return;
+  }
 
   if (error.status === 429) {
     let retrySeconds: number | null = null;

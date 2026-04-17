@@ -136,5 +136,42 @@
     "enable": "Enable",
     "deletionCountdown": "Your account will be deleted in {{time}}",
     "cancelDeletion": "Cancel deletion"
+  },
+  "consent": {
+    "modalTitle": "Privacy Settings",
+    "modalDescription": "Choose which data processing you allow. You can change these anytime in Settings.",
+    "saveButton": "Save preferences",
+    "submitting": "Saving...",
+    "required": "Required",
+    "success": "Consent preferences saved",
+    "error": "Failed to save consent preferences",
+    "settingsTitle": "Privacy",
+    "settingsDescription": "Manage your data processing consents",
+    "categories": {
+      "location_tracking": {
+        "name": "Location",
+        "desc": "Share your GPS location for local alerts"
+      },
+      "push_notifications": {
+        "name": "Push Notifications",
+        "desc": "Receive real-time alerts"
+      },
+      "analytics": {
+        "name": "Analytics",
+        "desc": "Help us improve the app"
+      },
+      "personalization": {
+        "name": "Personalization",
+        "desc": "Tailor content to your preferences"
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Receive promotional content"
+      },
+      "data_sharing": {
+        "name": "Data Sharing",
+        "desc": "Share anonymized data with partners"
+      }
+    }
   }
 }
