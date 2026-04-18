@@ -268,5 +268,39 @@
     "submitting": "Nahlasovanie...",
     "success": "Udalosť úspešne nahlásená",
     "error": "Nepodarilo sa nahlásiť udalosť"
+  },
+  "digest": {
+    "title": "Súhrn notifikácií",
+    "description": "Vyberte, ako chcete dostávať súhrny notifikácií",
+    "realtime": "V reálnom čase",
+    "realtimeDesc": "Prijímajte notifikácie okamžite",
+    "morning": "Ranný súhrn",
+    "morningDesc": "Denný súhrn každé ráno",
+    "evening": "Večerný súhrn",
+    "eveningDesc": "Denný súhrn každý večer",
+    "both": "Obidva (ráno + večer)",
+    "bothDesc": "Súhrny dvakrát denne",
+    "saved": "Režim súhrnu aktualizovaný",
+    "error": "Nepodarilo sa aktualizovať režim súhrnu"
+  },
+  "nameday": {
+    "today": "Dnes",
+    "tomorrow": "Zajtra"
+  },
+  "sources": {
+    "title": "Zdroje dát",
+    "accuracy": "Presnosť",
+    "timeliness": "Včasnosť",
+    "ratings": "{{count}} hodnotení",
+    "noRatings": "Zatiaľ žiadne hodnotenia",
+    "comment": "Komentár (voliteľný)",
+    "commentPlaceholder": "Podeľte sa o svoju skúsenosť...",
+    "save": "Uložiť hodnotenie",
+    "saving": "Ukladám...",
+    "saved": "Hodnotenie uložené",
+    "deleteRating": "Vymazať moje hodnotenie",
+    "deleteConfirm": "Odstrániť vaše hodnotenie pre tento zdroj?",
+    "deleted": "Hodnotenie odstránené",
+    "error": "Nepodarilo sa uložiť hodnotenie"
   }
 }

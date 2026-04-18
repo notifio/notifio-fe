@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { UserEvent } from '@notifio/api-client';
+import type { TrafficFlowSegment, UserEvent } from '@notifio/api-client';
 import type { OutageRecord } from '@notifio/shared/types';
 
 import { api } from '../lib/api';
@@ -32,6 +32,7 @@ interface ViewportCacheEntry {
 
 export function useMapData(center: { lat: number; lng: number } | null) {
   const [pins, setPins] = useState<MapPin[]>([]);
+  const [flowSegments, setFlowSegments] = useState<TrafficFlowSegment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,9 +87,10 @@ export function useMapData(center: { lat: number; lng: number } | null) {
 
       await fetchStatic();
 
-      const [traffic, events] = await Promise.all([
+      const [traffic, events, flow] = await Promise.all([
         safeFetch(() => api.getTraffic(coords.lat, coords.lng)),
         safeFetch(() => api.getEvents({ lat: coords.lat, lng: coords.lng, radius: EVENT_RADIUS })),
+        safeFetch(() => api.getTrafficFlow(coords.lat, coords.lng)),
       ]);
 
       // Stale response — a newer fetch superseded this one
@@ -116,6 +118,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       );
 
       setPins(normalized);
+      setFlowSegments(flow?.segments ?? []);
       viewportCache.current.set(key, { pins: normalized });
       lastFetchCenter.current = coords;
       fetchingRef.current = false;
@@ -166,5 +169,5 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     }
   }, [center, fetchViewport]);
 
-  return { pins, isLoading, isAutoRefreshing, error, refresh };
+  return { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh };
 }

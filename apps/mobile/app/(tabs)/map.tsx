@@ -4,7 +4,8 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
-import { Callout, Marker } from 'react-native-maps';
+import { Callout, Marker, Polyline } from 'react-native-maps';
+import type MapView from 'react-native-maps';
 import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -31,6 +32,13 @@ const SLOVAKIA_REGION: Region = {
   longitudeDelta: FALLBACK_DELTA,
 };
 
+const CONGESTION_COLORS: Record<string, string> = {
+  free: '#34C759',
+  moderate: '#F59E0B',
+  heavy: '#FF7A2F',
+  severe: '#FF3B30',
+};
+
 export default function MapScreen() {
   const { colors, isDark } = useAppTheme();
   const router = useRouter();
@@ -38,9 +46,11 @@ export default function MapScreen() {
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mapRef = useRef<MapView | null>(null);
 
-  const { pins, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
+  const { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showFlow, _setShowFlow] = useState(true);
 
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
@@ -102,6 +112,21 @@ export default function MapScreen() {
     [pins, activeFilters],
   );
 
+  const handleClusterPress = useCallback(
+    (_cluster: unknown, markers?: Array<{ properties?: { coordinate?: { latitude: number; longitude: number } } }>) => {
+      if (!markers || markers.length === 0 || !mapRef.current) return;
+      const coordinates = markers
+        .map((m) => m.properties?.coordinate)
+        .filter((c): c is { latitude: number; longitude: number } => c != null);
+      if (coordinates.length === 0) return;
+      mapRef.current.fitToCoordinates(coordinates, {
+        edgePadding: { top: 80, right: 80, bottom: 80, left: 80 },
+        animated: true,
+      });
+    },
+    [],
+  );
+
   const loadingPillBg = isDark ? 'rgba(14, 34, 63, 0.9)' : 'rgba(255, 255, 255, 0.9)';
   const showLoadingPill = isLoading || isAutoRefreshing;
 
@@ -125,7 +150,20 @@ export default function MapScreen() {
         clusterColor={colors.textMuted}
         radius={50}
         extent={512}
+        mapRef={(ref) => { mapRef.current = ref as unknown as MapView | null; }}
+        onClusterPress={handleClusterPress}
       >
+        {showFlow && flowSegments.map((segment, idx) => (
+          <Polyline
+            key={`flow-${idx}`}
+            coordinates={segment.coordinates.map(([lng, lat]) => ({
+              latitude: lat,
+              longitude: lng,
+            }))}
+            strokeColor={CONGESTION_COLORS[segment.congestion] ?? CONGESTION_COLORS.free}
+            strokeWidth={3}
+          />
+        ))}
         {filteredPins.map((pin) => (
           <Marker
             key={pin.id}

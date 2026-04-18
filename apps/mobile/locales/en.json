@@ -268,5 +268,39 @@
     "submitting": "Reporting...",
     "success": "Event reported successfully",
     "error": "Failed to report event"
+  },
+  "digest": {
+    "title": "Notification Digest",
+    "description": "Choose how you receive notification summaries",
+    "realtime": "Real-time",
+    "realtimeDesc": "Receive notifications immediately",
+    "morning": "Morning digest",
+    "morningDesc": "Daily summary each morning",
+    "evening": "Evening digest",
+    "eveningDesc": "Daily summary each evening",
+    "both": "Both (morning + evening)",
+    "bothDesc": "Summaries twice daily",
+    "saved": "Digest mode updated",
+    "error": "Failed to update digest mode"
+  },
+  "nameday": {
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "sources": {
+    "title": "Data Sources",
+    "accuracy": "Accuracy",
+    "timeliness": "Timeliness",
+    "ratings": "{{count}} ratings",
+    "noRatings": "No ratings yet",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Share your experience...",
+    "save": "Save rating",
+    "saving": "Saving...",
+    "saved": "Rating saved",
+    "deleteRating": "Delete my rating",
+    "deleteConfirm": "Remove your rating for this source?",
+    "deleted": "Rating removed",
+    "error": "Failed to save rating"
   }
 }

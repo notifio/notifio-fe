@@ -90,13 +90,13 @@ export default function SettingsScreen() {
       <Card>
         <SettingsRow icon={IconBell} label="Notifications" onPress={() => router.push('/settings/notifications')} />
         <SettingsRow icon={IconPalette} label="Appearance" onPress={() => router.push('/settings/appearance')} />
-        <SettingsRow icon={IconClock} label="Digest" onPress={() => pushPlaceholder('Digest')} />
+        <SettingsRow icon={IconClock} label="Digest" onPress={() => router.push('/settings/digest')} />
       </Card>
 
       {/* Data */}
       <SectionLabel label="Data" />
       <Card>
-        <SettingsRow icon={IconDatabase} label="Data Sources" onPress={() => pushPlaceholder('Data Sources')} />
+        <SettingsRow icon={IconDatabase} label="Data Sources" onPress={() => router.push('/settings/sources')} />
         <SettingsRow icon={IconStar} label="Source Preferences" badge="PRO" onPress={() => pushPlaceholder('Source Preferences')} />
         <SettingsRow icon={IconTemperature} label="Weather Thresholds" badge="PRO" onPress={() => pushPlaceholder('Weather Thresholds')} />
       </Card>
