@@ -1,4 +1,4 @@
-import { IconRefresh } from '@tabler/icons-react-native';
+import { IconPlus, IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -8,6 +8,7 @@ import { Callout, Marker } from 'react-native-maps';
 import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { EventReportModal } from '../../components/events/event-report-modal';
 import { MapFilterBar } from '../../components/map/map-filter-bar';
 import { MapStatusCard } from '../../components/map/map-status-card';
 import { OutageMarker } from '../../components/map/outage-marker';
@@ -39,6 +40,7 @@ export default function MapScreen() {
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { pins, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
@@ -164,6 +166,23 @@ export default function MapScreen() {
       )}
 
       <MapStatusCard alertCount={filteredPins.length} />
+
+      {/* FAB — Report event */}
+      <View style={styles.fabContainer}>
+        <Pressable
+          onPress={() => setShowReportModal(true)}
+          style={[styles.fab, { backgroundColor: colors.primary }]}
+        >
+          <IconPlus size={24} color="#FFFFFF" />
+        </Pressable>
+      </View>
+
+      <EventReportModal
+        visible={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onCreated={refresh}
+        initialCenter={mapCenter ?? undefined}
+      />
     </View>
   );
 }
@@ -215,5 +234,22 @@ const styles = StyleSheet.create({
   retryButton: {
     padding: theme.spacing.xs,
     borderRadius: theme.radius.full,
+  },
+  fabContainer: {
+    position: 'absolute',
+    right: theme.spacing.xl,
+    bottom: 100,
+  },
+  fab: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
 });

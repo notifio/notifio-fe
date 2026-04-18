@@ -258,5 +258,15 @@
       "deleted": "Event deleted",
       "error": "Failed to update event"
     }
+  },
+  "eventReport": {
+    "title": "Report an Event",
+    "selectCategory": "Select category",
+    "location": "Event location",
+    "radius": "Affected radius",
+    "submit": "Report Event",
+    "submitting": "Reporting...",
+    "success": "Event reported successfully",
+    "error": "Failed to report event"
   }
 }

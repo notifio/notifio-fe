@@ -258,5 +258,15 @@
       "deleted": "Udalosť vymazaná",
       "error": "Nepodarilo sa aktualizovať udalosť"
     }
+  },
+  "eventReport": {
+    "title": "Nahlásiť udalosť",
+    "selectCategory": "Vyberte kategóriu",
+    "location": "Poloha udalosti",
+    "radius": "Ovplyvnený polomer",
+    "submit": "Nahlásiť udalosť",
+    "submitting": "Nahlasovanie...",
+    "success": "Udalosť úspešne nahlásená",
+    "error": "Nepodarilo sa nahlásiť udalosť"
   }
 }
