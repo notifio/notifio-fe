@@ -225,5 +225,38 @@
     "saving": "Saving...",
     "saved": "Preferences saved",
     "error": "Failed to save preferences"
+  },
+  "eventDetail": {
+    "title": "Event Details",
+    "status": {
+      "active": "Active",
+      "resolved": "Resolved"
+    },
+    "details": {
+      "location": "Location",
+      "radius": "Radius",
+      "reportedAt": "Reported",
+      "expiresAt": "Expires",
+      "resolvedAt": "Resolved at"
+    },
+    "credibility": {
+      "title": "Credibility"
+    },
+    "vote": {
+      "confirm": "Confirm",
+      "deny": "Deny",
+      "voted": "Vote recorded",
+      "alreadyVoted": "Already voted",
+      "error": "Failed to vote"
+    },
+    "owner": {
+      "resolve": "Mark as resolved",
+      "resolveConfirm": "Mark this event as resolved?",
+      "resolved": "Event resolved",
+      "delete": "Delete event",
+      "deleteConfirm": "Permanently delete this event?",
+      "deleted": "Event deleted",
+      "error": "Failed to update event"
+    }
   }
 }

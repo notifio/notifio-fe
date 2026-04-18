@@ -1,5 +1,6 @@
 import { IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
@@ -31,6 +32,7 @@ const SLOVAKIA_REGION: Region = {
 
 export default function MapScreen() {
   const { colors, isDark } = useAppTheme();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
@@ -127,6 +129,7 @@ export default function MapScreen() {
             key={pin.id}
             coordinate={{ latitude: pin.lat, longitude: pin.lng }}
             tracksViewChanges={false}
+            onCalloutPress={pin.source === 'event' ? () => router.push(`/events/${pin.id}`) : undefined}
           >
             <OutageMarker pin={pin} />
             <Callout tooltip>

@@ -225,5 +225,38 @@
     "saving": "Ukladám...",
     "saved": "Preferencie uložené",
     "error": "Nepodarilo sa uložiť preferencie"
+  },
+  "eventDetail": {
+    "title": "Detail udalosti",
+    "status": {
+      "active": "Aktívna",
+      "resolved": "Vyriešená"
+    },
+    "details": {
+      "location": "Poloha",
+      "radius": "Polomer",
+      "reportedAt": "Nahlásená",
+      "expiresAt": "Vyprší",
+      "resolvedAt": "Vyriešená"
+    },
+    "credibility": {
+      "title": "Dôveryhodnosť"
+    },
+    "vote": {
+      "confirm": "Potvrdiť",
+      "deny": "Zamietnuť",
+      "voted": "Hlas zaznamenaný",
+      "alreadyVoted": "Už ste hlasovali",
+      "error": "Nepodarilo sa hlasovať"
+    },
+    "owner": {
+      "resolve": "Označiť ako vyriešenú",
+      "resolveConfirm": "Označiť túto udalosť ako vyriešenú?",
+      "resolved": "Udalosť vyriešená",
+      "delete": "Vymazať udalosť",
+      "deleteConfirm": "Natrvalo vymazať túto udalosť?",
+      "deleted": "Udalosť vymazaná",
+      "error": "Nepodarilo sa aktualizovať udalosť"
+    }
   }
 }
