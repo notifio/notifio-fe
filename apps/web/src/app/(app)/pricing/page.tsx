@@ -43,17 +43,18 @@ export default function PricingPage() {
   const handleUpgrade = async (targetTier: 'PLUS' | 'PRO') => {
     setUpgrading(targetTier);
     try {
-      // API returns { checkoutUrl, sessionId } — @notifio/shared types this as `url`,
-      // but the actual field is `checkoutUrl`. Cast until shared is updated.
+      // BE now returns `{ sessionId, url }` matching the shared `CheckoutResponse`
+      // contract — no cast needed. (Previously BE sent `checkoutUrl`; aligned in
+      // notifio-api refactor/be-p2-1-shared-types-dedup.)
       const response = await api.createCheckoutSession({
         plan: getPlan(targetTier, billing),
         successUrl: `${window.location.origin}/checkout/success`,
         cancelUrl: `${window.location.origin}/pricing`,
-      }) as unknown as { sessionId: string; checkoutUrl: string };
-      if (!response?.checkoutUrl) {
+      });
+      if (!response?.url) {
         throw new Error('No checkout URL returned');
       }
-      window.location.href = response.checkoutUrl;
+      window.location.href = response.url;
     } catch {
       toast.error(t('checkoutError'));
       setUpgrading(null);
