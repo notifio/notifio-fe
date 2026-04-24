@@ -118,7 +118,7 @@ npx turbo run build --filter=@notifio/web
 
 - Base URL configured via env var (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL`)
 - All requests go through `@notifio/api-client` (wraps `fetch` with auth, locale, error handling)
-- `@notifio/shared@^0.18.1` — types, Zod schemas, i18n (incl. nameday, payments, GDPR data-export)
+- `@notifio/shared@^0.18.2` — types, Zod schemas, i18n (incl. nameday, payments, GDPR data-export with error + completedAt)
 - Response envelope: `{ success: boolean, data?: T, error?: string, meta?: {} }`
 - Auth: Bearer token via Supabase Auth
 
