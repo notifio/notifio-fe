@@ -8,6 +8,9 @@
       "node": "22.12.0",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://notifio-api-production.up.railway.app/api/v1"
+      },
+      "install": {
+        "customCommand": "bash -c 'echo \"@notifio:registry=https://npm.pkg.github.com\" > .npmrc && echo \"//npm.pkg.github.com/:_authToken=${SHARED_PACKAGES_TOKEN}\" >> .npmrc && npm ci --include=dev'"
       }
     },
     "development": {
