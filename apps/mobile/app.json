@@ -20,7 +20,9 @@
         "aps-environment": "development"
       },
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -44,7 +46,10 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBMessaging"
+            ]
           }
         }
       ],
@@ -62,7 +67,8 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/messaging"
+      "@react-native-firebase/messaging",
+      "@react-native-community/datetimepicker"
     ]
   }
 }

@@ -287,6 +287,44 @@
     "today": "Dnes",
     "tomorrow": "Zajtra"
   },
+  "ads": {
+    "sponsored": "Sponzorované",
+    "adFree": "Bez reklám"
+  },
+  "upsell": {
+    "upgrade": "Upgradnúť",
+    "dismiss": "Zavrieť"
+  },
+  "reminders": {
+    "title": "Pripomienky",
+    "tabs": {
+      "history": "História",
+      "reminders": "Pripomienky"
+    },
+    "empty": "Zatiaľ žiadne pripomienky",
+    "emptyMessage": "Vytvorte pripomienky pre dôležité udalosti",
+    "create": "Vytvoriť pripomienku",
+    "edit": "Upraviť pripomienku",
+    "titleLabel": "Názov",
+    "titlePlaceholder": "Názov pripomienky",
+    "descriptionLabel": "Popis (voliteľný)",
+    "descriptionPlaceholder": "Pridať detaily...",
+    "dateLabel": "Dátum a čas",
+    "recurrence": "Opakovanie",
+    "recurrenceOptions": {
+      "ONCE": "Jednorazovo",
+      "DAILY": "Denne",
+      "WEEKLY": "Týždenne",
+      "MONTHLY": "Mesačne"
+    },
+    "save": "Uložiť",
+    "saving": "Ukladám...",
+    "saved": "Pripomienka uložená",
+    "delete": "Vymazať",
+    "deleteConfirm": "Vymazať túto pripomienku?",
+    "deleted": "Pripomienka vymazaná",
+    "error": "Nepodarilo sa uložiť pripomienku"
+  },
   "sources": {
     "title": "Zdroje dát",
     "accuracy": "Presnosť",

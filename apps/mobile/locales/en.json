@@ -287,6 +287,44 @@
     "today": "Today",
     "tomorrow": "Tomorrow"
   },
+  "ads": {
+    "sponsored": "Sponsored",
+    "adFree": "Go ad-free"
+  },
+  "upsell": {
+    "upgrade": "Upgrade",
+    "dismiss": "Dismiss"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "tabs": {
+      "history": "History",
+      "reminders": "Reminders"
+    },
+    "empty": "No reminders yet",
+    "emptyMessage": "Create reminders for important events",
+    "create": "Create reminder",
+    "edit": "Edit reminder",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Reminder title",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add details...",
+    "dateLabel": "Date & Time",
+    "recurrence": "Repeat",
+    "recurrenceOptions": {
+      "ONCE": "Once",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Reminder saved",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this reminder?",
+    "deleted": "Reminder deleted",
+    "error": "Failed to save reminder"
+  },
   "sources": {
     "title": "Data Sources",
     "accuracy": "Accuracy",

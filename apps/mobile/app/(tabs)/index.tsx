@@ -1,6 +1,8 @@
 import { IconCar } from '@tabler/icons-react-native';
 import { StyleSheet, View } from 'react-native';
 
+import { AdPlaceholder } from '../../components/monetization/ad-placeholder';
+import { UpsellCard } from '../../components/monetization/upsell-card';
 import { PlaceholderCard } from '../../components/ui/placeholder-card';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
@@ -24,6 +26,8 @@ export default function OverviewScreen() {
       <View style={styles.content}>
         <WeatherCard weather={weather} isLoading={isLoading} error={error} locationLabel={DEFAULT_LOCATION.label} onRetry={refresh} airQuality={airQuality} aqiLoading={aqiIsLoading} pollen={pollen} />
         <NamedayCard nameday={nameday} isLoading={namedayLoading} />
+        <UpsellCard />
+        <AdPlaceholder variant="banner" />
         <PlaceholderCard icon={IconCar} title="Traffic Summary" subtitle="Coming soon" />
       </View>
     </ScreenLayout>
