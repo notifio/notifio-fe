@@ -14,7 +14,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "clean": "turbo run clean",
-    "eas-build-pre-install": "echo \"@notifio:registry=https://npm.pkg.github.com\" > .npmrc && echo \"//npm.pkg.github.com/:_authToken=${SHARED_PACKAGES_TOKEN}\" >> .npmrc"
+    "eas-build-pre-install": "echo \"@notifio:registry=https://npm.pkg.github.com\" > .npmrc && echo \"//npm.pkg.github.com/:_authToken=${SHARED_PACKAGES_TOKEN}\" >> .npmrc",
+    "eas-build-post-install": "npx turbo run build --filter=@notifio/ui --filter=@notifio/api-client"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
