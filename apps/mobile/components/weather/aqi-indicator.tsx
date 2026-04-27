@@ -1,4 +1,3 @@
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react-native';
 import { useState } from 'react';
 import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -30,7 +29,6 @@ export function AqiIndicator({ airQuality, isLoading, textColor }: AqiIndicatorP
   if (!airQuality) return null;
 
   const aqiStyle = getAqiStyle(airQuality.level);
-  const Chevron = expanded ? IconChevronUp : IconChevronDown;
   const muted70 = withOpacity(textColor, 0.7);
   const muted50 = withOpacity(textColor, 0.5);
 
@@ -45,9 +43,6 @@ export function AqiIndicator({ airQuality, isLoading, textColor }: AqiIndicatorP
         <View style={[styles.dot, { backgroundColor: aqiStyle.color }]} />
         <Text style={[styles.aqiLabel, { color: textColor }]}>AQI {airQuality.aqi}</Text>
         <Text style={[styles.levelLabel, { color: muted70 }]}>{aqiStyle.label}</Text>
-        <View style={styles.chevron}>
-          <Chevron size={16} color={muted70} />
-        </View>
       </Pressable>
 
       {expanded && (
@@ -98,9 +93,6 @@ const styles = StyleSheet.create({
   },
   levelLabel: {
     fontSize: theme.fontSize.sm,
-  },
-  chevron: {
-    marginLeft: 'auto',
   },
   details: {
     marginTop: theme.spacing.sm,
