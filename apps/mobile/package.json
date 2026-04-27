@@ -9,7 +9,8 @@
     "build:android": "eas build --platform android",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "clean": "rm -rf .expo"
+    "clean": "rm -rf .expo",
+    "eas-build-pre-install": "cd ../.. && echo \"@notifio:registry=https://npm.pkg.github.com\" > .npmrc && echo \"//npm.pkg.github.com/:_authToken=${SHARED_PACKAGES_TOKEN}\" >> .npmrc"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
