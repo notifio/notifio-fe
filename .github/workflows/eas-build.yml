@@ -63,7 +63,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck + Lint (mobile)
-        run: npx turbo run typecheck lint --filter=@notifio/mobile
+        run: npx turbo run typecheck lint --filter=@notifio/mobile...
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
