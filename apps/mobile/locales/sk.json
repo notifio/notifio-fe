@@ -340,5 +340,22 @@
     "deleteConfirm": "Odstrániť vaše hodnotenie pre tento zdroj?",
     "deleted": "Hodnotenie odstránené",
     "error": "Nepodarilo sa uložiť hodnotenie"
+  },
+  "mapFilters": {
+    "title": "Filtre",
+    "close": "Zavrieť",
+    "electricity": "Elektrina",
+    "water": "Voda",
+    "gas": "Plyn",
+    "heat": "Teplo",
+    "traffic": "Doprava",
+    "events": "Udalosti",
+    "accident": "Nehody",
+    "construction": "Výstavba",
+    "road_closure": "Uzávery",
+    "congestion": "Kolóny",
+    "flooding": "Záplavy",
+    "event": "Udalosti",
+    "other": "Iné"
   }
 }

@@ -340,5 +340,22 @@
     "deleteConfirm": "Remove your rating for this source?",
     "deleted": "Rating removed",
     "error": "Failed to save rating"
+  },
+  "mapFilters": {
+    "title": "Filters",
+    "close": "Close",
+    "electricity": "Electricity",
+    "water": "Water",
+    "gas": "Gas",
+    "heat": "Heat",
+    "traffic": "Traffic",
+    "events": "Events",
+    "accident": "Accidents",
+    "construction": "Construction",
+    "road_closure": "Closures",
+    "congestion": "Congestion",
+    "flooding": "Flooding",
+    "event": "Events",
+    "other": "Other"
   }
 }

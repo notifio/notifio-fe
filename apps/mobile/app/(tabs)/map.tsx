@@ -2,7 +2,7 @@ import { IconPlus, IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
 import { Callout, Marker, Polyline } from 'react-native-maps';
 import type MapView from 'react-native-maps';
@@ -10,12 +10,18 @@ import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EventReportModal } from '../../components/events/event-report-modal';
-import { MapFilterBar } from '../../components/map/map-filter-bar';
+import { MapClusterMarker } from '../../components/map/map-cluster-marker';
+import { MapFilterPanel } from '../../components/map/map-filter-panel';
+import { MapPinMarker } from '../../components/map/map-pin-marker';
 import { MapStatusCard } from '../../components/map/map-status-card';
-import { OutageMarker } from '../../components/map/outage-marker';
 import { PinCallout } from '../../components/map/pin-callout';
 import { useMapData } from '../../hooks/use-map-data';
-import { MAP_FILTER_SOURCES } from '../../lib/map-pin-config';
+import {
+  MAP_FILTER_SOURCES,
+  TRAFFIC_SUBCATEGORIES,
+  type TrafficIncidentType,
+} from '../../lib/map-pin-config';
+import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import type { MapPinSource } from '../../lib/normalize-pins';
 import { shadows, theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -39,6 +45,13 @@ const CONGESTION_COLORS: Record<string, string> = {
   severe: '#FF3B30',
 };
 
+interface ClusterFeature {
+  id: number | string;
+  geometry: { coordinates: [number, number] };
+  properties?: { point_count?: number };
+  onPress?: () => void;
+}
+
 export default function MapScreen() {
   const { colors, isDark } = useAppTheme();
   const router = useRouter();
@@ -54,6 +67,9 @@ export default function MapScreen() {
 
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
+  );
+  const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<TrafficIncidentType>>(
+    () => new Set(TRAFFIC_SUBCATEGORIES),
   );
 
   // Resolve initial region before rendering the map
@@ -98,18 +114,31 @@ export default function MapScreen() {
   const toggleFilter = useCallback((source: MapPinSource) => {
     setActiveFilters((prev) => {
       const next = new Set(prev);
-      if (next.has(source)) {
-        next.delete(source);
-      } else {
-        next.add(source);
-      }
+      if (next.has(source)) next.delete(source);
+      else next.add(source);
+      return next;
+    });
+  }, []);
+
+  const toggleTrafficType = useCallback((type: TrafficIncidentType) => {
+    setActiveTrafficTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
       return next;
     });
   }, []);
 
   const filteredPins = useMemo(
-    () => pins.filter((p) => activeFilters.has(p.source)),
-    [pins, activeFilters],
+    () =>
+      pins.filter((p) => {
+        if (!activeFilters.has(p.source)) return false;
+        if (p.source === 'traffic' && p.incidentType) {
+          return activeTrafficTypes.has(p.incidentType as TrafficIncidentType);
+        }
+        return true;
+      }),
+    [pins, activeFilters, activeTrafficTypes],
   );
 
   const handleClusterPress = useCallback(
@@ -126,6 +155,22 @@ export default function MapScreen() {
     },
     [],
   );
+
+  const renderCluster = useCallback((cluster: ClusterFeature) => {
+    const [longitude, latitude] = cluster.geometry.coordinates;
+    const count = cluster.properties?.point_count ?? 0;
+    return (
+      <Marker
+        key={`cluster-${cluster.id}`}
+        coordinate={{ latitude, longitude }}
+        onPress={cluster.onPress}
+        tracksViewChanges={false}
+        anchor={{ x: 0.5, y: 1 }}
+      >
+        <MapClusterMarker count={count} />
+      </Marker>
+    );
+  }, []);
 
   const loadingPillBg = isDark ? 'rgba(14, 34, 63, 0.9)' : 'rgba(255, 255, 255, 0.9)';
   const showLoadingPill = isLoading || isAutoRefreshing;
@@ -147,11 +192,15 @@ export default function MapScreen() {
         onRegionChangeComplete={handleRegionChange}
         showsUserLocation
         showsMyLocationButton
-        clusterColor={colors.textMuted}
         radius={50}
         extent={512}
         mapRef={(ref) => { mapRef.current = ref as unknown as MapView | null; }}
         onClusterPress={handleClusterPress}
+        renderCluster={renderCluster}
+        // iOS Apple Maps native dark mode
+        userInterfaceStyle={isDark ? 'dark' : 'light'}
+        // Android Google Maps custom dark style
+        customMapStyle={Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined}
       >
         {showFlow && flowSegments.map((segment, idx) => (
           <Polyline
@@ -169,9 +218,10 @@ export default function MapScreen() {
             key={pin.id}
             coordinate={{ latitude: pin.lat, longitude: pin.lng }}
             tracksViewChanges={false}
+            anchor={{ x: 0.5, y: 1 }}
             onCalloutPress={pin.source === 'event' ? () => router.push(`/events/${pin.id}`) : undefined}
           >
-            <OutageMarker pin={pin} />
+            <MapPinMarker pin={pin} />
             <Callout tooltip>
               <PinCallout pin={pin} />
             </Callout>
@@ -179,7 +229,14 @@ export default function MapScreen() {
         ))}
       </ClusteredMapView>
 
-      <MapFilterBar activeFilters={activeFilters} onToggle={toggleFilter} pins={pins} topInset={insets.top} />
+      <MapFilterPanel
+        activeFilters={activeFilters}
+        activeTrafficTypes={activeTrafficTypes}
+        onToggle={toggleFilter}
+        onToggleTrafficType={toggleTrafficType}
+        pins={pins}
+        topInset={insets.top}
+      />
 
       {showLoadingPill && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]} pointerEvents="none">
