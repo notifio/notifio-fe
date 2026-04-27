@@ -31,17 +31,17 @@ export default function LocationsScreen() {
     setPickerVisible(true);
   };
 
-  const handleEdit = (loc: UserLocation) => {
+  const handleEdit = useCallback((loc: UserLocation) => {
     setEditingLocation(loc);
     setPickerVisible(true);
-  };
+  }, []);
 
-  const handleDelete = (loc: UserLocation) => {
+  const handleDelete = useCallback((loc: UserLocation) => {
     Alert.alert(t('locations.deleteConfirmTitle'), t('locations.deleteConfirm'), [
       { text: t('common.ok'), style: 'cancel' },
       { text: t('locations.deleteLocation'), style: 'destructive', onPress: () => removeLocation(loc.locationId) },
     ]);
-  };
+  }, [t, removeLocation]);
 
   const renderItem = useCallback(
     ({ item }: { item: UserLocation }) => {
@@ -77,7 +77,7 @@ export default function LocationsScreen() {
         </View>
       );
     },
-    [colors, t, removeLocation],
+    [colors, handleEdit, handleDelete],
   );
 
   return (

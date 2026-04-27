@@ -33,13 +33,20 @@
     },
     "production": {
       "extends": "base",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://notifio-api-production.up.railway.app/api/v1"
+      },
+      "ios": {
+        "image": "latest"
+      }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "ascAppId": "PLACEHOLDER_APP_STORE_CONNECT_APP_ID"
+        "ascAppId": "6764088360",
+        "appleTeamId": "D4UC9CTV4J"
       }
     }
   }
