@@ -1,11 +1,11 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { type StyleProp, StyleSheet, Switch, Text, View, type ViewStyle } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface ToggleRowProps {
-  icon?: LucideIcon;
+  icon?: TablerIcon;
   iconColor?: string;
   iconBgColor?: string;
   label: string;
@@ -13,6 +13,7 @@ interface ToggleRowProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
 export function ToggleRow({
@@ -24,23 +25,27 @@ export function ToggleRow({
   value,
   onValueChange,
   style,
+  disabled,
 }: ToggleRowProps) {
+  const { colors } = useAppTheme();
+
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, style, disabled && styles.disabled]}>
       {icon && iconBgColor && (
         <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
           <Icon icon={icon} size={18} color={iconColor} />
         </View>
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {description && <Text style={styles.description}>{description}</Text>}
+        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+        {description && <Text style={[styles.description, { color: colors.textMuted }]}>{description}</Text>}
       </View>
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-        thumbColor={theme.colors.background}
+        disabled={disabled}
+        trackColor={{ false: colors.border, true: colors.primary }}
+        thumbColor={colors.background}
       />
     </View>
   );
@@ -65,12 +70,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: theme.fontSize.md,
-    color: theme.colors.text,
     ...theme.font.medium,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   description: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.textMuted,
     marginTop: theme.spacing.xs,
   },
 });

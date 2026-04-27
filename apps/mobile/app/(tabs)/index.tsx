@@ -1,11 +1,14 @@
-import { Car } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
-import { PlaceholderCard } from '../../components/ui/placeholder-card';
+import { AdPlaceholder } from '../../components/monetization/ad-placeholder';
+import { UpsellCard } from '../../components/monetization/upsell-card';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
+import { NamedayCard } from '../../components/weather/nameday-card';
 import { WeatherCard } from '../../components/weather/weather-card';
 import { useAirQuality } from '../../hooks/use-air-quality';
+import { useNameday } from '../../hooks/use-nameday';
+import { usePollen } from '../../hooks/use-pollen';
 import { useWeather } from '../../hooks/use-weather';
 import { DEFAULT_LOCATION } from '../../lib/location';
 import { theme } from '../../lib/theme';
@@ -13,12 +16,16 @@ import { theme } from '../../lib/theme';
 export default function OverviewScreen() {
   const { weather, isLoading, error, refresh } = useWeather();
   const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
+  const { pollen } = usePollen();
+  const { nameday, isLoading: namedayLoading } = useNameday();
 
   return (
     <ScreenLayout scrollable header={<ScreenHeader title="Overview" subtitle={DEFAULT_LOCATION.label} />}>
       <View style={styles.content}>
-        <WeatherCard weather={weather} isLoading={isLoading} error={error} locationLabel={DEFAULT_LOCATION.label} onRetry={refresh} airQuality={airQuality} aqiLoading={aqiIsLoading} />
-        <PlaceholderCard icon={Car} title="Traffic Summary" subtitle="Coming soon" />
+        <WeatherCard weather={weather} isLoading={isLoading} error={error} locationLabel={DEFAULT_LOCATION.label} onRetry={refresh} airQuality={airQuality} aqiLoading={aqiIsLoading} pollen={pollen} />
+        <NamedayCard nameday={nameday} isLoading={namedayLoading} />
+        <UpsellCard />
+        <AdPlaceholder variant="banner" />
       </View>
     </ScreenLayout>
   );

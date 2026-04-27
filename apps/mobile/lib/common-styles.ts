@@ -5,7 +5,6 @@ import { theme } from './theme';
 export const commonStyles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: theme.colors.background,
   },
   screenPadding: {
     paddingHorizontal: theme.spacing.xl,

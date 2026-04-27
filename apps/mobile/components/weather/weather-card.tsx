@@ -1,44 +1,47 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import type { Icon } from '@tabler/icons-react-native';
 import {
-  type LucideIcon,
-  Cloud,
-  CloudDrizzle,
-  CloudFog,
-  CloudLightning,
-  CloudRain,
-  Droplets,
-  Eye,
-  Haze,
-  Snowflake,
-  Sun,
-  Thermometer,
-  Wind,
-} from 'lucide-react-native';
+  IconCloud,
+  IconCloudFog,
+  IconCloudRain,
+  IconCloudStorm,
+  IconDroplet,
+  IconEye,
+  IconMist,
+  IconSnowflake,
+  IconSun,
+  IconTemperature,
+  IconWind,
+} from '@tabler/icons-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // Use subpath imports to avoid barrel export pulling in h3-js (Hermes incompatible)
+import type { PollenResponse } from '@notifio/api-client';
 import type { AirQualityData, WeatherData } from '@notifio/shared/types';
 import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared/weather';
 
 import { AqiIndicator } from './aqi-indicator';
+import { PollenChip, PollenDetailPanel } from './pollen-indicator';
 import { commonStyles } from '../../lib/common-styles';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
-const WEATHER_ICON_MAP: Record<string, LucideIcon> = {
-  Sun,
-  Cloud,
-  CloudRain,
-  CloudDrizzle,
-  CloudLightning,
-  Snowflake,
-  CloudFog,
-  Haze,
-  Wind,
-  Thermometer,
+const WEATHER_ICON_MAP: Record<string, Icon> = {
+  Sun: IconSun,
+  Cloud: IconCloud,
+  CloudRain: IconCloudRain,
+  CloudDrizzle: IconCloudRain,
+  CloudLightning: IconCloudStorm,
+  Snowflake: IconSnowflake,
+  CloudFog: IconCloudFog,
+  Haze: IconMist,
+  Wind: IconWind,
+  Thermometer: IconTemperature,
 };
 
-function getWeatherIcon(iconName: string): LucideIcon {
-  return WEATHER_ICON_MAP[iconName] ?? Thermometer;
+function getWeatherIcon(iconName: string): Icon {
+  return WEATHER_ICON_MAP[iconName] ?? IconTemperature;
 }
 
 function withOpacity(hexColor: string, opacity: number): string {
@@ -48,6 +51,8 @@ function withOpacity(hexColor: string, opacity: number): string {
   return `${hexColor}${alpha}`;
 }
 
+type ExpandedChip = 'aqi' | 'pollen' | null;
+
 interface WeatherCardProps {
   weather: WeatherData | null;
   isLoading: boolean;
@@ -56,20 +61,27 @@ interface WeatherCardProps {
   onRetry?: () => void;
   airQuality?: AirQualityData | null;
   aqiLoading?: boolean;
+  pollen?: PollenResponse | null;
 }
 
-export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false }: WeatherCardProps) {
+export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false, pollen }: WeatherCardProps) {
+  const { colors } = useAppTheme();
+  const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
+
+  const toggleChip = (chip: ExpandedChip) =>
+    setExpandedChip((prev) => (prev === chip ? null : chip));
+
   if (isLoading) {
-    return <View style={styles.skeleton} />;
+    return <View style={[styles.skeleton, { backgroundColor: colors.surface }]} />;
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.severity.critical.bg }]}>
+        <Text style={[styles.errorText, { color: colors.severity.critical.text }]}>{error}</Text>
         {onRetry && (
-          <Pressable onPress={onRetry} style={styles.retryButton}>
-            <Text style={styles.retryText}>Try again</Text>
+          <Pressable onPress={onRetry} style={[styles.retryButton, { backgroundColor: colors.severity.critical.border }]}>
+            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>Try again</Text>
           </Pressable>
         )}
       </View>
@@ -112,26 +124,41 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
 
       <View style={styles.detailsRow}>
         <View style={commonStyles.row}>
-          <Wind size={14} color={color60} />
+          <IconWind size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>
             {formatWind(weather.windSpeed, weather.windDirection)}
           </Text>
         </View>
         <View style={commonStyles.row}>
-          <Droplets size={14} color={color60} />
+          <IconDroplet size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
         </View>
         <View style={commonStyles.row}>
-          <Eye size={14} color={color60} />
+          <IconEye size={14} color={color60} />
           <Text style={[styles.detailText, { color: color60 }]}>
             {formatVisibility(weather.visibility)}
           </Text>
         </View>
       </View>
 
-      {(airQuality || aqiLoading) && (
+      {(airQuality || aqiLoading || pollen) && (
         <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <AqiIndicator airQuality={airQuality ?? null} isLoading={aqiLoading} textColor={style.textColor} />
+          <View style={styles.chipRow}>
+            {(airQuality || aqiLoading) && (
+              <AqiIndicator airQuality={airQuality ?? null} isLoading={aqiLoading} textColor={style.textColor} />
+            )}
+            {pollen && (
+              <PollenChip
+                pollen={pollen}
+                isExpanded={expandedChip === 'pollen'}
+                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                onToggle={() => toggleChip('pollen')}
+              />
+            )}
+          </View>
+          {expandedChip === 'pollen' && pollen && (
+            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+          )}
         </View>
       )}
 
@@ -146,12 +173,10 @@ const styles = StyleSheet.create({
   skeleton: {
     height: 200,
     borderRadius: theme.radius.xl,
-    backgroundColor: theme.colors.surface,
   },
   errorContainer: {
     height: 200,
     borderRadius: theme.radius.xl,
-    backgroundColor: theme.colors.severity.critical.bg,
     alignItems: 'center',
     justifyContent: 'center',
     gap: theme.spacing.md,
@@ -159,18 +184,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.severity.critical.text,
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: theme.colors.severity.critical.border,
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.md,
   },
   retryText: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.severity.critical.text,
     ...theme.font.medium,
   },
   gradient: {
@@ -208,6 +230,12 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
     paddingTop: theme.spacing.md,
     borderTopWidth: 1,
+    gap: theme.spacing.sm,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
   },
   updatedAt: {
     fontSize: theme.fontSize.xs,

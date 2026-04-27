@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { WeatherWarning, WeatherWarningSeverity } from '@notifio/api-client';
+import { sharedColors } from '@notifio/ui';
 
 import { theme } from '../../lib/theme';
 
@@ -15,7 +16,7 @@ const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
 };
 
 const SEVERITY_GRADIENTS: Record<WeatherWarningSeverity, [string, string]> = {
-  red: ['#DC2626', '#EF4444'],
+  red: ['#E5352B', sharedColors.danger],
   orange: ['#EA580C', '#F97316'],
   yellow: ['#D97706', '#F59E0B'],
 };
@@ -39,7 +40,7 @@ interface WeatherWarningsBannerProps {
 }
 
 export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) {
-  
+
 
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);

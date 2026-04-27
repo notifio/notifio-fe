@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '../hooks/use-auth';
+import { useGeolocationTracker } from '../hooks/use-geolocation-tracker';
 import { api } from '../lib/api';
 import {
   autoSaveLocationIfNeeded,
@@ -35,6 +36,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [isRegistered, setIsRegistered] = useState(false);
   const isAuthenticated = !!session;
   const prevAuthRef = useRef(isAuthenticated);
+
+  // Track GPS in foreground when device is registered
+  useGeolocationTracker(isRegistered);
 
   // Configure how foreground notifications are displayed
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface PrimaryButtonProps {
   title: string;
@@ -15,6 +16,7 @@ export function PrimaryButton({
   variant = 'primary',
   disabled = false,
 }: PrimaryButtonProps) {
+  const { colors } = useAppTheme();
   const isPrimary = variant === 'primary';
 
   return (
@@ -23,12 +25,12 @@ export function PrimaryButton({
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
-        isPrimary ? styles.primary : styles.ghost,
+        isPrimary ? { backgroundColor: colors.primary } : styles.ghost,
         disabled && styles.disabled,
         pressed && !disabled && styles.pressed,
       ]}
     >
-      <Text style={[styles.text, isPrimary ? styles.textPrimary : styles.textGhost]}>
+      <Text style={[styles.text, { color: isPrimary ? colors.textInverse : colors.textMuted }]}>
         {title}
       </Text>
     </Pressable>
@@ -42,9 +44,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.xl,
     paddingVertical: theme.spacing.lg,
   },
-  primary: {
-    backgroundColor: theme.colors.primary,
-  },
   ghost: {
     backgroundColor: 'transparent',
   },
@@ -57,11 +56,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: theme.fontSize.md,
     ...theme.font.semibold,
-  },
-  textPrimary: {
-    color: theme.colors.textInverse,
-  },
-  textGhost: {
-    color: theme.colors.textMuted,
   },
 });

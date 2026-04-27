@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { commonStyles } from '../../lib/common-styles';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface ScreenLayoutProps {
   children: React.ReactNode;
@@ -13,8 +14,10 @@ interface ScreenLayoutProps {
 }
 
 export function ScreenLayout({ children, style, scrollable = false, header }: ScreenLayoutProps) {
+  const { colors } = useAppTheme();
+
   return (
-    <SafeAreaView style={[commonStyles.screen, style]}>
+    <SafeAreaView style={[commonStyles.screen, { backgroundColor: colors.background }, style]}>
       {header}
       {scrollable ? (
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>

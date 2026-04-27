@@ -3,12 +3,16 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
+import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { AuthProvider } from '../providers/auth-provider';
+import { ConsentProvider } from '../providers/consent-provider';
 import { NotificationProvider } from '../providers/notification-provider';
 import { OnboardingProvider } from '../providers/onboarding-provider';
+import { ThemeProvider, useIsDark } from '../providers/theme-provider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,21 +50,33 @@ function RootNavigator() {
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="onboarding" />
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen name="events" />
     </Stack>
   );
 }
 
+function DynamicStatusBar() {
+  const isDark = useIsDark();
+  return <StatusBar style={isDark ? 'light' : 'dark'} />;
+}
+
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <OnboardingProvider>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </SafeAreaProvider>
-        </OnboardingProvider>
-      </NotificationProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ConsentProvider>
+            <NotificationProvider>
+              <OnboardingProvider>
+                <DynamicStatusBar />
+                <RootNavigator />
+              </OnboardingProvider>
+            </NotificationProvider>
+          </ConsentProvider>
+        </AuthProvider>
+        <Toast config={toastConfig} />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
