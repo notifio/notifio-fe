@@ -123,5 +123,239 @@
     "active": "Aktívne",
     "resolved": "Vyriešené",
     "noNotifications": "Zatiaľ žiadne notifikácie"
+  },
+  "toast": {
+    "rateLimitTitle": "Príliš veľa požiadaviek",
+    "rateLimitMessage": "Počkajte {{seconds}} sekúnd a skúste znova",
+    "rateLimitMessageGeneric": "Počkajte chvíľu a skúste znova"
+  },
+  "banners": {
+    "enableBoth": "Zapnite notifikácie a polohu pre najlepší zážitok",
+    "enablePush": "Zapnite notifikácie pre príjem upozornení",
+    "enableLocation": "Zapnite polohu pre lokálne upozornenia",
+    "enable": "Zapnúť",
+    "deletionCountdown": "Váš účet bude vymazaný o {{time}}",
+    "cancelDeletion": "Zrušiť vymazanie"
+  },
+  "consent": {
+    "modalTitle": "Nastavenia súkromia",
+    "modalDescription": "Vyberte, ktoré spracovanie údajov povolíte. Kedykoľvek to môžete zmeniť v Nastaveniach.",
+    "saveButton": "Uložiť preferencie",
+    "submitting": "Ukladám...",
+    "required": "Povinné",
+    "success": "Preferencie súhlasov uložené",
+    "error": "Nepodarilo sa uložiť preferencie súhlasov",
+    "settingsTitle": "Súkromie",
+    "settingsDescription": "Spravujte súhlasy so spracovaním údajov",
+    "categories": {
+      "location_tracking": {
+        "name": "Poloha",
+        "desc": "Zdieľajte GPS polohu pre lokálne upozornenia"
+      },
+      "push_notifications": {
+        "name": "Push notifikácie",
+        "desc": "Prijímajte upozornenia v reálnom čase"
+      },
+      "analytics": {
+        "name": "Analytika",
+        "desc": "Pomôžte nám vylepšiť aplikáciu"
+      },
+      "personalization": {
+        "name": "Personalizácia",
+        "desc": "Prispôsobte obsah vašim preferenciám"
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Prijímajte propagačný obsah"
+      },
+      "data_sharing": {
+        "name": "Zdieľanie údajov",
+        "desc": "Zdieľajte anonymizované údaje s partnermi"
+      }
+    }
+  },
+  "deletion": {
+    "title": "Vymazať účet",
+    "warning": "Váš účet a všetky údaje budú natrvalo vymazané",
+    "graceperiod": "Máte 24 hodín na zrušenie po požiadaní o vymazanie.",
+    "whatDeleted": "Toto natrvalo vymaže:",
+    "items": "Váš profil, lokácie, nastavenia notifikácií, históriu upozornení a všetky osobné údaje.",
+    "confirmLabel": "Napíšte DELETE pre potvrdenie",
+    "confirmPlaceholder": "DELETE",
+    "deleteButton": "Vymazať môj účet",
+    "deleting": "Plánujem vymazanie...",
+    "scheduled": "Vymazanie naplánované",
+    "scheduledMessage": "Váš účet bude vymazaný o 24 hodín. Kedykoľvek to môžete zrušiť z banneru na vrchu aplikácie.",
+    "error": "Nepodarilo sa spracovať požiadavku"
+  },
+  "dataExport": {
+    "title": "Exportovať moje údaje",
+    "description": "Požiadajte o kópiu všetkých vašich osobných údajov. Pripravíme stiahnuteľný archív.",
+    "requestButton": "Požiadať o export",
+    "preparing": "Pripravujeme vaše údaje...",
+    "preparingMessage": "Môže to trvať niekoľko minút.",
+    "complete": "Vaše údaje sú pripravené",
+    "downloadButton": "Stiahnuť",
+    "timeout": "Export trvá dlhšie ako sa očakávalo. Skúste to prosím neskôr.",
+    "error": "Nepodarilo sa vytvoriť export"
+  },
+  "locations": {
+    "title": "Lokácie",
+    "count": "{{current}} z {{max}} lokácií",
+    "addLocation": "Pridať lokáciu",
+    "editLocation": "Upraviť lokáciu",
+    "deleteLocation": "Vymazať",
+    "deleteConfirm": "Naozaj chcete vymazať túto lokáciu?",
+    "deleteConfirmTitle": "Vymazať lokáciu",
+    "emptyTitle": "Žiadne uložené lokácie",
+    "emptyMessage": "Pridajte lokáciu pre príjem lokálnych upozornení",
+    "limitReached": "Limit lokácií dosiahnutý. Upgradnite pre viac.",
+    "labelPlaceholder": "Vlastný názov (napr. Mamkin dom)",
+    "useCurrentLocation": "Použiť aktuálnu polohu",
+    "save": "Uložiť lokáciu",
+    "saving": "Ukladám...",
+    "saved": "Lokácia uložená",
+    "updated": "Lokácia aktualizovaná",
+    "deleted": "Lokácia vymazaná",
+    "error": "Nepodarilo sa uložiť lokáciu"
+  },
+  "notificationPreferences": {
+    "title": "Nastavenia notifikácií",
+    "saveChanges": "Uložiť zmeny",
+    "saving": "Ukladám...",
+    "saved": "Preferencie uložené",
+    "error": "Nepodarilo sa uložiť preferencie"
+  },
+  "eventDetail": {
+    "title": "Detail udalosti",
+    "status": {
+      "active": "Aktívna",
+      "resolved": "Vyriešená"
+    },
+    "details": {
+      "location": "Poloha",
+      "radius": "Polomer",
+      "reportedAt": "Nahlásená",
+      "expiresAt": "Vyprší",
+      "resolvedAt": "Vyriešená"
+    },
+    "credibility": {
+      "title": "Dôveryhodnosť"
+    },
+    "vote": {
+      "confirm": "Potvrdiť",
+      "deny": "Zamietnuť",
+      "voted": "Hlas zaznamenaný",
+      "alreadyVoted": "Už ste hlasovali",
+      "error": "Nepodarilo sa hlasovať"
+    },
+    "owner": {
+      "resolve": "Označiť ako vyriešenú",
+      "resolveConfirm": "Označiť túto udalosť ako vyriešenú?",
+      "resolved": "Udalosť vyriešená",
+      "delete": "Vymazať udalosť",
+      "deleteConfirm": "Natrvalo vymazať túto udalosť?",
+      "deleted": "Udalosť vymazaná",
+      "error": "Nepodarilo sa aktualizovať udalosť"
+    }
+  },
+  "eventReport": {
+    "title": "Nahlásiť udalosť",
+    "selectCategory": "Vyberte kategóriu",
+    "location": "Poloha udalosti",
+    "radius": "Ovplyvnený polomer",
+    "submit": "Nahlásiť udalosť",
+    "submitting": "Nahlasovanie...",
+    "success": "Udalosť úspešne nahlásená",
+    "error": "Nepodarilo sa nahlásiť udalosť"
+  },
+  "digest": {
+    "title": "Súhrn notifikácií",
+    "description": "Vyberte, ako chcete dostávať súhrny notifikácií",
+    "realtime": "V reálnom čase",
+    "realtimeDesc": "Prijímajte notifikácie okamžite",
+    "morning": "Ranný súhrn",
+    "morningDesc": "Denný súhrn každé ráno",
+    "evening": "Večerný súhrn",
+    "eveningDesc": "Denný súhrn každý večer",
+    "both": "Obidva (ráno + večer)",
+    "bothDesc": "Súhrny dvakrát denne",
+    "saved": "Režim súhrnu aktualizovaný",
+    "error": "Nepodarilo sa aktualizovať režim súhrnu"
+  },
+  "nameday": {
+    "today": "Dnes",
+    "tomorrow": "Zajtra"
+  },
+  "ads": {
+    "sponsored": "Sponzorované",
+    "adFree": "Bez reklám"
+  },
+  "upsell": {
+    "upgrade": "Upgradnúť",
+    "dismiss": "Zavrieť"
+  },
+  "reminders": {
+    "title": "Pripomienky",
+    "tabs": {
+      "history": "História",
+      "reminders": "Pripomienky"
+    },
+    "empty": "Zatiaľ žiadne pripomienky",
+    "emptyMessage": "Vytvorte pripomienky pre dôležité udalosti",
+    "create": "Vytvoriť pripomienku",
+    "edit": "Upraviť pripomienku",
+    "titleLabel": "Názov",
+    "titlePlaceholder": "Názov pripomienky",
+    "descriptionLabel": "Popis (voliteľný)",
+    "descriptionPlaceholder": "Pridať detaily...",
+    "dateLabel": "Dátum a čas",
+    "recurrence": "Opakovanie",
+    "recurrenceOptions": {
+      "ONCE": "Jednorazovo",
+      "DAILY": "Denne",
+      "WEEKLY": "Týždenne",
+      "MONTHLY": "Mesačne"
+    },
+    "save": "Uložiť",
+    "saving": "Ukladám...",
+    "saved": "Pripomienka uložená",
+    "delete": "Vymazať",
+    "deleteConfirm": "Vymazať túto pripomienku?",
+    "deleted": "Pripomienka vymazaná",
+    "error": "Nepodarilo sa uložiť pripomienku"
+  },
+  "sources": {
+    "title": "Zdroje dát",
+    "accuracy": "Presnosť",
+    "timeliness": "Včasnosť",
+    "ratings": "{{count}} hodnotení",
+    "noRatings": "Zatiaľ žiadne hodnotenia",
+    "comment": "Komentár (voliteľný)",
+    "commentPlaceholder": "Podeľte sa o svoju skúsenosť...",
+    "save": "Uložiť hodnotenie",
+    "saving": "Ukladám...",
+    "saved": "Hodnotenie uložené",
+    "deleteRating": "Vymazať moje hodnotenie",
+    "deleteConfirm": "Odstrániť vaše hodnotenie pre tento zdroj?",
+    "deleted": "Hodnotenie odstránené",
+    "error": "Nepodarilo sa uložiť hodnotenie"
+  },
+  "mapFilters": {
+    "title": "Filtre",
+    "close": "Zavrieť",
+    "electricity": "Elektrina",
+    "water": "Voda",
+    "gas": "Plyn",
+    "heat": "Teplo",
+    "traffic": "Doprava",
+    "events": "Udalosti",
+    "accident": "Nehody",
+    "construction": "Výstavba",
+    "road_closure": "Uzávery",
+    "congestion": "Kolóny",
+    "flooding": "Záplavy",
+    "event": "Udalosti",
+    "other": "Iné"
   }
 }

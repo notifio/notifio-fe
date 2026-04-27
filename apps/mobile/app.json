@@ -3,24 +3,47 @@
     "name": "Notifio",
     "slug": "notifio",
     "scheme": "notifio",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.notifio.app",
+      "buildNumber": "1",
       "googleServicesFile": "./GoogleService-Info.plist",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "entitlements": {
-        "aps-environment": "development"
+        "aps-environment": "production"
       },
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSLocationWhenInUseUsageDescription": "Notifio uses your location to send you relevant local alerts for weather, traffic, and outages near you."
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+          }
+        ]
       }
     },
     "android": {
@@ -44,7 +67,10 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBMessaging"
+            ]
           }
         }
       ],
@@ -58,11 +84,19 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#1B7FE3"
+          "color": "#FF7A2F"
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/messaging"
-    ]
+      "@react-native-firebase/messaging",
+      "@react-native-community/datetimepicker"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a79da366-6f73-46ec-913c-5961c73cffd0"
+      }
+    },
+    "owner": "filipmichalec"
   }
 }

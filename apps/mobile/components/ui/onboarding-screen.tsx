@@ -1,10 +1,10 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from './icon';
+import { Icon, type TablerIcon } from './icon';
 import { PrimaryButton } from './primary-button';
 import { ScreenLayout } from './screen-layout';
 import { theme } from '../../lib/theme';
+import { useAppTheme } from '../../providers/theme-provider';
 
 interface ActionConfig {
   title: string;
@@ -12,7 +12,7 @@ interface ActionConfig {
 }
 
 interface OnboardingScreenProps {
-  icon: LucideIcon;
+  icon: TablerIcon;
   title: string;
   description: string;
   primaryAction: ActionConfig;
@@ -28,14 +28,16 @@ export function OnboardingScreen({
   secondaryAction,
   children,
 }: OnboardingScreenProps) {
+  const { colors } = useAppTheme();
+
   return (
     <ScreenLayout>
       <View style={styles.content}>
-        <View style={styles.iconCircle}>
-          <Icon icon={icon} size={32} color={theme.colors.primary} />
+        <View style={[styles.iconCircle, { backgroundColor: colors.surface }]}>
+          <Icon icon={icon} size={32} color={colors.primary} />
         </View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+        <Text style={[styles.description, { color: colors.textMuted }]}>{description}</Text>
         {children && <View style={styles.childrenContainer}>{children}</View>}
       </View>
       <View style={styles.actions}>
@@ -62,7 +64,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing['2xl'],
     textAlign: 'center',
     fontSize: theme.fontSize['2xl'],
-    color: theme.colors.text,
     ...theme.font.bold,
   },
   description: {
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: theme.fontSize.md,
     lineHeight: 24,
-    color: theme.colors.textMuted,
   },
   childrenContainer: {
     marginTop: theme.spacing['2xl'],
