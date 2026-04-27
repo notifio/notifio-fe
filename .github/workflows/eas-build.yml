@@ -1,0 +1,88 @@
+# Required secrets:
+#   EXPO_TOKEN            — Expo robot access token (https://expo.dev → settings → access tokens)
+#   SHARED_PACKAGES_TOKEN — GitHub PAT with read:packages for @notifio/shared
+name: EAS Build (Mobile)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/ui/**'
+      - 'packages/api-client/**'
+      - 'package-lock.json'
+
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        default: 'ios'
+        type: choice
+        options:
+          - ios
+          - android
+          - all
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+concurrency:
+  group: eas-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Configure GitHub Packages
+        run: |
+          echo "@notifio:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.SHARED_PACKAGES_TOKEN }}" >> .npmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck + Lint (mobile)
+        run: npx turbo run typecheck lint --filter=@notifio/mobile
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS
+        if: github.event_name == 'push' || github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all'
+        working-directory: apps/mobile
+        run: eas build --profile ${{ github.event.inputs.profile || 'production' }} --platform ios --non-interactive
+
+      - name: Build Android
+        if: github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all'
+        working-directory: apps/mobile
+        run: eas build --profile ${{ github.event.inputs.profile || 'production' }} --platform android --non-interactive
+
+      - name: Submit iOS to TestFlight
+        if: (github.event_name == 'push' || github.event.inputs.profile == 'production') && (github.event.inputs.platform != 'android')
+        working-directory: apps/mobile
+        run: eas submit --profile production --platform ios --non-interactive
+        continue-on-error: true
