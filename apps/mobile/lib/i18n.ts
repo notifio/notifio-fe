@@ -16,12 +16,14 @@ import {
 // Mobile-only locale files (app-specific copy: tabs, onboarding,
 // permissions, screens, etc.). cs/hu/de/uk start as en copies and are
 // translated manually over time; the `fallbackLng` chain below catches
-// any keys that drift out of parity.
-import mobileSk from '../locales/sk.json';
-import mobileEn from '../locales/en.json';
+// any keys that drift out of parity. Imports kept alphabetical to
+// satisfy `import/order`; the resource map below restores logical
+// locale ordering.
 import mobileCs from '../locales/cs.json';
-import mobileHu from '../locales/hu.json';
 import mobileDe from '../locales/de.json';
+import mobileEn from '../locales/en.json';
+import mobileHu from '../locales/hu.json';
+import mobileSk from '../locales/sk.json';
 import mobileUk from '../locales/uk.json';
 
 type LocaleMap = Record<string, unknown>;
