@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "658153554526",
+    "project_id": "notifio-490413",
+    "storage_bucket": "notifio-490413.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658153554526:android:4a3ab50858a7e954f3aacf",
+        "android_client_info": {
+          "package_name": "com.notifio.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658153554526-1ephstmo8u9aggc8b02puk2mgjj6h296.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCajjpA2ayd2uLHsOhnwh_WS0NOWRDE1tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658153554526-1ephstmo8u9aggc8b02puk2mgjj6h296.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "658153554526-0vgga6v40ar5coqi1o1beg193k7tbcc3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.notifio.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
