@@ -4,9 +4,13 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useTransition } from "react";
 
+import { supportedLocales } from "@notifio/shared/i18n";
+
 import { cn } from "@/lib/utils";
 
-const LOCALES = ["sk", "en"] as const;
+// Source of truth for the locale list lives in @notifio/shared. Adding a
+// new language is a one-file change in the shared package.
+const LOCALES = supportedLocales;
 
 export function LanguageSwitcher() {
   const locale = useLocale();

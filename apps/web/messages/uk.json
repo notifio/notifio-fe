@@ -1,0 +1,505 @@
+{
+  "map": {
+    "loadingMapData": "Loading map data...",
+    "yourLocation": "Your location",
+    "scheduled": "Scheduled",
+    "active": "Active",
+    "defaultLocation": "Slovakia",
+    "eventUnavailable": "Event details not available",
+    "coversYourArea": "This event covers your area",
+    "closeOverlay": "Close"
+  },
+  "weather": {
+    "feelsLike": "Feels like",
+    "clearNight": "Clear night",
+    "cloudyNight": "Cloudy night",
+    "details": "Details",
+    "pollenLevel": "Pollen"
+  },
+  "aqi": {
+    "good": "Air quality is satisfactory.",
+    "fair": "Acceptable. Sensitive groups take care.",
+    "moderate": "Sensitive groups may experience irritation.",
+    "poor": "Everyone may experience health effects.",
+    "very_poor": "Health alert. Avoid outdoor activity."
+  },
+  "pollen": {
+    "high": "High pollen levels. Allergy sufferers limit outdoor exposure.",
+    "moderate": "Moderate pollen. Sensitive individuals may notice symptoms.",
+    "low": "Low pollen levels. Generally safe for allergy sufferers.",
+    "birch": "Birch",
+    "grass": "Grass",
+    "alder": "Alder",
+    "ragweed": "Ragweed",
+    "mugwort": "Mugwort",
+    "olive": "Olive"
+  },
+  "nameday": {
+    "label": "Today's nameday",
+    "tomorrow": "Tomorrow",
+    "noData": "No nameday data"
+  },
+  "weatherWarnings": {
+    "validUntil": "Valid until",
+    "moreWarnings": "more warnings"
+  },
+  "outages": {
+    "electricity": "Electricity",
+    "water": "Water",
+    "heat": "Heat",
+    "gas": "Gas"
+  },
+  "traffic": {
+    "title": "Traffic"
+  },
+  "mapFilters": {
+    "title": "Filters",
+    "accident": "Accidents",
+    "construction": "Construction",
+    "road_closure": "Closures",
+    "congestion": "Congestion",
+    "event": "Events",
+    "weather": "Weather",
+    "other": "Other",
+    "close": "Close"
+  },
+  "notifications": {
+    "title": "Notifications"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "tabs": {
+      "history": "History",
+      "reminders": "Reminders"
+    },
+    "filters": {
+      "all": "All",
+      "weather": "Weather",
+      "traffic": "Traffic",
+      "outages": "Outages",
+      "pollen": "Pollen",
+      "events": "Events"
+    },
+    "history": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "older": "Older",
+      "empty": "No notifications yet",
+      "markAllRead": "Mark all as read"
+    },
+    "reminders": {
+      "viewList": "List",
+      "viewCalendar": "Calendar",
+      "newReminder": "New reminder",
+      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
+      "enabled": "Active",
+      "disabled": "Paused",
+      "daily": "daily",
+      "weekly": "weekly",
+      "monthly": "monthly",
+      "once": "once"
+    }
+  },
+  "notificationType": {
+    "start": "Starting now",
+    "update": "Updated",
+    "expiry": "Ending soon",
+    "all_clear": "Resolved",
+    "forecast": "Forecast",
+    "reminder": "Still active"
+  },
+  "categoryBadge": {
+    "traffic": "Traffic",
+    "weather": "Weather",
+    "weather_warning": "Warning",
+    "outage_electric": "Outage",
+    "outage_water": "Outage",
+    "outage_heat": "Outage",
+    "outage_gas": "Outage",
+    "planned_events": "Event",
+    "name_day": "Nameday",
+    "pollen": "Pollen",
+    "air_quality": "Air quality"
+  },
+  "locationBanner": {
+    "bothOff": "Push notifications and location tracking are off.",
+    "pushOkGeoOff": "Location tracking is off — notifications use saved locations only.",
+    "pushOffGeoOk": "Push notifications are off — you won't receive alerts.",
+    "pushDenied": "Notifications are blocked in your browser. Click the lock icon to allow.",
+    "geoDenied": "Location access denied. Add locations manually in Settings."
+  },
+  "alerts": {
+    "all": "All",
+    "sent": "Sent",
+    "active": "Active",
+    "resolved": "Resolved",
+    "noNotifications": "No notifications yet",
+    "loadMore": "Load more"
+  },
+  "common": {
+    "retry": "Retry",
+    "loading": "Loading...",
+    "back": "Back"
+  },
+  "pushSetup": {
+    "unsupported": "Your browser does not support push notifications.",
+    "unconfigured": "Push notifications are not configured.",
+    "locationExplain": "To receive notifications about events in your area. Your browser will ask — click",
+    "locationDenied": "Location access is denied. You can add locations manually in the \"Saved Locations\" section below in Settings.",
+    "pushExplain": "To receive alerts even when the page is closed. Your browser will ask — click",
+    "pushDenied": "Notifications are blocked. Enable them in your browser settings (lock icon in the address bar).",
+    "denied": "Blocked",
+    "geoEnabled": "Location tracking is active — alerts are targeted to your area."
+  },
+  "categoryGroups": {
+    "weather": "Weather",
+    "traffic": "Traffic",
+    "outages": "Outages",
+    "events": "Events"
+  },
+  "profile": {
+    "title": "Profile",
+    "memberSince": "Member since {date}",
+    "manageBilling": "Manage billing",
+    "upgradePlan": "Upgrade",
+    "locations": {
+      "title": "Saved Locations",
+      "description": "Alerts are sent based on your saved locations",
+      "add": "Add location",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Remove this location?",
+      "name": "Location name",
+      "namePlaceholder": "e.g. Home, Work",
+      "useCurrentLocation": "Use current location",
+      "label": "Label",
+      "maxReached": "Location limit reached ({max} for your plan)",
+      "empty": "No saved locations. Add one to start receiving local alerts.",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "myEvents": {
+      "title": "My Reports",
+      "empty": "You haven't reported any events yet",
+      "resolved": "Resolved",
+      "active": "Active",
+      "resolve": "Mark resolved"
+    },
+    "account": {
+      "title": "Account",
+      "signOut": "Sign out",
+      "deleteAccount": "Delete account",
+      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
+      "deleteVerify": "Type DELETE to confirm"
+    },
+    "yourData": {
+      "title": "Your data",
+      "description": "Download a copy of all your Notifio data.",
+      "download": "Download my data",
+      "preparing": "Preparing export...",
+      "ready": "Your export is ready. The download link expires in 24 hours.",
+      "downloadZip": "Download ZIP",
+      "expiresIn": "Expires in {time}",
+      "failed": "Export failed. Please try again."
+    },
+    "deletion": {
+      "pending": "Deletion pending",
+      "description": "All data will be removed in {time}. Changed your mind?",
+      "cancel": "Cancel deletion",
+      "cancelled": "Deletion cancelled"
+    }
+  },
+  "nav": {
+    "signIn": "Sign in",
+    "dashboard": "Dashboard",
+    "map": "Map",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "profile": "Profile",
+    "pricing": "Pricing",
+    "reminders": "Reminders"
+  },
+  "membership": {
+    "pricing": "Pricing",
+    "currentPlan": "Current plan",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "features": "Features",
+    "popular": "Most popular",
+    "free": {
+      "name": "Free",
+      "description": "Get started with basic alerts"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "More locations and advanced features"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Full control over your notifications"
+    },
+    "checkout": {
+      "successTitle": "Welcome to {tier}!",
+      "successSubtitle": "Your membership is now active.",
+      "trialStarted": "Your 14-day free trial has started.",
+      "unlocked": "Now unlocked:",
+      "goToDashboard": "Go to dashboard",
+      "manageInSettings": "Manage your subscription in settings",
+      "processingTitle": "Your upgrade is being processed...",
+      "processingSubtitle": "Payment successful. This usually takes under a minute, but can sometimes take a few minutes.",
+      "refresh": "Refresh"
+    },
+    "active": "Active",
+    "checkoutError": "Could not start checkout. Please try again.",
+    "manage": "Manage subscription",
+    "cancelPlan": "Cancel subscription",
+    "cancelConfirm": "Are you sure? You'll lose access to {tier} features.",
+    "adFree": "Remove ads",
+    "settingsTitle": "Subscription",
+    "settingsDescription": "Manage your plan and billing",
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 saved location",
+          "Weather & air quality alerts",
+          "Traffic incidents",
+          "Utility outage alerts",
+          "Ad-supported"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 saved locations",
+          "All Free features",
+          "Ad-free experience",
+          "Priority notifications",
+          "Custom alert sounds"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Unlimited locations",
+          "All Plus features",
+          "Personal reminders",
+          "Custom weather thresholds",
+          "Source preference control",
+          "Priority support"
+        ]
+      }
+    }
+  },
+  "events": {
+    "reportButton": "Report",
+    "selectCategory": "What happened?",
+    "pinLocation": "Location",
+    "pickLocation": "Location (click map or drag pin)",
+    "radius": "Affected radius",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Event reported",
+    "myEvents": "My reports",
+    "resolve": "Resolve",
+    "credibility": "Credibility",
+    "votes": "{count} votes",
+    "validVotes": "{count} valid",
+    "invalidVotes": "{count} invalid",
+    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
+    "stillHappening": "Still happening?",
+    "confirm": "Confirm",
+    "deny": "Deny",
+    "yes": "Yes",
+    "no": "No",
+    "alreadyVoted": "You already voted",
+    "upgradeToVote": "Upgrade to vote",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this event? This cannot be undone.",
+    "deleted": "Event deleted",
+    "detail": {
+      "title": "Event detail",
+      "source": "Source",
+      "reported": "Reported",
+      "radius": "Radius",
+      "activeSince": "Active since",
+      "ends": "Ends",
+      "ongoing": "Ongoing",
+      "communityReport": "Community report",
+      "active": "Active",
+      "resolved": "Resolved",
+      "notFound": "Event not found",
+      "backToDashboard": "Back to dashboard"
+    },
+    "resolveFailed": "Failed to resolve event"
+  },
+  "errors": {
+    "rateLimited": "Too many requests. Try again in {seconds} seconds.",
+    "consentRequired": "Permission required. Check Privacy in Settings.",
+    "generic": "Something went wrong. Try again."
+  },
+  "sources": {
+    "title": "Data Sources",
+    "description": "Rate the accuracy and timeliness of our data sources",
+    "accuracy": "Accuracy",
+    "timeliness": "Timeliness",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Share your experience...",
+    "ratings": "{count} ratings",
+    "credibility": "Credibility",
+    "yourRating": "Your rating",
+    "notRated": "Not rated",
+    "save": "Save",
+    "remove": "Remove rating",
+    "noSources": "No sources available"
+  },
+  "reminders": {
+    "title": "My Reminders",
+    "empty": "No reminders yet. Create one to get push notifications at a specific time.",
+    "addButton": "New reminder",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Take medication",
+      "description": "Description (optional)",
+      "dateTime": "Date & Time",
+      "recurrence": "Repeat",
+      "once": "Once",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "weekDays": "Days of week",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit reminder",
+      "create": "New reminder"
+    },
+    "deleteConfirm": "Delete this reminder?",
+    "enabled": "Active",
+    "disabled": "Paused",
+    "nextTrigger": "Next: {time}"
+  },
+  "consent": {
+    "modalTitle": "Privacy Settings",
+    "modalDescription": "Choose which data processing you allow. You can change these anytime in Settings.",
+    "saveButton": "Save preferences",
+    "required": "Required",
+    "granted": "Allowed",
+    "revoked": "Denied",
+    "categories": {
+      "location_tracking": { "name": "Location", "desc": "Share your GPS location for local alerts" },
+      "push_notifications": { "name": "Push Notifications", "desc": "Receive real-time alerts" },
+      "analytics": { "name": "Analytics", "desc": "Help us improve the app" },
+      "personalization": { "name": "Personalization", "desc": "Tailor content to your preferences" },
+      "marketing": { "name": "Marketing", "desc": "Receive promotional content" },
+      "data_sharing": { "name": "Data Sharing", "desc": "Share anonymized data with partners" }
+    },
+    "settingsTitle": "Privacy",
+    "settingsDescription": "Manage your data processing consents"
+  },
+  "landing": {
+    "hero": {
+      "title": "Know what's happening around you",
+      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+    },
+    "features": {
+      "title": "Everything that matters, in one place",
+      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "weather": { "title": "Weather Warnings", "description": "Storms, heavy wind, frost and other meteorological warnings." },
+      "traffic": { "title": "Traffic Updates", "description": "Closures, accidents and congestion near you in real time." },
+      "airQuality": { "title": "Air Quality", "description": "Smog, particulates and allergens. Know when to stay indoors." },
+      "outages": { "title": "Utility Outages", "description": "Planned outages of electricity, water, gas and heat in your area." },
+      "location": { "title": "Location-Smart", "description": "Everything works automatically based on where you are right now." }
+    },
+    "howItWorks": {
+      "title": "Get started in 3 steps",
+      "subtitle": "No sign-up forms, no city selection.",
+      "step1": { "title": "Install the app", "description": "Download Notifio from the App Store or Google Play." },
+      "step2": { "title": "Allow your location", "description": "The app detects where you are and filters alerts for your area." },
+      "step3": { "title": "Get notified", "description": "Push notifications alert you about what's happening around you." }
+    },
+    "cta": {
+      "title": "Ready to stay informed?",
+      "subtitle": "Download Notifio and never be caught off guard again."
+    },
+    "download": {
+      "ios": "Download for iOS",
+      "android": "Download for Android"
+    },
+    "footer": {
+      "copyright": "© 2026 Notifio",
+      "privacy": "Privacy Policy",
+      "about": "About",
+      "contact": "Contact"
+    }
+  },
+  "setupPrompt": {
+    "title": "Get started with notifications",
+    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
+    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
+    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
+    "enablePush": "Enable notifications",
+    "addLocation": "Add a location",
+    "setup": "Set up",
+    "compactBoth": "Enable location & notifications to see alerts here",
+    "compactPushOnly": "Enable push notifications to see alerts here",
+    "compactGeoOnly": "Add a location to see alerts here"
+  },
+  "upsell": {
+    "upgrade": "Upgrade",
+    "reminder": {
+      "title": "Set personal reminders",
+      "description": "Pro users can create custom alerts for events, deadlines, and more."
+    },
+    "locations": {
+      "title": "Monitor more locations",
+      "description": "Plus users can track up to 3 locations. Pro gets 10."
+    },
+    "pollen": {
+      "title": "Advanced pollen forecasts",
+      "description": "Plus users get detailed pollen breakdowns and daily forecasts."
+    }
+  },
+  "digest": {
+    "title": "Notification delivery",
+    "description": "When do you want to receive routine notifications?",
+    "realTime": "Real-time",
+    "realTimeDesc": "Every event as an immediate push notification",
+    "morning": "Morning summary",
+    "morningDesc": "Overnight events delivered at 7:00",
+    "evening": "Evening summary",
+    "eveningDesc": "Daytime events delivered at 18:00",
+    "both": "Both summaries",
+    "bothDesc": "Morning and evening — no routine pushes in between",
+    "criticalNote": "Critical events (accidents, major outages, severe weather) are always delivered immediately, regardless of this setting.",
+    "dashboardBanner": "Morning summary active — routine notifications at 7:00",
+    "dashboardBannerEvening": "Evening summary active — routine notifications at 18:00",
+    "dashboardBannerBoth": "Digest active — summaries at 7:00 and 18:00",
+    "change": "Change"
+  },
+  "settings": {
+    "sourcePreferences": "Preferred sources",
+    "weatherThresholds": "Weather thresholds"
+  },
+  "sourcePreferences": {
+    "title": "Preferred sources",
+    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
+    "onlySource": "Only available source",
+    "auto": "Auto (by community rating)",
+    "saved": "Saved",
+    "dragToReorder": "Drag to reorder priority"
+  },
+  "weatherThresholds": {
+    "title": "Weather thresholds",
+    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
+    "addThreshold": "Add threshold",
+    "selectType": "Select threshold type",
+    "saved": "Saved",
+    "tempHigh": "High temperature",
+    "tempLow": "Low temperature",
+    "windSpeed": "Wind speed",
+    "humidity": "Humidity",
+    "pressure": "Atmospheric pressure",
+    "deleteConfirm": "Remove this threshold?"
+  }
+}

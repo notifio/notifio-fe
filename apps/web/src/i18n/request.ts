@@ -1,9 +1,17 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
-import { getSharedMessages, defaultLocale, type SupportedLocale } from "@notifio/shared/i18n";
+import {
+  getSharedMessages,
+  defaultLocale,
+  supportedLocales,
+  type SupportedLocale,
+} from "@notifio/shared/i18n";
 
-const webLocales = ["sk", "en"] as const;
+// Mirror the shared `supportedLocales` so a new locale only needs to be
+// added once (in the shared bundle). Prior to PR3 this was hardcoded to
+// `['sk', 'en']`; now we accept all six.
+const webLocales = supportedLocales;
 
 function deepMerge(
   target: Record<string, unknown>,
@@ -34,17 +42,25 @@ export default getRequestConfig(async () => {
   const cookieLocale = store.get("locale")?.value;
 
   const locale: SupportedLocale =
-    cookieLocale && webLocales.includes(cookieLocale as (typeof webLocales)[number])
+    cookieLocale && webLocales.includes(cookieLocale as SupportedLocale)
       ? (cookieLocale as SupportedLocale)
       : defaultLocale;
 
+  // Shared bundle has full sk/en + en-fallback for cs/hu/de/uk.
   const shared = getSharedMessages(locale);
 
+  // Web-local messages: app-specific copy (landing, profile, events, …)
+  // not part of the shared cross-app set. cs/hu/de/uk fall back to en
+  // until manually translated; en falls back to sk as a last resort.
   let web: Record<string, unknown> = {};
-  try {
-    web = (await import(`../../messages/${locale}.json`)).default;
-  } catch {
-    web = (await import(`../../messages/${defaultLocale}.json`)).default;
+  const webFallbackChain: string[] = [locale, "en", "sk"];
+  for (const candidate of webFallbackChain) {
+    try {
+      web = (await import(`../../messages/${candidate}.json`)).default;
+      break;
+    } catch {
+      // try next candidate
+    }
   }
 
   const messages = deepMerge(shared, web);
