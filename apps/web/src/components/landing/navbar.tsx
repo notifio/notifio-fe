@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Navbar() {
@@ -12,8 +13,9 @@ export function Navbar() {
 
   return (
     <nav className="relative z-10 flex items-center justify-between">
-      <Link href="/" className="text-lg font-bold text-white">
-        Notifio
+      <Link href="/" className="flex items-center gap-2 text-lg font-bold text-white">
+        <Logo size={32} flat title="" />
+        <span>Notifio</span>
       </Link>
       <div className="flex items-center gap-2">
         <LanguageSwitcher />
