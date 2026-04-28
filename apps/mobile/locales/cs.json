@@ -1,0 +1,361 @@
+{
+  "tabs": {
+    "overview": "Dashboard",
+    "alerts": "Notifications",
+    "map": "Map",
+    "profile": "Profile"
+  },
+  "screens": {
+    "overview": { "title": "Overview", "subtitle": "Your area" },
+    "alerts": { "title": "Alerts", "subtitle": "For your area" },
+    "settings": { "title": "Settings" },
+    "profile": { "title": "Profile" }
+  },
+  "alertTypes": {
+    "weather": "Weather Warnings",
+    "traffic": "Traffic Updates",
+    "airQuality": "Air Quality",
+    "utilityOutage": "Utility Outages",
+    "event": "Events"
+  },
+  "common": {
+    "tryAgain": "Try again",
+    "comingSoon": "Coming soon",
+    "ok": "OK",
+    "units": "Units"
+  },
+  "categoryGroups": {
+    "weather": "Weather",
+    "traffic": "Traffic",
+    "outages": "Outages",
+    "events": "Events"
+  },
+  "profile": {
+    "free": "Free",
+    "notificationPreferences": "Notification preferences",
+    "language": "Language",
+    "languageSk": "Slovenčina",
+    "languageEn": "English",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "signOut": "Sign out",
+    "version": "Version"
+  },
+  "permissions": {
+    "pushNotifications": "Push notifications",
+    "locationTracking": "Location tracking",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "denied": "Denied",
+    "pushDenied": "Notifications are blocked. Open Settings to enable.",
+    "locationDenied": "Location access denied. Open Settings to enable.",
+    "openSettings": "Open Settings"
+  },
+  "weatherCard": {
+    "feelsLike": "Feels like",
+    "clearNight": "Clear night",
+    "cloudyNight": "Cloudy night",
+    "trafficSummary": "Traffic Summary"
+  },
+  "settingsOptions": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "metric": "Metric (°C, km/h)",
+    "imperial": "Imperial (°F, mph)"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to Notifio",
+    "welcomeDescription": "Real-time alerts for your area — weather, traffic, outages, and more.",
+    "getStarted": "Get Started",
+    "existingAccount": "I already have an account",
+    "welcomeBack": "Welcome back",
+    "signInDescription": "Sign in to your Notifio account to continue.",
+    "signInButton": "Sign In",
+    "signInError": "Sign In Error",
+    "goBack": "Go back"
+  },
+  "onboarding": {
+    "locationTitle": "Your location",
+    "locationDescription": "We use your location to send you relevant alerts about weather, traffic, and outages near you.",
+    "allowLocation": "Allow Location",
+    "skipForNow": "Skip for now",
+    "notificationsTitle": "What matters to you?",
+    "notificationsDescription": "Choose the types of alerts you want to receive.",
+    "enableNotifications": "Enable Notifications",
+    "notificationsDisabledTitle": "Notifications Disabled",
+    "notificationsDisabledMessage": "You can enable notifications later in Settings."
+  },
+  "aqi": {
+    "good": "Air quality is satisfactory.",
+    "fair": "Acceptable. Sensitive groups take care.",
+    "moderate": "Sensitive groups may experience irritation.",
+    "poor": "Everyone may experience health effects.",
+    "very_poor": "Health alert. Avoid outdoor activity."
+  },
+  "pollen": {
+    "high": "High pollen levels. Limit outdoor exposure.",
+    "moderate": "Moderate pollen. Sensitive individuals may notice symptoms.",
+    "low": "Low pollen levels. Generally safe.",
+    "birch": "Birch",
+    "grass": "Grass",
+    "alder": "Alder",
+    "ragweed": "Ragweed"
+  },
+  "weatherWarnings": {
+    "validUntil": "Valid until",
+    "moreWarnings": "warnings"
+  },
+  "events": {
+    "coversYourArea": "This event covers your area.",
+    "unavailable": "Event details not available."
+  },
+  "notificationType": {
+    "start": "Starting now",
+    "update": "Updated",
+    "expiry": "Ending soon",
+    "all_clear": "Resolved",
+    "forecast": "Forecast",
+    "reminder": "Still active"
+  },
+  "alertFilters": {
+    "all": "All",
+    "active": "Active",
+    "resolved": "Resolved",
+    "noNotifications": "No notifications yet"
+  },
+  "toast": {
+    "rateLimitTitle": "Too many requests",
+    "rateLimitMessage": "Please wait {{seconds}} seconds and try again",
+    "rateLimitMessageGeneric": "Please wait a moment and try again"
+  },
+  "banners": {
+    "enableBoth": "Enable notifications and location for the best experience",
+    "enablePush": "Enable notifications to receive alerts",
+    "enableLocation": "Enable location for local alerts",
+    "enable": "Enable",
+    "deletionCountdown": "Your account will be deleted in {{time}}",
+    "cancelDeletion": "Cancel deletion"
+  },
+  "consent": {
+    "modalTitle": "Privacy Settings",
+    "modalDescription": "Choose which data processing you allow. You can change these anytime in Settings.",
+    "saveButton": "Save preferences",
+    "submitting": "Saving...",
+    "required": "Required",
+    "success": "Consent preferences saved",
+    "error": "Failed to save consent preferences",
+    "settingsTitle": "Privacy",
+    "settingsDescription": "Manage your data processing consents",
+    "categories": {
+      "location_tracking": {
+        "name": "Location",
+        "desc": "Share your GPS location for local alerts"
+      },
+      "push_notifications": {
+        "name": "Push Notifications",
+        "desc": "Receive real-time alerts"
+      },
+      "analytics": {
+        "name": "Analytics",
+        "desc": "Help us improve the app"
+      },
+      "personalization": {
+        "name": "Personalization",
+        "desc": "Tailor content to your preferences"
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Receive promotional content"
+      },
+      "data_sharing": {
+        "name": "Data Sharing",
+        "desc": "Share anonymized data with partners"
+      }
+    }
+  },
+  "deletion": {
+    "title": "Delete Account",
+    "warning": "Your account and all data will be permanently deleted",
+    "graceperiod": "You have 24 hours to cancel after requesting deletion.",
+    "whatDeleted": "This will permanently delete:",
+    "items": "Your profile, locations, notification preferences, alert history, and all personal data.",
+    "confirmLabel": "Type DELETE to confirm",
+    "confirmPlaceholder": "DELETE",
+    "deleteButton": "Delete my account",
+    "deleting": "Scheduling deletion...",
+    "scheduled": "Deletion scheduled",
+    "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
+    "error": "Failed to process request"
+  },
+  "dataExport": {
+    "title": "Export My Data",
+    "description": "Request a copy of all your personal data. We'll prepare a downloadable archive.",
+    "requestButton": "Request export",
+    "preparing": "Preparing your data...",
+    "preparingMessage": "This may take a few minutes.",
+    "complete": "Your data is ready",
+    "downloadButton": "Download",
+    "timeout": "Export is taking longer than expected. Please try again later.",
+    "error": "Failed to create export"
+  },
+  "locations": {
+    "title": "Locations",
+    "count": "{{current}} of {{max}} locations",
+    "addLocation": "Add location",
+    "editLocation": "Edit location",
+    "deleteLocation": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this location?",
+    "deleteConfirmTitle": "Delete location",
+    "emptyTitle": "No locations saved",
+    "emptyMessage": "Add a location to receive local alerts",
+    "limitReached": "Location limit reached. Upgrade for more.",
+    "labelPlaceholder": "Custom name (e.g., Mom's house)",
+    "useCurrentLocation": "Use current location",
+    "save": "Save location",
+    "saving": "Saving...",
+    "saved": "Location saved",
+    "updated": "Location updated",
+    "deleted": "Location deleted",
+    "error": "Failed to save location"
+  },
+  "notificationPreferences": {
+    "title": "Notification Preferences",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "saved": "Preferences saved",
+    "error": "Failed to save preferences"
+  },
+  "eventDetail": {
+    "title": "Event Details",
+    "status": {
+      "active": "Active",
+      "resolved": "Resolved"
+    },
+    "details": {
+      "location": "Location",
+      "radius": "Radius",
+      "reportedAt": "Reported",
+      "expiresAt": "Expires",
+      "resolvedAt": "Resolved at"
+    },
+    "credibility": {
+      "title": "Credibility"
+    },
+    "vote": {
+      "confirm": "Confirm",
+      "deny": "Deny",
+      "voted": "Vote recorded",
+      "alreadyVoted": "Already voted",
+      "error": "Failed to vote"
+    },
+    "owner": {
+      "resolve": "Mark as resolved",
+      "resolveConfirm": "Mark this event as resolved?",
+      "resolved": "Event resolved",
+      "delete": "Delete event",
+      "deleteConfirm": "Permanently delete this event?",
+      "deleted": "Event deleted",
+      "error": "Failed to update event"
+    }
+  },
+  "eventReport": {
+    "title": "Report an Event",
+    "selectCategory": "Select category",
+    "location": "Event location",
+    "radius": "Affected radius",
+    "submit": "Report Event",
+    "submitting": "Reporting...",
+    "success": "Event reported successfully",
+    "error": "Failed to report event"
+  },
+  "digest": {
+    "title": "Notification Digest",
+    "description": "Choose how you receive notification summaries",
+    "realtime": "Real-time",
+    "realtimeDesc": "Receive notifications immediately",
+    "morning": "Morning digest",
+    "morningDesc": "Daily summary each morning",
+    "evening": "Evening digest",
+    "eveningDesc": "Daily summary each evening",
+    "both": "Both (morning + evening)",
+    "bothDesc": "Summaries twice daily",
+    "saved": "Digest mode updated",
+    "error": "Failed to update digest mode"
+  },
+  "nameday": {
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "ads": {
+    "sponsored": "Sponsored",
+    "adFree": "Go ad-free"
+  },
+  "upsell": {
+    "upgrade": "Upgrade",
+    "dismiss": "Dismiss"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "tabs": {
+      "history": "History",
+      "reminders": "Reminders"
+    },
+    "empty": "No reminders yet",
+    "emptyMessage": "Create reminders for important events",
+    "create": "Create reminder",
+    "edit": "Edit reminder",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Reminder title",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add details...",
+    "dateLabel": "Date & Time",
+    "recurrence": "Repeat",
+    "recurrenceOptions": {
+      "ONCE": "Once",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Reminder saved",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this reminder?",
+    "deleted": "Reminder deleted",
+    "error": "Failed to save reminder"
+  },
+  "sources": {
+    "title": "Data Sources",
+    "accuracy": "Accuracy",
+    "timeliness": "Timeliness",
+    "ratings": "{{count}} ratings",
+    "noRatings": "No ratings yet",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Share your experience...",
+    "save": "Save rating",
+    "saving": "Saving...",
+    "saved": "Rating saved",
+    "deleteRating": "Delete my rating",
+    "deleteConfirm": "Remove your rating for this source?",
+    "deleted": "Rating removed",
+    "error": "Failed to save rating"
+  },
+  "mapFilters": {
+    "title": "Filters",
+    "close": "Close",
+    "electricity": "Electricity",
+    "water": "Water",
+    "gas": "Gas",
+    "heat": "Heat",
+    "traffic": "Traffic",
+    "events": "Events",
+    "accident": "Accidents",
+    "construction": "Construction",
+    "road_closure": "Closures",
+    "congestion": "Congestion",
+    "flooding": "Flooding",
+    "event": "Events",
+    "other": "Other"
+  }
+}

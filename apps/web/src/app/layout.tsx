@@ -22,6 +22,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Notifio",
   description: "Real-time alerts for your location",
+  // `app/icon.svg` is automatically picked up by Next.js as the favicon,
+  // but we list it explicitly so social-card crawlers and the apple-touch
+  // path can reuse the same asset without falling back to defaults.
+  icons: {
+    icon: "/icon",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
+  openGraph: {
+    title: "Notifio",
+    description: "Real-time alerts for your location",
+    images: [{ url: "/logo.svg", width: 1024, height: 1024, alt: "Notifio" }],
+  },
 };
 
 export default async function RootLayout({

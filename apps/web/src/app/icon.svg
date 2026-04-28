@@ -1,0 +1,17 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="220" fill="#0E223F"/>
+  <g stroke="#FF7A2F" stroke-width="6" opacity="0.1" fill="none">
+    <path d="M100 300 L900 300"/>
+    <path d="M200 100 L800 900"/>
+    <path d="M100 700 L900 500"/>
+    <path d="M300 100 L300 900"/>
+    <path d="M700 100 L700 900"/>
+    <path d="M100 500 L900 800"/>
+  </g>
+  <path d="M300 750 V250 L750 750 V250"
+        stroke="#FF7A2F"
+        stroke-width="140"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"/>
+</svg>
