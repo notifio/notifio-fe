@@ -2,7 +2,7 @@
   "map": {
     "loadingMapData": "Načítavam údaje mapy...",
     "yourLocation": "Tvoja poloha",
-    "scheduled": "Plánované",
+    "upcoming": "Plánované",
     "active": "Aktívne",
     "defaultLocation": "Slovensko",
     "eventUnavailable": "Detaily udalosti nie sú dostupné",

@@ -2,7 +2,7 @@
   "map": {
     "loadingMapData": "Loading map data...",
     "yourLocation": "Your location",
-    "scheduled": "Scheduled",
+    "upcoming": "Upcoming",
     "active": "Active",
     "defaultLocation": "Slovakia",
     "eventUnavailable": "Event details not available",

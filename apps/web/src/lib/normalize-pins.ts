@@ -3,7 +3,14 @@ import type { UserEvent } from '@notifio/api-client';
 import type { OutageRecord, TrafficIncident } from '@notifio/shared';
 
 export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic';
-export type MapPinStatus = 'active' | 'scheduled';
+/**
+ * Lifecycle label rendered on a pin. Matches the API's `EventLifecycleStatus`
+ * (`upcoming | active | resolved`) — this enum is FE-local until the BE
+ * status field rolls out across `OutageRecord` adapters too. `resolved`
+ * pins are filtered out before reaching the map; the type still includes
+ * the variant so callers can reason about it.
+ */
+export type MapPinStatus = 'active' | 'upcoming' | 'resolved';
 export type TrafficIncidentType =
   | 'accident'
   | 'congestion'
@@ -30,7 +37,16 @@ function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null 
   if (outage.lat == null || outage.lng == null) return null;
   if (outage.status === 'resolved') return null;
 
-  const status: MapPinStatus = outage.status === 'scheduled' ? 'scheduled' : 'active';
+  // Status precedence: any record whose start is genuinely in the future is
+  // shown as `upcoming` regardless of what the adapter said. This catches
+  // the BVS-Lamač repro where a planned outage on 18.05.2026 surfaced with
+  // `status: 'active'` because the adapter classified it that way (see
+  // BE-P0.3, audit 30.4.2026). The legacy adapter value `'scheduled'`
+  // also maps to `'upcoming'` so adapter and pin vocabularies align.
+  const startedAtMs = new Date(outage.startedAt).getTime();
+  const isFuture = Number.isFinite(startedAtMs) && startedAtMs > Date.now();
+  const status: MapPinStatus =
+    outage.status === 'scheduled' || isFuture ? 'upcoming' : 'active';
 
   return {
     id: outage.id,
@@ -120,6 +136,16 @@ const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
 // Categories that should not appear as map pins
 const SKIP_CATEGORIES = new Set(['name_day']);
 
+function eventStatus(event: UserEvent): MapPinStatus {
+  if (event.eventFrom) {
+    const fromMs = new Date(event.eventFrom).getTime();
+    if (Number.isFinite(fromMs) && fromMs > Date.now()) {
+      return 'upcoming';
+    }
+  }
+  return 'active';
+}
+
 function eventToPin(event: UserEvent): MapPin | null {
   const categoryCode = getEventCategory(event);
   const subcategoryCode = getEventSubcategory(event);
@@ -131,13 +157,15 @@ function eventToPin(event: UserEvent): MapPin | null {
 
   if (SKIP_CATEGORIES.has(categoryCode)) return null;
 
+  const status = eventStatus(event);
+
   // Outage-type events → utility source pins
   const outageSource = EVENT_CATEGORY_TO_SOURCE[categoryCode];
   if (outageSource) {
     return {
       id: event.eventId,
       source: outageSource,
-      status: 'active',
+      status,
       lat: event.lat,
       lng: event.lng,
       title,
@@ -152,7 +180,7 @@ function eventToPin(event: UserEvent): MapPin | null {
     return {
       id: event.eventId,
       source: 'traffic',
-      status: 'active',
+      status,
       lat: event.lat,
       lng: event.lng,
       title,
@@ -168,7 +196,7 @@ function eventToPin(event: UserEvent): MapPin | null {
   return {
     id: event.eventId,
     source: 'traffic',
-    status: 'active',
+    status,
     lat: event.lat,
     lng: event.lng,
     title,
