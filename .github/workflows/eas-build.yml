@@ -87,5 +87,10 @@ jobs:
       - name: Submit iOS to TestFlight
         if: (github.event_name == 'push' || github.event.inputs.profile == 'production') && (github.event.inputs.platform != 'android')
         working-directory: apps/mobile
-        run: eas submit --profile production --platform ios --non-interactive
+        # `--latest` picks the most recent finished build for this app +
+        # platform. Required because non-interactive mode can't prompt
+        # for the archive source. The `Build iOS` step above is what
+        # produces "the latest", so this always submits the build we
+        # just made.
+        run: eas submit --profile production --platform ios --latest --non-interactive
         continue-on-error: true
