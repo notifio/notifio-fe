@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { signOut } from "@/app/(app)/actions";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { cn } from "@/lib/utils";
@@ -48,8 +49,12 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center border-b border-border bg-background px-4 md:px-6">
-      <Link href="/dashboard" className="text-lg font-bold text-accent">
-        Notifio
+      <Link
+        href="/dashboard"
+        className="flex items-center gap-2 text-lg font-bold text-accent"
+      >
+        <Logo size={28} flat title="" />
+        <span>Notifio</span>
       </Link>
 
       <nav className="ml-4 hidden items-center gap-1 md:flex md:ml-8">
