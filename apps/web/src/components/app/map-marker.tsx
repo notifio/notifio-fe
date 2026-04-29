@@ -8,7 +8,7 @@ interface MapMarkerProps {
   pin: MapPin;
   isExpanded: boolean;
   theme: 'light' | 'dark';
-  labels: { scheduled: string; active: string };
+  labels: { upcoming: string; active: string };
   clusterCount?: number;
   onToggle: () => void;
   onClose: () => void;
@@ -152,7 +152,7 @@ export function MapMarker({
                     fontWeight: 600,
                   }}
                 >
-                  {pin.status === 'scheduled' ? labels.scheduled : labels.active}
+                  {pin.status === 'upcoming' ? labels.upcoming : labels.active}
                 </span>
               </div>
               <div style={{ fontSize: '10px', opacity: 0.65, marginTop: '2px' }}>

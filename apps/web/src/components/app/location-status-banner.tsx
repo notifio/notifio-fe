@@ -13,7 +13,14 @@ const DISMISSED_KEY = 'notifio_banner_dismissed';
 export function LocationStatusBanner() {
   const t = useTranslations('locationBanner');
   const pathname = usePathname();
-  const { pushGranted, pushDenied, geoGranted, geoDenied, loading } = usePermissionStatus();
+  const {
+    pushGranted,
+    pushDenied,
+    pushSupported,
+    geoGranted,
+    geoDenied,
+    loading,
+  } = usePermissionStatus();
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -27,19 +34,26 @@ export function LocationStatusBanner() {
     setDismissed(true);
   };
 
+  // When push isn't available in this runtime (iOS Safari outside PWA), treat
+  // it as effectively granted for the banner — there is no actionable prompt
+  // we could surface and the user otherwise sees a permanent warning they
+  // cannot dismiss by changing a setting.
+  const pushEffectivelyOk = pushSupported ? pushGranted : true;
+  const pushEffectivelyDenied = pushSupported && pushDenied;
+
   // Hide while loading, on settings page, if dismissed, or if fully configured
   if (loading || pathname?.startsWith('/settings') || dismissed) return null;
-  if (pushGranted && geoGranted) return null;
+  if (pushEffectivelyOk && geoGranted) return null;
 
   // Determine message key based on permission matrix
   let messageKey: string;
-  if (pushDenied) {
+  if (pushEffectivelyDenied) {
     messageKey = 'pushDenied';
   } else if (geoDenied) {
     messageKey = 'geoDenied';
-  } else if (!pushGranted && !geoGranted) {
+  } else if (!pushEffectivelyOk && !geoGranted) {
     messageKey = 'bothOff';
-  } else if (pushGranted && !geoGranted) {
+  } else if (pushEffectivelyOk && !geoGranted) {
     messageKey = 'pushOkGeoOff';
   } else {
     messageKey = 'pushOffGeoOk';

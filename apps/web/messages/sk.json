@@ -2,7 +2,7 @@
   "map": {
     "loadingMapData": "Načítavam údaje mapy...",
     "yourLocation": "Tvoja poloha",
-    "scheduled": "Plánované",
+    "upcoming": "Plánované",
     "active": "Aktívne",
     "defaultLocation": "Slovensko",
     "eventUnavailable": "Detaily udalosti nie sú dostupné",
@@ -143,6 +143,7 @@
   },
   "pushSetup": {
     "unsupported": "Tvoj prehliadač nepodporuje push notifikácie.",
+    "iosAddToHomeScreen": "Na iPhone posiela Safari push notifikácie iba keď je Notifio nainštalované na domovskej obrazovke. Ťukni na ikonu zdieľania a vyber „Pridať na plochu“.",
     "unconfigured": "Push notifikácie nie sú nakonfigurované.",
     "locationExplain": "Aby si dostával notifikácie o udalostiach vo svojom okolí. Prehliadač sa opýta — klikni",
     "locationDenied": "Poloha je zamietnutá. Môžeš si pridať lokácie manuálne v sekcii \"Uložené lokácie\" nižšie v Settings.",

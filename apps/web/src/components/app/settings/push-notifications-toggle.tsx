@@ -2,14 +2,35 @@
 
 import { IconBell, IconMapPin } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
 import { useGeolocationTracker } from '@/hooks/use-geolocation-tracker';
 import { useWebPush } from '@/hooks/use-web-push';
+import { detectPushSupport, type PushSupportInfo } from '@/lib/push-support';
 
 export function PushNotificationsToggle() {
   const t = useTranslations('pushSetup');
   const { permission, deviceId, isLoading, error, enable, disable } = useWebPush();
   const geo = useGeolocationTracker(deviceId);
+
+  // Re-check on mount only; the result depends on UA + standalone PWA flag,
+  // both stable for the lifetime of the page.
+  const [pushSupport, setPushSupport] = useState<PushSupportInfo>({ supported: true });
+  useEffect(() => {
+    setPushSupport(detectPushSupport());
+  }, []);
+
+  // iOS Safari outside a PWA install: the Notification + serviceWorker APIs
+  // exist, so `useWebPush` reports `permission='default'` and renders the
+  // generic "enable" CTA — but `requestPermission()` resolves to `denied`
+  // without UI. Surface the install hint instead.
+  if (!pushSupport.supported && pushSupport.reason === 'ios-safari-not-pwa') {
+    return (
+      <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        {t('iosAddToHomeScreen')}
+      </div>
+    );
+  }
 
   if (permission === 'unsupported') {
     return (

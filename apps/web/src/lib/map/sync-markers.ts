@@ -22,7 +22,7 @@ export interface SyncMarkersParams {
   pins: MapPin[];
   theme: 'light' | 'dark';
   expandedPinId: string | null;
-  labels: { scheduled: string; active: string };
+  labels: { upcoming: string; active: string };
   markers: Map<string, MarkerEntry>;
   clusterMarkers: Map<number, ClusterMarkerEntry>;
   renderMarker: (
@@ -31,7 +31,7 @@ export interface SyncMarkersParams {
     opts: {
       isExpanded: boolean;
       theme: 'light' | 'dark';
-      labels: { scheduled: string; active: string };
+      labels: { upcoming: string; active: string };
       clusterCount?: number;
       onToggle: () => void;
       onClose: () => void;
