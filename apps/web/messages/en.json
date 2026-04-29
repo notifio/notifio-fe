@@ -143,6 +143,7 @@
   },
   "pushSetup": {
     "unsupported": "Your browser does not support push notifications.",
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\".",
     "unconfigured": "Push notifications are not configured.",
     "locationExplain": "To receive notifications about events in your area. Your browser will ask — click",
     "locationDenied": "Location access is denied. You can add locations manually in the \"Saved Locations\" section below in Settings.",
