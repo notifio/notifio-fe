@@ -122,6 +122,24 @@ export type {
   NamedayQuery,
 } from './shared-types.js';
 
+/**
+ * Public tier descriptor returned by `/api/v1/membership/tiers`. Backed
+ * by `c_membership` + `r_membership_feature` on the API. Prices are
+ * strings (numeric(6,2)) — the same convention as `MembershipDetails`
+ * in the shared package. Defined locally rather than in @notifio/shared
+ * because the FE consumes it as a plain type; if we ever validate at
+ * the boundary we can promote the schema upstream.
+ */
+export interface PublicMembershipTier {
+  tier: string;
+  name: string;
+  description: string | null;
+  maxLocations: number;
+  priceMonthly: string;
+  priceYearly: string;
+  features: string[];
+}
+
 export interface NotifioClientConfig {
   baseUrl: string;
   getToken: () => Promise<string | null>;
@@ -367,6 +385,16 @@ export function createNotifioClient(config: NotifioClientConfig) {
 
     async getMembership(): Promise<MembershipDetails> {
       return request<MembershipDetails>('/me/membership');
+    },
+
+    /**
+     * Public tier catalog — used by the pricing page so prices and feature
+     * lists live in `c_membership` + `r_membership_feature` instead of
+     * being duplicated in the FE bundle. No auth required; safe to call
+     * before sign-in.
+     */
+    async getMembershipTiers(): Promise<PublicMembershipTier[]> {
+      return request<PublicMembershipTier[]>('/membership/tiers');
     },
 
     async upgradeMembership(data: UpgradeMembershipBody): Promise<MembershipDetails> {
