@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { bootstrapLocale } from '../lib/i18n';
 import { AuthProvider } from '../providers/auth-provider';
 import { ConsentProvider } from '../providers/consent-provider';
 import { NotificationProvider } from '../providers/notification-provider';
@@ -15,6 +16,12 @@ import { OnboardingProvider } from '../providers/onboarding-provider';
 import { ThemeProvider, useIsDark } from '../providers/theme-provider';
 
 SplashScreen.preventAutoHideAsync();
+
+// Apply the user's previously-chosen locale (if any) before the first
+// React render writes it back. Fire-and-forget — i18next already has a
+// device-detected default queued, so this just swaps it when the
+// AsyncStorage read finishes a frame or two later.
+void bootstrapLocale();
 
 function RootNavigator() {
   const { session, isLoading: isAuthLoading } = useAuth();

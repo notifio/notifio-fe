@@ -6,6 +6,7 @@ import {
   IconDatabase,
   IconDownload,
   IconInfoCircle,
+  IconLanguage,
   IconLogout,
   IconMapPin,
   IconPalette,
@@ -90,6 +91,7 @@ export default function SettingsScreen() {
       <Card>
         <SettingsRow icon={IconBell} label="Notifications" onPress={() => router.push('/settings/notifications')} />
         <SettingsRow icon={IconPalette} label="Appearance" onPress={() => router.push('/settings/appearance')} />
+        <SettingsRow icon={IconLanguage} label="Language" onPress={() => router.push('/settings/language')} />
         <SettingsRow icon={IconClock} label="Digest" onPress={() => router.push('/settings/digest')} />
       </Card>
 
