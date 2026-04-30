@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -64,8 +65,15 @@ const resources = supportedLocales.reduce<Record<string, { translation: LocaleMa
   return acc;
 }, {});
 
+/** AsyncStorage key for the user-selected locale. Must match what
+ *  `setLocale()` writes and what the boot bootstrapping reads. */
+export const LOCALE_STORAGE_KEY = 'notifio.locale';
+
 // Detect device language; fall back to the project default if the device
-// reports something we don't ship copy for.
+// reports something we don't ship copy for. Used as the immediate i18next
+// `lng` so first paint isn't blocked on AsyncStorage; if the user picked a
+// different locale previously, `bootstrapLocale()` swaps it in once the
+// async read finishes.
 const deviceLocale = getLocales()[0]?.languageCode ?? defaultLocale;
 const initialLng: SupportedLocale = (supportedLocales as readonly string[]).includes(deviceLocale)
   ? (deviceLocale as SupportedLocale)
@@ -82,5 +90,44 @@ i18n
     fallbackLng: ['en', 'sk'],
     interpolation: { escapeValue: false },
   });
+
+/**
+ * Read the user's previously-selected locale from AsyncStorage and apply
+ * it to i18next. No-op when nothing's stored or the stored value isn't a
+ * supported locale. Call this once at app boot from a top-level layout.
+ *
+ * Kept fire-and-forget on purpose so the first render isn't blocked on
+ * the AsyncStorage read; users see device-locale copy for one frame and
+ * then the persisted choice.
+ */
+export async function bootstrapLocale(): Promise<void> {
+  try {
+    const stored = await AsyncStorage.getItem(LOCALE_STORAGE_KEY);
+    if (!stored) return;
+    if ((supportedLocales as readonly string[]).includes(stored)) {
+      if (i18n.language !== stored) {
+        await i18n.changeLanguage(stored);
+      }
+    }
+  } catch {
+    // AsyncStorage failure is non-critical — keep the device-detected locale.
+  }
+}
+
+/**
+ * Persist the user's locale pick to AsyncStorage and apply it immediately
+ * via i18next. The mobile LanguageSwitcher calls this; the next app boot
+ * picks the same value back up via `bootstrapLocale()`.
+ */
+export async function setLocale(locale: string): Promise<void> {
+  if (!(supportedLocales as readonly string[]).includes(locale)) return;
+  await i18n.changeLanguage(locale);
+  try {
+    await AsyncStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    // Persistence failure is recoverable — current session still uses the
+    // new locale; the next boot just falls back to device-detected.
+  }
+}
 
 export default i18n;

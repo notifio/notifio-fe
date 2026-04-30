@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseApiQueryOptions {
@@ -22,6 +23,13 @@ export function useApiQuery<T>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const fetchIdRef = useRef(0);
+  // Pulled from next-intl: re-renders when the locale context changes
+  // (LanguageSwitcher writes a cookie + router.refresh(), which the
+  // server's NextIntlClientProvider picks up on re-render). Adding it to
+  // the execute deps makes every useApiQuery call refetch with the new
+  // Accept-Language header automatically — without each caller having
+  // to remember to include locale in their own deps array. (I18N-2)
+  const locale = useLocale();
 
   const enabled = options?.enabled ?? true;
 
@@ -48,7 +56,7 @@ export function useApiQuery<T>(
         setIsLoading(false);
       }
     }
-  }, deps);
+  }, [...deps, locale]);
 
   useEffect(() => {
     execute();
