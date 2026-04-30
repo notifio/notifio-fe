@@ -8,6 +8,7 @@ export default function WelcomeScreen() {
 
   return (
     <OnboardingScreen
+      showBrand
       icon={IconBroadcast}
       title="Welcome to Notifio"
       description="Real-time alerts for your area — weather, traffic, outages, and more."

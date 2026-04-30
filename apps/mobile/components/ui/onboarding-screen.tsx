@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { BrandLogo } from './brand-logo';
 import { Icon, type TablerIcon } from './icon';
 import { PrimaryButton } from './primary-button';
 import { ScreenLayout } from './screen-layout';
@@ -18,6 +19,12 @@ interface OnboardingScreenProps {
   primaryAction: ActionConfig;
   secondaryAction?: ActionConfig;
   children?: React.ReactNode;
+  /**
+   * Render the Notifio brand mark + wordmark above the icon. Mirrors
+   * the web app's PR #59 (Logo on sign-in / app shell). Welcome and
+   * login screens turn this on; in-flow onboarding steps don't.
+   */
+  showBrand?: boolean;
 }
 
 export function OnboardingScreen({
@@ -27,11 +34,17 @@ export function OnboardingScreen({
   primaryAction,
   secondaryAction,
   children,
+  showBrand = false,
 }: OnboardingScreenProps) {
   const { colors } = useAppTheme();
 
   return (
     <ScreenLayout>
+      {showBrand && (
+        <View style={styles.brand}>
+          <BrandLogo size={48} />
+        </View>
+      )}
       <View style={styles.content}>
         <View style={[styles.iconCircle, { backgroundColor: colors.surface }]}>
           <Icon icon={icon} size={32} color={colors.primary} />
@@ -55,6 +68,10 @@ export function OnboardingScreen({
 }
 
 const styles = StyleSheet.create({
+  brand: {
+    alignItems: 'center',
+    paddingTop: theme.spacing.xl,
+  },
   content: {
     flex: 1,
     alignItems: 'center',

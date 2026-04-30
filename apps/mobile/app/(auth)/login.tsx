@@ -12,6 +12,7 @@ export default function LoginScreen() {
 
   return (
     <OnboardingScreen
+      showBrand
       icon={IconKey}
       title="Welcome back"
       description="Sign in to your Notifio account to continue."
