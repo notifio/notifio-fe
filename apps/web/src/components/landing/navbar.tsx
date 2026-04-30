@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Navbar() {
@@ -13,8 +12,11 @@ export function Navbar() {
 
   return (
     <nav className="relative z-10 flex items-center justify-between">
-      <Link href="/" className="flex items-center gap-2 text-lg font-bold text-white">
-        <Logo size={32} flat title="" />
+      {/* Wordmark only — the N-letter mark felt redundant beside the
+          word "Notifio" on the landing page (LOGO-2). The authenticated
+          TopBar still pairs the mark with the wordmark; this is just
+          the marketing-page treatment. */}
+      <Link href="/" className="text-lg font-bold text-white">
         <span>Notifio</span>
       </Link>
       <div className="flex items-center gap-2">
