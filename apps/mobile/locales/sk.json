@@ -70,9 +70,7 @@
   "settingsOptions": {
     "system": "Systém",
     "light": "Svetlý",
-    "dark": "Tmavý",
-    "metric": "Metrické (°C, km/h)",
-    "imperial": "Imperiálne (°F, mph)"
+    "dark": "Tmavý"
   },
   "auth": {
     "welcomeTitle": "Vitaj v Notifio",
@@ -378,5 +376,20 @@
   "mapPinStatus": {
     "active": "Aktívne",
     "upcoming": "Plánované"
+  },
+  "weatherThresholds": {
+    "title": "Prahové hodnoty počasia",
+    "description": "Nastavte si vlastné prahové hodnoty pre upozornenia na počasie. Dostanete upozornenie keď hodnoty prekročia nastavený prah.",
+    "addThreshold": "Pridať prahovú hodnotu",
+    "selectType": "Vyberte typ prahovej hodnoty",
+    "saved": "Uložené",
+    "tempHigh": "Vysoká teplota",
+    "tempLow": "Nízka teplota",
+    "windSpeed": "Rýchlosť vetra",
+    "humidity": "Vlhkosť",
+    "pressure": "Atmosférický tlak",
+    "deleteConfirm": "Odstrániť túto prahovú hodnotu?",
+    "notSet": "Nenastavené",
+    "invalidValue": "Zadajte platné číslo"
   }
 }

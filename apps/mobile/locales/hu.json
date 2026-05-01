@@ -70,9 +70,7 @@
   "settingsOptions": {
     "system": "System",
     "light": "Light",
-    "dark": "Dark",
-    "metric": "Metric (°C, km/h)",
-    "imperial": "Imperial (°F, mph)"
+    "dark": "Dark"
   },
   "auth": {
     "welcomeTitle": "Welcome to Notifio",
@@ -378,5 +376,20 @@
   "mapPinStatus": {
     "active": "Aktív",
     "upcoming": "Tervezett"
+  },
+  "weatherThresholds": {
+    "title": "Weather thresholds",
+    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
+    "addThreshold": "Add threshold",
+    "selectType": "Select threshold type",
+    "saved": "Saved",
+    "tempHigh": "High temperature",
+    "tempLow": "Low temperature",
+    "windSpeed": "Wind speed",
+    "humidity": "Humidity",
+    "pressure": "Atmospheric pressure",
+    "deleteConfirm": "Remove this threshold?",
+    "notSet": "Nincs beállítva",
+    "invalidValue": "Adjon meg érvényes számot"
   }
 }
