@@ -242,5 +242,12 @@
     "humidity": "Luftfeuchtigkeit",
     "pressure": "Luftdruck",
     "deleteConfirm": "Diesen Schwellenwert entfernen?"
+  },
+  "mapFilters": {
+    "air_quality": "Luftqualität",
+    "pollen": "Pollen",
+    "hydrology": "Hydrologie",
+    "wildfire": "Waldbrand",
+    "outage_internet": "Internet"
   }
 }

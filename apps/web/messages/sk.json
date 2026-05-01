@@ -61,7 +61,12 @@
     "event": "Udalosti",
     "weather": "Počasie",
     "other": "Ostatné",
-    "close": "Zavrieť"
+    "close": "Zavrieť",
+    "air_quality": "Kvalita ovzdušia",
+    "pollen": "Peľ",
+    "hydrology": "Hydrológia",
+    "wildfire": "Požiar",
+    "outage_internet": "Internet"
   },
   "notifications": {
     "title": "Notifikácie"
@@ -388,12 +393,30 @@
     "granted": "Povolené",
     "revoked": "Zamietnuté",
     "categories": {
-      "location_tracking": { "name": "Poloha", "desc": "Zdieľajte GPS polohu pre lokálne upozornenia" },
-      "push_notifications": { "name": "Push notifikácie", "desc": "Prijímajte upozornenia v reálnom čase" },
-      "analytics": { "name": "Analytika", "desc": "Pomôžte nám vylepšiť aplikáciu" },
-      "personalization": { "name": "Personalizácia", "desc": "Prispôsobte obsah vašim preferenciám" },
-      "marketing": { "name": "Marketing", "desc": "Prijímajte propagačný obsah" },
-      "data_sharing": { "name": "Zdieľanie údajov", "desc": "Zdieľajte anonymizované údaje s partnermi" }
+      "location_tracking": {
+        "name": "Poloha",
+        "desc": "Zdieľajte GPS polohu pre lokálne upozornenia"
+      },
+      "push_notifications": {
+        "name": "Push notifikácie",
+        "desc": "Prijímajte upozornenia v reálnom čase"
+      },
+      "analytics": {
+        "name": "Analytika",
+        "desc": "Pomôžte nám vylepšiť aplikáciu"
+      },
+      "personalization": {
+        "name": "Personalizácia",
+        "desc": "Prispôsobte obsah vašim preferenciám"
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Prijímajte propagačný obsah"
+      },
+      "data_sharing": {
+        "name": "Zdieľanie údajov",
+        "desc": "Zdieľajte anonymizované údaje s partnermi"
+      }
     },
     "settingsTitle": "Súkromie",
     "settingsDescription": "Spravujte súhlasy so spracovaním údajov"
@@ -406,18 +429,42 @@
     "features": {
       "title": "Všetko dôležité na jednom mieste",
       "subtitle": "Jedna appka nahradí päť. Hyperlokálne upozornenia na základe tvojej presnej polohy.",
-      "weather": { "title": "Výstrahy počasia", "description": "Búrky, silný vietor, mrazy a ďalšie varovania meteorológov." },
-      "traffic": { "title": "Dopravné správy", "description": "Uzávery, nehody a kolóny v tvojom okolí v reálnom čase." },
-      "airQuality": { "title": "Kvalita ovzdušia", "description": "Smog, prachové častice a alergény. Vedz, kedy radšej zostať doma." },
-      "outages": { "title": "Výpadky sietí", "description": "Plánované odstávky elektriny, vody, plynu a tepla vo tvojej oblasti." },
-      "location": { "title": "Podľa polohy", "description": "Všetko funguje automaticky podľa toho, kde sa práve nachádzaš." }
+      "weather": {
+        "title": "Výstrahy počasia",
+        "description": "Búrky, silný vietor, mrazy a ďalšie varovania meteorológov."
+      },
+      "traffic": {
+        "title": "Dopravné správy",
+        "description": "Uzávery, nehody a kolóny v tvojom okolí v reálnom čase."
+      },
+      "airQuality": {
+        "title": "Kvalita ovzdušia",
+        "description": "Smog, prachové častice a alergény. Vedz, kedy radšej zostať doma."
+      },
+      "outages": {
+        "title": "Výpadky sietí",
+        "description": "Plánované odstávky elektriny, vody, plynu a tepla vo tvojej oblasti."
+      },
+      "location": {
+        "title": "Podľa polohy",
+        "description": "Všetko funguje automaticky podľa toho, kde sa práve nachádzaš."
+      }
     },
     "howItWorks": {
       "title": "Začni v 3 krokoch",
       "subtitle": "Žiadne registračné formuláre, žiadny výber mesta.",
-      "step1": { "title": "Nainštaluj appku", "description": "Stiahni si Notifio z App Store alebo Google Play." },
-      "step2": { "title": "Povoľ polohu", "description": "Appka zistí, kde sa nachádzaš, a filtruje upozornenia pre tvoju oblasť." },
-      "step3": { "title": "Dostávaj upozornenia", "description": "Push notifikácie ťa upozornia na to, čo sa deje okolo teba." }
+      "step1": {
+        "title": "Nainštaluj appku",
+        "description": "Stiahni si Notifio z App Store alebo Google Play."
+      },
+      "step2": {
+        "title": "Povoľ polohu",
+        "description": "Appka zistí, kde sa nachádzaš, a filtruje upozornenia pre tvoju oblasť."
+      },
+      "step3": {
+        "title": "Dostávaj upozornenia",
+        "description": "Push notifikácie ťa upozornia na to, čo sa deje okolo teba."
+      }
     },
     "cta": {
       "title": "Pripravený zostať informovaný?",
