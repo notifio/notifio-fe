@@ -1,4 +1,4 @@
-import { IconHome, IconMapPin, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react-native';
+import { IconCurrentLocation, IconHome, IconMapPin, IconPencil, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react-native';
 import { Stack } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import type { UserLocation } from '@notifio/api-client';
 
 import { LocationPickerModal } from '../../components/locations/location-picker-modal';
 import { Icon } from '../../components/ui/icon';
+import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -22,6 +23,10 @@ export default function LocationsScreen() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const { locations, limit, used, isLoading, canAddMore, addLocation, updateLocation, removeLocation } = useLocations();
+  // LOC-2: current GPS sits above the saved-locations list so users can
+  // see where the system thinks they are right now even without saving
+  // a permanent location.
+  const { position, status: positionStatus, refresh: refreshPosition } = useCurrentPosition();
 
   const [pickerVisible, setPickerVisible] = useState(false);
   const [editingLocation, setEditingLocation] = useState<UserLocation | undefined>();
@@ -80,22 +85,90 @@ export default function LocationsScreen() {
     [colors, handleEdit, handleDelete],
   );
 
+  // ── LOC-2: current-position block, rendered above the saved list ──
+  const currentBody = (() => {
+    if (positionStatus === 'requesting' && !position) {
+      return (
+        <Text style={[styles.currentMeta, { color: colors.textMuted }]}>
+          {t('locations.currentLoading')}
+        </Text>
+      );
+    }
+    if (positionStatus === 'denied') {
+      return (
+        <Text style={[styles.currentMeta, { color: colors.textMuted }]}>
+          {t('locations.currentDenied')}
+        </Text>
+      );
+    }
+    if (positionStatus === 'unavailable') {
+      return (
+        <Text style={[styles.currentMeta, { color: colors.textMuted }]}>
+          {t('locations.currentUnavailable')}
+        </Text>
+      );
+    }
+    if (position) {
+      return (
+        <>
+          <Text style={[styles.currentCoord, { color: colors.text }]}>
+            {formatCoord(position.lat, position.lng)}
+          </Text>
+          {position.accuracyM !== null && (
+            <Text style={[styles.currentMeta, { color: colors.textMuted }]}>
+              {t('locations.currentAccuracy', { m: Math.round(position.accuracyM).toString() })}
+            </Text>
+          )}
+        </>
+      );
+    }
+    return null;
+  })();
+
+  const currentBlock = (
+    <View
+      style={[styles.currentCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+    >
+      <View style={styles.currentHeader}>
+        <Icon icon={IconCurrentLocation} size={20} color={colors.primary} />
+        <View style={styles.currentText}>
+          <Text style={[styles.currentTitle, { color: colors.text }]} numberOfLines={1}>
+            {t('locations.currentTitle')}
+          </Text>
+          {currentBody}
+        </View>
+        <Pressable
+          onPress={() => { void refreshPosition(); }}
+          hitSlop={8}
+          style={styles.actionButton}
+          disabled={positionStatus === 'requesting'}
+        >
+          {positionStatus === 'requesting' ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <IconRefresh size={16} color={colors.textMuted} />
+          )}
+        </Pressable>
+      </View>
+    </View>
+  );
+
+  const savedHeader = (
+    <View style={styles.savedHeader}>
+      <Text style={[styles.savedTitle, { color: colors.text }]}>
+        {t('locations.savedTitle')}
+      </Text>
+      <Text style={[styles.countText, { color: colors.textMuted }]}>
+        {t('locations.count', { current: used, max: limit })}
+        {!canAddMore ? ` · ${t('locations.limitReached')}` : ''}
+      </Text>
+    </View>
+  );
+
   return (
     <>
       <Stack.Screen options={{ title: t('locations.title') }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* Count header */}
-        <View style={styles.countHeader}>
-          <Text style={[styles.countText, { color: colors.textMuted }]}>
-            {t('locations.count', { current: used, max: limit })}
-          </Text>
-          {!canAddMore && (
-            <Text style={[styles.limitText, { color: colors.primary }]}>
-              {t('locations.limitReached')}
-            </Text>
-          )}
-        </View>
-
         {isLoading ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -107,6 +180,12 @@ export default function LocationsScreen() {
             keyExtractor={(item) => item.locationId}
             contentContainerStyle={[styles.list, locations.length === 0 && styles.emptyList]}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <View style={styles.listHeader}>
+                {currentBlock}
+                {savedHeader}
+              </View>
+            }
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Icon icon={IconMapPin} size={48} color={colors.textMuted} />
@@ -146,18 +225,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  countHeader: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
-    gap: theme.spacing.xs,
-  },
   countText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
-  },
-  limitText: {
     fontSize: theme.fontSize.xs,
     ...theme.font.medium,
+  },
+  listHeader: {
+    paddingTop: theme.spacing.md,
+    gap: theme.spacing.lg,
+  },
+  // ── LOC-2 current-position block ────────────────────────────────────
+  currentCard: {
+    borderRadius: theme.radius.xl,
+    borderWidth: 1,
+    padding: theme.spacing.lg,
+  },
+  currentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  currentText: {
+    flex: 1,
+  },
+  currentTitle: {
+    fontSize: theme.fontSize.sm,
+    ...theme.font.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    opacity: 0.7,
+  },
+  currentCoord: {
+    fontSize: theme.fontSize.md,
+    ...theme.font.semibold,
+    marginTop: 2,
+  },
+  currentMeta: {
+    fontSize: theme.fontSize.xs,
+    marginTop: 2,
+  },
+  // ── Saved-locations section header ─────────────────────────────────
+  savedHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginTop: theme.spacing.sm,
+  },
+  savedTitle: {
+    fontSize: theme.fontSize.lg,
+    ...theme.font.semibold,
   },
   centered: {
     flex: 1,

@@ -6,10 +6,20 @@
     "profile": "Profil"
   },
   "screens": {
-    "overview": { "title": "Prehľad", "subtitle": "Tvoja oblasť" },
-    "alerts": { "title": "Upozornenia", "subtitle": "Pre tvoju oblasť" },
-    "settings": { "title": "Nastavenia" },
-    "profile": { "title": "Profil" }
+    "overview": {
+      "title": "Prehľad",
+      "subtitle": "Tvoja oblasť"
+    },
+    "alerts": {
+      "title": "Upozornenia",
+      "subtitle": "Pre tvoju oblasť"
+    },
+    "settings": {
+      "title": "Nastavenia"
+    },
+    "profile": {
+      "title": "Profil"
+    }
   },
   "alertTypes": {
     "weather": "Výstrahy počasia",
@@ -217,7 +227,14 @@
     "saved": "Lokácia uložená",
     "updated": "Lokácia aktualizovaná",
     "deleted": "Lokácia vymazaná",
-    "error": "Nepodarilo sa uložiť lokáciu"
+    "error": "Nepodarilo sa uložiť lokáciu",
+    "customLabelPlusOnly": "Vlastný názov dostupný s Plus",
+    "currentTitle": "Aktuálna poloha",
+    "currentLoading": "Zisťujem polohu…",
+    "currentDenied": "Prístup k polohe zamietnutý. Povol ho v nastaveniach.",
+    "currentUnavailable": "Nepodarilo sa získať polohu. Skús to znova.",
+    "currentAccuracy": "Presnosť: ~{m} m",
+    "savedTitle": "Uložené lokácie"
   },
   "notificationPreferences": {
     "title": "Nastavenia notifikácií",
@@ -357,5 +374,9 @@
     "flooding": "Záplavy",
     "event": "Udalosti",
     "other": "Iné"
+  },
+  "mapPinStatus": {
+    "active": "Aktívne",
+    "upcoming": "Plánované"
   }
 }

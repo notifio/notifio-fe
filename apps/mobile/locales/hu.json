@@ -6,10 +6,20 @@
     "profile": "Profile"
   },
   "screens": {
-    "overview": { "title": "Overview", "subtitle": "Your area" },
-    "alerts": { "title": "Alerts", "subtitle": "For your area" },
-    "settings": { "title": "Settings" },
-    "profile": { "title": "Profile" }
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Your area"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "subtitle": "For your area"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "profile": {
+      "title": "Profile"
+    }
   },
   "alertTypes": {
     "weather": "Weather Warnings",
@@ -217,7 +227,14 @@
     "saved": "Location saved",
     "updated": "Location updated",
     "deleted": "Location deleted",
-    "error": "Failed to save location"
+    "error": "Failed to save location",
+    "customLabelPlusOnly": "Egyéni név Plus-szal érhető el",
+    "currentTitle": "Jelenlegi hely",
+    "currentLoading": "Hely meghatározása…",
+    "currentDenied": "A hely hozzáférés megtagadva. Engedélyezd a beállításokban.",
+    "currentUnavailable": "A hely nem érhető el. Próbáld meg újra.",
+    "currentAccuracy": "Pontosság: ~{m} m",
+    "savedTitle": "Mentett helyek"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -357,5 +374,9 @@
     "flooding": "Flooding",
     "event": "Events",
     "other": "Other"
+  },
+  "mapPinStatus": {
+    "active": "Aktív",
+    "upcoming": "Tervezett"
   }
 }
