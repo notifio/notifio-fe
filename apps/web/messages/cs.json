@@ -1,246 +1,246 @@
 {
   "notificationsPage": {
-    "title": "Notifications",
+    "title": "Oznámení",
     "tabs": {
-      "history": "History",
-      "reminders": "Reminders"
+      "history": "Historie",
+      "reminders": "Připomínky"
     },
     "filters": {
-      "all": "All",
-      "weather": "Weather",
-      "traffic": "Traffic",
-      "outages": "Outages",
-      "pollen": "Pollen",
-      "events": "Events"
+      "all": "Vše",
+      "weather": "Počasí",
+      "traffic": "Doprava",
+      "outages": "Výpadky",
+      "pollen": "Pyl",
+      "events": "Události"
     },
     "history": {
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "older": "Older",
-      "empty": "No notifications yet",
-      "markAllRead": "Mark all as read"
+      "today": "Dnes",
+      "yesterday": "Včera",
+      "older": "Starší",
+      "empty": "Zatím žádná oznámení",
+      "markAllRead": "Označit vše jako přečtené"
     },
     "reminders": {
-      "viewList": "List",
-      "viewCalendar": "Calendar",
-      "newReminder": "New reminder",
-      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
-      "enabled": "Active",
-      "disabled": "Paused",
-      "daily": "daily",
-      "weekly": "weekly",
-      "monthly": "monthly",
-      "once": "once"
+      "viewList": "Seznam",
+      "viewCalendar": "Kalendář",
+      "newReminder": "Nová připomínka",
+      "empty": "Zatím žádné připomínky. Vytvoř si jednu a dostaneš push notifikaci v určený čas.",
+      "enabled": "Aktivní",
+      "disabled": "Pozastavená",
+      "daily": "denně",
+      "weekly": "týdně",
+      "monthly": "měsíčně",
+      "once": "jednorázově"
     }
   },
   "categoryBadge": {
-    "traffic": "Traffic",
-    "weather": "Weather",
-    "weather_warning": "Warning",
-    "outage_electric": "Outage",
-    "outage_water": "Outage",
-    "outage_heat": "Outage",
-    "outage_gas": "Outage",
-    "planned_events": "Event",
-    "name_day": "Nameday",
-    "pollen": "Pollen",
-    "air_quality": "Air quality"
+    "traffic": "Doprava",
+    "weather": "Počasí",
+    "weather_warning": "Varování",
+    "outage_electric": "Výpadek",
+    "outage_water": "Výpadek",
+    "outage_heat": "Výpadek",
+    "outage_gas": "Výpadek",
+    "planned_events": "Událost",
+    "name_day": "Svátek",
+    "pollen": "Pyl",
+    "air_quality": "Kvalita ovzduší"
   },
   "profile": {
-    "title": "Profile",
-    "memberSince": "Member since {date}",
-    "manageBilling": "Manage billing",
-    "upgradePlan": "Upgrade",
+    "title": "Profil",
+    "memberSince": "Členem od {date}",
+    "manageBilling": "Spravovat fakturaci",
+    "upgradePlan": "Vylepšit",
     "locations": {
-      "title": "Saved Locations",
-      "description": "Alerts are sent based on your saved locations",
-      "add": "Add location",
-      "edit": "Edit",
-      "delete": "Delete",
-      "deleteConfirm": "Remove this location?",
-      "name": "Location name",
-      "namePlaceholder": "e.g. Home, Work",
-      "useCurrentLocation": "Use current location",
-      "label": "Label",
-      "maxReached": "Location limit reached ({max} for your plan)",
-      "empty": "No saved locations. Add one to start receiving local alerts.",
-      "save": "Save",
-      "cancel": "Cancel"
+      "title": "Uložené lokace",
+      "description": "Upozornění jsou posílána podle tvých uložených lokací",
+      "add": "Přidat lokaci",
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "deleteConfirm": "Odstranit tuto lokaci?",
+      "name": "Název lokace",
+      "namePlaceholder": "např. Domov, Práce",
+      "useCurrentLocation": "Použít aktuální polohu",
+      "label": "Štítek",
+      "maxReached": "Dosažen limit lokací ({max} pro tvůj plán)",
+      "empty": "Žádné uložené lokace. Přidej si jednu a začni dostávat lokální upozornění.",
+      "save": "Uložit",
+      "cancel": "Zrušit"
     },
     "myEvents": {
-      "title": "My Reports",
-      "empty": "You haven't reported any events yet",
-      "resolved": "Resolved",
-      "active": "Active",
-      "resolve": "Mark resolved"
+      "title": "Moje hlášení",
+      "empty": "Zatím jsi nenahlásil žádnou událost",
+      "resolved": "Vyřešeno",
+      "active": "Aktivní",
+      "resolve": "Označit jako vyřešené"
     },
     "account": {
-      "title": "Account",
-      "signOut": "Sign out",
-      "deleteAccount": "Delete account",
-      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
-      "deleteVerify": "Type DELETE to confirm"
+      "title": "Účet",
+      "signOut": "Odhlásit se",
+      "deleteAccount": "Smazat účet",
+      "deleteConfirm": "Tímto trvale smažeš svůj účet a všechna data. Toto nelze vrátit zpět.",
+      "deleteVerify": "Pro potvrzení napiš SMAZAT"
     },
     "yourData": {
-      "title": "Your data",
-      "description": "Download a copy of all your Notifio data.",
-      "download": "Download my data",
-      "preparing": "Preparing export...",
-      "ready": "Your export is ready. The download link expires in 24 hours.",
-      "downloadZip": "Download ZIP",
-      "expiresIn": "Expires in {time}",
-      "failed": "Export failed. Please try again."
+      "title": "Tvoje data",
+      "description": "Stáhni si kopii všech svých Notifio dat.",
+      "download": "Stáhnout moje data",
+      "preparing": "Připravuji export...",
+      "ready": "Tvůj export je připraven. Odkaz ke stažení vyprší za 24 hodin.",
+      "downloadZip": "Stáhnout ZIP",
+      "expiresIn": "Vyprší za {time}",
+      "failed": "Export selhal. Zkus to prosím znovu."
     },
     "deletion": {
-      "pending": "Deletion pending",
-      "description": "All data will be removed in {time}. Changed your mind?",
-      "cancel": "Cancel deletion",
-      "cancelled": "Deletion cancelled"
+      "pending": "Čeká na smazání",
+      "description": "Všechna data budou odstraněna za {time}. Změnil jsi názor?",
+      "cancel": "Zrušit smazání",
+      "cancelled": "Smazání zrušeno"
     }
   },
   "nav": {
-    "signIn": "Sign in",
-    "dashboard": "Dashboard",
-    "map": "Map",
-    "notifications": "Notifications",
-    "settings": "Settings",
-    "profile": "Profile",
-    "pricing": "Pricing",
-    "reminders": "Reminders"
+    "signIn": "Přihlásit se",
+    "dashboard": "Přehled",
+    "map": "Mapa",
+    "notifications": "Oznámení",
+    "settings": "Nastavení",
+    "profile": "Profil",
+    "pricing": "Ceník",
+    "reminders": "Připomínky"
   },
   "events": {
-    "reportButton": "Report",
-    "selectCategory": "What happened?",
-    "pinLocation": "Location",
-    "pickLocation": "Location (click map or drag pin)",
-    "radius": "Affected radius",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "success": "Event reported",
-    "myEvents": "My reports",
-    "resolve": "Resolve",
-    "credibility": "Credibility",
-    "votes": "{count} votes",
-    "validVotes": "{count} valid",
-    "invalidVotes": "{count} invalid",
-    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
-    "stillHappening": "Still happening?",
-    "confirm": "Confirm",
-    "deny": "Deny",
-    "yes": "Yes",
-    "no": "No",
-    "alreadyVoted": "You already voted",
-    "upgradeToVote": "Upgrade to vote",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this event? This cannot be undone.",
-    "deleted": "Event deleted",
+    "reportButton": "Nahlásit",
+    "selectCategory": "Co se stalo?",
+    "pinLocation": "Místo",
+    "pickLocation": "Místo (klikni do mapy nebo přetáhni špendlík)",
+    "radius": "Zasažený rádius",
+    "submit": "Odeslat",
+    "cancel": "Zrušit",
+    "success": "Událost nahlášena",
+    "myEvents": "Moje hlášení",
+    "resolve": "Vyřešit",
+    "credibility": "Důvěryhodnost",
+    "votes": "{count} hlasů",
+    "validVotes": "{count} platných",
+    "invalidVotes": "{count} neplatných",
+    "notEnoughVotes": "Zatím není dost hlasů ({current}/5 potřeba)",
+    "stillHappening": "Stále se děje?",
+    "confirm": "Potvrdit",
+    "deny": "Zamítnout",
+    "yes": "Ano",
+    "no": "Ne",
+    "alreadyVoted": "Už jsi hlasoval",
+    "upgradeToVote": "Upgrade pro hlasování",
+    "delete": "Smazat",
+    "deleteConfirm": "Smazat tuto událost? Toto nelze vrátit zpět.",
+    "deleted": "Událost smazána",
     "detail": {
-      "title": "Event detail",
-      "source": "Source",
-      "reported": "Reported",
-      "radius": "Radius",
-      "activeSince": "Active since",
-      "ends": "Ends",
-      "ongoing": "Ongoing",
-      "communityReport": "Community report",
-      "active": "Active",
-      "resolved": "Resolved",
-      "notFound": "Event not found",
-      "backToDashboard": "Back to dashboard"
+      "title": "Detail události",
+      "source": "Zdroj",
+      "reported": "Nahlášeno",
+      "radius": "Rádius",
+      "activeSince": "Aktivní od",
+      "ends": "Končí",
+      "ongoing": "Probíhá",
+      "communityReport": "Komunitní hlášení",
+      "active": "Aktivní",
+      "resolved": "Vyřešeno",
+      "notFound": "Událost nenalezena",
+      "backToDashboard": "Zpět na přehled"
     },
-    "resolveFailed": "Failed to resolve event"
+    "resolveFailed": "Událost se nepodařilo vyřešit"
   },
   "landing": {
     "hero": {
-      "title": "Know what's happening around you",
-      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+      "title": "Věz, co se děje kolem tebe",
+      "subtitle": "Varování před počasím, dopravní uzávěry, alarmy kvality ovzduší — doručeno na tvůj telefon dřív, než tě zasáhnou."
     },
     "features": {
-      "title": "Everything that matters, in one place",
-      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "title": "Vše důležité na jednom místě",
+      "subtitle": "Jedna aplikace nahradí pět. Hyperlokální upozornění podle tvé přesné polohy.",
       "weather": {
-        "title": "Weather Warnings",
-        "description": "Storms, heavy wind, frost and other meteorological warnings."
+        "title": "Varování před počasím",
+        "description": "Bouřky, silný vítr, mráz a další meteorologická varování."
       },
       "traffic": {
-        "title": "Traffic Updates",
-        "description": "Closures, accidents and congestion near you in real time."
+        "title": "Dopravní informace",
+        "description": "Uzávěry, nehody a kolony ve tvém okolí v reálném čase."
       },
       "airQuality": {
-        "title": "Air Quality",
-        "description": "Smog, particulates and allergens. Know when to stay indoors."
+        "title": "Kvalita ovzduší",
+        "description": "Smog, prachové částice a alergeny. Věz, kdy zůstat doma."
       },
       "outages": {
-        "title": "Utility Outages",
-        "description": "Planned outages of electricity, water, gas and heat in your area."
+        "title": "Výpadky sítí",
+        "description": "Plánované výpadky elektřiny, vody, plynu a tepla ve tvé oblasti."
       },
       "location": {
-        "title": "Location-Smart",
-        "description": "Everything works automatically based on where you are right now."
+        "title": "Chytré podle polohy",
+        "description": "Vše funguje automaticky podle toho, kde se právě nacházíš."
       }
     },
     "howItWorks": {
-      "title": "Get started in 3 steps",
-      "subtitle": "No sign-up forms, no city selection.",
+      "title": "Začni ve 3 krocích",
+      "subtitle": "Žádné registrační formuláře, žádný výběr měst.",
       "step1": {
-        "title": "Install the app",
-        "description": "Download Notifio from the App Store or Google Play."
+        "title": "Nainstaluj aplikaci",
+        "description": "Stáhni si Notifio z App Store nebo Google Play."
       },
       "step2": {
-        "title": "Allow your location",
-        "description": "The app detects where you are and filters alerts for your area."
+        "title": "Povol polohu",
+        "description": "Aplikace zjistí, kde jsi, a vyfiltruje upozornění pro tvou oblast."
       },
       "step3": {
-        "title": "Get notified",
-        "description": "Push notifications alert you about what's happening around you."
+        "title": "Dostávej upozornění",
+        "description": "Push notifikace ti řeknou, co se děje kolem tebe."
       }
     },
     "cta": {
-      "title": "Ready to stay informed?",
-      "subtitle": "Download Notifio and never be caught off guard again."
+      "title": "Připraven být informovaný?",
+      "subtitle": "Stáhni si Notifio a už nikdy nebudeš zaskočený."
     },
     "download": {
-      "ios": "Download for iOS",
-      "android": "Download for Android"
+      "ios": "Stáhnout pro iOS",
+      "android": "Stáhnout pro Android"
     },
     "footer": {
       "copyright": "© 2026 Notifio",
-      "privacy": "Privacy Policy",
-      "about": "About",
-      "contact": "Contact"
+      "privacy": "Ochrana soukromí",
+      "about": "O nás",
+      "contact": "Kontakt"
     }
   },
   "setupPrompt": {
-    "title": "Get started with notifications",
-    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
-    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
-    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
-    "enablePush": "Enable notifications",
-    "addLocation": "Add a location",
-    "setup": "Set up",
-    "compactBoth": "Enable location & notifications to see alerts here",
-    "compactPushOnly": "Enable push notifications to see alerts here",
-    "compactGeoOnly": "Add a location to see alerts here"
+    "title": "Začni s notifikacemi",
+    "descriptionBoth": "Povol přístup k poloze a push notifikace, abys dostával upozornění o počasí, dopravě a výpadcích ve své oblasti v reálném čase.",
+    "descriptionPushOnly": "Povol push notifikace, abys dostával upozornění pro své uložené lokace v reálném čase.",
+    "descriptionGeoOnly": "Přidej lokaci, abychom věděli, kam ti posílat upozornění.",
+    "enablePush": "Zapnout notifikace",
+    "addLocation": "Přidat lokaci",
+    "setup": "Nastavit",
+    "compactBoth": "Zapni polohu a notifikace, abys zde viděl upozornění",
+    "compactPushOnly": "Zapni push notifikace, abys zde viděl upozornění",
+    "compactGeoOnly": "Přidej lokaci, abys zde viděl upozornění"
   },
   "sourcePreferences": {
-    "title": "Preferred sources",
-    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
-    "onlySource": "Only available source",
-    "auto": "Auto (by community rating)",
-    "saved": "Saved",
-    "dragToReorder": "Drag to reorder priority"
+    "title": "Preferované zdroje",
+    "description": "Nastav si preferovaný zdroj dat pro každou kategorii. Zdroj s nejvyšší prioritou bude použit jako první.",
+    "onlySource": "Jediný dostupný zdroj",
+    "auto": "Automaticky (podle hodnocení komunity)",
+    "saved": "Uloženo",
+    "dragToReorder": "Tažením změníš pořadí priorit"
   },
   "weatherThresholds": {
-    "title": "Weather thresholds",
-    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
-    "addThreshold": "Add threshold",
-    "selectType": "Select threshold type",
-    "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
-    "deleteConfirm": "Remove this threshold?"
+    "title": "Prahové hodnoty počasí",
+    "description": "Nastav vlastní prahové hodnoty pro upozornění o počasí. Dostaneš notifikaci, když hodnoty přesáhnou tvé prahy.",
+    "addThreshold": "Přidat prahovou hodnotu",
+    "selectType": "Vyber typ prahu",
+    "saved": "Uloženo",
+    "tempHigh": "Vysoká teplota",
+    "tempLow": "Nízká teplota",
+    "windSpeed": "Rychlost větru",
+    "humidity": "Vlhkost",
+    "pressure": "Atmosférický tlak",
+    "deleteConfirm": "Odstranit tento práh?"
   }
 }

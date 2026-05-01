@@ -1,246 +1,246 @@
 {
   "notificationsPage": {
-    "title": "Notifications",
+    "title": "Benachrichtigungen",
     "tabs": {
-      "history": "History",
-      "reminders": "Reminders"
+      "history": "Verlauf",
+      "reminders": "Erinnerungen"
     },
     "filters": {
-      "all": "All",
-      "weather": "Weather",
-      "traffic": "Traffic",
-      "outages": "Outages",
+      "all": "Alle",
+      "weather": "Wetter",
+      "traffic": "Verkehr",
+      "outages": "Ausfälle",
       "pollen": "Pollen",
-      "events": "Events"
+      "events": "Ereignisse"
     },
     "history": {
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "older": "Older",
-      "empty": "No notifications yet",
-      "markAllRead": "Mark all as read"
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "older": "Älter",
+      "empty": "Noch keine Benachrichtigungen",
+      "markAllRead": "Alle als gelesen markieren"
     },
     "reminders": {
-      "viewList": "List",
-      "viewCalendar": "Calendar",
-      "newReminder": "New reminder",
-      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
-      "enabled": "Active",
-      "disabled": "Paused",
-      "daily": "daily",
-      "weekly": "weekly",
-      "monthly": "monthly",
-      "once": "once"
+      "viewList": "Liste",
+      "viewCalendar": "Kalender",
+      "newReminder": "Neue Erinnerung",
+      "empty": "Noch keine Erinnerungen. Erstelle eine, um Push-Benachrichtigungen zu einem bestimmten Zeitpunkt zu erhalten.",
+      "enabled": "Aktiv",
+      "disabled": "Pausiert",
+      "daily": "täglich",
+      "weekly": "wöchentlich",
+      "monthly": "monatlich",
+      "once": "einmalig"
     }
   },
   "categoryBadge": {
-    "traffic": "Traffic",
-    "weather": "Weather",
-    "weather_warning": "Warning",
-    "outage_electric": "Outage",
-    "outage_water": "Outage",
-    "outage_heat": "Outage",
-    "outage_gas": "Outage",
-    "planned_events": "Event",
-    "name_day": "Nameday",
+    "traffic": "Verkehr",
+    "weather": "Wetter",
+    "weather_warning": "Warnung",
+    "outage_electric": "Ausfall",
+    "outage_water": "Ausfall",
+    "outage_heat": "Ausfall",
+    "outage_gas": "Ausfall",
+    "planned_events": "Ereignis",
+    "name_day": "Namenstag",
     "pollen": "Pollen",
-    "air_quality": "Air quality"
+    "air_quality": "Luftqualität"
   },
   "profile": {
-    "title": "Profile",
-    "memberSince": "Member since {date}",
-    "manageBilling": "Manage billing",
+    "title": "Profil",
+    "memberSince": "Mitglied seit {date}",
+    "manageBilling": "Abrechnung verwalten",
     "upgradePlan": "Upgrade",
     "locations": {
-      "title": "Saved Locations",
-      "description": "Alerts are sent based on your saved locations",
-      "add": "Add location",
-      "edit": "Edit",
-      "delete": "Delete",
-      "deleteConfirm": "Remove this location?",
-      "name": "Location name",
-      "namePlaceholder": "e.g. Home, Work",
-      "useCurrentLocation": "Use current location",
-      "label": "Label",
-      "maxReached": "Location limit reached ({max} for your plan)",
-      "empty": "No saved locations. Add one to start receiving local alerts.",
-      "save": "Save",
-      "cancel": "Cancel"
+      "title": "Gespeicherte Orte",
+      "description": "Warnungen werden basierend auf deinen gespeicherten Orten gesendet",
+      "add": "Ort hinzufügen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleteConfirm": "Diesen Ort entfernen?",
+      "name": "Ortsname",
+      "namePlaceholder": "z. B. Zuhause, Arbeit",
+      "useCurrentLocation": "Aktuellen Standort verwenden",
+      "label": "Bezeichnung",
+      "maxReached": "Ortslimit erreicht ({max} für deinen Plan)",
+      "empty": "Keine gespeicherten Orte. Füge einen hinzu, um lokale Warnungen zu erhalten.",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
     },
     "myEvents": {
-      "title": "My Reports",
-      "empty": "You haven't reported any events yet",
-      "resolved": "Resolved",
-      "active": "Active",
-      "resolve": "Mark resolved"
+      "title": "Meine Meldungen",
+      "empty": "Du hast noch keine Ereignisse gemeldet",
+      "resolved": "Behoben",
+      "active": "Aktiv",
+      "resolve": "Als behoben markieren"
     },
     "account": {
-      "title": "Account",
-      "signOut": "Sign out",
-      "deleteAccount": "Delete account",
-      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
-      "deleteVerify": "Type DELETE to confirm"
+      "title": "Konto",
+      "signOut": "Abmelden",
+      "deleteAccount": "Konto löschen",
+      "deleteConfirm": "Dies löscht dein Konto und alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.",
+      "deleteVerify": "Tippe LÖSCHEN zur Bestätigung"
     },
     "yourData": {
-      "title": "Your data",
-      "description": "Download a copy of all your Notifio data.",
-      "download": "Download my data",
-      "preparing": "Preparing export...",
-      "ready": "Your export is ready. The download link expires in 24 hours.",
-      "downloadZip": "Download ZIP",
-      "expiresIn": "Expires in {time}",
-      "failed": "Export failed. Please try again."
+      "title": "Deine Daten",
+      "description": "Lade eine Kopie all deiner Notifio-Daten herunter.",
+      "download": "Meine Daten herunterladen",
+      "preparing": "Export wird vorbereitet...",
+      "ready": "Dein Export ist bereit. Der Download-Link läuft in 24 Stunden ab.",
+      "downloadZip": "ZIP herunterladen",
+      "expiresIn": "Läuft ab in {time}",
+      "failed": "Export fehlgeschlagen. Bitte erneut versuchen."
     },
     "deletion": {
-      "pending": "Deletion pending",
-      "description": "All data will be removed in {time}. Changed your mind?",
-      "cancel": "Cancel deletion",
-      "cancelled": "Deletion cancelled"
+      "pending": "Löschung ausstehend",
+      "description": "Alle Daten werden in {time} entfernt. Hast du deine Meinung geändert?",
+      "cancel": "Löschung abbrechen",
+      "cancelled": "Löschung abgebrochen"
     }
   },
   "nav": {
-    "signIn": "Sign in",
+    "signIn": "Anmelden",
     "dashboard": "Dashboard",
-    "map": "Map",
-    "notifications": "Notifications",
-    "settings": "Settings",
-    "profile": "Profile",
-    "pricing": "Pricing",
-    "reminders": "Reminders"
+    "map": "Karte",
+    "notifications": "Benachrichtigungen",
+    "settings": "Einstellungen",
+    "profile": "Profil",
+    "pricing": "Preise",
+    "reminders": "Erinnerungen"
   },
   "events": {
-    "reportButton": "Report",
-    "selectCategory": "What happened?",
-    "pinLocation": "Location",
-    "pickLocation": "Location (click map or drag pin)",
-    "radius": "Affected radius",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "success": "Event reported",
-    "myEvents": "My reports",
-    "resolve": "Resolve",
-    "credibility": "Credibility",
-    "votes": "{count} votes",
-    "validVotes": "{count} valid",
-    "invalidVotes": "{count} invalid",
-    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
-    "stillHappening": "Still happening?",
-    "confirm": "Confirm",
-    "deny": "Deny",
-    "yes": "Yes",
-    "no": "No",
-    "alreadyVoted": "You already voted",
-    "upgradeToVote": "Upgrade to vote",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this event? This cannot be undone.",
-    "deleted": "Event deleted",
+    "reportButton": "Melden",
+    "selectCategory": "Was ist passiert?",
+    "pinLocation": "Standort",
+    "pickLocation": "Standort (auf Karte klicken oder Pin ziehen)",
+    "radius": "Betroffener Radius",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "success": "Ereignis gemeldet",
+    "myEvents": "Meine Meldungen",
+    "resolve": "Beheben",
+    "credibility": "Glaubwürdigkeit",
+    "votes": "{count} Stimmen",
+    "validVotes": "{count} gültig",
+    "invalidVotes": "{count} ungültig",
+    "notEnoughVotes": "Noch nicht genug Stimmen ({current}/5 benötigt)",
+    "stillHappening": "Passiert es noch?",
+    "confirm": "Bestätigen",
+    "deny": "Ablehnen",
+    "yes": "Ja",
+    "no": "Nein",
+    "alreadyVoted": "Du hast bereits abgestimmt",
+    "upgradeToVote": "Upgrade zum Abstimmen",
+    "delete": "Löschen",
+    "deleteConfirm": "Dieses Ereignis löschen? Dies kann nicht rückgängig gemacht werden.",
+    "deleted": "Ereignis gelöscht",
     "detail": {
-      "title": "Event detail",
-      "source": "Source",
-      "reported": "Reported",
+      "title": "Ereignisdetail",
+      "source": "Quelle",
+      "reported": "Gemeldet",
       "radius": "Radius",
-      "activeSince": "Active since",
-      "ends": "Ends",
-      "ongoing": "Ongoing",
-      "communityReport": "Community report",
-      "active": "Active",
-      "resolved": "Resolved",
-      "notFound": "Event not found",
-      "backToDashboard": "Back to dashboard"
+      "activeSince": "Aktiv seit",
+      "ends": "Endet",
+      "ongoing": "Andauernd",
+      "communityReport": "Community-Meldung",
+      "active": "Aktiv",
+      "resolved": "Behoben",
+      "notFound": "Ereignis nicht gefunden",
+      "backToDashboard": "Zurück zum Dashboard"
     },
-    "resolveFailed": "Failed to resolve event"
+    "resolveFailed": "Ereignis konnte nicht behoben werden"
   },
   "landing": {
     "hero": {
-      "title": "Know what's happening around you",
-      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+      "title": "Wisse, was um dich herum passiert",
+      "subtitle": "Wetterwarnungen, Verkehrssperrungen, Luftqualitätsalarme — auf dein Handy geliefert, bevor sie dich betreffen."
     },
     "features": {
-      "title": "Everything that matters, in one place",
-      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "title": "Alles Wichtige an einem Ort",
+      "subtitle": "Eine App ersetzt fünf. Hyperlokale Warnungen basierend auf deinem genauen Standort.",
       "weather": {
-        "title": "Weather Warnings",
-        "description": "Storms, heavy wind, frost and other meteorological warnings."
+        "title": "Wetterwarnungen",
+        "description": "Stürme, starker Wind, Frost und andere meteorologische Warnungen."
       },
       "traffic": {
-        "title": "Traffic Updates",
-        "description": "Closures, accidents and congestion near you in real time."
+        "title": "Verkehrsupdates",
+        "description": "Sperrungen, Unfälle und Staus in deiner Nähe in Echtzeit."
       },
       "airQuality": {
-        "title": "Air Quality",
-        "description": "Smog, particulates and allergens. Know when to stay indoors."
+        "title": "Luftqualität",
+        "description": "Smog, Feinstaub und Allergene. Wisse, wann du drinnen bleiben solltest."
       },
       "outages": {
-        "title": "Utility Outages",
-        "description": "Planned outages of electricity, water, gas and heat in your area."
+        "title": "Versorgungsausfälle",
+        "description": "Geplante Ausfälle von Strom, Wasser, Gas und Heizung in deiner Region."
       },
       "location": {
-        "title": "Location-Smart",
-        "description": "Everything works automatically based on where you are right now."
+        "title": "Standortintelligent",
+        "description": "Alles funktioniert automatisch basierend auf deinem aktuellen Standort."
       }
     },
     "howItWorks": {
-      "title": "Get started in 3 steps",
-      "subtitle": "No sign-up forms, no city selection.",
+      "title": "In 3 Schritten loslegen",
+      "subtitle": "Keine Anmeldeformulare, keine Stadtauswahl.",
       "step1": {
-        "title": "Install the app",
-        "description": "Download Notifio from the App Store or Google Play."
+        "title": "App installieren",
+        "description": "Lade Notifio aus dem App Store oder Google Play herunter."
       },
       "step2": {
-        "title": "Allow your location",
-        "description": "The app detects where you are and filters alerts for your area."
+        "title": "Standort erlauben",
+        "description": "Die App erkennt, wo du bist, und filtert Warnungen für deine Region."
       },
       "step3": {
-        "title": "Get notified",
-        "description": "Push notifications alert you about what's happening around you."
+        "title": "Benachrichtigungen erhalten",
+        "description": "Push-Benachrichtigungen informieren dich über das, was um dich herum passiert."
       }
     },
     "cta": {
-      "title": "Ready to stay informed?",
-      "subtitle": "Download Notifio and never be caught off guard again."
+      "title": "Bereit, informiert zu bleiben?",
+      "subtitle": "Lade Notifio herunter und werde nie wieder unvorbereitet erwischt."
     },
     "download": {
-      "ios": "Download for iOS",
-      "android": "Download for Android"
+      "ios": "Für iOS herunterladen",
+      "android": "Für Android herunterladen"
     },
     "footer": {
       "copyright": "© 2026 Notifio",
-      "privacy": "Privacy Policy",
-      "about": "About",
-      "contact": "Contact"
+      "privacy": "Datenschutz",
+      "about": "Über uns",
+      "contact": "Kontakt"
     }
   },
   "setupPrompt": {
-    "title": "Get started with notifications",
-    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
-    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
-    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
-    "enablePush": "Enable notifications",
-    "addLocation": "Add a location",
-    "setup": "Set up",
-    "compactBoth": "Enable location & notifications to see alerts here",
-    "compactPushOnly": "Enable push notifications to see alerts here",
-    "compactGeoOnly": "Add a location to see alerts here"
+    "title": "Mit Benachrichtigungen loslegen",
+    "descriptionBoth": "Aktiviere den Standortzugriff und Push-Benachrichtigungen, um Echtzeit-Warnungen zu Wetter, Verkehr und Ausfällen in deiner Region zu erhalten.",
+    "descriptionPushOnly": "Aktiviere Push-Benachrichtigungen, um Echtzeit-Warnungen für deine gespeicherten Orte zu erhalten.",
+    "descriptionGeoOnly": "Füge einen Ort hinzu, damit wir wissen, wohin wir Warnungen senden sollen.",
+    "enablePush": "Benachrichtigungen aktivieren",
+    "addLocation": "Ort hinzufügen",
+    "setup": "Einrichten",
+    "compactBoth": "Aktiviere Standort & Benachrichtigungen, um Warnungen hier zu sehen",
+    "compactPushOnly": "Aktiviere Push-Benachrichtigungen, um Warnungen hier zu sehen",
+    "compactGeoOnly": "Füge einen Ort hinzu, um Warnungen hier zu sehen"
   },
   "sourcePreferences": {
-    "title": "Preferred sources",
-    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
-    "onlySource": "Only available source",
-    "auto": "Auto (by community rating)",
-    "saved": "Saved",
-    "dragToReorder": "Drag to reorder priority"
+    "title": "Bevorzugte Quellen",
+    "description": "Lege deine bevorzugte Datenquelle für jede Kategorie fest. Die Quelle mit der höchsten Priorität wird zuerst verwendet.",
+    "onlySource": "Einzige verfügbare Quelle",
+    "auto": "Automatisch (nach Community-Bewertung)",
+    "saved": "Gespeichert",
+    "dragToReorder": "Zum Neuordnen ziehen"
   },
   "weatherThresholds": {
-    "title": "Weather thresholds",
-    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
-    "addThreshold": "Add threshold",
-    "selectType": "Select threshold type",
-    "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
-    "deleteConfirm": "Remove this threshold?"
+    "title": "Wetter-Schwellenwerte",
+    "description": "Lege benutzerdefinierte Schwellenwerte für Wetterwarnungen fest. Du wirst benachrichtigt, wenn Werte deine Schwellen überschreiten.",
+    "addThreshold": "Schwellenwert hinzufügen",
+    "selectType": "Schwellenwerttyp auswählen",
+    "saved": "Gespeichert",
+    "tempHigh": "Hohe Temperatur",
+    "tempLow": "Niedrige Temperatur",
+    "windSpeed": "Windgeschwindigkeit",
+    "humidity": "Luftfeuchtigkeit",
+    "pressure": "Luftdruck",
+    "deleteConfirm": "Diesen Schwellenwert entfernen?"
   }
 }
