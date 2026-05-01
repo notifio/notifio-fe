@@ -12,6 +12,10 @@ export default tseslint.config(
       '**/.next/**',
       '**/.expo/**',
       '**/metro.config.js',
+      // Build/asset generators run on Node, not in the RN bundle. Their
+      // `console.log` + `process.exit` aren't undefined globals there;
+      // skipping them keeps the React Native lint config simple.
+      '**/scripts/**/*.mjs',
     ],
   },
   js.configs.recommended,
