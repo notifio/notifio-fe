@@ -242,5 +242,12 @@
     "humidity": "Páratartalom",
     "pressure": "Légnyomás",
     "deleteConfirm": "Eltávolítod ezt a küszöböt?"
+  },
+  "mapFilters": {
+    "air_quality": "Levegőminőség",
+    "pollen": "Pollen",
+    "hydrology": "Hidrológia",
+    "wildfire": "Tűz",
+    "outage_internet": "Internet"
   }
 }
