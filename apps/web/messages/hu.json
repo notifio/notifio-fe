@@ -1,246 +1,246 @@
 {
   "notificationsPage": {
-    "title": "Notifications",
+    "title": "Értesítések",
     "tabs": {
-      "history": "History",
-      "reminders": "Reminders"
+      "history": "Előzmények",
+      "reminders": "Emlékeztetők"
     },
     "filters": {
-      "all": "All",
-      "weather": "Weather",
-      "traffic": "Traffic",
-      "outages": "Outages",
+      "all": "Összes",
+      "weather": "Időjárás",
+      "traffic": "Közlekedés",
+      "outages": "Kimaradások",
       "pollen": "Pollen",
-      "events": "Events"
+      "events": "Események"
     },
     "history": {
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "older": "Older",
-      "empty": "No notifications yet",
-      "markAllRead": "Mark all as read"
+      "today": "Ma",
+      "yesterday": "Tegnap",
+      "older": "Régebbi",
+      "empty": "Még nincsenek értesítések",
+      "markAllRead": "Összes megjelölése olvasottként"
     },
     "reminders": {
-      "viewList": "List",
-      "viewCalendar": "Calendar",
-      "newReminder": "New reminder",
-      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
-      "enabled": "Active",
-      "disabled": "Paused",
-      "daily": "daily",
-      "weekly": "weekly",
-      "monthly": "monthly",
-      "once": "once"
+      "viewList": "Lista",
+      "viewCalendar": "Naptár",
+      "newReminder": "Új emlékeztető",
+      "empty": "Még nincsenek emlékeztetők. Hozz létre egyet, hogy adott időpontban push értesítést kapj.",
+      "enabled": "Aktív",
+      "disabled": "Szüneteltetve",
+      "daily": "naponta",
+      "weekly": "hetente",
+      "monthly": "havonta",
+      "once": "egyszeri"
     }
   },
   "categoryBadge": {
-    "traffic": "Traffic",
-    "weather": "Weather",
-    "weather_warning": "Warning",
-    "outage_electric": "Outage",
-    "outage_water": "Outage",
-    "outage_heat": "Outage",
-    "outage_gas": "Outage",
-    "planned_events": "Event",
-    "name_day": "Nameday",
+    "traffic": "Közlekedés",
+    "weather": "Időjárás",
+    "weather_warning": "Figyelmeztetés",
+    "outage_electric": "Kimaradás",
+    "outage_water": "Kimaradás",
+    "outage_heat": "Kimaradás",
+    "outage_gas": "Kimaradás",
+    "planned_events": "Esemény",
+    "name_day": "Névnap",
     "pollen": "Pollen",
-    "air_quality": "Air quality"
+    "air_quality": "Levegőminőség"
   },
   "profile": {
-    "title": "Profile",
-    "memberSince": "Member since {date}",
-    "manageBilling": "Manage billing",
-    "upgradePlan": "Upgrade",
+    "title": "Profil",
+    "memberSince": "Tag {date} óta",
+    "manageBilling": "Számlázás kezelése",
+    "upgradePlan": "Frissítés",
     "locations": {
-      "title": "Saved Locations",
-      "description": "Alerts are sent based on your saved locations",
-      "add": "Add location",
-      "edit": "Edit",
-      "delete": "Delete",
-      "deleteConfirm": "Remove this location?",
-      "name": "Location name",
-      "namePlaceholder": "e.g. Home, Work",
-      "useCurrentLocation": "Use current location",
-      "label": "Label",
-      "maxReached": "Location limit reached ({max} for your plan)",
-      "empty": "No saved locations. Add one to start receiving local alerts.",
-      "save": "Save",
-      "cancel": "Cancel"
+      "title": "Mentett helyek",
+      "description": "A figyelmeztetéseket a mentett helyek alapján küldjük",
+      "add": "Hely hozzáadása",
+      "edit": "Szerkesztés",
+      "delete": "Törlés",
+      "deleteConfirm": "Eltávolítod ezt a helyet?",
+      "name": "Hely neve",
+      "namePlaceholder": "pl. Otthon, Munka",
+      "useCurrentLocation": "Jelenlegi hely használata",
+      "label": "Címke",
+      "maxReached": "Helykorlát elérve ({max} a csomagodban)",
+      "empty": "Nincsenek mentett helyek. Adj hozzá egyet, hogy helyi figyelmeztetéseket kapj.",
+      "save": "Mentés",
+      "cancel": "Mégse"
     },
     "myEvents": {
-      "title": "My Reports",
-      "empty": "You haven't reported any events yet",
-      "resolved": "Resolved",
-      "active": "Active",
-      "resolve": "Mark resolved"
+      "title": "Saját bejelentések",
+      "empty": "Még nem jelentettél be eseményt",
+      "resolved": "Megoldva",
+      "active": "Aktív",
+      "resolve": "Megoldottnak jelölés"
     },
     "account": {
-      "title": "Account",
-      "signOut": "Sign out",
-      "deleteAccount": "Delete account",
-      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
-      "deleteVerify": "Type DELETE to confirm"
+      "title": "Fiók",
+      "signOut": "Kijelentkezés",
+      "deleteAccount": "Fiók törlése",
+      "deleteConfirm": "Ez véglegesen törli a fiókodat és minden adatot. Ez nem vonható vissza.",
+      "deleteVerify": "Megerősítéshez írd be: TÖRLÉS"
     },
     "yourData": {
-      "title": "Your data",
-      "description": "Download a copy of all your Notifio data.",
-      "download": "Download my data",
-      "preparing": "Preparing export...",
-      "ready": "Your export is ready. The download link expires in 24 hours.",
-      "downloadZip": "Download ZIP",
-      "expiresIn": "Expires in {time}",
-      "failed": "Export failed. Please try again."
+      "title": "Az adataid",
+      "description": "Tölts le egy másolatot az összes Notifio adatodról.",
+      "download": "Adataim letöltése",
+      "preparing": "Export előkészítése...",
+      "ready": "Az export kész. A letöltési link 24 órán belül lejár.",
+      "downloadZip": "ZIP letöltése",
+      "expiresIn": "Lejár: {time}",
+      "failed": "Az export sikertelen. Kérlek próbáld újra."
     },
     "deletion": {
-      "pending": "Deletion pending",
-      "description": "All data will be removed in {time}. Changed your mind?",
-      "cancel": "Cancel deletion",
-      "cancelled": "Deletion cancelled"
+      "pending": "Törlés függőben",
+      "description": "Minden adat törlésre kerül {time} múlva. Meggondoltad magad?",
+      "cancel": "Törlés visszavonása",
+      "cancelled": "Törlés visszavonva"
     }
   },
   "nav": {
-    "signIn": "Sign in",
-    "dashboard": "Dashboard",
-    "map": "Map",
-    "notifications": "Notifications",
-    "settings": "Settings",
-    "profile": "Profile",
-    "pricing": "Pricing",
-    "reminders": "Reminders"
+    "signIn": "Bejelentkezés",
+    "dashboard": "Irányítópult",
+    "map": "Térkép",
+    "notifications": "Értesítések",
+    "settings": "Beállítások",
+    "profile": "Profil",
+    "pricing": "Árak",
+    "reminders": "Emlékeztetők"
   },
   "events": {
-    "reportButton": "Report",
-    "selectCategory": "What happened?",
-    "pinLocation": "Location",
-    "pickLocation": "Location (click map or drag pin)",
-    "radius": "Affected radius",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "success": "Event reported",
-    "myEvents": "My reports",
-    "resolve": "Resolve",
-    "credibility": "Credibility",
-    "votes": "{count} votes",
-    "validVotes": "{count} valid",
-    "invalidVotes": "{count} invalid",
-    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
-    "stillHappening": "Still happening?",
-    "confirm": "Confirm",
-    "deny": "Deny",
-    "yes": "Yes",
-    "no": "No",
-    "alreadyVoted": "You already voted",
-    "upgradeToVote": "Upgrade to vote",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this event? This cannot be undone.",
-    "deleted": "Event deleted",
+    "reportButton": "Bejelentés",
+    "selectCategory": "Mi történt?",
+    "pinLocation": "Hely",
+    "pickLocation": "Hely (kattints a térképre vagy húzd a tűt)",
+    "radius": "Érintett sugár",
+    "submit": "Küldés",
+    "cancel": "Mégse",
+    "success": "Esemény bejelentve",
+    "myEvents": "Saját bejelentések",
+    "resolve": "Megoldás",
+    "credibility": "Hitelesség",
+    "votes": "{count} szavazat",
+    "validVotes": "{count} érvényes",
+    "invalidVotes": "{count} érvénytelen",
+    "notEnoughVotes": "Még nincs elég szavazat ({current}/5 szükséges)",
+    "stillHappening": "Még mindig történik?",
+    "confirm": "Megerősítés",
+    "deny": "Elutasítás",
+    "yes": "Igen",
+    "no": "Nem",
+    "alreadyVoted": "Már szavaztál",
+    "upgradeToVote": "Frissítés a szavazáshoz",
+    "delete": "Törlés",
+    "deleteConfirm": "Törlöd ezt az eseményt? Ez nem vonható vissza.",
+    "deleted": "Esemény törölve",
     "detail": {
-      "title": "Event detail",
-      "source": "Source",
-      "reported": "Reported",
-      "radius": "Radius",
-      "activeSince": "Active since",
-      "ends": "Ends",
-      "ongoing": "Ongoing",
-      "communityReport": "Community report",
-      "active": "Active",
-      "resolved": "Resolved",
-      "notFound": "Event not found",
-      "backToDashboard": "Back to dashboard"
+      "title": "Esemény részletei",
+      "source": "Forrás",
+      "reported": "Bejelentve",
+      "radius": "Sugár",
+      "activeSince": "Aktív ettől:",
+      "ends": "Vége",
+      "ongoing": "Folyamatban",
+      "communityReport": "Közösségi bejelentés",
+      "active": "Aktív",
+      "resolved": "Megoldva",
+      "notFound": "Esemény nem található",
+      "backToDashboard": "Vissza az irányítópultra"
     },
-    "resolveFailed": "Failed to resolve event"
+    "resolveFailed": "Az esemény megoldása sikertelen"
   },
   "landing": {
     "hero": {
-      "title": "Know what's happening around you",
-      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+      "title": "Tudd meg, mi történik körülötted",
+      "subtitle": "Időjárás-figyelmeztetések, közlekedési zárlatok, levegőminőség-riasztások — eljuttatva a telefonodra, mielőtt érintenének."
     },
     "features": {
-      "title": "Everything that matters, in one place",
-      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "title": "Minden, ami fontos, egy helyen",
+      "subtitle": "Egy alkalmazás öt helyett. Hiperlokális figyelmeztetések a pontos helyzeted alapján.",
       "weather": {
-        "title": "Weather Warnings",
-        "description": "Storms, heavy wind, frost and other meteorological warnings."
+        "title": "Időjárás-figyelmeztetések",
+        "description": "Viharok, erős szél, fagy és más meteorológiai figyelmeztetések."
       },
       "traffic": {
-        "title": "Traffic Updates",
-        "description": "Closures, accidents and congestion near you in real time."
+        "title": "Közlekedési információk",
+        "description": "Útzárlatok, balesetek és dugók a közeledben valós időben."
       },
       "airQuality": {
-        "title": "Air Quality",
-        "description": "Smog, particulates and allergens. Know when to stay indoors."
+        "title": "Levegőminőség",
+        "description": "Szmog, részecskék és allergének. Tudd meg, mikor maradj bent."
       },
       "outages": {
-        "title": "Utility Outages",
-        "description": "Planned outages of electricity, water, gas and heat in your area."
+        "title": "Hálózati kimaradások",
+        "description": "Áram, víz, gáz és fűtés tervezett kimaradásai a környékeden."
       },
       "location": {
-        "title": "Location-Smart",
-        "description": "Everything works automatically based on where you are right now."
+        "title": "Helyzet-okos",
+        "description": "Minden automatikusan működik az alapján, hogy hol vagy éppen."
       }
     },
     "howItWorks": {
-      "title": "Get started in 3 steps",
-      "subtitle": "No sign-up forms, no city selection.",
+      "title": "Kezdj el 3 lépésben",
+      "subtitle": "Nincs regisztrációs űrlap, nincs városválasztás.",
       "step1": {
-        "title": "Install the app",
-        "description": "Download Notifio from the App Store or Google Play."
+        "title": "Telepítsd az appot",
+        "description": "Töltsd le a Notifio-t az App Store-ból vagy Google Play-ből."
       },
       "step2": {
-        "title": "Allow your location",
-        "description": "The app detects where you are and filters alerts for your area."
+        "title": "Engedélyezd a helyet",
+        "description": "Az alkalmazás érzékeli, hol vagy, és kiszűri a régiódhoz tartozó figyelmeztetéseket."
       },
       "step3": {
-        "title": "Get notified",
-        "description": "Push notifications alert you about what's happening around you."
+        "title": "Kapj értesítést",
+        "description": "A push értesítések tájékoztatnak a körülötted történt eseményekről."
       }
     },
     "cta": {
-      "title": "Ready to stay informed?",
-      "subtitle": "Download Notifio and never be caught off guard again."
+      "title": "Készen állsz informáltnak maradni?",
+      "subtitle": "Tölts le a Notifio-t, és többé soha ne ér készületlenül."
     },
     "download": {
-      "ios": "Download for iOS",
-      "android": "Download for Android"
+      "ios": "Letöltés iOS-re",
+      "android": "Letöltés Androidra"
     },
     "footer": {
       "copyright": "© 2026 Notifio",
-      "privacy": "Privacy Policy",
-      "about": "About",
-      "contact": "Contact"
+      "privacy": "Adatvédelem",
+      "about": "Rólunk",
+      "contact": "Kapcsolat"
     }
   },
   "setupPrompt": {
-    "title": "Get started with notifications",
-    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
-    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
-    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
-    "enablePush": "Enable notifications",
-    "addLocation": "Add a location",
-    "setup": "Set up",
-    "compactBoth": "Enable location & notifications to see alerts here",
-    "compactPushOnly": "Enable push notifications to see alerts here",
-    "compactGeoOnly": "Add a location to see alerts here"
+    "title": "Kezdj el az értesítésekkel",
+    "descriptionBoth": "Engedélyezd a helyhez való hozzáférést és a push értesítéseket, hogy valós idejű figyelmeztetéseket kapj az időjárásról, közlekedésről és kimaradásokról a környékeden.",
+    "descriptionPushOnly": "Engedélyezd a push értesítéseket, hogy valós idejű figyelmeztetéseket kapj a mentett helyeidre.",
+    "descriptionGeoOnly": "Adj hozzá egy helyet, hogy tudjuk, hová küldjünk figyelmeztetéseket.",
+    "enablePush": "Értesítések engedélyezése",
+    "addLocation": "Hely hozzáadása",
+    "setup": "Beállítás",
+    "compactBoth": "Engedélyezd a helyet és értesítéseket, hogy itt láss figyelmeztetéseket",
+    "compactPushOnly": "Engedélyezd a push értesítéseket, hogy itt láss figyelmeztetéseket",
+    "compactGeoOnly": "Adj hozzá helyet, hogy itt láss figyelmeztetéseket"
   },
   "sourcePreferences": {
-    "title": "Preferred sources",
-    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
-    "onlySource": "Only available source",
-    "auto": "Auto (by community rating)",
-    "saved": "Saved",
-    "dragToReorder": "Drag to reorder priority"
+    "title": "Preferált források",
+    "description": "Állítsd be a preferált adatforrást minden kategóriához. A legmagasabb prioritású forrás kerül elsőként felhasználásra.",
+    "onlySource": "Egyetlen elérhető forrás",
+    "auto": "Automatikus (közösségi értékelés alapján)",
+    "saved": "Mentve",
+    "dragToReorder": "Húzd a sorrend megváltoztatásához"
   },
   "weatherThresholds": {
-    "title": "Weather thresholds",
-    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
-    "addThreshold": "Add threshold",
-    "selectType": "Select threshold type",
-    "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
-    "deleteConfirm": "Remove this threshold?"
+    "title": "Időjárási küszöbértékek",
+    "description": "Állíts be saját küszöbértékeket időjárási figyelmeztetésekhez. Értesítést kapsz, ha az értékek meghaladják a küszöböket.",
+    "addThreshold": "Küszöbérték hozzáadása",
+    "selectType": "Válassz küszöbtípust",
+    "saved": "Mentve",
+    "tempHigh": "Magas hőmérséklet",
+    "tempLow": "Alacsony hőmérséklet",
+    "windSpeed": "Szélsebesség",
+    "humidity": "Páratartalom",
+    "pressure": "Légnyomás",
+    "deleteConfirm": "Eltávolítod ezt a küszöböt?"
   }
 }

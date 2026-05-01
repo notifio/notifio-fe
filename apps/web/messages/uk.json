@@ -1,246 +1,246 @@
 {
   "notificationsPage": {
-    "title": "Notifications",
+    "title": "Сповіщення",
     "tabs": {
-      "history": "History",
-      "reminders": "Reminders"
+      "history": "Історія",
+      "reminders": "Нагадування"
     },
     "filters": {
-      "all": "All",
-      "weather": "Weather",
-      "traffic": "Traffic",
-      "outages": "Outages",
-      "pollen": "Pollen",
-      "events": "Events"
+      "all": "Усі",
+      "weather": "Погода",
+      "traffic": "Дорожній рух",
+      "outages": "Відключення",
+      "pollen": "Пилок",
+      "events": "Події"
     },
     "history": {
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "older": "Older",
-      "empty": "No notifications yet",
-      "markAllRead": "Mark all as read"
+      "today": "Сьогодні",
+      "yesterday": "Вчора",
+      "older": "Старіші",
+      "empty": "Поки немає сповіщень",
+      "markAllRead": "Позначити всі як прочитані"
     },
     "reminders": {
-      "viewList": "List",
-      "viewCalendar": "Calendar",
-      "newReminder": "New reminder",
-      "empty": "No reminders yet. Create one to get push notifications at a specific time.",
-      "enabled": "Active",
-      "disabled": "Paused",
-      "daily": "daily",
-      "weekly": "weekly",
-      "monthly": "monthly",
-      "once": "once"
+      "viewList": "Список",
+      "viewCalendar": "Календар",
+      "newReminder": "Нове нагадування",
+      "empty": "Поки немає нагадувань. Створи одне, щоб отримати push-сповіщення в певний час.",
+      "enabled": "Активне",
+      "disabled": "Призупинено",
+      "daily": "щодня",
+      "weekly": "щотижня",
+      "monthly": "щомісяця",
+      "once": "одноразово"
     }
   },
   "categoryBadge": {
-    "traffic": "Traffic",
-    "weather": "Weather",
-    "weather_warning": "Warning",
-    "outage_electric": "Outage",
-    "outage_water": "Outage",
-    "outage_heat": "Outage",
-    "outage_gas": "Outage",
-    "planned_events": "Event",
-    "name_day": "Nameday",
-    "pollen": "Pollen",
-    "air_quality": "Air quality"
+    "traffic": "Рух",
+    "weather": "Погода",
+    "weather_warning": "Попередження",
+    "outage_electric": "Збій",
+    "outage_water": "Збій",
+    "outage_heat": "Збій",
+    "outage_gas": "Збій",
+    "planned_events": "Подія",
+    "name_day": "Іменини",
+    "pollen": "Пилок",
+    "air_quality": "Якість повітря"
   },
   "profile": {
-    "title": "Profile",
-    "memberSince": "Member since {date}",
-    "manageBilling": "Manage billing",
-    "upgradePlan": "Upgrade",
+    "title": "Профіль",
+    "memberSince": "Учасник з {date}",
+    "manageBilling": "Керування рахунками",
+    "upgradePlan": "Оновити",
     "locations": {
-      "title": "Saved Locations",
-      "description": "Alerts are sent based on your saved locations",
-      "add": "Add location",
-      "edit": "Edit",
-      "delete": "Delete",
-      "deleteConfirm": "Remove this location?",
-      "name": "Location name",
-      "namePlaceholder": "e.g. Home, Work",
-      "useCurrentLocation": "Use current location",
-      "label": "Label",
-      "maxReached": "Location limit reached ({max} for your plan)",
-      "empty": "No saved locations. Add one to start receiving local alerts.",
-      "save": "Save",
-      "cancel": "Cancel"
+      "title": "Збережені місця",
+      "description": "Сповіщення надсилаються на основі ваших збережених місць",
+      "add": "Додати місце",
+      "edit": "Редагувати",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити це місце?",
+      "name": "Назва місця",
+      "namePlaceholder": "напр. Дім, Робота",
+      "useCurrentLocation": "Використати поточне місце",
+      "label": "Мітка",
+      "maxReached": "Досягнуто ліміту місць ({max} для вашого плану)",
+      "empty": "Немає збережених місць. Додай одне, щоб отримувати локальні сповіщення.",
+      "save": "Зберегти",
+      "cancel": "Скасувати"
     },
     "myEvents": {
-      "title": "My Reports",
-      "empty": "You haven't reported any events yet",
-      "resolved": "Resolved",
-      "active": "Active",
-      "resolve": "Mark resolved"
+      "title": "Мої повідомлення",
+      "empty": "Ти ще не повідомляв про події",
+      "resolved": "Вирішено",
+      "active": "Активне",
+      "resolve": "Позначити вирішеним"
     },
     "account": {
-      "title": "Account",
-      "signOut": "Sign out",
-      "deleteAccount": "Delete account",
-      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
-      "deleteVerify": "Type DELETE to confirm"
+      "title": "Акаунт",
+      "signOut": "Вийти",
+      "deleteAccount": "Видалити акаунт",
+      "deleteConfirm": "Це назавжди видалить твій акаунт і всі дані. Цю дію неможливо скасувати.",
+      "deleteVerify": "Для підтвердження введи DELETE"
     },
     "yourData": {
-      "title": "Your data",
-      "description": "Download a copy of all your Notifio data.",
-      "download": "Download my data",
-      "preparing": "Preparing export...",
-      "ready": "Your export is ready. The download link expires in 24 hours.",
-      "downloadZip": "Download ZIP",
-      "expiresIn": "Expires in {time}",
-      "failed": "Export failed. Please try again."
+      "title": "Твої дані",
+      "description": "Завантаж копію всіх своїх даних Notifio.",
+      "download": "Завантажити мої дані",
+      "preparing": "Підготовка експорту...",
+      "ready": "Твій експорт готовий. Посилання для завантаження діє 24 години.",
+      "downloadZip": "Завантажити ZIP",
+      "expiresIn": "Термін дії: {time}",
+      "failed": "Експорт не вдалося. Спробуй знову."
     },
     "deletion": {
-      "pending": "Deletion pending",
-      "description": "All data will be removed in {time}. Changed your mind?",
-      "cancel": "Cancel deletion",
-      "cancelled": "Deletion cancelled"
+      "pending": "Видалення очікується",
+      "description": "Усі дані будуть видалені через {time}. Передумав?",
+      "cancel": "Скасувати видалення",
+      "cancelled": "Видалення скасовано"
     }
   },
   "nav": {
-    "signIn": "Sign in",
-    "dashboard": "Dashboard",
-    "map": "Map",
-    "notifications": "Notifications",
-    "settings": "Settings",
-    "profile": "Profile",
-    "pricing": "Pricing",
-    "reminders": "Reminders"
+    "signIn": "Увійти",
+    "dashboard": "Панель",
+    "map": "Карта",
+    "notifications": "Сповіщення",
+    "settings": "Налаштування",
+    "profile": "Профіль",
+    "pricing": "Тарифи",
+    "reminders": "Нагадування"
   },
   "events": {
-    "reportButton": "Report",
-    "selectCategory": "What happened?",
-    "pinLocation": "Location",
-    "pickLocation": "Location (click map or drag pin)",
-    "radius": "Affected radius",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "success": "Event reported",
-    "myEvents": "My reports",
-    "resolve": "Resolve",
-    "credibility": "Credibility",
-    "votes": "{count} votes",
-    "validVotes": "{count} valid",
-    "invalidVotes": "{count} invalid",
-    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
-    "stillHappening": "Still happening?",
-    "confirm": "Confirm",
-    "deny": "Deny",
-    "yes": "Yes",
-    "no": "No",
-    "alreadyVoted": "You already voted",
-    "upgradeToVote": "Upgrade to vote",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this event? This cannot be undone.",
-    "deleted": "Event deleted",
+    "reportButton": "Повідомити",
+    "selectCategory": "Що сталося?",
+    "pinLocation": "Місце",
+    "pickLocation": "Місце (клікни на карту або перетягни шпильку)",
+    "radius": "Радіус впливу",
+    "submit": "Надіслати",
+    "cancel": "Скасувати",
+    "success": "Подію зареєстровано",
+    "myEvents": "Мої повідомлення",
+    "resolve": "Вирішити",
+    "credibility": "Достовірність",
+    "votes": "{count} голосів",
+    "validVotes": "{count} дійсних",
+    "invalidVotes": "{count} недійсних",
+    "notEnoughVotes": "Поки недостатньо голосів ({current}/5 потрібно)",
+    "stillHappening": "Ще триває?",
+    "confirm": "Підтвердити",
+    "deny": "Відхилити",
+    "yes": "Так",
+    "no": "Ні",
+    "alreadyVoted": "Ти вже проголосував",
+    "upgradeToVote": "Оновити для голосування",
+    "delete": "Видалити",
+    "deleteConfirm": "Видалити цю подію? Цю дію неможливо скасувати.",
+    "deleted": "Подію видалено",
     "detail": {
-      "title": "Event detail",
-      "source": "Source",
-      "reported": "Reported",
-      "radius": "Radius",
-      "activeSince": "Active since",
-      "ends": "Ends",
-      "ongoing": "Ongoing",
-      "communityReport": "Community report",
-      "active": "Active",
-      "resolved": "Resolved",
-      "notFound": "Event not found",
-      "backToDashboard": "Back to dashboard"
+      "title": "Деталі події",
+      "source": "Джерело",
+      "reported": "Зареєстровано",
+      "radius": "Радіус",
+      "activeSince": "Активне з",
+      "ends": "Завершується",
+      "ongoing": "Триває",
+      "communityReport": "Повідомлення спільноти",
+      "active": "Активне",
+      "resolved": "Вирішено",
+      "notFound": "Подію не знайдено",
+      "backToDashboard": "Назад на панель"
     },
-    "resolveFailed": "Failed to resolve event"
+    "resolveFailed": "Не вдалося вирішити подію"
   },
   "landing": {
     "hero": {
-      "title": "Know what's happening around you",
-      "subtitle": "Weather warnings, traffic closures, air quality alerts — delivered to your phone before they affect you."
+      "title": "Знай, що відбувається навколо тебе",
+      "subtitle": "Попередження про погоду, дорожні перекриття, сповіщення про якість повітря — на твоєму телефоні раніше, ніж вони тебе зачеплять."
     },
     "features": {
-      "title": "Everything that matters, in one place",
-      "subtitle": "One app replaces five. Hyperlocal alerts powered by your exact location.",
+      "title": "Все важливе в одному місці",
+      "subtitle": "Один додаток замінює п'ять. Гіперлокальні сповіщення на основі точного місцезнаходження.",
       "weather": {
-        "title": "Weather Warnings",
-        "description": "Storms, heavy wind, frost and other meteorological warnings."
+        "title": "Погодні попередження",
+        "description": "Шторми, сильний вітер, мороз та інші метеорологічні попередження."
       },
       "traffic": {
-        "title": "Traffic Updates",
-        "description": "Closures, accidents and congestion near you in real time."
+        "title": "Дорожні оновлення",
+        "description": "Перекриття, аварії та затори поряд з тобою в реальному часі."
       },
       "airQuality": {
-        "title": "Air Quality",
-        "description": "Smog, particulates and allergens. Know when to stay indoors."
+        "title": "Якість повітря",
+        "description": "Смог, частинки та алергени. Знай, коли залишатися всередині."
       },
       "outages": {
-        "title": "Utility Outages",
-        "description": "Planned outages of electricity, water, gas and heat in your area."
+        "title": "Збої комунальних служб",
+        "description": "Планові відключення електрики, води, газу та опалення у твоєму регіоні."
       },
       "location": {
-        "title": "Location-Smart",
-        "description": "Everything works automatically based on where you are right now."
+        "title": "Розумне за місцем",
+        "description": "Усе працює автоматично залежно від того, де ти зараз."
       }
     },
     "howItWorks": {
-      "title": "Get started in 3 steps",
-      "subtitle": "No sign-up forms, no city selection.",
+      "title": "Почни за 3 кроки",
+      "subtitle": "Без реєстраційних форм, без вибору міста.",
       "step1": {
-        "title": "Install the app",
-        "description": "Download Notifio from the App Store or Google Play."
+        "title": "Встанови додаток",
+        "description": "Завантаж Notifio з App Store або Google Play."
       },
       "step2": {
-        "title": "Allow your location",
-        "description": "The app detects where you are and filters alerts for your area."
+        "title": "Дозволь геолокацію",
+        "description": "Додаток визначає, де ти, і фільтрує сповіщення для твоєї зони."
       },
       "step3": {
-        "title": "Get notified",
-        "description": "Push notifications alert you about what's happening around you."
+        "title": "Отримуй сповіщення",
+        "description": "Push-сповіщення повідомляють тобі про події навколо."
       }
     },
     "cta": {
-      "title": "Ready to stay informed?",
-      "subtitle": "Download Notifio and never be caught off guard again."
+      "title": "Готовий бути в курсі?",
+      "subtitle": "Завантаж Notifio і ніколи більше не будеш заскочений зненацька."
     },
     "download": {
-      "ios": "Download for iOS",
-      "android": "Download for Android"
+      "ios": "Завантажити для iOS",
+      "android": "Завантажити для Android"
     },
     "footer": {
       "copyright": "© 2026 Notifio",
-      "privacy": "Privacy Policy",
-      "about": "About",
-      "contact": "Contact"
+      "privacy": "Політика конфіденційності",
+      "about": "Про нас",
+      "contact": "Контакти"
     }
   },
   "setupPrompt": {
-    "title": "Get started with notifications",
-    "descriptionBoth": "Enable location access and push notifications to receive real-time alerts about weather, traffic, and outages in your area.",
-    "descriptionPushOnly": "Enable push notifications to receive real-time alerts for your saved locations.",
-    "descriptionGeoOnly": "Add a location so we know where to send you alerts.",
-    "enablePush": "Enable notifications",
-    "addLocation": "Add a location",
-    "setup": "Set up",
-    "compactBoth": "Enable location & notifications to see alerts here",
-    "compactPushOnly": "Enable push notifications to see alerts here",
-    "compactGeoOnly": "Add a location to see alerts here"
+    "title": "Почни зі сповіщень",
+    "descriptionBoth": "Дозволь доступ до місця та push-сповіщення, щоб отримувати сповіщення про погоду, рух і збої у твоєму районі в реальному часі.",
+    "descriptionPushOnly": "Дозволь push-сповіщення, щоб отримувати сповіщення для своїх збережених місць у реальному часі.",
+    "descriptionGeoOnly": "Додай місце, щоб ми знали, куди надсилати сповіщення.",
+    "enablePush": "Увімкнути сповіщення",
+    "addLocation": "Додати місце",
+    "setup": "Налаштувати",
+    "compactBoth": "Увімкни геолокацію та сповіщення, щоб бачити сповіщення тут",
+    "compactPushOnly": "Увімкни push-сповіщення, щоб бачити сповіщення тут",
+    "compactGeoOnly": "Додай місце, щоб бачити сповіщення тут"
   },
   "sourcePreferences": {
-    "title": "Preferred sources",
-    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
-    "onlySource": "Only available source",
-    "auto": "Auto (by community rating)",
-    "saved": "Saved",
-    "dragToReorder": "Drag to reorder priority"
+    "title": "Бажані джерела",
+    "description": "Встанови бажане джерело даних для кожної категорії. Джерело з найвищим пріоритетом використовуватиметься першим.",
+    "onlySource": "Єдине доступне джерело",
+    "auto": "Автоматично (за рейтингом спільноти)",
+    "saved": "Збережено",
+    "dragToReorder": "Перетягни для зміни пріоритету"
   },
   "weatherThresholds": {
-    "title": "Weather thresholds",
-    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
-    "addThreshold": "Add threshold",
-    "selectType": "Select threshold type",
-    "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
-    "deleteConfirm": "Remove this threshold?"
+    "title": "Порогові значення погоди",
+    "description": "Встанови власні порогові значення для попереджень про погоду. Ти отримаєш сповіщення, коли значення перевищать пороги.",
+    "addThreshold": "Додати поріг",
+    "selectType": "Вибери тип порогу",
+    "saved": "Збережено",
+    "tempHigh": "Висока температура",
+    "tempLow": "Низька температура",
+    "windSpeed": "Швидкість вітру",
+    "humidity": "Вологість",
+    "pressure": "Атмосферний тиск",
+    "deleteConfirm": "Видалити цей поріг?"
   }
 }
