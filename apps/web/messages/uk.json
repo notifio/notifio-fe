@@ -242,5 +242,12 @@
     "humidity": "Вологість",
     "pressure": "Атмосферний тиск",
     "deleteConfirm": "Видалити цей поріг?"
+  },
+  "mapFilters": {
+    "air_quality": "Якість повітря",
+    "pollen": "Пилок",
+    "hydrology": "Гідрологія",
+    "wildfire": "Пожежа",
+    "outage_internet": "Інтернет"
   }
 }

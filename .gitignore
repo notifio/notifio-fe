@@ -23,3 +23,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .npmrc
+
+# Mobile icon generator artifacts (regenerated from sources)
+apps/mobile/scripts/osm-cache/
+apps/mobile/scripts/design-proposals/

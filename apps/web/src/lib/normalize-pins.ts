@@ -2,7 +2,19 @@
 import type { UserEvent } from '@notifio/api-client';
 import type { OutageRecord, TrafficIncident } from '@notifio/shared';
 
-export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic';
+// FE-P1.2: dropped the grey "event" fallback for five categories that
+// already have their own pin colours + icons. Order matches the legend.
+export type MapPinSource =
+  | 'electricity'
+  | 'water'
+  | 'gas'
+  | 'heat'
+  | 'traffic'
+  | 'air_quality'
+  | 'pollen'
+  | 'hydrology'
+  | 'wildfire'
+  | 'outage_internet';
 /**
  * Lifecycle label rendered on a pin. Matches the API's `EventLifecycleStatus`
  * (`upcoming | active | resolved`) — this enum is FE-local until the BE
@@ -125,12 +137,21 @@ const EVENT_SUBCATEGORY_TO_INCIDENT: Record<string, TrafficIncidentType> = {
   flooding: 'flooding',
 };
 
-// Category codes that map to outage pin sources
+// Category codes that map to outage pin sources. Five categories were
+// previously falling through to the generic grey "event" pin
+// (FE-P1.2) — air_quality / pollen / hydrology / wildfire /
+// outage_internet — even though the BE emits them with stable
+// category codes. Map them all explicitly.
 const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
   outage_electric: 'electricity',
   outage_water: 'water',
   outage_heat: 'heat',
   outage_gas: 'gas',
+  outage_internet: 'outage_internet',
+  air_quality: 'air_quality',
+  pollen: 'pollen',
+  hydrology: 'hydrology',
+  wildfire: 'wildfire',
 };
 
 // Categories that should not appear as map pins

@@ -242,5 +242,12 @@
     "humidity": "Vlhkost",
     "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstranit tento práh?"
+  },
+  "mapFilters": {
+    "air_quality": "Kvalita ovzduší",
+    "pollen": "Pyl",
+    "hydrology": "Hydrologie",
+    "wildfire": "Požár",
+    "outage_internet": "Internet"
   }
 }
