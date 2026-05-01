@@ -7,6 +7,13 @@ import { showToast } from './toast';
 const rawApi = createNotifioClient({
   baseUrl: process.env.EXPO_PUBLIC_API_URL!,
   apiKey: process.env.EXPO_PUBLIC_API_KEY,
+  // Read locale lazily on every request so it tracks i18next state.
+  // Without this the BE never received `Accept-Language`, served the
+  // SK default for everything (event titles, type names, materiality
+  // labels), and users picking DE/CS/HU/UK/EN saw Slovak content
+  // regardless. Web's `apps/web/src/lib/api.ts` has had the same wiring
+  // since PR3; the mobile callsite was missed.
+  locale: () => i18n.language || 'sk',
   getToken: async () => {
     const { data: { session } } = await supabase.auth.getSession();
     return session?.access_token ?? null;
