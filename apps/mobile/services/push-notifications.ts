@@ -22,6 +22,28 @@ export async function requestPermissions(): Promise<boolean> {
   return status === 'granted';
 }
 
+/**
+ * Read-only permission check. Does NOT prompt the user — used at app
+ * mount to learn whether a previously-granted permission still holds,
+ * so the device-registration effect can re-run on cold start. Without
+ * this the provider's `hasPermission` always starts `false`, the
+ * registration effect bails out, and the device never re-registers
+ * after an app restart (PUSH-1, audit 30.4.2026).
+ */
+export async function checkPermissions(): Promise<boolean> {
+  if (Platform.OS === 'ios') {
+    const authStatus = await messaging().hasPermission();
+    return (
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL
+    );
+  }
+
+  // Android
+  const { status } = await Notifications.getPermissionsAsync();
+  return status === 'granted';
+}
+
 export async function getFcmToken(): Promise<string | null> {
   try {
     return await messaging().getToken();

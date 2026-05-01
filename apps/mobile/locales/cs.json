@@ -6,10 +6,20 @@
     "profile": "Profile"
   },
   "screens": {
-    "overview": { "title": "Overview", "subtitle": "Your area" },
-    "alerts": { "title": "Alerts", "subtitle": "For your area" },
-    "settings": { "title": "Settings" },
-    "profile": { "title": "Profile" }
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Your area"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "subtitle": "For your area"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "profile": {
+      "title": "Profile"
+    }
   },
   "alertTypes": {
     "weather": "Weather Warnings",
@@ -217,7 +227,14 @@
     "saved": "Location saved",
     "updated": "Location updated",
     "deleted": "Location deleted",
-    "error": "Failed to save location"
+    "error": "Failed to save location",
+    "customLabelPlusOnly": "Vlastní název dostupný s Plus",
+    "currentTitle": "Aktuální poloha",
+    "currentLoading": "Zjišťuji polohu…",
+    "currentDenied": "Přístup k poloze zamítnut. Povol ho v nastavení.",
+    "currentUnavailable": "Nepodařilo se získat polohu. Zkus to znovu.",
+    "currentAccuracy": "Přesnost: ~{m} m",
+    "savedTitle": "Uložené lokace"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -357,5 +374,9 @@
     "flooding": "Flooding",
     "event": "Events",
     "other": "Other"
+  },
+  "mapPinStatus": {
+    "active": "Aktivní",
+    "upcoming": "Plánované"
   }
 }

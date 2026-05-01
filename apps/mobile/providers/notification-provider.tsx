@@ -8,6 +8,7 @@ import { useGeolocationTracker } from '../hooks/use-geolocation-tracker';
 import { api } from '../lib/api';
 import {
   autoSaveLocationIfNeeded,
+  checkPermissions,
   configureForegroundNotifications,
   deactivateDevice,
   getFcmToken,
@@ -43,6 +44,23 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Configure how foreground notifications are displayed
   useEffect(() => {
     configureForegroundNotifications();
+  }, []);
+
+  // PUSH-1: rehydrate the granted-permission state on every cold start.
+  // Without this `hasPermission` was permanently false until the user
+  // explicitly tapped "enable" again — which meant the
+  // device-registration effect below never fired after an app restart,
+  // FCM tokens got stale, and the GPS tracker (gated on `isRegistered`)
+  // also stayed off. Real-time location-based push effectively died on
+  // every reboot until the user manually reset it.
+  useEffect(() => {
+    let cancelled = false;
+    void checkPermissions().then((granted) => {
+      if (!cancelled) setHasPermission(granted);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Handle notification tap → deep link

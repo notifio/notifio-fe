@@ -6,10 +6,20 @@
     "profile": "Profile"
   },
   "screens": {
-    "overview": { "title": "Overview", "subtitle": "Your area" },
-    "alerts": { "title": "Alerts", "subtitle": "For your area" },
-    "settings": { "title": "Settings" },
-    "profile": { "title": "Profile" }
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Your area"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "subtitle": "For your area"
+    },
+    "settings": {
+      "title": "Settings"
+    },
+    "profile": {
+      "title": "Profile"
+    }
   },
   "alertTypes": {
     "weather": "Weather Warnings",
@@ -217,7 +227,14 @@
     "saved": "Location saved",
     "updated": "Location updated",
     "deleted": "Location deleted",
-    "error": "Failed to save location"
+    "error": "Failed to save location",
+    "customLabelPlusOnly": "Власна назва з Plus",
+    "currentTitle": "Поточне місце",
+    "currentLoading": "Визначаю місце…",
+    "currentDenied": "Доступ до геолокації заборонено. Дозволь у налаштуваннях.",
+    "currentUnavailable": "Не вдалося отримати місце. Спробуй ще раз.",
+    "currentAccuracy": "Точність: ~{m} м",
+    "savedTitle": "Збережені місця"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -357,5 +374,9 @@
     "flooding": "Flooding",
     "event": "Events",
     "other": "Other"
+  },
+  "mapPinStatus": {
+    "active": "Активне",
+    "upcoming": "Заплановане"
   }
 }

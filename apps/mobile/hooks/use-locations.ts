@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { CreateLocationBody, UpdateLocationBody, UserLocation, UserLocationsResponse } from '@notifio/api-client';
 
 import { api } from '../lib/api';
+import { extractApiErrorMessage } from '../lib/api-error';
 import { showToast } from '../lib/toast';
 
 interface UseLocationsResult {
@@ -42,6 +43,10 @@ export function useLocations(): UseLocationsResult {
     fetch();
   }, [fetch]);
 
+  // LOC-1: surface the BE's `error` string instead of a generic toast.
+  // The previous catch-all swallowed "Location limit reached (1)" /
+  // "Custom labels require a higher membership tier" / validation
+  // errors — users could only see a vague "failed to save" message.
   const addLocation = useCallback(
     async (body: CreateLocationBody): Promise<boolean> => {
       try {
@@ -49,8 +54,8 @@ export function useLocations(): UseLocationsResult {
         await fetch();
         showToast.success(t('locations.saved'));
         return true;
-      } catch {
-        showToast.error(t('locations.error'));
+      } catch (err) {
+        showToast.error(extractApiErrorMessage(err, t('locations.error')));
         return false;
       }
     },
@@ -64,8 +69,8 @@ export function useLocations(): UseLocationsResult {
         await fetch();
         showToast.success(t('locations.updated'));
         return true;
-      } catch {
-        showToast.error(t('locations.error'));
+      } catch (err) {
+        showToast.error(extractApiErrorMessage(err, t('locations.error')));
         return false;
       }
     },
@@ -79,8 +84,8 @@ export function useLocations(): UseLocationsResult {
         await fetch();
         showToast.success(t('locations.deleted'));
         return true;
-      } catch {
-        showToast.error(t('locations.error'));
+      } catch (err) {
+        showToast.error(extractApiErrorMessage(err, t('locations.error')));
         return false;
       }
     },
