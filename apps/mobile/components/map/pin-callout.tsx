@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { formatTimeAgo } from '@notifio/shared/weather';
@@ -13,8 +14,9 @@ interface PinCalloutProps {
 
 export function PinCallout({ pin }: PinCalloutProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const style = MAP_PIN_STYLES[pin.source];
-  const isScheduled = pin.status === 'scheduled';
+  const isUpcoming = pin.status === 'upcoming';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -37,7 +39,7 @@ export function PinCallout({ pin }: PinCalloutProps) {
         <View
           style={[
             styles.statusBadge,
-            isScheduled
+            isUpcoming
               ? { backgroundColor: colors.severity.info.bg }
               : { backgroundColor: colors.severity.critical.bg },
           ]}
@@ -45,10 +47,10 @@ export function PinCallout({ pin }: PinCalloutProps) {
           <Text
             style={[
               styles.statusText,
-              { color: isScheduled ? colors.severity.info.text : colors.severity.critical.text },
+              { color: isUpcoming ? colors.severity.info.text : colors.severity.critical.text },
             ]}
           >
-            {isScheduled ? 'Scheduled' : 'Active'}
+            {isUpcoming ? t('mapPinStatus.upcoming') : t('mapPinStatus.active')}
           </Text>
         </View>
       </View>

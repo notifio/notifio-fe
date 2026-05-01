@@ -6,7 +6,9 @@ import type { MapPin } from '../../lib/normalize-pins';
 
 const PIN_W = 38;
 const PIN_H = 50;
-const SCHEDULED_OPACITY = 0.55;
+// Upcoming pins are dimmed so the user can tell future events from
+// active ones at a glance (matches web's MapMarker styling).
+const UPCOMING_OPACITY = 0.55;
 
 interface MapPinMarkerProps {
   pin: MapPin;
@@ -20,7 +22,7 @@ interface MapPinMarkerProps {
 export function MapPinMarker({ pin }: MapPinMarkerProps) {
   const style = getPinStyle(pin);
   const IconComponent = style.icon;
-  const opacity = pin.status === 'scheduled' ? SCHEDULED_OPACITY : 1;
+  const opacity = pin.status === 'upcoming' ? UPCOMING_OPACITY : 1;
 
   return (
     <View style={[styles.container, { opacity }]}>

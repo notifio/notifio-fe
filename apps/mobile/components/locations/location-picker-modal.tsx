@@ -1,4 +1,4 @@
-import { IconCurrentLocation, IconX } from '@tabler/icons-react-native';
+import { IconCurrentLocation, IconLock, IconX } from '@tabler/icons-react-native';
 import * as ExpoLocation from 'expo-location';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
 
+import { useMembership } from '../../hooks/use-membership';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -44,8 +45,15 @@ export function LocationPickerModal({
 }: LocationPickerModalProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
+  const { membership } = useMembership();
   const mapRef = useRef<MapView>(null);
   const isEdit = !!editLocation;
+  // LOC-1: BE's `user-location.service.createLocation` rejects customLabel
+  // for tiers without the `custom_labels` feature (FREE has none, PLUS+
+  // has it). Used to fail with a generic toast when a FREE user typed
+  // anything in the box. Gate the input — non-eligible users see a
+  // disabled field with a small lock badge instead.
+  const canSetCustomLabel = membership?.features.includes('custom_labels') ?? false;
 
   const [region, setRegion] = useState<Region>(
     editLocation
@@ -81,11 +89,15 @@ export function LocationPickerModal({
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Don't ship customLabel up if the user isn't entitled — saves a
+      // round-trip and prevents the BE rejection error. Users without
+      // the feature see the input disabled in the form below anyway.
+      const trimmedCustom = customLabel.trim();
       const body = {
         lat: region.latitude,
         lng: region.longitude,
         label,
-        ...(customLabel.trim() ? { customLabel: customLabel.trim() } : {}),
+        ...(trimmedCustom && canSetCustomLabel ? { customLabel: trimmedCustom } : {}),
       };
 
       let success: boolean;
@@ -173,14 +185,35 @@ export function LocationPickerModal({
             ))}
           </View>
 
-          {/* Custom label */}
-          <TextInput
-            value={customLabel}
-            onChangeText={setCustomLabel}
-            placeholder={t('locations.labelPlaceholder')}
-            placeholderTextColor={colors.textMuted}
-            style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
-          />
+          {/* Custom label — gated behind PLUS membership */}
+          <View>
+            <TextInput
+              value={canSetCustomLabel ? customLabel : ''}
+              onChangeText={canSetCustomLabel ? setCustomLabel : undefined}
+              editable={canSetCustomLabel}
+              placeholder={
+                canSetCustomLabel
+                  ? t('locations.labelPlaceholder')
+                  : t('locations.customLabelPlusOnly')
+              }
+              placeholderTextColor={colors.textMuted}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  color: colors.text,
+                  paddingRight: canSetCustomLabel ? theme.spacing.lg : 40,
+                },
+                !canSetCustomLabel && styles.inputDisabled,
+              ]}
+            />
+            {!canSetCustomLabel && (
+              <View style={styles.lockBadge} pointerEvents="none">
+                <IconLock size={14} color={colors.textMuted} />
+              </View>
+            )}
+          </View>
 
           {/* Save */}
           <Pressable
@@ -285,6 +318,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: theme.spacing.lg,
     fontSize: theme.fontSize.sm,
+  },
+  inputDisabled: {
+    opacity: 0.55,
+  },
+  lockBadge: {
+    position: 'absolute',
+    right: theme.spacing.lg,
+    top: 13,
   },
   saveButton: {
     flexDirection: 'row',
