@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { TrafficFlowSegment, UserEvent } from '@notifio/api-client';
+import type { TrafficFlowSegment } from '@notifio/api-client';
 import type { OutageRecord } from '@notifio/shared/types';
 
 import { api } from '../lib/api';
@@ -114,7 +114,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         sd?.heat ?? [],
         sd?.gas ?? [],
         traffic?.incidents ?? [],
-        (events as UserEvent[] | null) ?? [],
+        events ?? [],
       );
 
       setPins(normalized);

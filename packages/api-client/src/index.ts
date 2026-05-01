@@ -32,6 +32,7 @@ import type {
   UserEventCategory,
   CreateUserEventBody,
   UpdateUserEventBody,
+  EventFeedItem,
   UserWeatherThreshold,
   SetWeatherThresholdBody,
   SourcePreference,
@@ -102,6 +103,7 @@ export type {
   UserEventCategory,
   CreateUserEventBody,
   UpdateUserEventBody,
+  EventFeedItem,
   UserWeatherThreshold,
   SetWeatherThresholdBody,
   SourcePreference,
@@ -479,8 +481,8 @@ export function createNotifioClient(config: NotifioClientConfig) {
 
     // ─── Event endpoints (extended) ──────────────────────────────────
 
-    async getEvents(params: { lat: number; lng: number; radius?: number }): Promise<UserEvent[]> {
-      return request<UserEvent[]>('/events', {
+    async getEvents(params: { lat: number; lng: number; radius?: number }): Promise<EventFeedItem[]> {
+      return request<EventFeedItem[]>('/events', {
         params: {
           lat: String(params.lat),
           lng: String(params.lng),

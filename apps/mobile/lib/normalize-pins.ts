@@ -1,6 +1,5 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { UserEvent } from '@notifio/api-client';
-import type { OutageRecord, TrafficIncident } from '@notifio/shared/types';
+import type { EventFeedItem, OutageRecord, TrafficIncident } from '@notifio/shared/types';
 
 export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic' | 'event';
 // EVENT-1: align with web's vocabulary (`active | upcoming | resolved`).
@@ -75,10 +74,11 @@ function trafficToPin(incident: TrafficIncident): MapPin {
   };
 }
 
-function eventToPin(event: UserEvent): MapPin | null {
+function eventToPin(event: EventFeedItem): MapPin | null {
   // Resolved events are dropped at the call site already, but keep this
   // null-safe so a stray resolved row doesn't render mis-statused.
-  if (event.isResolved) return null;
+  if (event.status === 'resolved') return null;
+  if (event.lat == null || event.lng == null) return null;
   const isFuture = isFutureIso(event.eventFrom);
   return {
     id: event.eventId,
@@ -86,8 +86,8 @@ function eventToPin(event: UserEvent): MapPin | null {
     status: isFuture ? 'upcoming' : 'active',
     lat: event.lat,
     lng: event.lng,
-    title: event.title,
-    description: event.subcategoryName,
+    title: event.title ?? '',
+    description: event.subcategoryName ?? '',
     // For future events show the start time, not the creation time —
     // the user's report was "11.5.2026 event labeled Just now" because
     // we used `createdAt` (today) instead of `eventFrom` (11 days
@@ -102,7 +102,7 @@ export function normalizeMapPins(
   heatOutages: OutageRecord[],
   gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
-  events: UserEvent[],
+  events: EventFeedItem[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 

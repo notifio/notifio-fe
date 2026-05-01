@@ -151,6 +151,7 @@ export type {
   UserEventCategory,
   CreateUserEventBody,
   UpdateUserEventBody,
+  EventFeedItem,
 } from '@notifio/shared';
 
 // Weather threshold types

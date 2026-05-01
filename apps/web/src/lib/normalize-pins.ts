@@ -1,5 +1,5 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { UserEvent } from '@notifio/api-client';
+import type { EventFeedItem } from '@notifio/api-client';
 import type { OutageRecord, TrafficIncident } from '@notifio/shared';
 
 // FE-P1.2: dropped the grey "event" fallback for five categories that
@@ -88,43 +88,6 @@ function trafficToPin(incident: TrafficIncident): MapPin {
 }
 
 // ── Event → MapPin mapping ───────────────────────────────────────────
-// The UserEvent TypeScript type uses `subcategoryCode`/`categoryCode` but the
-// actual API returns `subcategory`/`category`. We read both to be safe.
-
-/**
- * Extract the real field value regardless of whether the API uses
- * `subcategory` or `subcategoryCode` (TS type vs actual response).
- */
-function getEventSubcategory(event: UserEvent): string {
-  return (
-    event.subcategoryCode ??
-    (event as unknown as Record<string, unknown>).subcategory as string ??
-    ''
-  );
-}
-
-function getEventCategory(event: UserEvent): string {
-  return (
-    event.categoryCode ??
-    (event as unknown as Record<string, unknown>).category as string ??
-    ''
-  );
-}
-
-function getEventTitle(event: UserEvent): string {
-  return (
-    event.title ??
-    (event as unknown as Record<string, unknown>).typeName as string ??
-    event.subcategoryName ??
-    (event as unknown as Record<string, unknown>).subcategoryName as string ??
-    ''
-  );
-}
-
-function isEventResolved(event: UserEvent): boolean {
-  const raw = (event as unknown as Record<string, unknown>).isResolved;
-  return raw === true;
-}
 
 // Subcategory codes that map to specific traffic incident types
 const EVENT_SUBCATEGORY_TO_INCIDENT: Record<string, TrafficIncidentType> = {
@@ -157,7 +120,7 @@ const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
 // Categories that should not appear as map pins
 const SKIP_CATEGORIES = new Set(['name_day']);
 
-function eventStatus(event: UserEvent): MapPinStatus {
+function eventStatus(event: EventFeedItem): MapPinStatus {
   if (event.eventFrom) {
     const fromMs = new Date(event.eventFrom).getTime();
     if (Number.isFinite(fromMs) && fromMs > Date.now()) {
@@ -167,14 +130,13 @@ function eventStatus(event: UserEvent): MapPinStatus {
   return 'active';
 }
 
-function eventToPin(event: UserEvent): MapPin | null {
-  const categoryCode = getEventCategory(event);
-  const subcategoryCode = getEventSubcategory(event);
-  const title = getEventTitle(event);
-  const description =
-    event.subcategoryName ??
-    (event as unknown as Record<string, unknown>).subcategoryName as string ??
-    '';
+function eventToPin(event: EventFeedItem): MapPin | null {
+  if (event.lat == null || event.lng == null) return null;
+
+  const categoryCode = event.category;
+  const subcategoryCode = event.subcategory ?? '';
+  const title = event.title ?? '';
+  const description = event.subcategoryName ?? '';
 
   if (SKIP_CATEGORIES.has(categoryCode)) return null;
 
@@ -233,7 +195,7 @@ export function normalizeMapPins(
   heatOutages: OutageRecord[],
   gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
-  events?: UserEvent[],
+  events?: EventFeedItem[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
@@ -258,7 +220,7 @@ export function normalizeMapPins(
   }
   if (events) {
     for (const e of events) {
-      if (!isEventResolved(e)) {
+      if (e.status !== 'resolved') {
         const pin = eventToPin(e);
         if (pin) pins.push(pin);
       }
