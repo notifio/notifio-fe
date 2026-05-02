@@ -98,23 +98,6 @@
       "cancelled": "Видалення скасовано"
     }
   },
-  "nav": {
-    "signIn": "Увійти",
-    "dashboard": "Панель",
-    "map": "Карта",
-    "notifications": "Сповіщення",
-    "settings": "Налаштування",
-    "profile": "Профіль",
-    "pricing": "Тарифи",
-    "reminders": "Нагадування",
-    "language": "Мова",
-    "languageBack": "Назад",
-    "theme": "Тема",
-    "themeMode": {
-      "light": "Світла",
-      "dark": "Темна"
-    }
-  },
   "events": {
     "reportButton": "Повідомити",
     "selectCategory": "Що сталося?",
@@ -249,41 +232,5 @@
     "humidity": "Вологість",
     "pressure": "Атмосферний тиск",
     "deleteConfirm": "Видалити цей поріг?"
-  },
-  "mapFilters": {
-    "air_quality": "Якість повітря",
-    "pollen": "Пилок",
-    "hydrology": "Гідрологія",
-    "wildfire": "Пожежа",
-    "outage_internet": "Інтернет",
-    "weather_alerts": "Weather alerts",
-    "weather_forecast": "Weather forecast"
-  },
-  "upsell": {
-    "subtitle": "Unlock the full map",
-    "sources": {
-      "traffic": {
-        "title": "Traffic",
-        "bullet1": "Traffic incidents",
-        "bullet2": "Current congestion",
-        "bullet3": "Closures and detours"
-      },
-      "air_quality": {
-        "title": "Air quality",
-        "bullet1": "Current air quality index",
-        "bullet2": "Pollution alerts",
-        "bullet3": "PM2.5, PM10, NO2, O3 details"
-      },
-      "pollen": {
-        "title": "Pollen",
-        "bullet1": "Daily pollen measurements",
-        "bullet2": "Alerts for allergy sufferers",
-        "bullet3": "Birch, grass, ragweed, mugwort, alder, olive"
-      }
-    },
-    "cta": {
-      "PLUS": "Upgrade to PLUS",
-      "PRO": "Upgrade to PRO"
-    }
   }
 }

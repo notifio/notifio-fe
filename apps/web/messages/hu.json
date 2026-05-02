@@ -98,23 +98,6 @@
       "cancelled": "Törlés visszavonva"
     }
   },
-  "nav": {
-    "signIn": "Bejelentkezés",
-    "dashboard": "Irányítópult",
-    "map": "Térkép",
-    "notifications": "Értesítések",
-    "settings": "Beállítások",
-    "profile": "Profil",
-    "pricing": "Árak",
-    "reminders": "Emlékeztetők",
-    "language": "Nyelv",
-    "languageBack": "Vissza",
-    "theme": "Téma",
-    "themeMode": {
-      "light": "Világos",
-      "dark": "Sötét"
-    }
-  },
   "events": {
     "reportButton": "Bejelentés",
     "selectCategory": "Mi történt?",
@@ -249,41 +232,5 @@
     "humidity": "Páratartalom",
     "pressure": "Légnyomás",
     "deleteConfirm": "Eltávolítod ezt a küszöböt?"
-  },
-  "mapFilters": {
-    "air_quality": "Levegőminőség",
-    "pollen": "Pollen",
-    "hydrology": "Hidrológia",
-    "wildfire": "Tűz",
-    "outage_internet": "Internet",
-    "weather_alerts": "Weather alerts",
-    "weather_forecast": "Weather forecast"
-  },
-  "upsell": {
-    "subtitle": "Unlock the full map",
-    "sources": {
-      "traffic": {
-        "title": "Traffic",
-        "bullet1": "Traffic incidents",
-        "bullet2": "Current congestion",
-        "bullet3": "Closures and detours"
-      },
-      "air_quality": {
-        "title": "Air quality",
-        "bullet1": "Current air quality index",
-        "bullet2": "Pollution alerts",
-        "bullet3": "PM2.5, PM10, NO2, O3 details"
-      },
-      "pollen": {
-        "title": "Pollen",
-        "bullet1": "Daily pollen measurements",
-        "bullet2": "Alerts for allergy sufferers",
-        "bullet3": "Birch, grass, ragweed, mugwort, alder, olive"
-      }
-    },
-    "cta": {
-      "PLUS": "Upgrade to PLUS",
-      "PRO": "Upgrade to PRO"
-    }
   }
 }

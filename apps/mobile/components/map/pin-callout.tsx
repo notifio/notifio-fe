@@ -63,7 +63,7 @@ export function PinCallout({ pin }: PinCalloutProps) {
       {showViewDetails && (
         <View style={[styles.cta, { borderTopColor: colors.border }]}>
           <Text style={[styles.ctaLabel, { color: colors.primary }]}>
-            {t('mapPinStatus.viewDetails')}
+            {t('map.viewDetails')}
           </Text>
           <IconChevronRight size={14} color={colors.primary} />
         </View>

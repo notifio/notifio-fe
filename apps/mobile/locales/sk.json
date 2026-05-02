@@ -72,17 +72,6 @@
     "light": "Svetlý",
     "dark": "Tmavý"
   },
-  "auth": {
-    "welcomeTitle": "Vitaj v Notifio",
-    "welcomeDescription": "Upozornenia v reálnom čase pre tvoju oblasť — počasie, doprava, výpadky a ďalšie.",
-    "getStarted": "Začať",
-    "existingAccount": "Už mám účet",
-    "welcomeBack": "Vitaj späť",
-    "signInDescription": "Prihlás sa do svojho Notifio účtu.",
-    "signInButton": "Prihlásiť sa",
-    "signInError": "Chyba prihlásenia",
-    "goBack": "Späť"
-  },
   "onboarding": {
     "locationTitle": "Tvoja poloha",
     "locationDescription": "Používame tvoju polohu na zasielanie relevantných upozornení o počasí, doprave a výpadkoch v tvojom okolí.",
@@ -119,9 +108,6 @@
     "unavailable": "Detaily udalosti nie sú dostupné."
   },
   "alerts": {
-    "active": "Aktívne",
-    "ended": "Ukončené",
-    "all": "Všetky",
     "noNotifications": "Zatiaľ žiadne notifikácie"
   },
   "notificationType": {
@@ -312,35 +298,6 @@
     "sponsored": "Sponzorované",
     "adFree": "Bez reklám"
   },
-  "upsell": {
-    "upgrade": "Upgradnúť",
-    "dismiss": "Zavrieť",
-    "subtitle": "Odomknite plnú mapu",
-    "sources": {
-      "traffic": {
-        "title": "Doprava",
-        "bullet1": "Dopravné nehody",
-        "bullet2": "Aktuálne zápchy",
-        "bullet3": "Uzávery a obchádzky"
-      },
-      "air_quality": {
-        "title": "Kvalita ovzdušia",
-        "bullet1": "Aktuálny index kvality vzduchu",
-        "bullet2": "Upozornenia pri zhoršení",
-        "bullet3": "Detail pre PM2.5, PM10, NO2, O3"
-      },
-      "pollen": {
-        "title": "Peľ",
-        "bullet1": "Denné peľové merania",
-        "bullet2": "Upozornenia pre alergikov",
-        "bullet3": "Breza, tráva, ambrózia, palina, jelša, oliva"
-      }
-    },
-    "cta": {
-      "PLUS": "Prejsť na PLUS",
-      "PRO": "Prejsť na PRO"
-    }
-  },
   "reminders": {
     "title": "Pripomienky",
     "tabs": {
@@ -388,42 +345,13 @@
     "error": "Nepodarilo sa uložiť hodnotenie"
   },
   "mapFilters": {
-    "title": "Filtre",
-    "close": "Zavrieť",
-    "electricity": "Elektrina",
-    "water": "Voda",
-    "gas": "Plyn",
-    "heat": "Teplo",
-    "traffic": "Doprava",
-    "events": "Udalosti",
-    "air_quality": "Kvalita ovzdušia",
-    "pollen": "Peľ",
     "hydrology": "Vodné hladiny",
     "wildfire": "Lesné požiare",
-    "outage_internet": "Výpadky internetu",
-    "weather_alerts": "Výstrahy počasia",
-    "weather_forecast": "Predpoveď počasia",
-    "accident": "Nehody",
-    "construction": "Výstavba",
-    "road_closure": "Uzávery",
-    "congestion": "Kolóny",
-    "flooding": "Záplavy",
-    "event": "Udalosti",
-    "other": "Iné"
+    "outage_internet": "Výpadky internetu"
   },
   "mapPinStatus": {
     "active": "Aktívne",
-    "upcoming": "Plánované",
-    "viewDetails": "Zobraziť detail"
-  },
-  "mapCluster": {
-    "eventsAtLocation_one": "1 udalosť na tomto mieste",
-    "eventsAtLocation_few": "{{count}} udalosti na tomto mieste",
-    "eventsAtLocation_other": "{{count}} udalostí na tomto mieste",
-    "eventsNearby_one": "1 udalosť v okolí",
-    "eventsNearby_few": "{{count}} udalosti v okolí",
-    "eventsNearby_other": "{{count}} udalostí v okolí",
-    "untitledEvent": "Bez názvu"
+    "upcoming": "Plánované"
   },
   "weatherThresholds": {
     "title": "Prahové hodnoty počasia",

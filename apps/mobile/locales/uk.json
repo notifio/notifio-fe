@@ -72,17 +72,6 @@
     "light": "Light",
     "dark": "Dark"
   },
-  "auth": {
-    "welcomeTitle": "Welcome to Notifio",
-    "welcomeDescription": "Real-time alerts for your area — weather, traffic, outages, and more.",
-    "getStarted": "Get Started",
-    "existingAccount": "I already have an account",
-    "welcomeBack": "Welcome back",
-    "signInDescription": "Sign in to your Notifio account to continue.",
-    "signInButton": "Sign In",
-    "signInError": "Sign In Error",
-    "goBack": "Go back"
-  },
   "onboarding": {
     "locationTitle": "Your location",
     "locationDescription": "We use your location to send you relevant alerts about weather, traffic, and outages near you.",
@@ -119,9 +108,6 @@
     "unavailable": "Event details not available."
   },
   "alerts": {
-    "active": "Активні",
-    "ended": "Завершені",
-    "all": "Усі",
     "noNotifications": "Поки що немає сповіщень"
   },
   "notificationType": {
@@ -312,35 +298,6 @@
     "sponsored": "Sponsored",
     "adFree": "Go ad-free"
   },
-  "upsell": {
-    "upgrade": "Upgrade",
-    "dismiss": "Dismiss",
-    "subtitle": "Unlock the full map",
-    "sources": {
-      "traffic": {
-        "title": "Traffic",
-        "bullet1": "Traffic incidents",
-        "bullet2": "Current congestion",
-        "bullet3": "Closures and detours"
-      },
-      "air_quality": {
-        "title": "Air quality",
-        "bullet1": "Current air quality index",
-        "bullet2": "Pollution alerts",
-        "bullet3": "PM2.5, PM10, NO2, O3 details"
-      },
-      "pollen": {
-        "title": "Pollen",
-        "bullet1": "Daily pollen measurements",
-        "bullet2": "Alerts for allergy sufferers",
-        "bullet3": "Birch, grass, ragweed, mugwort, alder, olive"
-      }
-    },
-    "cta": {
-      "PLUS": "Upgrade to PLUS",
-      "PRO": "Upgrade to PRO"
-    }
-  },
   "reminders": {
     "title": "Reminders",
     "tabs": {
@@ -388,44 +345,13 @@
     "error": "Failed to save rating"
   },
   "mapFilters": {
-    "title": "Filters",
-    "close": "Close",
-    "electricity": "Electricity",
-    "water": "Water",
-    "gas": "Gas",
-    "heat": "Heat",
-    "traffic": "Traffic",
-    "events": "Events",
-    "air_quality": "Air quality",
-    "pollen": "Pollen",
     "hydrology": "Water levels",
     "wildfire": "Wildfires",
-    "outage_internet": "Internet outages",
-    "weather_alerts": "Weather alerts",
-    "weather_forecast": "Weather forecast",
-    "accident": "Accidents",
-    "construction": "Construction",
-    "road_closure": "Closures",
-    "congestion": "Congestion",
-    "flooding": "Flooding",
-    "event": "Events",
-    "other": "Other"
+    "outage_internet": "Internet outages"
   },
   "mapPinStatus": {
     "active": "Активне",
-    "upcoming": "Заплановане",
-    "viewDetails": "Переглянути деталі"
-  },
-  "mapCluster": {
-    "eventsAtLocation_one": "1 подія в цьому місці",
-    "eventsAtLocation_few": "{{count}} події в цьому місці",
-    "eventsAtLocation_many": "{{count}} подій в цьому місці",
-    "eventsAtLocation_other": "{{count}} подій в цьому місці",
-    "eventsNearby_one": "1 подія поблизу",
-    "eventsNearby_few": "{{count}} події поблизу",
-    "eventsNearby_many": "{{count}} подій поблизу",
-    "eventsNearby_other": "{{count}} подій поблизу",
-    "untitledEvent": "Без назви"
+    "upcoming": "Заплановане"
   },
   "weatherThresholds": {
     "title": "Weather thresholds",

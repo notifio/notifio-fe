@@ -1,14 +1,8 @@
 {
   "map": {
     "loadingMapData": "Načítavam údaje mapy...",
-    "yourLocation": "Tvoja poloha",
     "upcoming": "Plánované",
-    "active": "Aktívne",
-    "defaultLocation": "Slovensko",
-    "eventUnavailable": "Detaily udalosti nie sú dostupné",
-    "coversYourArea": "Táto udalosť sa týka tvojej oblasti",
-    "closeOverlay": "Zavrieť",
-    "viewDetails": "Zobraziť detail"
+    "active": "Aktívne"
   },
   "weather": {
     "feelsLike": "Pocitovo",
@@ -54,22 +48,8 @@
     "title": "Doprava"
   },
   "mapFilters": {
-    "title": "Filtre",
-    "accident": "Nehody",
     "construction": "Stavebné práce",
-    "road_closure": "Uzávery",
-    "congestion": "Kolóny",
-    "event": "Udalosti",
-    "weather": "Počasie",
-    "other": "Ostatné",
-    "close": "Zavrieť",
-    "air_quality": "Kvalita ovzdušia",
-    "pollen": "Peľ",
-    "hydrology": "Hydrológia",
-    "wildfire": "Požiar",
-    "outage_internet": "Internet",
-    "weather_alerts": "Výstrahy počasia",
-    "weather_forecast": "Predpoveď počasia"
+    "other": "Ostatné"
   },
   "notifications": {
     "title": "Notifikácie"
@@ -137,10 +117,6 @@
     "geoDenied": "Prístup k polohe zamietnutý. Pridaj lokácie manuálne v Nastaveniach."
   },
   "alerts": {
-    "all": "Všetky",
-    "sent": "Odoslané",
-    "active": "Aktívne",
-    "ended": "Ukončené",
     "noNotifications": "Zatiaľ žiadne notifikácie",
     "loadMore": "Načítať viac"
   },
@@ -219,21 +195,7 @@
     }
   },
   "nav": {
-    "signIn": "Prihl��siť sa",
-    "dashboard": "Prehľad",
-    "map": "Mapa",
-    "notifications": "Notifikácie",
-    "settings": "Nastavenia",
-    "profile": "Profil",
-    "pricing": "Cenník",
-    "reminders": "Pripomienky",
-    "language": "Jazyk",
-    "languageBack": "Späť",
-    "theme": "Téma",
-    "themeMode": {
-      "light": "Svetlá",
-      "dark": "Tmavá"
-    }
+    "signIn": "Prihl��siť sa"
   },
   "membership": {
     "pricing": "Cenník",
@@ -504,44 +466,7 @@
     "compactGeoOnly": "Pridajte lokáciu pre zobrazenie upozornení"
   },
   "upsell": {
-    "upgrade": "Vylepšiť",
-    "reminder": {
-      "title": "Nastavte si osobné pripomienky",
-      "description": "Pro používatelia môžu vytvárať vlastné upozornenia na udalosti a termíny."
-    },
-    "locations": {
-      "title": "Sledujte viac lokácií",
-      "description": "Plus používatelia môžu sledovať až 3 lokácie. Pro až 10."
-    },
-    "pollen": {
-      "title": "Pokročilé peľové predpovede",
-      "description": "Plus používatelia dostávajú podrobný rozbor peľových informácií."
-    },
-    "subtitle": "Odomknite plnú mapu",
-    "sources": {
-      "traffic": {
-        "title": "Doprava",
-        "bullet1": "Dopravné nehody",
-        "bullet2": "Aktuálne zápchy",
-        "bullet3": "Uzávery a obchádzky"
-      },
-      "air_quality": {
-        "title": "Kvalita ovzdušia",
-        "bullet1": "Aktuálny index kvality vzduchu",
-        "bullet2": "Upozornenia pri zhoršení",
-        "bullet3": "Detail pre PM2.5, PM10, NO2, O3"
-      },
-      "pollen": {
-        "title": "Peľ",
-        "bullet1": "Denné peľové merania",
-        "bullet2": "Upozornenia pre alergikov",
-        "bullet3": "Breza, tráva, ambrózia, palina, jelša, oliva"
-      }
-    },
-    "cta": {
-      "PLUS": "Prejsť na PLUS",
-      "PRO": "Prejsť na PRO"
-    }
+    "upgrade": "Vylepšiť"
   },
   "digest": {
     "title": "Doručovanie notifikácií",
