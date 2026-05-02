@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EventReportModal } from '../../components/events/event-report-modal';
 import { MapClusterMarker } from '../../components/map/map-cluster-marker';
-import { MapFilterPanel } from '../../components/map/map-filter-panel';
+import { MapFilterSheet } from '../../components/map/map-filter-sheet';
 import { MapPinMarker } from '../../components/map/map-pin-marker';
 import { MapStatusCard } from '../../components/map/map-status-card';
 import { PinCallout } from '../../components/map/pin-callout';
@@ -250,7 +250,7 @@ export default function MapScreen() {
         ))}
       </ClusteredMapView>
 
-      <MapFilterPanel
+      <MapFilterSheet
         activeFilters={activeFilters}
         activeTrafficTypes={activeTrafficTypes}
         onToggle={toggleFilter}
