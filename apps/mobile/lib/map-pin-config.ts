@@ -109,3 +109,23 @@ export const TRAFFIC_SUBCATEGORIES = [
 ] as const;
 
 export type TrafficIncidentType = typeof TRAFFIC_SUBCATEGORIES[number];
+
+// Step 8: gating tier per source. Mirrors web's map-pin-config + the BE
+// catalogue: only `traffic`, `air_quality`, `pollen` require a paid
+// tier. `event` is the generic teaser fallback so it stays FREE — the
+// effective gating happens on the BE source code via the teaser shim.
+export const SOURCE_REQUIRED_TIER: Record<MapPinSource, 'FREE' | 'PLUS' | 'PRO'> = {
+  electricity: 'FREE',
+  water: 'FREE',
+  gas: 'FREE',
+  heat: 'FREE',
+  traffic: 'PLUS',
+  air_quality: 'PLUS',
+  pollen: 'PRO',
+  hydrology: 'FREE',
+  wildfire: 'FREE',
+  outage_internet: 'FREE',
+  weather_alerts: 'FREE',
+  weather_forecast: 'FREE',
+  event: 'FREE',
+};

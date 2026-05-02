@@ -54,7 +54,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       }
       setError(null);
 
-      const [traffic, events, flow] = await Promise.all([
+      const [traffic, eventsResp, flow] = await Promise.all([
         safeFetch(() => api.getTraffic(coords.lat, coords.lng)),
         safeFetch(() => api.getEvents({ lat: coords.lat, lng: coords.lng, radius: EVENT_RADIUS })),
         safeFetch(() => api.getTrafficFlow(coords.lat, coords.lng)),
@@ -66,7 +66,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         return;
       }
 
-      if (!traffic && !events) {
+      if (!traffic && !eventsResp) {
         setError('Could not load data');
         fetchingRef.current = false;
         setIsLoading(false);
@@ -74,7 +74,15 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         return;
       }
 
-      const normalized = normalizeMapPins(traffic?.incidents ?? [], events ?? []);
+      const allTeasers = [
+        ...(eventsResp?.teasers ?? []),
+        ...(traffic?.teasers ?? []),
+      ];
+      const normalized = normalizeMapPins(
+        traffic?.incidents ?? [],
+        eventsResp?.events ?? [],
+        allTeasers,
+      );
 
       setPins(normalized);
       setFlowSegments(flow?.segments ?? []);

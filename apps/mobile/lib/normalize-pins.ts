@@ -1,5 +1,5 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { EventFeedItem, TrafficIncident } from '@notifio/shared/types';
+import type { EventFeedItem, TeaserPin, TrafficIncident } from '@notifio/shared/types';
 
 export type MapPinSource =
   | 'electricity'
@@ -66,6 +66,47 @@ export interface MapPin {
    *  events (EVENT-1). */
   timestamp: string;
   incidentType?: string;
+  /** Teaser pins are off-tier previews — render greyed and never open
+   *  the callout; tapping opens the upsell sheet instead. Step 8. */
+  isTeaser?: boolean;
+}
+
+// Step 8: BE → FE source code shim. Mirrors web's normalize-pins so a
+// teaser emitted with `weather` becomes the alerts pin and unknown
+// codes (earthquake, community) collapse to the generic event pin
+// rather than crashing the union.
+const BE_TO_FE_SOURCE: Record<string, MapPinSource> = {
+  weather: 'weather_alerts',
+  electricity: 'electricity',
+  water: 'water',
+  gas: 'gas',
+  heat: 'heat',
+  traffic: 'traffic',
+  air_quality: 'air_quality',
+  pollen: 'pollen',
+  hydrology: 'hydrology',
+  wildfire: 'wildfire',
+  outage_internet: 'outage_internet',
+  earthquake: 'event',
+  community: 'event',
+};
+
+function teaserSourceToFE(beSource: string): MapPinSource {
+  return BE_TO_FE_SOURCE[beSource] ?? 'event';
+}
+
+function teaserPinToMapPin(t: TeaserPin): MapPin {
+  return {
+    id: `teaser:${t.source}:${t.lat}:${t.lng}`,
+    source: teaserSourceToFE(t.source),
+    status: 'active',
+    lat: t.lat,
+    lng: t.lng,
+    title: '',
+    description: '',
+    timestamp: new Date().toISOString(),
+    isTeaser: true,
+  };
 }
 
 function isFutureIso(value: string | null | undefined): boolean {
@@ -113,6 +154,7 @@ function eventToPin(event: EventFeedItem): MapPin | null {
 export function normalizeMapPins(
   trafficIncidents: TrafficIncident[],
   events: EventFeedItem[],
+  teasers?: TeaserPin[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
@@ -122,6 +164,11 @@ export function normalizeMapPins(
   for (const e of events) {
     const pin = eventToPin(e);
     if (pin) pins.push(pin);
+  }
+  if (teasers) {
+    for (const t of teasers) {
+      pins.push(teaserPinToMapPin(t));
+    }
   }
 
   return pins;

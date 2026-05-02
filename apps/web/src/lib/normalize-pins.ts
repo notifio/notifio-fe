@@ -1,9 +1,12 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { EventFeedItem } from '@notifio/api-client';
+import type { EventFeedItem, TeaserPin } from '@notifio/api-client';
 import type { TrafficIncident } from '@notifio/shared';
 
 // FE-P1.2: dropped the grey "event" fallback for five categories that
 // already have their own pin colours + icons. Order matches the legend.
+// Step 8: `event` re-introduced as a generic teaser fallback target so
+// teaser pins coming from BE categories without a dedicated FE icon
+// (earthquake, community, etc.) still render rather than being dropped.
 export type MapPinSource =
   | 'electricity'
   | 'water'
@@ -16,7 +19,8 @@ export type MapPinSource =
   | 'wildfire'
   | 'outage_internet'
   | 'weather_alerts'
-  | 'weather_forecast';
+  | 'weather_forecast'
+  | 'event';
 /**
  * Lifecycle label rendered on a pin. Matches the API's `EventLifecycleStatus`
  * (`upcoming | active | resolved`) — this enum is FE-local until the BE
@@ -45,6 +49,49 @@ export interface MapPin {
   locality?: string;
   timestamp: string;
   incidentType?: TrafficIncidentType;
+  /** Teaser pins are off-tier previews — render greyed and never expand
+   *  the popup; tapping opens the upsell modal instead. Step 8. */
+  isTeaser?: boolean;
+}
+
+// Step 8: BE emits a small set of `source` codes on /events teasers that
+// don't always line up with the FE's `MapPinSource` union (e.g.
+// `weather` → split into `weather_alerts` / `weather_forecast`,
+// `earthquake` / `community` → no dedicated pin yet). Map known codes
+// 1:1 and route everything else to the generic `event` fallback so the
+// pin still renders.
+const BE_TO_FE_SOURCE: Record<string, MapPinSource> = {
+  weather: 'weather_alerts',
+  electricity: 'electricity',
+  water: 'water',
+  gas: 'gas',
+  heat: 'heat',
+  traffic: 'traffic',
+  air_quality: 'air_quality',
+  pollen: 'pollen',
+  hydrology: 'hydrology',
+  wildfire: 'wildfire',
+  outage_internet: 'outage_internet',
+  earthquake: 'event',
+  community: 'event',
+};
+
+function teaserSourceToFE(beSource: string): MapPinSource {
+  return BE_TO_FE_SOURCE[beSource] ?? 'event';
+}
+
+function teaserPinToMapPin(t: TeaserPin): MapPin {
+  return {
+    id: `teaser:${t.source}:${t.lat}:${t.lng}`,
+    source: teaserSourceToFE(t.source),
+    status: 'active',
+    lat: t.lat,
+    lng: t.lng,
+    title: '',
+    description: '',
+    timestamp: new Date().toISOString(),
+    isTeaser: true,
+  };
 }
 
 function trafficToPin(incident: TrafficIncident): MapPin {
@@ -178,6 +225,7 @@ function eventToPin(event: EventFeedItem): MapPin | null {
 export function normalizeMapPins(
   trafficIncidents: TrafficIncident[],
   events?: EventFeedItem[],
+  teasers?: TeaserPin[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
@@ -190,6 +238,11 @@ export function normalizeMapPins(
         const pin = eventToPin(e);
         if (pin) pins.push(pin);
       }
+    }
+  }
+  if (teasers) {
+    for (const t of teasers) {
+      pins.push(teaserPinToMapPin(t));
     }
   }
 

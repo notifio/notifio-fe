@@ -54,6 +54,10 @@ const SOURCE_STYLES: Record<MapPinSource, PinStyle> = {
   outage_internet: { color: '#8B9BB5', label: 'mapFilters.outage_internet', icon: IconWifiOff },
   weather_alerts: { color: '#F59E0B', label: 'mapFilters.weather_alerts', icon: IconAlertTriangle },
   weather_forecast: { color: '#D97706', label: 'mapFilters.weather_forecast', icon: IconCloudBolt },
+  // Step 8: generic teaser fallback for BE source codes without a
+  // dedicated FE pin (earthquake, community). Not surfaced in
+  // MAP_FILTER_SOURCES — these only ever come through as teasers.
+  event: { color: '#6B7A99', label: 'mapFilters.events', icon: IconCalendarEvent },
 };
 
 const TRAFFIC_TYPE_COLORS: Record<string, string> = {
@@ -102,3 +106,24 @@ export const MAP_FILTER_SOURCES: MapPinSource[] = [
   'weather_forecast',
 ];
 export { TRAFFIC_TYPE_COLORS, TRAFFIC_ICON_MAP };
+
+// Step 8: gating tier per source. Mirrors the BE catalogue: only
+// `traffic`, `air_quality`, `pollen` are paid; everything else is
+// FREE. `event` is the generic teaser fallback so it's effectively
+// never gated on its own — gating happens via the underlying BE
+// `source` code, not the FE pin source.
+export const SOURCE_REQUIRED_TIER: Record<MapPinSource, 'FREE' | 'PLUS' | 'PRO'> = {
+  electricity: 'FREE',
+  water: 'FREE',
+  gas: 'FREE',
+  heat: 'FREE',
+  traffic: 'PLUS',
+  air_quality: 'PLUS',
+  pollen: 'PRO',
+  hydrology: 'FREE',
+  wildfire: 'FREE',
+  outage_internet: 'FREE',
+  weather_alerts: 'FREE',
+  weather_forecast: 'FREE',
+  event: 'FREE',
+};
