@@ -407,7 +407,8 @@
   },
   "mapPinStatus": {
     "active": "Aktívne",
-    "upcoming": "Plánované"
+    "upcoming": "Plánované",
+    "viewDetails": "Zobraziť detail"
   },
   "weatherThresholds": {
     "title": "Prahové hodnoty počasia",

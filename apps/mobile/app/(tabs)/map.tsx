@@ -234,8 +234,11 @@ export default function MapScreen() {
             // taps to the upsell sheet so the user finds out why
             // coverage is greyed out.
             onPress={pin.isTeaser ? () => setUpsellSource(pin.source) : undefined}
+            // Any non-teaser pin whose id maps to /events/{id} navigates
+            // on callout tap. Traffic excluded because pin.id is a
+            // TomTom incidentId, not an eventId.
             onCalloutPress={
-              !pin.isTeaser && pin.source === 'event'
+              !pin.isTeaser && pin.source !== 'traffic' && pin.id
                 ? () => router.push(`/events/${pin.id}`)
                 : undefined
             }

@@ -7,7 +7,8 @@
     "defaultLocation": "Slovensko",
     "eventUnavailable": "Detaily udalosti nie sú dostupné",
     "coversYourArea": "Táto udalosť sa týka tvojej oblasti",
-    "closeOverlay": "Zavrieť"
+    "closeOverlay": "Zavrieť",
+    "viewDetails": "Zobraziť detail"
   },
   "weather": {
     "feelsLike": "Pocitovo",

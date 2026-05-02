@@ -407,7 +407,8 @@
   },
   "mapPinStatus": {
     "active": "Active",
-    "upcoming": "Upcoming"
+    "upcoming": "Upcoming",
+    "viewDetails": "View details"
   },
   "weatherThresholds": {
     "title": "Weather thresholds",

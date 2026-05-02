@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { formatTimeAgo } from '@notifio/shared';
 
 import { getPinStyle } from '@/lib/map-pin-config';
@@ -8,7 +10,7 @@ interface MapMarkerProps {
   pin: MapPin;
   isExpanded: boolean;
   theme: 'light' | 'dark';
-  labels: { upcoming: string; active: string };
+  labels: { upcoming: string; active: string; viewDetails: string };
   clusterCount?: number;
   onToggle: () => void;
   onClose: () => void;
@@ -166,6 +168,30 @@ export function MapMarker({
               <div style={{ fontSize: '10px', opacity: 0.65, marginTop: '2px' }}>
                 {formatTimeAgo(pin.timestamp)}
               </div>
+
+              {/* Traffic incidents have no /events/{id} page (pin.id is a
+                  TomTom incidentId, not an eventId). Teasers already
+                  short-circuit before showExpanded above. */}
+              {pin.source !== 'traffic' && pin.id && (
+                <Link
+                  href={`/events/${pin.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'block',
+                    marginTop: '8px',
+                    padding: '6px 10px',
+                    backgroundColor: 'rgba(255,255,255,0.18)',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#FFFFFF',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {labels.viewDetails}
+                </Link>
+              )}
             </div>
 
             {/* Close button */}

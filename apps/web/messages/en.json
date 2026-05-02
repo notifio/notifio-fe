@@ -7,7 +7,8 @@
     "defaultLocation": "Slovakia",
     "eventUnavailable": "Event details not available",
     "coversYourArea": "This event covers your area",
-    "closeOverlay": "Close"
+    "closeOverlay": "Close",
+    "viewDetails": "View details"
   },
   "weather": {
     "feelsLike": "Feels like",

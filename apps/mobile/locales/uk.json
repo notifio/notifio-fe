@@ -407,7 +407,8 @@
   },
   "mapPinStatus": {
     "active": "Активне",
-    "upcoming": "Заплановане"
+    "upcoming": "Заплановане",
+    "viewDetails": "Переглянути деталі"
   },
   "weatherThresholds": {
     "title": "Weather thresholds",

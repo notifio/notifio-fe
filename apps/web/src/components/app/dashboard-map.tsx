@@ -151,7 +151,7 @@ export function DashboardMap({
   const renderMarker = (
     root: Root,
     pin: MapPin,
-    opts: { isExpanded: boolean; theme: 'light' | 'dark'; labels: { upcoming: string; active: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
+    opts: { isExpanded: boolean; theme: 'light' | 'dark'; labels: { upcoming: string; active: string; viewDetails: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
   ) => {
     root.render(
       <MapMarker
@@ -175,7 +175,7 @@ export function DashboardMap({
       pins: pinsRef.current,
       theme: (themeRef.current === 'dark' ? 'dark' : 'light') as 'light' | 'dark',
       expandedPinId: expandedPinIdRef.current,
-      labels: { upcoming: translate('upcoming'), active: translate('active') },
+      labels: { upcoming: translate('upcoming'), active: translate('active'), viewDetails: translate('viewDetails') },
       markers: markersRef.current,
       clusterMarkers: clusterMarkersRef.current,
       renderMarker,
@@ -288,7 +288,7 @@ export function DashboardMap({
     if (!sourceReady.current) return;
 
     const themeMode = (resolvedTheme === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
-    const labels = { upcoming: t('upcoming'), active: t('active') };
+    const labels = { upcoming: t('upcoming'), active: t('active'), viewDetails: t('viewDetails') };
 
     for (const [, entry] of markersRef.current) {
       entry.root.render(
