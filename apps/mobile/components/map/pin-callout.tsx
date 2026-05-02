@@ -1,3 +1,4 @@
+import { IconChevronRight } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -17,6 +18,10 @@ export function PinCallout({ pin }: PinCalloutProps) {
   const { t } = useTranslation();
   const style = MAP_PIN_STYLES[pin.source];
   const isUpcoming = pin.status === 'upcoming';
+  // Traffic incidents have no /events/{id} page (pin.id is a TomTom
+  // incidentId, not an eventId). Teasers never render this callout —
+  // map.tsx skips <Callout> entirely when pin.isTeaser.
+  const showViewDetails = pin.source !== 'traffic' && !!pin.id;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -54,6 +59,15 @@ export function PinCallout({ pin }: PinCalloutProps) {
           </Text>
         </View>
       </View>
+
+      {showViewDetails && (
+        <View style={[styles.cta, { borderTopColor: colors.border }]}>
+          <Text style={[styles.ctaLabel, { color: colors.primary }]}>
+            {t('map.viewDetails')}
+          </Text>
+          <IconChevronRight size={14} color={colors.primary} />
+        </View>
+      )}
     </View>
   );
 }
@@ -105,5 +119,18 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     ...theme.font.medium,
+  },
+  cta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: theme.spacing.sm,
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  ctaLabel: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.semibold,
   },
 });

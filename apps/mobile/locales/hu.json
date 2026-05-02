@@ -70,20 +70,7 @@
   "settingsOptions": {
     "system": "System",
     "light": "Light",
-    "dark": "Dark",
-    "metric": "Metric (°C, km/h)",
-    "imperial": "Imperial (°F, mph)"
-  },
-  "auth": {
-    "welcomeTitle": "Welcome to Notifio",
-    "welcomeDescription": "Real-time alerts for your area — weather, traffic, outages, and more.",
-    "getStarted": "Get Started",
-    "existingAccount": "I already have an account",
-    "welcomeBack": "Welcome back",
-    "signInDescription": "Sign in to your Notifio account to continue.",
-    "signInButton": "Sign In",
-    "signInError": "Sign In Error",
-    "goBack": "Go back"
+    "dark": "Dark"
   },
   "onboarding": {
     "locationTitle": "Your location",
@@ -308,10 +295,6 @@
     "sponsored": "Sponsored",
     "adFree": "Go ad-free"
   },
-  "upsell": {
-    "upgrade": "Upgrade",
-    "dismiss": "Dismiss"
-  },
   "reminders": {
     "title": "Reminders",
     "tabs": {
@@ -359,24 +342,27 @@
     "error": "Failed to save rating"
   },
   "mapFilters": {
-    "title": "Filters",
-    "close": "Close",
-    "electricity": "Electricity",
-    "water": "Water",
-    "gas": "Gas",
-    "heat": "Heat",
-    "traffic": "Traffic",
-    "events": "Events",
-    "accident": "Accidents",
-    "construction": "Construction",
-    "road_closure": "Closures",
-    "congestion": "Congestion",
-    "flooding": "Flooding",
-    "event": "Events",
-    "other": "Other"
+    "hydrology": "Water levels",
+    "wildfire": "Wildfires",
+    "outage_internet": "Internet outages"
   },
   "mapPinStatus": {
     "active": "Aktív",
     "upcoming": "Tervezett"
+  },
+  "weatherThresholds": {
+    "title": "Weather thresholds",
+    "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
+    "addThreshold": "Add threshold",
+    "selectType": "Select threshold type",
+    "saved": "Saved",
+    "tempHigh": "High temperature",
+    "tempLow": "Low temperature",
+    "windSpeed": "Wind speed",
+    "humidity": "Humidity",
+    "pressure": "Atmospheric pressure",
+    "deleteConfirm": "Remove this threshold?",
+    "notSet": "Nincs beállítva",
+    "invalidValue": "Adjon meg érvényes számot"
   }
 }

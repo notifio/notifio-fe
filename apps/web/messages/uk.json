@@ -98,16 +98,6 @@
       "cancelled": "Видалення скасовано"
     }
   },
-  "nav": {
-    "signIn": "Увійти",
-    "dashboard": "Панель",
-    "map": "Карта",
-    "notifications": "Сповіщення",
-    "settings": "Налаштування",
-    "profile": "Профіль",
-    "pricing": "Тарифи",
-    "reminders": "Нагадування"
-  },
   "events": {
     "reportButton": "Повідомити",
     "selectCategory": "Що сталося?",
@@ -242,12 +232,5 @@
     "humidity": "Вологість",
     "pressure": "Атмосферний тиск",
     "deleteConfirm": "Видалити цей поріг?"
-  },
-  "mapFilters": {
-    "air_quality": "Якість повітря",
-    "pollen": "Пилок",
-    "hydrology": "Гідрологія",
-    "wildfire": "Пожежа",
-    "outage_internet": "Інтернет"
   }
 }

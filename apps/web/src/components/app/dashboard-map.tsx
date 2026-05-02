@@ -62,6 +62,7 @@ function pinsToGeoJSON(
     type: 'FeatureCollection',
     features: pins
       .filter((p) => {
+        if (p.isTeaser) return true; // teasers always render — they're the upsell hook
         if (!activeFilters.has(p.source)) return false;
         if (p.source === 'traffic') {
           return p.incidentType ? activeTrafficTypes.has(p.incidentType) : false;
@@ -93,6 +94,9 @@ interface DashboardMapProps {
   onFlyToComplete?: () => void;
   infoOverlay?: { title: string; category: string; description: string } | null;
   onCloseOverlay?: () => void;
+  /** Step 8: invoked when a teaser pin is tapped. Parent opens the
+   *  upsell modal with this source. */
+  onTeaserTap?: (source: MapPinSource) => void;
 }
 
 export function DashboardMap({
@@ -110,6 +114,7 @@ export function DashboardMap({
   onFlyToComplete,
   infoOverlay,
   onCloseOverlay,
+  onTeaserTap,
 }: DashboardMapProps) {
   const t = useTranslations('map');
   const { resolvedTheme } = useTheme();
@@ -138,13 +143,15 @@ export function DashboardMap({
   onCenterChangeRef.current = onCenterChange;
   const onCloseOverlayRef = useRef(onCloseOverlay);
   onCloseOverlayRef.current = onCloseOverlay;
+  const onTeaserTapRef = useRef(onTeaserTap);
+  onTeaserTapRef.current = onTeaserTap;
   const debouncedCenterChange = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Marker sync ──────────────────────────────────────────────────────
   const renderMarker = (
     root: Root,
     pin: MapPin,
-    opts: { isExpanded: boolean; theme: 'light' | 'dark'; labels: { upcoming: string; active: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
+    opts: { isExpanded: boolean; theme: 'light' | 'dark'; labels: { upcoming: string; active: string; viewDetails: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
   ) => {
     root.render(
       <MapMarker
@@ -168,11 +175,21 @@ export function DashboardMap({
       pins: pinsRef.current,
       theme: (themeRef.current === 'dark' ? 'dark' : 'light') as 'light' | 'dark',
       expandedPinId: expandedPinIdRef.current,
-      labels: { upcoming: translate('upcoming'), active: translate('active') },
+      labels: { upcoming: translate('upcoming'), active: translate('active'), viewDetails: translate('viewDetails') },
       markers: markersRef.current,
       clusterMarkers: clusterMarkersRef.current,
       renderMarker,
-      onTogglePin: (pinId) => setExpandedPinId((prev) => (prev === pinId ? null : pinId)),
+      onTogglePin: (pinId) => {
+        // Step 8: teaser pins never expand the popup — they open the
+        // upsell modal upstream so the user can find out why coverage
+        // is greyed out.
+        const pin = pinsRef.current.find((p) => p.id === pinId);
+        if (pin?.isTeaser) {
+          onTeaserTapRef.current?.(pin.source);
+          return;
+        }
+        setExpandedPinId((prev) => (prev === pinId ? null : pinId));
+      },
       onClosePin: () => setExpandedPinId(null),
       onSyncAgain: () => doSyncMarkers.current(map),
     });
@@ -271,7 +288,7 @@ export function DashboardMap({
     if (!sourceReady.current) return;
 
     const themeMode = (resolvedTheme === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
-    const labels = { upcoming: t('upcoming'), active: t('active') };
+    const labels = { upcoming: t('upcoming'), active: t('active'), viewDetails: t('viewDetails') };
 
     for (const [, entry] of markersRef.current) {
       entry.root.render(
@@ -280,9 +297,13 @@ export function DashboardMap({
           isExpanded={expandedPinId === entry.pin.id}
           theme={themeMode}
           labels={labels}
-          onToggle={() =>
-            setExpandedPinId((prev) => (prev === entry.pin.id ? null : entry.pin.id))
-          }
+          onToggle={() => {
+            if (entry.pin.isTeaser) {
+              onTeaserTapRef.current?.(entry.pin.source);
+              return;
+            }
+            setExpandedPinId((prev) => (prev === entry.pin.id ? null : entry.pin.id));
+          }}
           onClose={() => setExpandedPinId(null)}
         />
       );

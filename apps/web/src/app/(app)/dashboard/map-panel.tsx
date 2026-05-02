@@ -8,7 +8,9 @@ import { DashboardMap } from '@/components/app/dashboard-map';
 import { EventReportModal } from '@/components/app/event-report-modal';
 import { MapAdBanner } from '@/components/app/map-ad-banner';
 import { MapFilterBar } from '@/components/app/map-filter-bar';
+import { UpsellModal } from '@/components/app/upsell-modal';
 import { useMapData } from '@/hooks/use-map-data';
+import { useMembership } from '@/hooks/use-membership';
 import { api } from '@/lib/api';
 import { DEFAULT_LOCATION } from '@/lib/location';
 import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
@@ -76,6 +78,12 @@ export function MapPanel({
   const [reportOpen, setReportOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<FlyToTarget | null>(null);
   const [infoOverlay, setInfoOverlay] = useState<InfoOverlay | null>(null);
+  // Step 8: source for the upsell modal — set by teaser pin taps and
+  // locked filter row taps; cleared on close.
+  const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
+  const { tier } = useMembership();
+  // Anonymous sessions return tier `null`; treat as FREE for gating.
+  const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
 
   const effectiveCenter = mapCenter ?? userLocation ?? DEFAULT_LOCATION;
   const { pins, flowSegments, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData(effectiveCenter);
@@ -199,6 +207,8 @@ export function MapPanel({
         onToggle={toggleFilter}
         onToggleTrafficType={toggleTrafficType}
         pins={pins}
+        tier={effectiveTier}
+        onLockedRowTap={setUpsellSource}
       />
       <DashboardMap
         pins={pins}
@@ -215,7 +225,10 @@ export function MapPanel({
         onFlyToComplete={handleFlyToComplete}
         infoOverlay={infoOverlay}
         onCloseOverlay={handleCloseOverlay}
+        onTeaserTap={setUpsellSource}
       />
+
+      <UpsellModal source={upsellSource} onClose={() => setUpsellSource(null)} />
 
       <MapAdBanner />
 

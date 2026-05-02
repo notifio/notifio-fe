@@ -100,7 +100,7 @@ export default function SettingsScreen() {
       <Card>
         <SettingsRow icon={IconDatabase} label="Data Sources" onPress={() => router.push('/settings/sources')} />
         <SettingsRow icon={IconStar} label="Source Preferences" badge="PRO" onPress={() => pushPlaceholder('Source Preferences')} />
-        <SettingsRow icon={IconTemperature} label="Weather Thresholds" badge="PRO" onPress={() => pushPlaceholder('Weather Thresholds')} />
+        <SettingsRow icon={IconTemperature} label="Weather Thresholds" badge="PRO" onPress={() => router.push('/settings/weather-thresholds')} />
       </Card>
 
       {/* Privacy */}

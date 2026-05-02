@@ -22,7 +22,14 @@ interface MapPinMarkerProps {
 export function MapPinMarker({ pin }: MapPinMarkerProps) {
   const style = getPinStyle(pin);
   const IconComponent = style.icon;
-  const opacity = pin.status === 'upcoming' ? UPCOMING_OPACITY : 1;
+  // Step 8: teaser pins (off-tier previews) are dimmed harder than
+  // upcoming events so the user can tell at a glance the pin isn't
+  // interactive — tapping routes to the upsell sheet via the parent.
+  const opacity = pin.isTeaser
+    ? 0.4
+    : pin.status === 'upcoming'
+      ? UPCOMING_OPACITY
+      : 1;
 
   return (
     <View style={[styles.container, { opacity }]}>

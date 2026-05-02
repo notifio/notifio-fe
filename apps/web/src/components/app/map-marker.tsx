@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { formatTimeAgo } from '@notifio/shared';
 
 import { getPinStyle } from '@/lib/map-pin-config';
@@ -8,7 +10,7 @@ interface MapMarkerProps {
   pin: MapPin;
   isExpanded: boolean;
   theme: 'light' | 'dark';
-  labels: { upcoming: string; active: string };
+  labels: { upcoming: string; active: string; viewDetails: string };
   clusterCount?: number;
   onToggle: () => void;
   onClose: () => void;
@@ -69,6 +71,13 @@ export function MapMarker({
 }: MapMarkerProps) {
   const style = getPinStyle(pin);
   const iconColor = theme === 'dark' ? '#FFFFFF' : '#FFFFFF';
+  // Step 8: greyed-out preview style for off-tier teaser pins. The pin
+  // stays in place so the user sees coverage exists, but it never
+  // expands the popup — tap routes to the upsell modal upstream.
+  const teaserStyle: React.CSSProperties = pin.isTeaser
+    ? { opacity: 0.45, filter: 'grayscale(80%)' }
+    : {};
+  const showExpanded = isExpanded && !pin.isTeaser;
 
   // Fixed-size wrapper: MapLibre anchor: 'bottom' places bottom-center at the
   // map coordinate.  Because this wrapper never changes size the anchor pixel
@@ -80,9 +89,10 @@ export function MapMarker({
         width: `${PIN_W}px`,
         height: `${PIN_H}px`,
         overflow: 'visible',
+        ...teaserStyle,
       }}
     >
-      {isExpanded ? (
+      {showExpanded ? (
         <>
           {/* Expanded info pill — grows upward & to the right */}
           <div
@@ -158,6 +168,30 @@ export function MapMarker({
               <div style={{ fontSize: '10px', opacity: 0.65, marginTop: '2px' }}>
                 {formatTimeAgo(pin.timestamp)}
               </div>
+
+              {/* Traffic incidents have no /events/{id} page (pin.id is a
+                  TomTom incidentId, not an eventId). Teasers already
+                  short-circuit before showExpanded above. */}
+              {pin.source !== 'traffic' && pin.id && (
+                <Link
+                  href={`/events/${pin.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'block',
+                    marginTop: '8px',
+                    padding: '6px 10px',
+                    backgroundColor: 'rgba(255,255,255,0.18)',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#FFFFFF',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {labels.viewDetails}
+                </Link>
+              )}
             </div>
 
             {/* Close button */}

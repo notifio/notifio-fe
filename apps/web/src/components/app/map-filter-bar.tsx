@@ -1,6 +1,6 @@
 'use client';
 
-import { IconAdjustments, IconInfoCircle, IconX } from '@tabler/icons-react';
+import { IconAdjustments, IconInfoCircle, IconLock, IconX } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   MAP_FILTER_SOURCES,
   MAP_PIN_STYLES,
+  SOURCE_REQUIRED_TIER,
   TRAFFIC_ICON_MAP,
   TRAFFIC_TYPE_COLORS,
 } from '@/lib/map-pin-config';
@@ -16,6 +17,12 @@ import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-
 import { AdPlaceholder } from './ad-placeholder';
 import { CategoryIcon } from './category-icon';
 import { MapToggle } from './map-toggle';
+import { TierBadge } from './tier-badge';
+
+// Step 8: ranks tiers so a single comparison gates a row by required
+// tier. `null` is coerced to FREE upstream (anonymous users) so this
+// map only needs the three real tiers.
+const TIER_ORDER: Record<'FREE' | 'PLUS' | 'PRO', number> = { FREE: 0, PLUS: 1, PRO: 2 };
 
 const TRAFFIC_SUBCATEGORIES: TrafficIncidentType[] = [
   'accident',
@@ -32,6 +39,12 @@ interface MapFilterBarProps {
   onToggle: (source: MapPinSource) => void;
   onToggleTrafficType: (type: TrafficIncidentType) => void;
   pins: MapPin[];
+  /** Step 8: effective user tier. `null` from anonymous sessions is
+   *  coerced to FREE by the caller — this prop never carries `null`. */
+  tier?: 'FREE' | 'PLUS' | 'PRO';
+  /** Step 8: invoked when a locked filter row is tapped — opens the
+   *  upsell modal upstream with the row's source. */
+  onLockedRowTap?: (source: MapPinSource) => void;
 }
 
 // ── Main component ───────────────────────────────────────────────────
@@ -41,6 +54,8 @@ export function MapFilterBar({
   onToggle,
   onToggleTrafficType,
   pins,
+  tier = 'FREE',
+  onLockedRowTap,
 }: MapFilterBarProps) {
   const t = useTranslations();
   const tf = useTranslations('mapFilters');
@@ -214,6 +229,11 @@ export function MapFilterBar({
               const isActive = activeFilters.has(source);
               const count = sourceCounts.get(source) ?? 0;
               const isTraffic = source === 'traffic';
+              // Step 8: lock the row when the source's required tier
+              // outranks the user's. `traffic` and `air_quality` are
+              // PLUS, `pollen` is PRO; everything else stays FREE.
+              const requiredTier = SOURCE_REQUIRED_TIER[source];
+              const isLocked = TIER_ORDER[tier] < TIER_ORDER[requiredTier];
 
               return (
                 <div key={source}>
@@ -230,12 +250,15 @@ export function MapFilterBar({
 
                   {/* Top-level row */}
                   <div
+                    onClick={isLocked ? () => onLockedRowTap?.(source) : undefined}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
                       padding: '10px 16px',
                       minHeight: '48px',
+                      opacity: isLocked ? 0.7 : 1,
+                      cursor: isLocked ? 'pointer' : 'default',
                     }}
                   >
                     <CategoryIcon
@@ -255,19 +278,28 @@ export function MapFilterBar({
                     >
                       {t(style.label)}
                     </span>
-                    <span style={{ fontSize: '12px', color: countColor, marginRight: '8px' }}>
-                      {count}
-                    </span>
-                    <MapToggle
-                      on={isActive}
-                      onToggle={() => onToggle(source)}
-                      partial={isTraffic && trafficIsPartial}
-                      isDark={isDark}
-                    />
+                    {isLocked ? (
+                      <>
+                        <IconLock size={14} style={{ color: countColor, marginRight: '4px' }} />
+                        <TierBadge tier={requiredTier as 'PLUS' | 'PRO'} size="sm" />
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: '12px', color: countColor, marginRight: '8px' }}>
+                          {count}
+                        </span>
+                        <MapToggle
+                          on={isActive}
+                          onToggle={() => onToggle(source)}
+                          partial={isTraffic && trafficIsPartial}
+                          isDark={isDark}
+                        />
+                      </>
+                    )}
                   </div>
 
                   {/* Traffic subcategories */}
-                  {isTraffic && trafficIsActive && trafficSubsWithData.length > 0 && (
+                  {!isLocked && isTraffic && trafficIsActive && trafficSubsWithData.length > 0 && (
                     <div>
                       {trafficSubsWithData.map((type) => {
                         const subCount = trafficTypeCounts.get(type) ?? 0;

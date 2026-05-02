@@ -6,8 +6,6 @@ import type {
   EventDetail,
   UserVote,
   AirQualityResponse,
-  OutageRecord,
-  UtilityType,
   UserProfile,
   UserLocation,
   UserLocationsResponse,
@@ -32,6 +30,9 @@ import type {
   UserEventCategory,
   CreateUserEventBody,
   UpdateUserEventBody,
+  EventFeedItem,
+  EventFeedResponse,
+  TeaserPin,
   UserWeatherThreshold,
   SetWeatherThresholdBody,
   SourcePreference,
@@ -102,6 +103,9 @@ export type {
   UserEventCategory,
   CreateUserEventBody,
   UpdateUserEventBody,
+  EventFeedItem,
+  EventFeedResponse,
+  TeaserPin,
   UserWeatherThreshold,
   SetWeatherThresholdBody,
   SourcePreference,
@@ -167,7 +171,7 @@ interface RequestOptions {
 }
 
 export function createNotifioClient(config: NotifioClientConfig) {
-  async function request<T>(path: string, options?: RequestOptions): Promise<T> {
+  async function requestEnvelope<TJson>(path: string, options?: RequestOptions): Promise<TJson> {
     const { method = 'GET', body, params } = options ?? {};
 
     let url = `${config.baseUrl}${path}`;
@@ -226,15 +230,18 @@ export function createNotifioClient(config: NotifioClientConfig) {
     }
 
     if (response.status === 204) {
-      return undefined as T;
+      return undefined as TJson;
     }
 
-    const json = (await response.json()) as ApiResponse<T>;
+    return (await response.json()) as TJson;
+  }
 
+  async function request<T>(path: string, options?: RequestOptions): Promise<T> {
+    const json = await requestEnvelope<ApiResponse<T>>(path, options);
+    if (json === undefined) return undefined as T;
     if (!json.success) {
-      throw new ApiError(response.status, json.error ?? 'Unknown API error');
+      throw new ApiError(0, json.error ?? 'Unknown API error');
     }
-
     return json.data as T;
   }
 
@@ -290,13 +297,6 @@ export function createNotifioClient(config: NotifioClientConfig) {
           upcoming: params.upcoming !== undefined ? String(params.upcoming) : undefined,
         },
       });
-    },
-
-    async getOutages(utility: UtilityType): Promise<OutageRecord[]> {
-      const data = await request<{ totalOutages: number; outages: OutageRecord[] }>('/outages', {
-        params: { utility },
-      });
-      return data.outages;
     },
 
     // ─── Event endpoints ──────────────────────────────────────────
@@ -479,14 +479,28 @@ export function createNotifioClient(config: NotifioClientConfig) {
 
     // ─── Event endpoints (extended) ──────────────────────────────────
 
-    async getEvents(params: { lat: number; lng: number; radius?: number }): Promise<UserEvent[]> {
-      return request<UserEvent[]>('/events', {
+    async getEvents(params: { lat: number; lng: number; radius?: number }): Promise<EventFeedResponse> {
+      const json = await requestEnvelope<{
+        success: boolean;
+        data?: EventFeedItem[];
+        teasers?: TeaserPin[];
+        meta?: { total?: number; limit?: number; offset?: number };
+        error?: string;
+      }>('/events', {
         params: {
           lat: String(params.lat),
           lng: String(params.lng),
           radius: params.radius !== undefined ? String(params.radius) : undefined,
         },
       });
+      if (!json.success) {
+        throw new ApiError(0, json.error ?? 'Unknown API error');
+      }
+      return {
+        events: json.data ?? [],
+        teasers: json.teasers ?? [],
+        total: json.meta?.total ?? 0,
+      };
     },
 
     async createEvent(body: CreateUserEventBody): Promise<UserEvent> {
