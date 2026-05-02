@@ -65,7 +65,6 @@ export default function MapScreen() {
 
   const { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showFlow, _setShowFlow] = useState(true);
 
   // Step 8: source for the upsell sheet — set by teaser pin taps and
   // locked filter row taps; cleared on close.
@@ -203,8 +202,9 @@ export default function MapScreen() {
         onRegionChangeComplete={handleRegionChange}
         showsUserLocation
         showsMyLocationButton
-        radius={50}
+        radius={80}
         extent={512}
+        spiralEnabled={false}
         mapRef={(ref) => { mapRef.current = ref as unknown as MapView | null; }}
         onClusterPress={handleClusterPress}
         renderCluster={renderCluster}
@@ -213,17 +213,23 @@ export default function MapScreen() {
         // Android Google Maps custom dark style
         customMapStyle={Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined}
       >
-        {showFlow && flowSegments.map((segment, idx) => (
-          <Polyline
-            key={`flow-${idx}`}
-            coordinates={segment.coordinates.map(([lng, lat]) => ({
-              latitude: lat,
-              longitude: lng,
-            }))}
-            strokeColor={CONGESTION_COLORS[segment.congestion] ?? CONGESTION_COLORS.free}
-            strokeWidth={3}
-          />
-        ))}
+        {/* Flow polylines are gated by the `traffic` filter row so the
+            user controls them from one place. Free-flow segments are
+            hidden (matches web's flowToGeoJSON filter) — only actual
+            congestion shows, with a softer stroke than before. */}
+        {activeFilters.has('traffic') && flowSegments
+          .filter((segment) => segment.congestion !== 'free')
+          .map((segment, idx) => (
+            <Polyline
+              key={`flow-${idx}`}
+              coordinates={segment.coordinates.map(([lng, lat]) => ({
+                latitude: lat,
+                longitude: lng,
+              }))}
+              strokeColor={CONGESTION_COLORS[segment.congestion] ?? CONGESTION_COLORS.moderate}
+              strokeWidth={2}
+            />
+          ))}
         {filteredPins.map((pin) => (
           <Marker
             key={pin.id}
