@@ -98,16 +98,6 @@
       "cancelled": "Smazání zrušeno"
     }
   },
-  "nav": {
-    "signIn": "Přihlásit se",
-    "dashboard": "Přehled",
-    "map": "Mapa",
-    "notifications": "Oznámení",
-    "settings": "Nastavení",
-    "profile": "Profil",
-    "pricing": "Ceník",
-    "reminders": "Připomínky"
-  },
   "events": {
     "reportButton": "Nahlásit",
     "selectCategory": "Co se stalo?",
@@ -242,12 +232,5 @@
     "humidity": "Vlhkost",
     "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstranit tento práh?"
-  },
-  "mapFilters": {
-    "air_quality": "Kvalita ovzduší",
-    "pollen": "Pyl",
-    "hydrology": "Hydrologie",
-    "wildfire": "Požár",
-    "outage_internet": "Internet"
   }
 }

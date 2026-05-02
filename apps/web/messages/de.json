@@ -98,16 +98,6 @@
       "cancelled": "Löschung abgebrochen"
     }
   },
-  "nav": {
-    "signIn": "Anmelden",
-    "dashboard": "Dashboard",
-    "map": "Karte",
-    "notifications": "Benachrichtigungen",
-    "settings": "Einstellungen",
-    "profile": "Profil",
-    "pricing": "Preise",
-    "reminders": "Erinnerungen"
-  },
   "events": {
     "reportButton": "Melden",
     "selectCategory": "Was ist passiert?",
@@ -242,12 +232,5 @@
     "humidity": "Luftfeuchtigkeit",
     "pressure": "Luftdruck",
     "deleteConfirm": "Diesen Schwellenwert entfernen?"
-  },
-  "mapFilters": {
-    "air_quality": "Luftqualität",
-    "pollen": "Pollen",
-    "hydrology": "Hydrologie",
-    "wildfire": "Waldbrand",
-    "outage_internet": "Internet"
   }
 }

@@ -1,16 +1,22 @@
 import type { Icon } from '@tabler/icons-react-native';
 import {
+  IconAlertTriangle,
   IconBarrierBlock,
   IconBolt,
   IconCalendarEvent,
   IconCar,
   IconCarCrash,
+  IconCloudBolt,
   IconCone2,
   IconDroplet,
   IconDropletFilled,
   IconFlame,
   IconFlameOff,
+  IconFlower,
   IconInfoCircle,
+  IconRipple,
+  IconWifiOff,
+  IconWindmill,
 } from '@tabler/icons-react-native';
 
 import { alertTypeColors } from '@notifio/ui';
@@ -55,6 +61,13 @@ const SOURCE_STYLES: Record<MapPinSource, PinStyle> = {
   heat:        { color: '#FF3B30', label: 'mapFilters.heat',        icon: IconFlame },
   gas:         { color: '#FF7A2F', label: 'mapFilters.gas',         icon: IconFlameOff },
   traffic:     { color: '#8B5CF6', label: 'mapFilters.traffic',     icon: IconCarCrash },
+  air_quality:      { color: '#1D9E75', label: 'mapFilters.air_quality',      icon: IconWindmill },
+  pollen:           { color: '#A78BFA', label: 'mapFilters.pollen',           icon: IconFlower },
+  hydrology:        { color: '#38BDF8', label: 'mapFilters.hydrology',        icon: IconRipple },
+  wildfire:         { color: '#FB7121', label: 'mapFilters.wildfire',         icon: IconFlame },
+  outage_internet:  { color: '#8B9BB5', label: 'mapFilters.outage_internet',  icon: IconWifiOff },
+  weather_alerts:   { color: '#F59E0B', label: 'mapFilters.weather_alerts',   icon: IconAlertTriangle },
+  weather_forecast: { color: '#D97706', label: 'mapFilters.weather_forecast', icon: IconCloudBolt },
   event:       { color: alertTypeColors.event, label: 'mapFilters.events', icon: IconCalendarEvent },
 };
 
@@ -77,7 +90,13 @@ export const MAP_FILTER_SOURCES: MapPinSource[] = [
   'gas',
   'heat',
   'traffic',
-  'event',
+  'air_quality',
+  'pollen',
+  'hydrology',
+  'wildfire',
+  'outage_internet',
+  'weather_alerts',
+  'weather_forecast',
 ];
 
 export const TRAFFIC_SUBCATEGORIES = [
@@ -90,3 +109,23 @@ export const TRAFFIC_SUBCATEGORIES = [
 ] as const;
 
 export type TrafficIncidentType = typeof TRAFFIC_SUBCATEGORIES[number];
+
+// Step 8: gating tier per source. Mirrors web's map-pin-config + the BE
+// catalogue: only `traffic`, `air_quality`, `pollen` require a paid
+// tier. `event` is the generic teaser fallback so it stays FREE — the
+// effective gating happens on the BE source code via the teaser shim.
+export const SOURCE_REQUIRED_TIER: Record<MapPinSource, 'FREE' | 'PLUS' | 'PRO'> = {
+  electricity: 'FREE',
+  water: 'FREE',
+  gas: 'FREE',
+  heat: 'FREE',
+  traffic: 'PLUS',
+  air_quality: 'PLUS',
+  pollen: 'PRO',
+  hydrology: 'FREE',
+  wildfire: 'FREE',
+  outage_internet: 'FREE',
+  weather_alerts: 'FREE',
+  weather_forecast: 'FREE',
+  event: 'FREE',
+};

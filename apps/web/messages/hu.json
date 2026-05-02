@@ -98,16 +98,6 @@
       "cancelled": "Törlés visszavonva"
     }
   },
-  "nav": {
-    "signIn": "Bejelentkezés",
-    "dashboard": "Irányítópult",
-    "map": "Térkép",
-    "notifications": "Értesítések",
-    "settings": "Beállítások",
-    "profile": "Profil",
-    "pricing": "Árak",
-    "reminders": "Emlékeztetők"
-  },
   "events": {
     "reportButton": "Bejelentés",
     "selectCategory": "Mi történt?",
@@ -242,12 +232,5 @@
     "humidity": "Páratartalom",
     "pressure": "Légnyomás",
     "deleteConfirm": "Eltávolítod ezt a küszöböt?"
-  },
-  "mapFilters": {
-    "air_quality": "Levegőminőség",
-    "pollen": "Pollen",
-    "hydrology": "Hidrológia",
-    "wildfire": "Tűz",
-    "outage_internet": "Internet"
   }
 }

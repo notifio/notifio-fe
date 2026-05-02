@@ -14,14 +14,9 @@ const THEME_OPTIONS = [
   { value: 'dark' as const, label: 'Dark' },
 ];
 
-const UNITS_OPTIONS = [
-  { value: 'metric' as const, label: 'Metric (°C, km/h)' },
-  { value: 'imperial' as const, label: 'Imperial (°F, mph)' },
-];
-
 export default function AppearanceScreen() {
   const { colors, mode, setMode } = useAppTheme();
-  const { preferences, setDisplay } = usePreferences();
+  const { setDisplay } = usePreferences();
 
   return (
     <>
@@ -39,18 +34,6 @@ export default function AppearanceScreen() {
                   setMode(option.value as ThemeMode);
                   setDisplay('theme', option.value);
                 }}
-              />
-            ))}
-          </Card>
-
-          <SectionLabel label="Units" />
-          <Card>
-            {UNITS_OPTIONS.map((option) => (
-              <SelectableRow
-                key={option.value}
-                label={option.label}
-                selected={preferences?.display.units === option.value}
-                onPress={() => setDisplay('units', option.value)}
               />
             ))}
           </Card>

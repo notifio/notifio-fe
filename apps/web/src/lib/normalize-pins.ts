@@ -1,9 +1,12 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { UserEvent } from '@notifio/api-client';
-import type { OutageRecord, TrafficIncident } from '@notifio/shared';
+import type { EventFeedItem, TeaserPin } from '@notifio/api-client';
+import type { TrafficIncident } from '@notifio/shared';
 
 // FE-P1.2: dropped the grey "event" fallback for five categories that
 // already have their own pin colours + icons. Order matches the legend.
+// Step 8: `event` re-introduced as a generic teaser fallback target so
+// teaser pins coming from BE categories without a dedicated FE icon
+// (earthquake, community, etc.) still render rather than being dropped.
 export type MapPinSource =
   | 'electricity'
   | 'water'
@@ -14,7 +17,10 @@ export type MapPinSource =
   | 'pollen'
   | 'hydrology'
   | 'wildfire'
-  | 'outage_internet';
+  | 'outage_internet'
+  | 'weather_alerts'
+  | 'weather_forecast'
+  | 'event';
 /**
  * Lifecycle label rendered on a pin. Matches the API's `EventLifecycleStatus`
  * (`upcoming | active | resolved`) — this enum is FE-local until the BE
@@ -43,33 +49,48 @@ export interface MapPin {
   locality?: string;
   timestamp: string;
   incidentType?: TrafficIncidentType;
+  /** Teaser pins are off-tier previews — render greyed and never expand
+   *  the popup; tapping opens the upsell modal instead. Step 8. */
+  isTeaser?: boolean;
 }
 
-function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null {
-  if (outage.lat == null || outage.lng == null) return null;
-  if (outage.status === 'resolved') return null;
+// Step 8: BE emits a small set of `source` codes on /events teasers that
+// don't always line up with the FE's `MapPinSource` union (e.g.
+// `weather` → split into `weather_alerts` / `weather_forecast`,
+// `earthquake` / `community` → no dedicated pin yet). Map known codes
+// 1:1 and route everything else to the generic `event` fallback so the
+// pin still renders.
+const BE_TO_FE_SOURCE: Record<string, MapPinSource> = {
+  weather: 'weather_alerts',
+  electricity: 'electricity',
+  water: 'water',
+  gas: 'gas',
+  heat: 'heat',
+  traffic: 'traffic',
+  air_quality: 'air_quality',
+  pollen: 'pollen',
+  hydrology: 'hydrology',
+  wildfire: 'wildfire',
+  outage_internet: 'outage_internet',
+  earthquake: 'event',
+  community: 'event',
+};
 
-  // Status precedence: any record whose start is genuinely in the future is
-  // shown as `upcoming` regardless of what the adapter said. This catches
-  // the BVS-Lamač repro where a planned outage on 18.05.2026 surfaced with
-  // `status: 'active'` because the adapter classified it that way (see
-  // BE-P0.3, audit 30.4.2026). The legacy adapter value `'scheduled'`
-  // also maps to `'upcoming'` so adapter and pin vocabularies align.
-  const startedAtMs = new Date(outage.startedAt).getTime();
-  const isFuture = Number.isFinite(startedAtMs) && startedAtMs > Date.now();
-  const status: MapPinStatus =
-    outage.status === 'scheduled' || isFuture ? 'upcoming' : 'active';
+function teaserSourceToFE(beSource: string): MapPinSource {
+  return BE_TO_FE_SOURCE[beSource] ?? 'event';
+}
 
+function teaserPinToMapPin(t: TeaserPin): MapPin {
   return {
-    id: outage.id,
-    source,
-    status,
-    lat: outage.lat,
-    lng: outage.lng,
-    title: outage.title,
-    description: outage.description,
-    locality: outage.locality,
-    timestamp: outage.startedAt,
+    id: `teaser:${t.source}:${t.lat}:${t.lng}`,
+    source: teaserSourceToFE(t.source),
+    status: 'active',
+    lat: t.lat,
+    lng: t.lng,
+    title: '',
+    description: '',
+    timestamp: new Date().toISOString(),
+    isTeaser: true,
   };
 }
 
@@ -88,43 +109,6 @@ function trafficToPin(incident: TrafficIncident): MapPin {
 }
 
 // ── Event → MapPin mapping ───────────────────────────────────────────
-// The UserEvent TypeScript type uses `subcategoryCode`/`categoryCode` but the
-// actual API returns `subcategory`/`category`. We read both to be safe.
-
-/**
- * Extract the real field value regardless of whether the API uses
- * `subcategory` or `subcategoryCode` (TS type vs actual response).
- */
-function getEventSubcategory(event: UserEvent): string {
-  return (
-    event.subcategoryCode ??
-    (event as unknown as Record<string, unknown>).subcategory as string ??
-    ''
-  );
-}
-
-function getEventCategory(event: UserEvent): string {
-  return (
-    event.categoryCode ??
-    (event as unknown as Record<string, unknown>).category as string ??
-    ''
-  );
-}
-
-function getEventTitle(event: UserEvent): string {
-  return (
-    event.title ??
-    (event as unknown as Record<string, unknown>).typeName as string ??
-    event.subcategoryName ??
-    (event as unknown as Record<string, unknown>).subcategoryName as string ??
-    ''
-  );
-}
-
-function isEventResolved(event: UserEvent): boolean {
-  const raw = (event as unknown as Record<string, unknown>).isResolved;
-  return raw === true;
-}
 
 // Subcategory codes that map to specific traffic incident types
 const EVENT_SUBCATEGORY_TO_INCIDENT: Record<string, TrafficIncidentType> = {
@@ -157,7 +141,19 @@ const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
 // Categories that should not appear as map pins
 const SKIP_CATEGORIES = new Set(['name_day']);
 
-function eventStatus(event: UserEvent): MapPinStatus {
+// Step 7: `weather_warning` events come from two distinct upstream
+// sources. Branch on `event.source.code` so MeteoAlarm warnings
+// (`malarm_warning`) render as the amber `weather_alerts` pin while
+// Weather Intelligence forecasts (`weather_intelligence`, default)
+// render as the deeper-amber `weather_forecast` pin.
+function resolveEventSource(event: EventFeedItem): MapPinSource | undefined {
+  if (event.category === 'weather_warning') {
+    return event.source?.code === 'malarm_warning' ? 'weather_alerts' : 'weather_forecast';
+  }
+  return EVENT_CATEGORY_TO_SOURCE[event.category];
+}
+
+function eventStatus(event: EventFeedItem): MapPinStatus {
   if (event.eventFrom) {
     const fromMs = new Date(event.eventFrom).getTime();
     if (Number.isFinite(fromMs) && fromMs > Date.now()) {
@@ -167,21 +163,20 @@ function eventStatus(event: UserEvent): MapPinStatus {
   return 'active';
 }
 
-function eventToPin(event: UserEvent): MapPin | null {
-  const categoryCode = getEventCategory(event);
-  const subcategoryCode = getEventSubcategory(event);
-  const title = getEventTitle(event);
-  const description =
-    event.subcategoryName ??
-    (event as unknown as Record<string, unknown>).subcategoryName as string ??
-    '';
+function eventToPin(event: EventFeedItem): MapPin | null {
+  if (event.lat == null || event.lng == null) return null;
+
+  const categoryCode = event.category;
+  const subcategoryCode = event.subcategory ?? '';
+  const title = event.title ?? '';
+  const description = event.subcategoryName ?? '';
 
   if (SKIP_CATEGORIES.has(categoryCode)) return null;
 
   const status = eventStatus(event);
 
   // Outage-type events → utility source pins
-  const outageSource = EVENT_CATEGORY_TO_SOURCE[categoryCode];
+  const outageSource = resolveEventSource(event);
   if (outageSource) {
     return {
       id: event.eventId,
@@ -228,40 +223,26 @@ function eventToPin(event: UserEvent): MapPin | null {
 }
 
 export function normalizeMapPins(
-  electricityOutages: OutageRecord[],
-  waterOutages: OutageRecord[],
-  heatOutages: OutageRecord[],
-  gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
-  events?: UserEvent[],
+  events?: EventFeedItem[],
+  teasers?: TeaserPin[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
-  for (const o of electricityOutages) {
-    const pin = outageToPin(o, 'electricity');
-    if (pin) pins.push(pin);
-  }
-  for (const o of waterOutages) {
-    const pin = outageToPin(o, 'water');
-    if (pin) pins.push(pin);
-  }
-  for (const o of heatOutages) {
-    const pin = outageToPin(o, 'heat');
-    if (pin) pins.push(pin);
-  }
-  for (const o of gasOutages) {
-    const pin = outageToPin(o, 'gas');
-    if (pin) pins.push(pin);
-  }
   for (const t of trafficIncidents) {
     pins.push(trafficToPin(t));
   }
   if (events) {
     for (const e of events) {
-      if (!isEventResolved(e)) {
+      if (e.status !== 'resolved') {
         const pin = eventToPin(e);
         if (pin) pins.push(pin);
       }
+    }
+  }
+  if (teasers) {
+    for (const t of teasers) {
+      pins.push(teaserPinToMapPin(t));
     }
   }
 

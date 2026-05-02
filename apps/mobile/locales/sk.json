@@ -70,20 +70,7 @@
   "settingsOptions": {
     "system": "Systém",
     "light": "Svetlý",
-    "dark": "Tmavý",
-    "metric": "Metrické (°C, km/h)",
-    "imperial": "Imperiálne (°F, mph)"
-  },
-  "auth": {
-    "welcomeTitle": "Vitaj v Notifio",
-    "welcomeDescription": "Upozornenia v reálnom čase pre tvoju oblasť — počasie, doprava, výpadky a ďalšie.",
-    "getStarted": "Začať",
-    "existingAccount": "Už mám účet",
-    "welcomeBack": "Vitaj späť",
-    "signInDescription": "Prihlás sa do svojho Notifio účtu.",
-    "signInButton": "Prihlásiť sa",
-    "signInError": "Chyba prihlásenia",
-    "goBack": "Späť"
+    "dark": "Tmavý"
   },
   "onboarding": {
     "locationTitle": "Tvoja poloha",
@@ -119,6 +106,9 @@
   "events": {
     "coversYourArea": "Táto udalosť sa týka tvojej oblasti.",
     "unavailable": "Detaily udalosti nie sú dostupné."
+  },
+  "alerts": {
+    "noNotifications": "Zatiaľ žiadne notifikácie"
   },
   "notificationType": {
     "start": "Začína",
@@ -308,10 +298,6 @@
     "sponsored": "Sponzorované",
     "adFree": "Bez reklám"
   },
-  "upsell": {
-    "upgrade": "Upgradnúť",
-    "dismiss": "Zavrieť"
-  },
   "reminders": {
     "title": "Pripomienky",
     "tabs": {
@@ -359,24 +345,27 @@
     "error": "Nepodarilo sa uložiť hodnotenie"
   },
   "mapFilters": {
-    "title": "Filtre",
-    "close": "Zavrieť",
-    "electricity": "Elektrina",
-    "water": "Voda",
-    "gas": "Plyn",
-    "heat": "Teplo",
-    "traffic": "Doprava",
-    "events": "Udalosti",
-    "accident": "Nehody",
-    "construction": "Výstavba",
-    "road_closure": "Uzávery",
-    "congestion": "Kolóny",
-    "flooding": "Záplavy",
-    "event": "Udalosti",
-    "other": "Iné"
+    "hydrology": "Vodné hladiny",
+    "wildfire": "Lesné požiare",
+    "outage_internet": "Výpadky internetu"
   },
   "mapPinStatus": {
     "active": "Aktívne",
     "upcoming": "Plánované"
+  },
+  "weatherThresholds": {
+    "title": "Prahové hodnoty počasia",
+    "description": "Nastavte si vlastné prahové hodnoty pre upozornenia na počasie. Dostanete upozornenie keď hodnoty prekročia nastavený prah.",
+    "addThreshold": "Pridať prahovú hodnotu",
+    "selectType": "Vyberte typ prahovej hodnoty",
+    "saved": "Uložené",
+    "tempHigh": "Vysoká teplota",
+    "tempLow": "Nízka teplota",
+    "windSpeed": "Rýchlosť vetra",
+    "humidity": "Vlhkosť",
+    "pressure": "Atmosférický tlak",
+    "deleteConfirm": "Odstrániť túto prahovú hodnotu?",
+    "notSet": "Nenastavené",
+    "invalidValue": "Zadajte platné číslo"
   }
 }

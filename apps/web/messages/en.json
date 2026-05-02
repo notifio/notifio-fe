@@ -1,13 +1,7 @@
 {
   "map": {
     "loadingMapData": "Loading map data...",
-    "yourLocation": "Your location",
-    "upcoming": "Upcoming",
-    "active": "Active",
-    "defaultLocation": "Slovakia",
-    "eventUnavailable": "Event details not available",
-    "coversYourArea": "This event covers your area",
-    "closeOverlay": "Close"
+    "upcoming": "Upcoming"
   },
   "weather": {
     "feelsLike": "Feels like",
@@ -51,22 +45,6 @@
   },
   "traffic": {
     "title": "Traffic"
-  },
-  "mapFilters": {
-    "title": "Filters",
-    "accident": "Accidents",
-    "construction": "Construction",
-    "road_closure": "Closures",
-    "congestion": "Congestion",
-    "event": "Events",
-    "weather": "Weather",
-    "other": "Other",
-    "close": "Close",
-    "air_quality": "Air quality",
-    "pollen": "Pollen",
-    "hydrology": "Hydrology",
-    "wildfire": "Wildfire",
-    "outage_internet": "Internet"
   },
   "notifications": {
     "title": "Notifications"
@@ -132,14 +110,6 @@
     "pushOffGeoOk": "Push notifications are off — you won't receive alerts.",
     "pushDenied": "Notifications are blocked in your browser. Click the lock icon to allow.",
     "geoDenied": "Location access denied. Add locations manually in Settings."
-  },
-  "alerts": {
-    "all": "All",
-    "sent": "Sent",
-    "active": "Active",
-    "resolved": "Resolved",
-    "noNotifications": "No notifications yet",
-    "loadMore": "Load more"
   },
   "common": {
     "retry": "Retry",
@@ -214,16 +184,6 @@
       "cancel": "Cancel deletion",
       "cancelled": "Deletion cancelled"
     }
-  },
-  "nav": {
-    "signIn": "Sign in",
-    "dashboard": "Dashboard",
-    "map": "Map",
-    "notifications": "Notifications",
-    "settings": "Settings",
-    "profile": "Profile",
-    "pricing": "Pricing",
-    "reminders": "Reminders"
   },
   "membership": {
     "pricing": "Pricing",
@@ -492,21 +452,6 @@
     "compactBoth": "Enable location & notifications to see alerts here",
     "compactPushOnly": "Enable push notifications to see alerts here",
     "compactGeoOnly": "Add a location to see alerts here"
-  },
-  "upsell": {
-    "upgrade": "Upgrade",
-    "reminder": {
-      "title": "Set personal reminders",
-      "description": "Pro users can create custom alerts for events, deadlines, and more."
-    },
-    "locations": {
-      "title": "Monitor more locations",
-      "description": "Plus users can track up to 3 locations. Pro gets 10."
-    },
-    "pollen": {
-      "title": "Advanced pollen forecasts",
-      "description": "Plus users get detailed pollen breakdowns and daily forecasts."
-    }
   },
   "digest": {
     "title": "Notification delivery",
