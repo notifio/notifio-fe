@@ -106,7 +106,14 @@
     "settings": "Налаштування",
     "profile": "Профіль",
     "pricing": "Тарифи",
-    "reminders": "Нагадування"
+    "reminders": "Нагадування",
+    "language": "Мова",
+    "languageBack": "Назад",
+    "theme": "Тема",
+    "themeMode": {
+      "light": "Світла",
+      "dark": "Темна"
+    }
   },
   "events": {
     "reportButton": "Повідомити",

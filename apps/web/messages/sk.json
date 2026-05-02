@@ -226,7 +226,14 @@
     "settings": "Nastavenia",
     "profile": "Profil",
     "pricing": "Cenník",
-    "reminders": "Pripomienky"
+    "reminders": "Pripomienky",
+    "language": "Jazyk",
+    "languageBack": "Späť",
+    "theme": "Téma",
+    "themeMode": {
+      "light": "Svetlá",
+      "dark": "Tmavá"
+    }
   },
   "membership": {
     "pricing": "Cenník",

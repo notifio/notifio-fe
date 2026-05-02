@@ -226,7 +226,14 @@
     "settings": "Settings",
     "profile": "Profile",
     "pricing": "Pricing",
-    "reminders": "Reminders"
+    "reminders": "Reminders",
+    "language": "Language",
+    "languageBack": "Back",
+    "theme": "Theme",
+    "themeMode": {
+      "light": "Light",
+      "dark": "Dark"
+    }
   },
   "membership": {
     "pricing": "Pricing",

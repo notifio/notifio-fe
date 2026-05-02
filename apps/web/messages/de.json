@@ -106,7 +106,14 @@
     "settings": "Einstellungen",
     "profile": "Profil",
     "pricing": "Preise",
-    "reminders": "Erinnerungen"
+    "reminders": "Erinnerungen",
+    "language": "Sprache",
+    "languageBack": "Zurück",
+    "theme": "Design",
+    "themeMode": {
+      "light": "Hell",
+      "dark": "Dunkel"
+    }
   },
   "events": {
     "reportButton": "Melden",

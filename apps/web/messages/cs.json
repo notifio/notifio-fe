@@ -106,7 +106,14 @@
     "settings": "Nastavení",
     "profile": "Profil",
     "pricing": "Ceník",
-    "reminders": "Připomínky"
+    "reminders": "Připomínky",
+    "language": "Jazyk",
+    "languageBack": "Zpět",
+    "theme": "Téma",
+    "themeMode": {
+      "light": "Světlá",
+      "dark": "Tmavá"
+    }
   },
   "events": {
     "reportButton": "Nahlásit",

@@ -106,7 +106,14 @@
     "settings": "Beállítások",
     "profile": "Profil",
     "pricing": "Árak",
-    "reminders": "Emlékeztetők"
+    "reminders": "Emlékeztetők",
+    "language": "Nyelv",
+    "languageBack": "Vissza",
+    "theme": "Téma",
+    "themeMode": {
+      "light": "Világos",
+      "dark": "Sötét"
+    }
   },
   "events": {
     "reportButton": "Bejelentés",
