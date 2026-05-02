@@ -15,7 +15,9 @@ import { MapFilterPanel } from '../../components/map/map-filter-panel';
 import { MapPinMarker } from '../../components/map/map-pin-marker';
 import { MapStatusCard } from '../../components/map/map-status-card';
 import { PinCallout } from '../../components/map/pin-callout';
+import { UpsellSheet } from '../../components/monetization/upsell-sheet';
 import { useMapData } from '../../hooks/use-map-data';
+import { useMembership } from '../../hooks/use-membership';
 import {
   MAP_FILTER_SOURCES,
   TRAFFIC_SUBCATEGORIES,
@@ -64,6 +66,14 @@ export default function MapScreen() {
   const { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showFlow, _setShowFlow] = useState(true);
+
+  // Step 8: source for the upsell sheet — set by teaser pin taps and
+  // locked filter row taps; cleared on close.
+  const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
+  const { tier } = useMembership();
+  // Mobile's `useMembership` already coerces missing data to FREE, but
+  // be explicit so the call site reads the same as web.
+  const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
 
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
@@ -132,6 +142,7 @@ export default function MapScreen() {
   const filteredPins = useMemo(
     () =>
       pins.filter((p) => {
+        if (p.isTeaser) return true; // teasers always render — they're the upsell hook
         if (!activeFilters.has(p.source)) return false;
         if (p.source === 'traffic' && p.incidentType) {
           return activeTrafficTypes.has(p.incidentType as TrafficIncidentType);
@@ -219,12 +230,22 @@ export default function MapScreen() {
             coordinate={{ latitude: pin.lat, longitude: pin.lng }}
             tracksViewChanges={false}
             anchor={{ x: 0.5, y: 1 }}
-            onCalloutPress={pin.source === 'event' ? () => router.push(`/events/${pin.id}`) : undefined}
+            // Step 8: teaser pins skip the callout entirely and route
+            // taps to the upsell sheet so the user finds out why
+            // coverage is greyed out.
+            onPress={pin.isTeaser ? () => setUpsellSource(pin.source) : undefined}
+            onCalloutPress={
+              !pin.isTeaser && pin.source === 'event'
+                ? () => router.push(`/events/${pin.id}`)
+                : undefined
+            }
           >
             <MapPinMarker pin={pin} />
-            <Callout tooltip>
-              <PinCallout pin={pin} />
-            </Callout>
+            {!pin.isTeaser && (
+              <Callout tooltip>
+                <PinCallout pin={pin} />
+              </Callout>
+            )}
           </Marker>
         ))}
       </ClusteredMapView>
@@ -236,7 +257,11 @@ export default function MapScreen() {
         onToggleTrafficType={toggleTrafficType}
         pins={pins}
         topInset={insets.top}
+        tier={effectiveTier}
+        onLockedRowTap={setUpsellSource}
       />
+
+      <UpsellSheet source={upsellSource} onClose={() => setUpsellSource(null)} />
 
       {showLoadingPill && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]} pointerEvents="none">

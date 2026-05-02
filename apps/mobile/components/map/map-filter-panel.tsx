@@ -1,4 +1,4 @@
-import { IconAdjustments, IconInfoCircle, IconX } from '@tabler/icons-react-native';
+import { IconAdjustments, IconInfoCircle, IconLock, IconX } from '@tabler/icons-react-native';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LayoutAnimation, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -10,6 +10,7 @@ import { MapToggle } from './map-toggle';
 import {
   MAP_FILTER_SOURCES,
   MAP_PIN_STYLES,
+  SOURCE_REQUIRED_TIER,
   TRAFFIC_ICON_MAP,
   TRAFFIC_SUBCATEGORIES,
   TRAFFIC_TYPE_COLORS,
@@ -19,6 +20,9 @@ import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { AdPlaceholder } from '../monetization/ad-placeholder';
+import { TierBadge } from '../ui/tier-badge';
+
+const TIER_ORDER: Record<'FREE' | 'PLUS' | 'PRO', number> = { FREE: 0, PLUS: 1, PRO: 2 };
 
 interface MapFilterPanelProps {
   activeFilters: Set<MapPinSource>;
@@ -27,6 +31,12 @@ interface MapFilterPanelProps {
   onToggleTrafficType: (type: TrafficIncidentType) => void;
   pins: MapPin[];
   topInset?: number;
+  /** Step 8: effective user tier. Defaults to FREE so anonymous and
+   *  loading states behave the same as a non-paying user. */
+  tier?: 'FREE' | 'PLUS' | 'PRO';
+  /** Step 8: invoked when a locked filter row is tapped — opens the
+   *  upsell sheet upstream with the row's source. */
+  onLockedRowTap?: (source: MapPinSource) => void;
 }
 
 export function MapFilterPanel({
@@ -36,6 +46,8 @@ export function MapFilterPanel({
   onToggleTrafficType,
   pins,
   topInset = 0,
+  tier = 'FREE',
+  onLockedRowTap,
 }: MapFilterPanelProps) {
   const { colors, isDark } = useAppTheme();
   const { t } = useTranslation();
@@ -121,12 +133,22 @@ export function MapFilterPanel({
               const isActive = activeFilters.has(source);
               const count = sourceCounts.get(source) ?? 0;
               const isTraffic = source === 'traffic';
+              // Step 8: lock the row when the source's required tier
+              // outranks the user's. Same gating as web — `traffic` &
+              // `air_quality` PLUS, `pollen` PRO, rest FREE.
+              const requiredTier = SOURCE_REQUIRED_TIER[source];
+              const isLocked = TIER_ORDER[tier] < TIER_ORDER[requiredTier];
+
+              const RowContainer = isLocked ? Pressable : View;
+              const rowProps = isLocked
+                ? { onPress: () => onLockedRowTap?.(source) }
+                : {};
 
               return (
                 <View key={source}>
                   {isTraffic && <View style={[styles.divider, { backgroundColor: dividerColor }]} />}
 
-                  <View style={styles.row}>
+                  <RowContainer {...rowProps} style={[styles.row, isLocked && styles.rowLocked]}>
                     <CategoryIcon
                       icon={style.icon}
                       color={style.color}
@@ -138,17 +160,26 @@ export function MapFilterPanel({
                     <Text style={[styles.rowLabel, { color: colors.text }]} numberOfLines={1}>
                       {t(style.label)}
                     </Text>
-                    <Text style={[styles.count, { color: countColor }]}>{count}</Text>
-                    <MapToggle
-                      on={isActive}
-                      onToggle={() => onToggle(source)}
-                      partial={isTraffic && trafficIsPartial}
-                      isDark={isDark}
-                    />
-                  </View>
+                    {isLocked ? (
+                      <View style={styles.lockedTrailing}>
+                        <IconLock size={14} color={countColor} />
+                        <TierBadge tier={requiredTier as 'PLUS' | 'PRO'} size="sm" />
+                      </View>
+                    ) : (
+                      <>
+                        <Text style={[styles.count, { color: countColor }]}>{count}</Text>
+                        <MapToggle
+                          on={isActive}
+                          onToggle={() => onToggle(source)}
+                          partial={isTraffic && trafficIsPartial}
+                          isDark={isDark}
+                        />
+                      </>
+                    )}
+                  </RowContainer>
 
                   {/* Traffic subcategories */}
-                  {isTraffic && trafficIsActive && trafficSubsWithData.length > 0 && (
+                  {!isLocked && isTraffic && trafficIsActive && trafficSubsWithData.length > 0 && (
                     <View>
                       {trafficSubsWithData.map((type) => {
                         const subCount = trafficTypeCounts.get(type) ?? 0;
@@ -285,6 +316,14 @@ const styles = StyleSheet.create({
   rowLabel: {
     flex: 1,
     fontSize: theme.fontSize.sm,
+  },
+  rowLocked: {
+    opacity: 0.7,
+  },
+  lockedTrailing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
   },
   subRow: {
     flexDirection: 'row',

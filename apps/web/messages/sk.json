@@ -508,6 +508,31 @@
     "pollen": {
       "title": "Pokročilé peľové predpovede",
       "description": "Plus používatelia dostávajú podrobný rozbor peľových informácií."
+    },
+    "subtitle": "Odomknite plnú mapu",
+    "sources": {
+      "traffic": {
+        "title": "Doprava",
+        "bullet1": "Dopravné nehody",
+        "bullet2": "Aktuálne zápchy",
+        "bullet3": "Uzávery a obchádzky"
+      },
+      "air_quality": {
+        "title": "Kvalita ovzdušia",
+        "bullet1": "Aktuálny index kvality vzduchu",
+        "bullet2": "Upozornenia pri zhoršení",
+        "bullet3": "Detail pre PM2.5, PM10, NO2, O3"
+      },
+      "pollen": {
+        "title": "Peľ",
+        "bullet1": "Denné peľové merania",
+        "bullet2": "Upozornenia pre alergikov",
+        "bullet3": "Breza, tráva, ambrózia, palina, jelša, oliva"
+      }
+    },
+    "cta": {
+      "PLUS": "Prejsť na PLUS",
+      "PRO": "Prejsť na PRO"
     }
   },
   "digest": {

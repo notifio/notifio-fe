@@ -69,6 +69,13 @@ export function MapMarker({
 }: MapMarkerProps) {
   const style = getPinStyle(pin);
   const iconColor = theme === 'dark' ? '#FFFFFF' : '#FFFFFF';
+  // Step 8: greyed-out preview style for off-tier teaser pins. The pin
+  // stays in place so the user sees coverage exists, but it never
+  // expands the popup — tap routes to the upsell modal upstream.
+  const teaserStyle: React.CSSProperties = pin.isTeaser
+    ? { opacity: 0.45, filter: 'grayscale(80%)' }
+    : {};
+  const showExpanded = isExpanded && !pin.isTeaser;
 
   // Fixed-size wrapper: MapLibre anchor: 'bottom' places bottom-center at the
   // map coordinate.  Because this wrapper never changes size the anchor pixel
@@ -80,9 +87,10 @@ export function MapMarker({
         width: `${PIN_W}px`,
         height: `${PIN_H}px`,
         overflow: 'visible',
+        ...teaserStyle,
       }}
     >
-      {isExpanded ? (
+      {showExpanded ? (
         <>
           {/* Expanded info pill — grows upward & to the right */}
           <div
