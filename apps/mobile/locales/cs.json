@@ -410,6 +410,15 @@
     "upcoming": "Plánované",
     "viewDetails": "Zobrazit detail"
   },
+  "mapCluster": {
+    "eventsAtLocation_one": "1 událost na tomto místě",
+    "eventsAtLocation_few": "{{count}} události na tomto místě",
+    "eventsAtLocation_other": "{{count}} událostí na tomto místě",
+    "eventsNearby_one": "1 událost poblíž",
+    "eventsNearby_few": "{{count}} události poblíž",
+    "eventsNearby_other": "{{count}} událostí poblíž",
+    "untitledEvent": "Bez názvu"
+  },
   "weatherThresholds": {
     "title": "Weather thresholds",
     "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",

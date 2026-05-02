@@ -410,6 +410,17 @@
     "upcoming": "Заплановане",
     "viewDetails": "Переглянути деталі"
   },
+  "mapCluster": {
+    "eventsAtLocation_one": "1 подія в цьому місці",
+    "eventsAtLocation_few": "{{count}} події в цьому місці",
+    "eventsAtLocation_many": "{{count}} подій в цьому місці",
+    "eventsAtLocation_other": "{{count}} подій в цьому місці",
+    "eventsNearby_one": "1 подія поблизу",
+    "eventsNearby_few": "{{count}} події поблизу",
+    "eventsNearby_many": "{{count}} подій поблизу",
+    "eventsNearby_other": "{{count}} подій поблизу",
+    "untitledEvent": "Без назви"
+  },
   "weatherThresholds": {
     "title": "Weather thresholds",
     "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",

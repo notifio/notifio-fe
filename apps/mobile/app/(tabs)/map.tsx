@@ -10,6 +10,7 @@ import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EventReportModal } from '../../components/events/event-report-modal';
+import { ClusterEventsSheet } from '../../components/map/cluster-events-sheet';
 import { MapClusterMarker } from '../../components/map/map-cluster-marker';
 import { MapFilterSheet } from '../../components/map/map-filter-sheet';
 import { MapPinMarker } from '../../components/map/map-pin-marker';
@@ -24,7 +25,7 @@ import {
   type TrafficIncidentType,
 } from '../../lib/map-pin-config';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
-import type { MapPinSource } from '../../lib/normalize-pins';
+import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
 import { shadows, theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -69,6 +70,12 @@ export default function MapScreen() {
   // Step 8: source for the upsell sheet — set by teaser pin taps and
   // locked filter row taps; cleared on close.
   const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
+
+  // Cluster tap → list of children. Solves the identical-coord stack:
+  // multiple events at the same lat/lng each get a row in the sheet
+  // instead of being unreachable behind the top pin.
+  const [clusterChildren, setClusterChildren] = useState<MapPin[]>([]);
+  const [clusterSheetOpen, setClusterSheetOpen] = useState(false);
   const { tier } = useMembership();
   // Mobile's `useMembership` already coerces missing data to FREE, but
   // be explicit so the call site reads the same as web.
@@ -152,18 +159,30 @@ export default function MapScreen() {
   );
 
   const handleClusterPress = useCallback(
-    (_cluster: unknown, markers?: Array<{ properties?: { coordinate?: { latitude: number; longitude: number } } }>) => {
-      if (!markers || markers.length === 0 || !mapRef.current) return;
-      const coordinates = markers
-        .map((m) => m.properties?.coordinate)
-        .filter((c): c is { latitude: number; longitude: number } => c != null);
-      if (coordinates.length === 0) return;
-      mapRef.current.fitToCoordinates(coordinates, {
-        edgePadding: { top: 80, right: 80, bottom: 80, left: 80 },
-        animated: true,
-      });
+    (
+      _cluster: unknown,
+      children?: Array<{ geometry?: { coordinates?: [number, number] } }>,
+    ) => {
+      if (!children || children.length === 0) return;
+      // Resolve cluster children → MapPin[] via lat/lng matching.
+      // The clustering lib's GeoJSON features don't carry pin.id, so
+      // coord equality is the only stable hook back to our pins
+      // array. Floating-point safe: coords come unmutated from
+      // pin.lat/lng. Teasers filtered out — synthetic IDs would 404
+      // on /events/{id}.
+      const childCoords = children
+        .map((c) => c.geometry?.coordinates)
+        .filter((c): c is [number, number] => Array.isArray(c));
+      const matched = pins.filter(
+        (p) =>
+          !p.isTeaser &&
+          childCoords.some(([lng, lat]) => p.lat === lat && p.lng === lng),
+      );
+      if (matched.length === 0) return;
+      setClusterChildren(matched);
+      setClusterSheetOpen(true);
     },
-    [],
+    [pins],
   );
 
   const renderCluster = useCallback((cluster: ClusterFeature) => {
@@ -205,6 +224,9 @@ export default function MapScreen() {
         radius={80}
         extent={512}
         spiralEnabled={false}
+        // Skip the lib's auto fitToCoordinates — we open a list sheet
+        // instead so identical-coord events are still reachable.
+        preserveClusterPressBehavior
         mapRef={(ref) => { mapRef.current = ref as unknown as MapView | null; }}
         onClusterPress={handleClusterPress}
         renderCluster={renderCluster}
@@ -271,6 +293,12 @@ export default function MapScreen() {
       />
 
       <UpsellSheet source={upsellSource} onClose={() => setUpsellSource(null)} />
+
+      <ClusterEventsSheet
+        visible={clusterSheetOpen}
+        events={clusterChildren}
+        onClose={() => setClusterSheetOpen(false)}
+      />
 
       {showLoadingPill && (
         <View style={[styles.statusOverlay, { top: insets.top + FILTER_BAR_HEIGHT }]} pointerEvents="none">

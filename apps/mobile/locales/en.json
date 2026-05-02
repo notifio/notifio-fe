@@ -410,6 +410,13 @@
     "upcoming": "Upcoming",
     "viewDetails": "View details"
   },
+  "mapCluster": {
+    "eventsAtLocation_one": "1 event at this location",
+    "eventsAtLocation_other": "{{count}} events at this location",
+    "eventsNearby_one": "1 event nearby",
+    "eventsNearby_other": "{{count}} events nearby",
+    "untitledEvent": "Untitled event"
+  },
   "weatherThresholds": {
     "title": "Weather thresholds",
     "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",

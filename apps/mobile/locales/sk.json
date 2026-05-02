@@ -410,6 +410,15 @@
     "upcoming": "Plánované",
     "viewDetails": "Zobraziť detail"
   },
+  "mapCluster": {
+    "eventsAtLocation_one": "1 udalosť na tomto mieste",
+    "eventsAtLocation_few": "{{count}} udalosti na tomto mieste",
+    "eventsAtLocation_other": "{{count}} udalostí na tomto mieste",
+    "eventsNearby_one": "1 udalosť v okolí",
+    "eventsNearby_few": "{{count}} udalosti v okolí",
+    "eventsNearby_other": "{{count}} udalostí v okolí",
+    "untitledEvent": "Bez názvu"
+  },
   "weatherThresholds": {
     "title": "Prahové hodnoty počasia",
     "description": "Nastavte si vlastné prahové hodnoty pre upozornenia na počasie. Dostanete upozornenie keď hodnoty prekročia nastavený prah.",

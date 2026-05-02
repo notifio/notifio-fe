@@ -410,6 +410,13 @@
     "upcoming": "Tervezett",
     "viewDetails": "Részletek"
   },
+  "mapCluster": {
+    "eventsAtLocation_one": "1 esemény ezen a helyen",
+    "eventsAtLocation_other": "{{count}} esemény ezen a helyen",
+    "eventsNearby_one": "1 esemény a közelben",
+    "eventsNearby_other": "{{count}} esemény a közelben",
+    "untitledEvent": "Cím nélküli esemény"
+  },
   "weatherThresholds": {
     "title": "Weather thresholds",
     "description": "Set custom threshold values for weather alerts. You'll be notified when values exceed your thresholds.",
