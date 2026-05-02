@@ -1,6 +1,6 @@
 // TODO: Move MapPin types to @notifio/shared when stable
 import type { EventFeedItem } from '@notifio/api-client';
-import type { OutageRecord, TrafficIncident } from '@notifio/shared';
+import type { TrafficIncident } from '@notifio/shared';
 
 // FE-P1.2: dropped the grey "event" fallback for five categories that
 // already have their own pin colours + icons. Order matches the legend.
@@ -43,34 +43,6 @@ export interface MapPin {
   locality?: string;
   timestamp: string;
   incidentType?: TrafficIncidentType;
-}
-
-function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null {
-  if (outage.lat == null || outage.lng == null) return null;
-  if (outage.status === 'resolved') return null;
-
-  // Status precedence: any record whose start is genuinely in the future is
-  // shown as `upcoming` regardless of what the adapter said. This catches
-  // the BVS-Lamač repro where a planned outage on 18.05.2026 surfaced with
-  // `status: 'active'` because the adapter classified it that way (see
-  // BE-P0.3, audit 30.4.2026). The legacy adapter value `'scheduled'`
-  // also maps to `'upcoming'` so adapter and pin vocabularies align.
-  const startedAtMs = new Date(outage.startedAt).getTime();
-  const isFuture = Number.isFinite(startedAtMs) && startedAtMs > Date.now();
-  const status: MapPinStatus =
-    outage.status === 'scheduled' || isFuture ? 'upcoming' : 'active';
-
-  return {
-    id: outage.id,
-    source,
-    status,
-    lat: outage.lat,
-    lng: outage.lng,
-    title: outage.title,
-    description: outage.description,
-    locality: outage.locality,
-    timestamp: outage.startedAt,
-  };
 }
 
 function trafficToPin(incident: TrafficIncident): MapPin {
@@ -190,31 +162,11 @@ function eventToPin(event: EventFeedItem): MapPin | null {
 }
 
 export function normalizeMapPins(
-  electricityOutages: OutageRecord[],
-  waterOutages: OutageRecord[],
-  heatOutages: OutageRecord[],
-  gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
   events?: EventFeedItem[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
-  for (const o of electricityOutages) {
-    const pin = outageToPin(o, 'electricity');
-    if (pin) pins.push(pin);
-  }
-  for (const o of waterOutages) {
-    const pin = outageToPin(o, 'water');
-    if (pin) pins.push(pin);
-  }
-  for (const o of heatOutages) {
-    const pin = outageToPin(o, 'heat');
-    if (pin) pins.push(pin);
-  }
-  for (const o of gasOutages) {
-    const pin = outageToPin(o, 'gas');
-    if (pin) pins.push(pin);
-  }
   for (const t of trafficIncidents) {
     pins.push(trafficToPin(t));
   }

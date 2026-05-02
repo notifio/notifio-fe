@@ -6,8 +6,6 @@ import type {
   EventDetail,
   UserVote,
   AirQualityResponse,
-  OutageRecord,
-  UtilityType,
   UserProfile,
   UserLocation,
   UserLocationsResponse,
@@ -292,13 +290,6 @@ export function createNotifioClient(config: NotifioClientConfig) {
           upcoming: params.upcoming !== undefined ? String(params.upcoming) : undefined,
         },
       });
-    },
-
-    async getOutages(utility: UtilityType): Promise<OutageRecord[]> {
-      const data = await request<{ totalOutages: number; outages: OutageRecord[] }>('/outages', {
-        params: { utility },
-      });
-      return data.outages;
     },
 
     // ─── Event endpoints ──────────────────────────────────────────

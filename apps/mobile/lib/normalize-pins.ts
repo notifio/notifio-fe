@@ -1,7 +1,19 @@
 // TODO: Move MapPin types to @notifio/shared when stable
-import type { EventFeedItem, OutageRecord, TrafficIncident } from '@notifio/shared/types';
+import type { EventFeedItem, TrafficIncident } from '@notifio/shared/types';
 
 export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic' | 'event';
+
+// Bounded port from web's `EVENT_CATEGORY_TO_SOURCE` — limited to the 4
+// outage utility categories so existing pin sources keep their colours
+// when outages flow through `/events`. The 5 newer categories
+// (air_quality, pollen, hydrology, wildfire, outage_internet) are
+// intentionally NOT mapped here — extending `MapPinSource` is Step 7.
+const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
+  outage_electric: 'electricity',
+  outage_water: 'water',
+  outage_gas: 'gas',
+  outage_heat: 'heat',
+};
 // EVENT-1: align with web's vocabulary (`active | upcoming | resolved`).
 // `scheduled` was a legacy synonym for `upcoming`; the web fix in PR #58
 // already renamed it but mobile carried the old name and used it
@@ -35,31 +47,6 @@ function isFutureIso(value: string | null | undefined): boolean {
   return Number.isFinite(t) && t > Date.now();
 }
 
-function outageToPin(outage: OutageRecord, source: MapPinSource): MapPin | null {
-  if (outage.lat == null || outage.lng == null) return null;
-  if (outage.status === 'resolved') return null;
-
-  // Future-start trumps the adapter's `status` field — Veolia / BVS
-  // can mark a row `'active'` while its `startedAt` is days away,
-  // which in the old code rendered as "Just now / Active" on the
-  // map (EVENT-1, audit 30.4.2026).
-  const isFuture = isFutureIso(outage.startedAt);
-  const status: MapPinStatus =
-    outage.status === 'scheduled' || isFuture ? 'upcoming' : 'active';
-
-  return {
-    id: outage.id,
-    source,
-    status,
-    lat: outage.lat,
-    lng: outage.lng,
-    title: outage.title,
-    description: outage.description,
-    locality: outage.locality,
-    timestamp: outage.startedAt,
-  };
-}
-
 function trafficToPin(incident: TrafficIncident): MapPin {
   return {
     id: incident.id,
@@ -82,7 +69,7 @@ function eventToPin(event: EventFeedItem): MapPin | null {
   const isFuture = isFutureIso(event.eventFrom);
   return {
     id: event.eventId,
-    source: 'event',
+    source: EVENT_CATEGORY_TO_SOURCE[event.category] ?? 'event',
     status: isFuture ? 'upcoming' : 'active',
     lat: event.lat,
     lng: event.lng,
@@ -97,31 +84,11 @@ function eventToPin(event: EventFeedItem): MapPin | null {
 }
 
 export function normalizeMapPins(
-  electricityOutages: OutageRecord[],
-  waterOutages: OutageRecord[],
-  heatOutages: OutageRecord[],
-  gasOutages: OutageRecord[],
   trafficIncidents: TrafficIncident[],
   events: EventFeedItem[],
 ): MapPin[] {
   const pins: MapPin[] = [];
 
-  for (const o of electricityOutages) {
-    const pin = outageToPin(o, 'electricity');
-    if (pin) pins.push(pin);
-  }
-  for (const o of waterOutages) {
-    const pin = outageToPin(o, 'water');
-    if (pin) pins.push(pin);
-  }
-  for (const o of heatOutages) {
-    const pin = outageToPin(o, 'heat');
-    if (pin) pins.push(pin);
-  }
-  for (const o of gasOutages) {
-    const pin = outageToPin(o, 'gas');
-    if (pin) pins.push(pin);
-  }
   for (const t of trafficIncidents) {
     pins.push(trafficToPin(t));
   }

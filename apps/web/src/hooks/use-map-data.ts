@@ -9,10 +9,9 @@ import { type MapPin, normalizeMapPins } from '@/lib/normalize-pins';
 
 import { safeFetch } from './use-map-data/fetch-utils';
 import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from './use-map-data/geo-utils';
-import type { StaticData, ViewportCache } from './use-map-data/types';
+import type { ViewportCache } from './use-map-data/types';
 
 const VIEWPORT_REFRESH_MS = 2 * 60 * 1000;
-const STATIC_REFRESH_MS = 10 * 60 * 1000;
 
 export function useMapData(center: { lat: number; lng: number } | null) {
   const [pins, setPins] = useState<MapPin[]>([]);
@@ -21,32 +20,10 @@ export function useMapData(center: { lat: number; lng: number } | null) {
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const staticData = useRef<StaticData | null>(null);
-  const staticFetched = useRef(false);
   const lastFetchCenter = useRef<{ lat: number; lng: number } | null>(null);
   const fetchingRef = useRef(false);
   const viewportFetchId = useRef(0);
   const viewportCache = useRef<Map<string, ViewportCache>>(new Map());
-
-  // ── Static data: outages ──────────────────────────────────────────
-  const fetchStatic = useCallback(async () => {
-    if (staticFetched.current) return;
-    staticFetched.current = true;
-
-    const [elec, water, heat, gas] = await Promise.all([
-      safeFetch(() => api.getOutages('electricity')),
-      safeFetch(() => api.getOutages('water')),
-      safeFetch(() => api.getOutages('heat')),
-      safeFetch(() => api.getOutages('gas')),
-    ]);
-
-    staticData.current = {
-      elec: elec ?? [],
-      water: water ?? [],
-      heat: heat ?? [],
-      gas: gas ?? [],
-    };
-  }, []);
 
   // ── Viewport data: traffic + flow + events ────────────────────────
   const fetchViewport = useCallback(
@@ -71,8 +48,6 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       }
       setError(null);
 
-      await fetchStatic();
-
       const [traffic, flow, events] = await Promise.all([
         safeFetch(() => api.getTraffic(coords.lat, coords.lng)),
         safeFetch(() => api.getTrafficFlow(coords.lat, coords.lng)),
@@ -85,8 +60,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         return;
       }
 
-      const sd = staticData.current;
-      if (!sd && !traffic && !events) {
+      if (!traffic && !events) {
         setError('Could not load data');
         fetchingRef.current = false;
         setIsLoading(false);
@@ -94,14 +68,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         return;
       }
 
-      const normalized = normalizeMapPins(
-        sd?.elec ?? [],
-        sd?.water ?? [],
-        sd?.heat ?? [],
-        sd?.gas ?? [],
-        traffic?.incidents ?? [],
-        events ?? [],
-      );
+      const normalized = normalizeMapPins(traffic?.incidents ?? [], events ?? []);
 
       setPins(normalized);
       setFlowSegments(flow ?? null);
@@ -111,7 +78,7 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       setIsLoading(false);
       setIsAutoRefreshing(false);
     },
-    [fetchStatic],
+    [],
   );
 
   // Fetch when center changes and exceeds distance threshold
@@ -136,20 +103,9 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     return () => clearInterval(interval);
   }, [center, fetchViewport]);
 
-  // Auto-refresh static (outage) data every 10 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      staticFetched.current = false;
-      staticData.current = null;
-    }, STATIC_REFRESH_MS);
-    return () => clearInterval(interval);
-  }, []);
-
   const refresh = useCallback(() => {
     if (center) {
       lastFetchCenter.current = null;
-      staticFetched.current = false;
-      staticData.current = null;
       viewportCache.current.clear();
       fetchViewport(center);
     }
