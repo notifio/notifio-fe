@@ -248,6 +248,8 @@
     "pollen": "Pyl",
     "hydrology": "Hydrologie",
     "wildfire": "Požár",
-    "outage_internet": "Internet"
+    "outage_internet": "Internet",
+    "weather_alerts": "Weather alerts",
+    "weather_forecast": "Weather forecast"
   }
 }

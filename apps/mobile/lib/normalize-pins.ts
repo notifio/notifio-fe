@@ -1,19 +1,46 @@
 // TODO: Move MapPin types to @notifio/shared when stable
 import type { EventFeedItem, TrafficIncident } from '@notifio/shared/types';
 
-export type MapPinSource = 'electricity' | 'water' | 'gas' | 'heat' | 'traffic' | 'event';
+export type MapPinSource =
+  | 'electricity'
+  | 'water'
+  | 'gas'
+  | 'heat'
+  | 'traffic'
+  | 'air_quality'
+  | 'pollen'
+  | 'hydrology'
+  | 'wildfire'
+  | 'outage_internet'
+  | 'weather_alerts'
+  | 'weather_forecast'
+  | 'event';
 
-// Bounded port from web's `EVENT_CATEGORY_TO_SOURCE` — limited to the 4
-// outage utility categories so existing pin sources keep their colours
-// when outages flow through `/events`. The 5 newer categories
-// (air_quality, pollen, hydrology, wildfire, outage_internet) are
-// intentionally NOT mapped here — extending `MapPinSource` is Step 7.
+// Step 7: extended from the 4-utility port to web parity. The newer
+// environmental categories (air_quality, pollen, hydrology, wildfire,
+// outage_internet) get their own pin sources; weather_warning is
+// branched on `event.source.code` via `resolveEventSource` below.
 const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
   outage_electric: 'electricity',
   outage_water: 'water',
   outage_gas: 'gas',
   outage_heat: 'heat',
+  air_quality: 'air_quality',
+  pollen: 'pollen',
+  hydrology: 'hydrology',
+  wildfire: 'wildfire',
+  outage_internet: 'outage_internet',
 };
+
+// `weather_warning` events come from two distinct upstream sources.
+// Branch on `event.source.code` so MeteoAlarm renders amber and
+// Weather Intelligence renders deeper amber.
+function resolveEventSource(event: EventFeedItem): MapPinSource | undefined {
+  if (event.category === 'weather_warning') {
+    return event.source?.code === 'malarm_warning' ? 'weather_alerts' : 'weather_forecast';
+  }
+  return EVENT_CATEGORY_TO_SOURCE[event.category];
+}
 // EVENT-1: align with web's vocabulary (`active | upcoming | resolved`).
 // `scheduled` was a legacy synonym for `upcoming`; the web fix in PR #58
 // already renamed it but mobile carried the old name and used it
@@ -69,7 +96,7 @@ function eventToPin(event: EventFeedItem): MapPin | null {
   const isFuture = isFutureIso(event.eventFrom);
   return {
     id: event.eventId,
-    source: EVENT_CATEGORY_TO_SOURCE[event.category] ?? 'event',
+    source: resolveEventSource(event) ?? 'event',
     status: isFuture ? 'upcoming' : 'active',
     lat: event.lat,
     lng: event.lng,

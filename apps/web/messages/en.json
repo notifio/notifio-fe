@@ -66,7 +66,9 @@
     "pollen": "Pollen",
     "hydrology": "Hydrology",
     "wildfire": "Wildfire",
-    "outage_internet": "Internet"
+    "outage_internet": "Internet",
+    "weather_alerts": "Weather alerts",
+    "weather_forecast": "Weather forecast"
   },
   "notifications": {
     "title": "Notifications"

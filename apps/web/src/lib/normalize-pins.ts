@@ -14,7 +14,9 @@ export type MapPinSource =
   | 'pollen'
   | 'hydrology'
   | 'wildfire'
-  | 'outage_internet';
+  | 'outage_internet'
+  | 'weather_alerts'
+  | 'weather_forecast';
 /**
  * Lifecycle label rendered on a pin. Matches the API's `EventLifecycleStatus`
  * (`upcoming | active | resolved`) — this enum is FE-local until the BE
@@ -92,6 +94,18 @@ const EVENT_CATEGORY_TO_SOURCE: Record<string, MapPinSource> = {
 // Categories that should not appear as map pins
 const SKIP_CATEGORIES = new Set(['name_day']);
 
+// Step 7: `weather_warning` events come from two distinct upstream
+// sources. Branch on `event.source.code` so MeteoAlarm warnings
+// (`malarm_warning`) render as the amber `weather_alerts` pin while
+// Weather Intelligence forecasts (`weather_intelligence`, default)
+// render as the deeper-amber `weather_forecast` pin.
+function resolveEventSource(event: EventFeedItem): MapPinSource | undefined {
+  if (event.category === 'weather_warning') {
+    return event.source?.code === 'malarm_warning' ? 'weather_alerts' : 'weather_forecast';
+  }
+  return EVENT_CATEGORY_TO_SOURCE[event.category];
+}
+
 function eventStatus(event: EventFeedItem): MapPinStatus {
   if (event.eventFrom) {
     const fromMs = new Date(event.eventFrom).getTime();
@@ -115,7 +129,7 @@ function eventToPin(event: EventFeedItem): MapPin | null {
   const status = eventStatus(event);
 
   // Outage-type events → utility source pins
-  const outageSource = EVENT_CATEGORY_TO_SOURCE[categoryCode];
+  const outageSource = resolveEventSource(event);
   if (outageSource) {
     return {
       id: event.eventId,

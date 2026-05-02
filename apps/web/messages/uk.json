@@ -248,6 +248,8 @@
     "pollen": "Пилок",
     "hydrology": "Гідрологія",
     "wildfire": "Пожежа",
-    "outage_internet": "Інтернет"
+    "outage_internet": "Інтернет",
+    "weather_alerts": "Weather alerts",
+    "weather_forecast": "Weather forecast"
   }
 }
