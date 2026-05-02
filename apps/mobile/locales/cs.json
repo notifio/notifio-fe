@@ -118,6 +118,12 @@
     "coversYourArea": "This event covers your area.",
     "unavailable": "Event details not available."
   },
+  "alerts": {
+    "active": "Aktivní",
+    "ended": "Ukončené",
+    "all": "Všechny",
+    "noNotifications": "Zatím žádná oznámení"
+  },
   "notificationType": {
     "start": "Starting now",
     "update": "Updated",

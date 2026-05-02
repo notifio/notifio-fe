@@ -140,7 +140,7 @@
     "all": "Všetky",
     "sent": "Odoslané",
     "active": "Aktívne",
-    "resolved": "Vyriešené",
+    "ended": "Ukončené",
     "noNotifications": "Zatiaľ žiadne notifikácie",
     "loadMore": "Načítať viac"
   },

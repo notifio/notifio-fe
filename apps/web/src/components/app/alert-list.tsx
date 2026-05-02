@@ -15,7 +15,7 @@ import { isResolved } from './alert-card-utils';
 import { SetupPromptCard } from './setup-prompt-card';
 import { UpsellCard } from './upsell-card';
 
-type TabFilter = 'all' | 'active' | 'resolved';
+type TabFilter = 'active' | 'ended' | 'all';
 
 interface AlertListProps {
   selectedId?: string | null;
@@ -25,7 +25,7 @@ interface AlertListProps {
 
 export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: AlertListProps) {
   const t = useTranslations();
-  const [tab, setTab] = useState<TabFilter>('all');
+  const [tab, setTab] = useState<TabFilter>('active');
   const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory();
   const { fullyConfigured } = usePermissionStatus();
 
@@ -54,9 +54,9 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
   }, [grouped, tab]);
 
   const tabs: { key: TabFilter; label: string }[] = [
-    { key: 'all', label: t('alerts.all') },
     { key: 'active', label: t('alerts.active') },
-    { key: 'resolved', label: t('alerts.resolved') },
+    { key: 'ended', label: t('alerts.ended') },
+    { key: 'all', label: t('alerts.all') },
   ];
 
   return (

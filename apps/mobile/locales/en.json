@@ -118,6 +118,12 @@
     "coversYourArea": "This event covers your area.",
     "unavailable": "Event details not available."
   },
+  "alerts": {
+    "active": "Active",
+    "ended": "Ended",
+    "all": "All",
+    "noNotifications": "No notifications yet"
+  },
   "notificationType": {
     "start": "Starting now",
     "update": "Updated",

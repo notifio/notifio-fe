@@ -118,6 +118,12 @@
     "coversYourArea": "This event covers your area.",
     "unavailable": "Event details not available."
   },
+  "alerts": {
+    "active": "Активні",
+    "ended": "Завершені",
+    "all": "Усі",
+    "noNotifications": "Поки що немає сповіщень"
+  },
   "notificationType": {
     "start": "Starting now",
     "update": "Updated",

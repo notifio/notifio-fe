@@ -118,6 +118,12 @@
     "coversYourArea": "Táto udalosť sa týka tvojej oblasti.",
     "unavailable": "Detaily udalosti nie sú dostupné."
   },
+  "alerts": {
+    "active": "Aktívne",
+    "ended": "Ukončené",
+    "all": "Všetky",
+    "noNotifications": "Zatiaľ žiadne notifikácie"
+  },
   "notificationType": {
     "start": "Začína",
     "update": "Aktualizované",

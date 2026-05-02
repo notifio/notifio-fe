@@ -140,7 +140,7 @@
     "all": "All",
     "sent": "Sent",
     "active": "Active",
-    "resolved": "Resolved",
+    "ended": "Ended",
     "noNotifications": "No notifications yet",
     "loadMore": "Load more"
   },

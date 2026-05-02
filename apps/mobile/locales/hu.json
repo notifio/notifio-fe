@@ -118,6 +118,12 @@
     "coversYourArea": "This event covers your area.",
     "unavailable": "Event details not available."
   },
+  "alerts": {
+    "active": "Aktív",
+    "ended": "Befejezett",
+    "all": "Összes",
+    "noNotifications": "Még nincsenek értesítések"
+  },
   "notificationType": {
     "start": "Starting now",
     "update": "Updated",
