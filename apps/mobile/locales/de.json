@@ -371,5 +371,33 @@
       "upcoming": "Geplant",
       "resolved": "Beendet"
     }
+  },
+  "settings": {
+    "language": "Sprache",
+    "languageCountryDefault": "Landesvorgabe verwenden",
+    "preferences": "Einstellungen",
+    "data": "Daten",
+    "privacy": "Datenschutz",
+    "app": "App",
+    "subscription": "Abonnement",
+    "locations": "Standorte",
+    "notifications": "Benachrichtigungen",
+    "appearance": "Erscheinungsbild",
+    "digest": "Zusammenfassung",
+    "dataSources": "Datenquellen",
+    "privacyAndConsents": "Datenschutz & Einwilligungen",
+    "exportData": "Meine Daten exportieren",
+    "deleteAccount": "Konto löschen",
+    "about": "Über",
+    "profile": "Profil",
+    "profileCountry": "Land",
+    "profileMemberSince": "Mitglied seit",
+    "placeholder": "Demnächst",
+    "placeholderSubtitle": "Diese Funktion wird entwickelt.",
+    "signOutConfirm": {
+      "title": "Abmelden",
+      "message": "Möchten Sie sich wirklich abmelden?",
+      "confirm": "Abmelden"
+    }
   }
 }

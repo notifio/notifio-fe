@@ -375,5 +375,33 @@
       "upcoming": "Plánované",
       "resolved": "Ukončené"
     }
+  },
+  "settings": {
+    "language": "Jazyk",
+    "languageCountryDefault": "Použít výchozí pro zemi",
+    "preferences": "Předvolby",
+    "data": "Data",
+    "privacy": "Soukromí",
+    "app": "Aplikace",
+    "subscription": "Předplatné",
+    "locations": "Polohy",
+    "notifications": "Oznámení",
+    "appearance": "Vzhled",
+    "digest": "Souhrn",
+    "dataSources": "Zdroje dat",
+    "privacyAndConsents": "Soukromí a souhlasy",
+    "exportData": "Exportovat moje data",
+    "deleteAccount": "Smazat účet",
+    "about": "O aplikaci",
+    "profile": "Profil",
+    "profileCountry": "Země",
+    "profileMemberSince": "Člen od",
+    "placeholder": "Brzy",
+    "placeholderSubtitle": "Tato funkce se připravuje.",
+    "signOutConfirm": {
+      "title": "Odhlásit se",
+      "message": "Opravdu se chcete odhlásit?",
+      "confirm": "Odhlásit se"
+    }
   }
 }

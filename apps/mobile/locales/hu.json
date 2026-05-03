@@ -371,5 +371,33 @@
       "upcoming": "Tervezett",
       "resolved": "Befejezett"
     }
+  },
+  "settings": {
+    "language": "Nyelv",
+    "languageCountryDefault": "Országbeállítás használata",
+    "preferences": "Beállítások",
+    "data": "Adatok",
+    "privacy": "Adatvédelem",
+    "app": "Alkalmazás",
+    "subscription": "Előfizetés",
+    "locations": "Helyek",
+    "notifications": "Értesítések",
+    "appearance": "Megjelenés",
+    "digest": "Összefoglaló",
+    "dataSources": "Adatforrások",
+    "privacyAndConsents": "Adatvédelem és hozzájárulások",
+    "exportData": "Adataim exportálása",
+    "deleteAccount": "Fiók törlése",
+    "about": "Névjegy",
+    "profile": "Profil",
+    "profileCountry": "Ország",
+    "profileMemberSince": "Tag óta",
+    "placeholder": "Hamarosan",
+    "placeholderSubtitle": "Ez a funkció fejlesztés alatt áll.",
+    "signOutConfirm": {
+      "title": "Kijelentkezés",
+      "message": "Biztosan ki szeretne jelentkezni?",
+      "confirm": "Kijelentkezés"
+    }
   }
 }

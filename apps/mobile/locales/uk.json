@@ -374,5 +374,33 @@
       "upcoming": "Заплановані",
       "resolved": "Завершені"
     }
+  },
+  "settings": {
+    "language": "Мова",
+    "languageCountryDefault": "Використати країнні налаштування",
+    "preferences": "Налаштування",
+    "data": "Дані",
+    "privacy": "Конфіденційність",
+    "app": "Додаток",
+    "subscription": "Підписка",
+    "locations": "Локації",
+    "notifications": "Сповіщення",
+    "appearance": "Вигляд",
+    "digest": "Зведення",
+    "dataSources": "Джерела даних",
+    "privacyAndConsents": "Конфіденційність і згоди",
+    "exportData": "Експортувати мої дані",
+    "deleteAccount": "Видалити обліковий запис",
+    "about": "Про додаток",
+    "profile": "Профіль",
+    "profileCountry": "Країна",
+    "profileMemberSince": "Учасник з",
+    "placeholder": "Незабаром",
+    "placeholderSubtitle": "Ця функція в розробці.",
+    "signOutConfirm": {
+      "title": "Вийти",
+      "message": "Ви впевнені, що хочете вийти?",
+      "confirm": "Вийти"
+    }
   }
 }

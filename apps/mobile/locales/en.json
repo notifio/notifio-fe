@@ -371,5 +371,33 @@
       "upcoming": "Planned",
       "resolved": "Resolved"
     }
+  },
+  "settings": {
+    "language": "Language",
+    "languageCountryDefault": "Use country default",
+    "preferences": "Preferences",
+    "data": "Data",
+    "privacy": "Privacy",
+    "app": "App",
+    "subscription": "Subscription",
+    "locations": "Locations",
+    "notifications": "Notifications",
+    "appearance": "Appearance",
+    "digest": "Digest",
+    "dataSources": "Data Sources",
+    "privacyAndConsents": "Privacy & Consents",
+    "exportData": "Export My Data",
+    "deleteAccount": "Delete Account",
+    "about": "About",
+    "profile": "Profile",
+    "profileCountry": "Country",
+    "profileMemberSince": "Member since",
+    "placeholder": "Coming soon",
+    "placeholderSubtitle": "This feature is under development.",
+    "signOutConfirm": {
+      "title": "Sign Out",
+      "message": "Are you sure you want to sign out?",
+      "confirm": "Sign Out"
+    }
   }
 }

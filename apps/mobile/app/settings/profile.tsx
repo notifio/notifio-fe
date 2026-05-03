@@ -1,5 +1,6 @@
 import { IconRefresh } from '@tabler/icons-react-native';
 import { Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { TierBadge } from '../../components/ui/tier-badge';
@@ -23,6 +24,7 @@ function formatDate(iso: string): string {
 
 export default function ProfileScreen() {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { profile, isLoading, error, refetch } = useProfile();
   const { tier } = useMembership();
@@ -36,7 +38,7 @@ export default function ProfileScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Profile' }} />
+      <Stack.Screen options={{ title: t('settings.profile') }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         {isLoading ? (
           <View style={styles.centered}>
@@ -47,7 +49,7 @@ export default function ProfileScreen() {
             <Text style={[styles.errorText, { color: colors.danger }]}>{error}</Text>
             <Pressable onPress={refetch} style={[styles.retryButton, { backgroundColor: colors.surface }]}>
               <IconRefresh size={16} color={colors.primary} />
-              <Text style={[styles.retryText, { color: colors.primary }]}>Retry</Text>
+              <Text style={[styles.retryText, { color: colors.primary }]}>{t('common.retry')}</Text>
             </Pressable>
           </View>
         ) : (
@@ -72,13 +74,13 @@ export default function ProfileScreen() {
             <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               {profile?.country && (
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textMuted }]}>Country</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('settings.profileCountry')}</Text>
                   <Text style={[styles.detailValue, { color: colors.text }]}>{profile.country.name}</Text>
                 </View>
               )}
               {profile?.createdAt && (
                 <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textMuted }]}>Member since</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('settings.profileMemberSince')}</Text>
                   <Text style={[styles.detailValue, { color: colors.text }]}>{formatDate(profile.createdAt)}</Text>
                 </View>
               )}
