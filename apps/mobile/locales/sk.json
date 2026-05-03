@@ -34,7 +34,9 @@
     "ok": "OK",
     "units": "Jednotky",
     "cancel": "Zrušiť",
-    "delete": "Vymazať"
+    "delete": "Vymazať",
+    "done": "Hotovo",
+    "today": "Dnes"
   },
   "categoryGroups": {
     "weather": "Počasie",
@@ -112,6 +114,8 @@
   },
   "alerts": {
     "noNotifications": "Zatiaľ žiadne notifikácie",
+    "filter": "Filter",
+    "status": "Stav",
     "filters": {
       "all": "Všetko",
       "weather": "Počasie",
@@ -342,7 +346,8 @@
     "list": "Zoznam",
     "calendar": {
       "label": "Kalendár",
-      "empty": "Žiadne pripomienky v tento deň"
+      "empty": "Žiadne pripomienky v tento deň",
+      "emptyInline": "Žiadne pripomienky"
     }
   },
   "sources": {

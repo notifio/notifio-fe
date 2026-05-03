@@ -34,7 +34,9 @@
     "ok": "OK",
     "units": "Units",
     "cancel": "Mégse",
-    "delete": "Törlés"
+    "delete": "Törlés",
+    "done": "Kész",
+    "today": "Ma"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -332,7 +334,8 @@
     "list": "Lista",
     "calendar": {
       "label": "Naptár",
-      "empty": "Nincs emlékeztető ezen a napon"
+      "empty": "Nincs emlékeztető ezen a napon",
+      "emptyInline": "Nincs emlékeztető"
     }
   },
   "sources": {
@@ -432,6 +435,8 @@
     "alerts": "Riasztások"
   },
   "alerts": {
+    "filter": "Szűrő",
+    "status": "Állapot",
     "filters": {
       "all": "Mind",
       "weather": "Időjárás",

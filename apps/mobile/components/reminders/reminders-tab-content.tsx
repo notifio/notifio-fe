@@ -12,24 +12,37 @@ import { useAppTheme } from '../../providers/theme-provider';
 
 type ViewMode = 'list' | 'calendar';
 
+function ymd(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 /**
  * Wraps the Reminders tab content with a List/Calendar view toggle
  * and a parent-level FAB. The FAB owns the create flow so it stays
- * visible (and functional) on both views — without this, the calendar
- * view had no way to create a new reminder. ReminderList still owns
- * its own edit modal (opened by row tap → handleItemPress); the
- * calendar view is read-only browsing for v1.
+ * visible (and functional) on both views. selectedDate is lifted here
+ * so that tapping the FAB in calendar view can pre-fill the form with
+ * the day the user picked. ReminderList still owns its own edit modal
+ * (opened by row tap → handleItemPress).
  */
 export function RemindersTabContent() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const [view, setView] = useState<ViewMode>('list');
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(() => ymd(new Date()));
   const { createReminder } = useReminders();
 
   const handleCloseCreate = useCallback(() => {
     setShowCreateForm(false);
   }, []);
+
+  // Calendar view: prefill form with the selected day. List view: no
+  // prefill (form opens on today). Convert YYYY-MM-DD to a local Date.
+  const createDefaultDate =
+    view === 'calendar' ? new Date(`${selectedDate}T00:00:00`) : undefined;
 
   return (
     <View style={styles.container}>
@@ -60,7 +73,14 @@ export function RemindersTabContent() {
         </View>
       </View>
 
-      {view === 'list' ? <ReminderList /> : <ReminderCalendarView />}
+      {view === 'list' ? (
+        <ReminderList />
+      ) : (
+        <ReminderCalendarView
+          selectedDate={selectedDate}
+          onSelectedDateChange={setSelectedDate}
+        />
+      )}
 
       {/* FAB — parent-level, visible on both List and Calendar views.
           Tapping it opens the create-only ReminderFormModal below. */}
@@ -76,6 +96,7 @@ export function RemindersTabContent() {
         onClose={handleCloseCreate}
         onSave={createReminder}
         editReminder={undefined}
+        defaultDate={createDefaultDate}
       />
     </View>
   );

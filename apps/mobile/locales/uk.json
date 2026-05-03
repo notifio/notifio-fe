@@ -34,7 +34,9 @@
     "ok": "OK",
     "units": "Units",
     "cancel": "Скасувати",
-    "delete": "Видалити"
+    "delete": "Видалити",
+    "done": "Готово",
+    "today": "Сьогодні"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -112,6 +114,8 @@
   },
   "alerts": {
     "noNotifications": "Поки що немає сповіщень",
+    "filter": "Фільтр",
+    "status": "Статус",
     "filters": {
       "all": "Усі",
       "weather": "Погода",
@@ -342,7 +346,8 @@
     "list": "Список",
     "calendar": {
       "label": "Календар",
-      "empty": "Немає нагадувань на цей день"
+      "empty": "Немає нагадувань на цей день",
+      "emptyInline": "Немає нагадувань"
     }
   },
   "sources": {

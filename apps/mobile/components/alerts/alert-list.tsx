@@ -1,4 +1,4 @@
-import { IconBell } from '@tabler/icons-react-native';
+import { IconAdjustments, IconBell } from '@tabler/icons-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, Sty
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
 import { AlertCard } from './alert-card';
+import { FilterSheet } from './filter-sheet';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { isResolved } from '../../lib/alert-card-utils';
 import { theme } from '../../lib/theme';
@@ -13,12 +14,6 @@ import { useAppTheme } from '../../providers/theme-provider';
 import { Icon } from '../ui/icon';
 
 type TabFilter = 'active' | 'ended' | 'all';
-
-const TABS: ReadonlyArray<{ id: TabFilter; labelKey: string }> = [
-  { id: 'active', labelKey: 'alerts.active' },
-  { id: 'ended', labelKey: 'alerts.ended' },
-  { id: 'all', labelKey: 'alerts.all' },
-];
 
 // Category chip filters — mirrors web's CATEGORY_FILTERS in
 // apps/web/src/app/(app)/notifications/history-section.tsx. Same
@@ -55,6 +50,10 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<TabFilter>('active');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+
+  // Default status is `active` — count any non-default for the badge.
+  const activeFilterCount = tab === 'active' ? 0 : 1;
 
   // Server fetches active-only when on the Active tab (cheaper round
   // trip); Ended + All fetch the full set so we can client-filter the
@@ -80,74 +79,66 @@ export function AlertList({ onAlertPress }: AlertListProps) {
 
   return (
     <View style={styles.container}>
-      {/* Merged filter row — status sub-tabs + visual divider +
-          category chips, all in ONE horizontal scroll row. Saves a
-          full ~44pt of vertical space vs the earlier two-row layout
-          (header → top tabs → status row → category row → list).
-          Active state on either group uses brand-orange fill (chip
-          style) so they read as related controls. */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chipRowContent}
-        style={styles.chipRow}
-      >
-        {TABS.map((tabDef) => {
-          const active = tab === tabDef.id;
-          return (
-            <Pressable
-              key={tabDef.id}
-              onPress={() => setTab(tabDef.id)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: active ? colors.primary : 'transparent',
-                  borderColor: active ? colors.primary : colors.border,
-                },
-              ]}
-            >
-              <Text
-                numberOfLines={1}
+      {/* Top filter row: Filter button (status → bottom sheet) +
+          inline category chips. Filter button shows active-count
+          badge when status filter is non-default. */}
+      <View style={styles.filterTopRow}>
+        <Pressable
+          onPress={() => setFilterSheetOpen(true)}
+          style={[styles.filterButton, { borderColor: colors.border }]}
+        >
+          <IconAdjustments size={14} color={colors.text} />
+          <Text style={[styles.filterButtonText, { color: colors.text }]}>
+            {t('alerts.filter')}
+          </Text>
+          {activeFilterCount > 0 && (
+            <View style={[styles.filterBadge, { backgroundColor: colors.primary }]}>
+              <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+            </View>
+          )}
+        </Pressable>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipRowContent}
+          style={styles.chipRow}
+        >
+          {CATEGORY_FILTERS.map((filter) => {
+            const active = categoryFilter === filter.id;
+            return (
+              <Pressable
+                key={filter.id}
+                onPress={() => setCategoryFilter(filter.id)}
                 style={[
-                  styles.chipText,
-                  { color: active ? '#FFFFFF' : colors.textMuted },
+                  styles.chip,
+                  {
+                    backgroundColor: active ? colors.primary : 'transparent',
+                    borderColor: active ? colors.primary : colors.border,
+                  },
                 ]}
               >
-                {t(tabDef.labelKey)}
-              </Text>
-            </Pressable>
-          );
-        })}
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.chipText,
+                    { color: active ? '#FFFFFF' : colors.textMuted },
+                  ]}
+                >
+                  {t(`alerts.filters.${filter.id}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
 
-        <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-        {CATEGORY_FILTERS.map((filter) => {
-          const active = categoryFilter === filter.id;
-          return (
-            <Pressable
-              key={filter.id}
-              onPress={() => setCategoryFilter(filter.id)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: active ? colors.primary : 'transparent',
-                  borderColor: active ? colors.primary : colors.border,
-                },
-              ]}
-            >
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.chipText,
-                  { color: active ? '#FFFFFF' : colors.textMuted },
-                ]}
-              >
-                {t(`alerts.filters.${filter.id}`)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+      <FilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        status={tab}
+        onStatusChange={setTab}
+      />
 
       <FlatList
         data={filtered}
@@ -189,16 +180,12 @@ const styles = StyleSheet.create({
   },
   chipRow: {
     // flexGrow: 0 — without this the horizontal ScrollView fills the
-    // parent's available height (FlatList parent has flex:1) and
-    // chip Pressables stretch vertically to the viewport.
+    // parent's available height and chip Pressables stretch vertically.
     flexGrow: 0,
-    marginBottom: theme.spacing.sm,
+    flexShrink: 1,
   },
   chipRowContent: {
-    paddingHorizontal: theme.spacing.xl,
     gap: theme.spacing.sm,
-    // alignItems: center inside contentContainerStyle keeps each
-    // child centered on the cross-axis instead of stretching them.
     alignItems: 'center',
   },
   chip: {
@@ -209,11 +196,38 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  divider: {
-    width: StyleSheet.hairlineWidth,
-    height: 20,
-    marginHorizontal: theme.spacing.xs,
-    alignSelf: 'center',
+  filterTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.xl,
+    marginBottom: theme.spacing.md,
+    gap: theme.spacing.sm,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 999,
+  },
+  filterButtonText: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.medium,
+  },
+  filterBadge: {
+    minWidth: 16,
+    height: 16,
+    borderRadius: 999,
+    paddingHorizontal: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    ...theme.font.semibold,
   },
   chipText: {
     fontSize: theme.fontSize.xs,

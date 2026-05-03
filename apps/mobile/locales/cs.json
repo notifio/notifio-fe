@@ -34,7 +34,9 @@
     "ok": "OK",
     "units": "Units",
     "cancel": "Zrušit",
-    "delete": "Smazat"
+    "delete": "Smazat",
+    "done": "Hotovo",
+    "today": "Dnes"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -113,6 +115,8 @@
   "alerts": {
     "all": "Všechny",
     "noNotifications": "Zatím žádná oznámení",
+    "filter": "Filtr",
+    "status": "Stav",
     "filters": {
       "all": "Vše",
       "weather": "Počasí",
@@ -343,7 +347,8 @@
     "list": "Seznam",
     "calendar": {
       "label": "Kalendář",
-      "empty": "Žádná připomenutí v tento den"
+      "empty": "Žádná připomenutí v tento den",
+      "emptyInline": "Žádná připomenutí"
     }
   },
   "sources": {

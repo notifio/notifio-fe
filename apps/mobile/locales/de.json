@@ -34,7 +34,9 @@
     "ok": "OK",
     "units": "Units",
     "cancel": "Abbrechen",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "done": "Fertig",
+    "today": "Heute"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -332,7 +334,8 @@
     "list": "Liste",
     "calendar": {
       "label": "Kalender",
-      "empty": "Keine Erinnerungen an diesem Tag"
+      "empty": "Keine Erinnerungen an diesem Tag",
+      "emptyInline": "Keine Erinnerungen"
     }
   },
   "sources": {
@@ -432,6 +435,8 @@
     "alerts": "Warnungen"
   },
   "alerts": {
+    "filter": "Filter",
+    "status": "Status",
     "filters": {
       "all": "Alle",
       "weather": "Wetter",

@@ -1,5 +1,5 @@
 import { IconClock } from '@tabler/icons-react-native';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar, type DateData } from 'react-native-calendars';
@@ -11,6 +11,8 @@ import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 interface ReminderCalendarViewProps {
+  selectedDate: string;
+  onSelectedDateChange: (date: string) => void;
   onReminderPress?: (reminder: PersonalReminder) => void;
 }
 
@@ -26,11 +28,29 @@ function ymd(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export function ReminderCalendarView({ onReminderPress }: ReminderCalendarViewProps) {
-  const { t } = useTranslation();
+/**
+ * "PONDELOK 3. MÁJA" style header for the inline reminder list.
+ * Uses native toLocaleDateString — locale comes from the active i18n
+ * language so it follows the app's setting without a date-fns dep.
+ */
+function formatDayHeader(iso: string, locale: string): string {
+  const d = new Date(`${iso}T00:00:00`);
+  const weekday = d.toLocaleDateString(locale, { weekday: 'long' });
+  const day = d.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
+  return `${weekday} ${day}`.toUpperCase();
+}
+
+export function ReminderCalendarView({
+  selectedDate,
+  onSelectedDateChange,
+  onReminderPress,
+}: ReminderCalendarViewProps) {
+  const { t, i18n } = useTranslation();
   const { colors, isDark } = useAppTheme();
   const { reminders } = useReminders();
-  const [selectedDate, setSelectedDate] = useState<string>(ymd(new Date()));
+
+  const todayKey = ymd(new Date());
+  const isToday = selectedDate === todayKey;
 
   const markedDates = useMemo(() => {
     const map: Record<string, { marked?: boolean; dotColor?: string; selected?: boolean; selectedColor?: string }> = {};
@@ -47,9 +67,10 @@ export function ReminderCalendarView({ onReminderPress }: ReminderCalendarViewPr
     [reminders, selectedDate],
   );
 
-  // Theme keyed by isDark so toggling app theme re-mounts the
-  // Calendar with fresh palette (the lib doesn't hot-swap colors).
   const calendarKey = isDark ? 'dark' : 'light';
+
+  const headerLabel = formatDayHeader(selectedDate, i18n.language);
+  const headerPrefix = isToday ? `${t('common.today').toUpperCase()} · ` : '';
 
   return (
     <ScrollView
@@ -59,7 +80,7 @@ export function ReminderCalendarView({ onReminderPress }: ReminderCalendarViewPr
     >
       <Calendar
         key={calendarKey}
-        onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
+        onDayPress={(day: DateData) => onSelectedDateChange(day.dateString)}
         markedDates={markedDates}
         theme={{
           backgroundColor: colors.background,
@@ -74,16 +95,35 @@ export function ReminderCalendarView({ onReminderPress }: ReminderCalendarViewPr
           textDisabledColor: colors.textMuted,
           dotColor: colors.primary,
           selectedDotColor: '#FFFFFF',
+          textDayFontSize: 13,
+          textMonthFontSize: 15,
+          textDayHeaderFontSize: 11,
+          // Tighten the week-row spacing — these stylesheet overrides
+          // are runtime-supported by react-native-calendars but not
+          // present in its Theme types, hence the cast.
+          ...({
+            'stylesheet.calendar.main': {
+              week: {
+                marginVertical: 2,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+              },
+            },
+          } as object),
         }}
         style={[styles.calendar, { borderColor: colors.border }]}
       />
 
+      <Text style={[styles.sectionHeader, { color: colors.textMuted }]} numberOfLines={1}>
+        {headerPrefix}{headerLabel}
+      </Text>
+
       <View style={styles.dayList}>
         {remindersOnSelectedDate.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <IconClock size={32} color={colors.textMuted} />
-            <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-              {t('reminders.calendar.empty')}
+          <View style={styles.emptyInline}>
+            <IconClock size={16} color={colors.textMuted} />
+            <Text style={[styles.emptyInlineText, { color: colors.textMuted }]}>
+              {t('reminders.calendar.emptyInline')}
             </Text>
           </View>
         ) : (
@@ -136,6 +176,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: theme.spacing.lg,
   },
+  sectionHeader: {
+    fontSize: theme.fontSize.xs,
+    letterSpacing: 0.5,
+    ...theme.font.semibold,
+    marginBottom: theme.spacing.sm,
+  },
   dayList: {
     gap: theme.spacing.sm,
   },
@@ -171,14 +217,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     ...theme.font.medium,
   },
-  emptyContainer: {
+  emptyInline: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: theme.spacing.sm,
-    paddingVertical: theme.spacing['3xl'],
+    paddingVertical: theme.spacing.md,
   },
-  emptyText: {
+  emptyInlineText: {
     fontSize: theme.fontSize.sm,
-    textAlign: 'center',
   },
 });
