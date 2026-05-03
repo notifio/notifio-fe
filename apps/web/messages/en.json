@@ -494,5 +494,12 @@
     "humidity": "Humidity",
     "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?"
+  },
+  "event": {
+    "status": {
+      "active": "Active",
+      "upcoming": "Planned",
+      "resolved": "Resolved"
+    }
   }
 }

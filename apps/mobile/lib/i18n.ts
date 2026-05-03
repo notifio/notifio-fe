@@ -118,8 +118,25 @@ export async function bootstrapLocale(): Promise<void> {
  * Persist the user's locale pick to AsyncStorage and apply it immediately
  * via i18next. The mobile LanguageSwitcher calls this; the next app boot
  * picks the same value back up via `bootstrapLocale()`.
+ *
+ * Passing `null` clears the explicit override so the app re-resolves the
+ * device default — same logic as a fresh install with no AsyncStorage
+ * value. Used by the picker's "Use country default" option.
  */
-export async function setLocale(locale: string): Promise<void> {
+export async function setLocale(locale: string | null): Promise<void> {
+  if (locale === null) {
+    try {
+      await AsyncStorage.removeItem(LOCALE_STORAGE_KEY);
+    } catch {
+      // Same recoverability story — clearing failure isn't fatal.
+    }
+    const device = getLocales()[0]?.languageCode ?? defaultLocale;
+    const fallback: SupportedLocale = (supportedLocales as readonly string[]).includes(device)
+      ? (device as SupportedLocale)
+      : defaultLocale;
+    await i18n.changeLanguage(fallback);
+    return;
+  }
   if (!(supportedLocales as readonly string[]).includes(locale)) return;
   await i18n.changeLanguage(locale);
   try {
@@ -127,6 +144,20 @@ export async function setLocale(locale: string): Promise<void> {
   } catch {
     // Persistence failure is recoverable — current session still uses the
     // new locale; the next boot just falls back to device-detected.
+  }
+}
+
+/**
+ * Read the explicit locale override (or `null` if the user is following
+ * the device default). The picker uses this to mark the right row as
+ * selected — `i18n.language` alone can't distinguish "explicitly chose
+ * sk" from "device is sk, no override".
+ */
+export async function getStoredLocale(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(LOCALE_STORAGE_KEY);
+  } catch {
+    return null;
   }
 }
 

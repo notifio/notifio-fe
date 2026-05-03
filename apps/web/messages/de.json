@@ -232,5 +232,12 @@
     "humidity": "Luftfeuchtigkeit",
     "pressure": "Luftdruck",
     "deleteConfirm": "Diesen Schwellenwert entfernen?"
+  },
+  "event": {
+    "status": {
+      "active": "Aktiv",
+      "upcoming": "Geplant",
+      "resolved": "Beendet"
+    }
   }
 }

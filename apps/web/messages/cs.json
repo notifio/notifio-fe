@@ -232,5 +232,12 @@
     "humidity": "Vlhkost",
     "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstranit tento práh?"
+  },
+  "event": {
+    "status": {
+      "active": "Aktivní",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    }
   }
 }

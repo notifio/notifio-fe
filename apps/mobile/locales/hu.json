@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Még nincsenek szavazatok"
   },
   "notificationType": {
     "start": "Starting now",
@@ -364,5 +365,61 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nincs beállítva",
     "invalidValue": "Adjon meg érvényes számot"
+  },
+  "event": {
+    "status": {
+      "active": "Aktív",
+      "upcoming": "Tervezett",
+      "resolved": "Befejezett"
+    }
+  },
+  "settings": {
+    "language": "Nyelv",
+    "languageCountryDefault": "Országbeállítás használata",
+    "preferences": "Beállítások",
+    "data": "Adatok",
+    "privacy": "Adatvédelem",
+    "app": "Alkalmazás",
+    "subscription": "Előfizetés",
+    "locations": "Helyek",
+    "notifications": "Értesítések",
+    "appearance": "Megjelenés",
+    "digest": "Összefoglaló",
+    "dataSources": "Adatforrások",
+    "privacyAndConsents": "Adatvédelem és hozzájárulások",
+    "exportData": "Adataim exportálása",
+    "deleteAccount": "Fiók törlése",
+    "about": "Névjegy",
+    "profile": "Profil",
+    "profileCountry": "Ország",
+    "profileMemberSince": "Tag óta",
+    "placeholder": "Hamarosan",
+    "placeholderSubtitle": "Ez a funkció fejlesztés alatt áll.",
+    "signOutConfirm": {
+      "title": "Kijelentkezés",
+      "message": "Biztosan ki szeretne jelentkezni?",
+      "confirm": "Kijelentkezés"
+    }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Állíts be személyes emlékeztetőket",
+      "unlimitedLocations": "Korlátlan helyek követése",
+      "removeAds": "Hirdetések eltávolítása",
+      "communityEvents": "Közösségi események létrehozása és jelentése",
+      "sourcePriorities": "Forrásprioritások beállítása",
+      "weatherThresholds": "Időjárási küszöbértékek beállítása",
+      "fineTuneSources": "Finomhangold a forrásokat"
+    },
+    "upgradeSoon": "A frissítés hamarosan elérhető lesz."
+  },
+  "map": {
+    "activeIncidents_one": "1 aktív esemény a közelben",
+    "activeIncidents_other": "{{count}} aktív esemény a közelben",
+    "noActiveIncidents": "Nincsenek aktív események ezen a területen"
+  },
+  "nav": {
+    "overview": "Áttekintés",
+    "alerts": "Riasztások"
   }
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { sharedColors } from '@notifio/ui';
@@ -16,11 +17,12 @@ interface CredibilityBarProps {
 
 export function CredibilityBar({ total, score }: CredibilityBarProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
 
   if (total < MIN_VOTES) {
     return (
       <View style={styles.container}>
-        <Text style={[styles.noVotes, { color: colors.textMuted }]}>No votes yet</Text>
+        <Text style={[styles.noVotes, { color: colors.textMuted }]}>{t('events.noVotes')}</Text>
       </View>
     );
   }

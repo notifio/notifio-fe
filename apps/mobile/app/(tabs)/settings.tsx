@@ -16,6 +16,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '../../components/ui/card';
@@ -31,6 +32,7 @@ import { useAppTheme } from '../../providers/theme-provider';
 
 export default function SettingsScreen() {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const { tier } = useMembership();
   const router = useRouter();
@@ -44,17 +46,21 @@ export default function SettingsScreen() {
   const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
   const handleSignOut = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: signOut },
-    ]);
+    Alert.alert(
+      t('settings.signOutConfirm.title'),
+      t('settings.signOutConfirm.message'),
+      [
+        { text: t('settings.cancel'), style: 'cancel' },
+        { text: t('settings.signOutConfirm.confirm'), style: 'destructive', onPress: signOut },
+      ],
+    );
   };
 
   const pushPlaceholder = (title: string) =>
     router.push({ pathname: '/settings/placeholder', params: { title } });
 
   return (
-    <ScreenLayout scrollable header={<ScreenHeader title="Settings" />}>
+    <ScreenLayout scrollable header={<ScreenHeader title={t('settings.title')} />}>
       {/* Profile summary */}
       <Pressable
         onPress={() => router.push('/settings/profile')}
@@ -80,42 +86,42 @@ export default function SettingsScreen() {
       </Pressable>
 
       {/* Account */}
-      <SectionLabel label="Account" />
+      <SectionLabel label={t('settings.account')} />
       <Card>
-        <SettingsRow icon={IconCrown} label="Subscription" value={tier} onPress={() => pushPlaceholder('Subscription')} />
-        <SettingsRow icon={IconMapPin} label="Locations" onPress={() => router.push('/settings/locations')} />
+        <SettingsRow icon={IconCrown} label={t('settings.subscription')} value={tier} onPress={() => pushPlaceholder(t('settings.subscription'))} />
+        <SettingsRow icon={IconMapPin} label={t('settings.locations')} onPress={() => router.push('/settings/locations')} />
       </Card>
 
       {/* Preferences */}
-      <SectionLabel label="Preferences" />
+      <SectionLabel label={t('settings.preferences')} />
       <Card>
-        <SettingsRow icon={IconBell} label="Notifications" onPress={() => router.push('/settings/notifications')} />
-        <SettingsRow icon={IconPalette} label="Appearance" onPress={() => router.push('/settings/appearance')} />
-        <SettingsRow icon={IconLanguage} label="Language" onPress={() => router.push('/settings/language')} />
-        <SettingsRow icon={IconClock} label="Digest" onPress={() => router.push('/settings/digest')} />
+        <SettingsRow icon={IconBell} label={t('settings.notifications')} onPress={() => router.push('/settings/notifications')} />
+        <SettingsRow icon={IconPalette} label={t('settings.appearance')} onPress={() => router.push('/settings/appearance')} />
+        <SettingsRow icon={IconLanguage} label={t('settings.language')} onPress={() => router.push('/settings/language')} />
+        <SettingsRow icon={IconClock} label={t('settings.digest')} onPress={() => router.push('/settings/digest')} />
       </Card>
 
       {/* Data */}
-      <SectionLabel label="Data" />
+      <SectionLabel label={t('settings.data')} />
       <Card>
-        <SettingsRow icon={IconDatabase} label="Data Sources" onPress={() => router.push('/settings/sources')} />
-        <SettingsRow icon={IconStar} label="Source Preferences" badge="PRO" onPress={() => pushPlaceholder('Source Preferences')} />
-        <SettingsRow icon={IconTemperature} label="Weather Thresholds" badge="PRO" onPress={() => router.push('/settings/weather-thresholds')} />
+        <SettingsRow icon={IconDatabase} label={t('settings.dataSources')} onPress={() => router.push('/settings/sources')} />
+        <SettingsRow icon={IconStar} label={t('settings.sourcePreferences')} badge="PRO" onPress={() => pushPlaceholder(t('settings.sourcePreferences'))} />
+        <SettingsRow icon={IconTemperature} label={t('settings.weatherThresholds')} badge="PRO" onPress={() => router.push('/settings/weather-thresholds')} />
       </Card>
 
       {/* Privacy */}
-      <SectionLabel label="Privacy" />
+      <SectionLabel label={t('settings.privacy')} />
       <Card>
-        <SettingsRow icon={IconShieldLock} label="Privacy & Consents" onPress={() => router.push('/settings/privacy')} />
-        <SettingsRow icon={IconDownload} label="Export My Data" onPress={() => router.push('/settings/data-export')} />
-        <SettingsRow icon={IconTrash} label="Delete Account" danger onPress={() => router.push('/settings/delete-account')} />
+        <SettingsRow icon={IconShieldLock} label={t('settings.privacyAndConsents')} onPress={() => router.push('/settings/privacy')} />
+        <SettingsRow icon={IconDownload} label={t('settings.exportData')} onPress={() => router.push('/settings/data-export')} />
+        <SettingsRow icon={IconTrash} label={t('settings.deleteAccount')} danger onPress={() => router.push('/settings/delete-account')} />
       </Card>
 
       {/* App */}
-      <SectionLabel label="App" />
+      <SectionLabel label={t('settings.app')} />
       <Card>
-        <SettingsRow icon={IconInfoCircle} label="About" value="0.1.0" onPress={() => pushPlaceholder('About')} />
-        <SettingsRow icon={IconLogout} label="Sign Out" danger onPress={handleSignOut} />
+        <SettingsRow icon={IconInfoCircle} label={t('settings.about')} value="0.1.0" onPress={() => pushPlaceholder(t('settings.about'))} />
+        <SettingsRow icon={IconLogout} label={t('auth.signOut')} danger onPress={handleSignOut} />
       </Card>
 
       <View style={styles.bottomSpacer} />

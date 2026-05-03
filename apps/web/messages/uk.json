@@ -232,5 +232,12 @@
     "humidity": "Вологість",
     "pressure": "Атмосферний тиск",
     "deleteConfirm": "Видалити цей поріг?"
+  },
+  "event": {
+    "status": {
+      "active": "Активні",
+      "upcoming": "Заплановані",
+      "resolved": "Завершені"
+    }
   }
 }

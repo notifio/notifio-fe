@@ -28,7 +28,7 @@ export default function FeedScreen() {
   };
 
   return (
-    <ScreenLayout header={<ScreenHeader title="Alerts" subtitle="For your area" />}>
+    <ScreenLayout header={<ScreenHeader title={t('screens.alerts.title')} subtitle={t('screens.alerts.subtitle')} />}>
       {/* Tab bar */}
       <View style={styles.tabBar}>
         <Pressable

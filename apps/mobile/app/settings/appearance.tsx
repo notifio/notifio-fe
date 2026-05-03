@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Card } from '../../components/ui/card';
@@ -8,30 +9,31 @@ import { usePreferences } from '../../hooks/use-preferences';
 import { theme } from '../../lib/theme';
 import { type ThemeMode, useAppTheme } from '../../providers/theme-provider';
 
-const THEME_OPTIONS = [
-  { value: 'system' as const, label: 'System' },
-  { value: 'light' as const, label: 'Light' },
-  { value: 'dark' as const, label: 'Dark' },
+const THEME_OPTIONS: Array<{ value: ThemeMode; labelKey: string }> = [
+  { value: 'system', labelKey: 'settings.themeSystem' },
+  { value: 'light', labelKey: 'settings.themeLight' },
+  { value: 'dark', labelKey: 'settings.themeDark' },
 ];
 
 export default function AppearanceScreen() {
   const { colors, mode, setMode } = useAppTheme();
   const { setDisplay } = usePreferences();
+  const { t } = useTranslation();
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Appearance' }} />
+      <Stack.Screen options={{ title: t('settings.appearance') }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
-          <SectionLabel label="Theme" style={styles.firstSection} />
+          <SectionLabel label={t('settings.theme')} style={styles.firstSection} />
           <Card>
             {THEME_OPTIONS.map((option) => (
               <SelectableRow
                 key={option.value}
-                label={option.label}
+                label={t(option.labelKey)}
                 selected={mode === option.value}
                 onPress={() => {
-                  setMode(option.value as ThemeMode);
+                  setMode(option.value);
                   setDisplay('theme', option.value);
                 }}
               />
