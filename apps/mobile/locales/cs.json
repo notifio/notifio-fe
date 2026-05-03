@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Zatím žádné hlasy"
   },
   "alerts": {
     "all": "Všechny",
@@ -403,5 +404,27 @@
       "message": "Opravdu se chcete odhlásit?",
       "confirm": "Odhlásit se"
     }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Nastav si osobní připomínky",
+      "unlimitedLocations": "Sleduj neomezeně mnoho lokalit",
+      "removeAds": "Odstraň reklamy",
+      "communityEvents": "Vytvářej a hlas komunitní události",
+      "sourcePriorities": "Nastav prioritu zdrojů",
+      "weatherThresholds": "Nastav prahy pro počasí",
+      "fineTuneSources": "Jemně nalaď své zdroje"
+    },
+    "upgradeSoon": "Vylepšení bude brzy k dispozici."
+  },
+  "map": {
+    "activeIncidents_one": "1 aktivní událost v okolí",
+    "activeIncidents_few": "{{count}} aktivní události v okolí",
+    "activeIncidents_other": "{{count}} aktivních událostí v okolí",
+    "noActiveIncidents": "V této oblasti nejsou žádné aktivní události"
+  },
+  "nav": {
+    "overview": "Přehled",
+    "alerts": "Upozornění"
   }
 }

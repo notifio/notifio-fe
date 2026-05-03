@@ -8,14 +8,16 @@ import { theme } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
-const UPSELL_MESSAGES = [
-  'Set up personal reminders with PRO',
-  'Get unlimited locations with PLUS',
-  'Remove ads and support Notifio',
-  'Create and report community events',
-  'Customize data source priorities with PRO',
-  'Unlock custom weather thresholds',
-  'Fine-tune notification sources with PRO',
+// Translation keys instead of literal strings — `t()` resolves at render
+// so the daily-rotated message follows the active locale.
+const UPSELL_MESSAGE_KEYS = [
+  'upsell.messages.personalReminders',
+  'upsell.messages.unlimitedLocations',
+  'upsell.messages.removeAds',
+  'upsell.messages.communityEvents',
+  'upsell.messages.sourcePriorities',
+  'upsell.messages.weatherThresholds',
+  'upsell.messages.fineTuneSources',
 ];
 
 export function UpsellCard() {
@@ -26,8 +28,10 @@ export function UpsellCard() {
 
   if (tier !== 'FREE' || dismissed) return null;
 
-  const dayIndex = Math.floor(Date.now() / 86400000) % UPSELL_MESSAGES.length;
-  const message = UPSELL_MESSAGES[dayIndex];
+  const dayIndex = Math.floor(Date.now() / 86400000) % UPSELL_MESSAGE_KEYS.length;
+  // dayIndex is mathematically bounded by the modulo above, so the
+  // lookup is always defined — assert past TS's noUncheckedIndexedAccess.
+  const message = t(UPSELL_MESSAGE_KEYS[dayIndex]!);
 
   return (
     <View
@@ -56,7 +60,7 @@ export function UpsellCard() {
       </View>
 
       <Pressable
-        onPress={() => showToast.info('Coming soon', 'Upgrade will be available soon.')}
+        onPress={() => showToast.info(t('common.comingSoon'), t('upsell.upgradeSoon'))}
         style={[styles.upgradeButton, { backgroundColor: colors.primary }]}
       >
         <Text style={[styles.upgradeText, { color: colors.textInverse }]}>

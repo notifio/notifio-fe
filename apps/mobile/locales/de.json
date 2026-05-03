@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Noch keine Stimmen"
   },
   "notificationType": {
     "start": "Starting now",
@@ -399,5 +400,26 @@
       "message": "Möchten Sie sich wirklich abmelden?",
       "confirm": "Abmelden"
     }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Persönliche Erinnerungen einrichten",
+      "unlimitedLocations": "Unbegrenzt Standorte verfolgen",
+      "removeAds": "Werbung entfernen",
+      "communityEvents": "Community-Ereignisse erstellen und melden",
+      "sourcePriorities": "Quellenpriorität einstellen",
+      "weatherThresholds": "Wetterschwellenwerte festlegen",
+      "fineTuneSources": "Quellen feinabstimmen"
+    },
+    "upgradeSoon": "Upgrade wird bald verfügbar sein."
+  },
+  "map": {
+    "activeIncidents_one": "1 aktives Ereignis in der Nähe",
+    "activeIncidents_other": "{{count}} aktive Ereignisse in der Nähe",
+    "noActiveIncidents": "Keine aktiven Ereignisse in diesem Gebiet"
+  },
+  "nav": {
+    "overview": "Übersicht",
+    "alerts": "Warnungen"
   }
 }

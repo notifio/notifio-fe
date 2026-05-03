@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Поки що немає голосів"
   },
   "alerts": {
     "noNotifications": "Поки що немає сповіщень"
@@ -402,5 +403,28 @@
       "message": "Ви впевнені, що хочете вийти?",
       "confirm": "Вийти"
     }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Налаштуй особисті нагадування",
+      "unlimitedLocations": "Відстежуй необмежену кількість локацій",
+      "removeAds": "Прибери рекламу",
+      "communityEvents": "Створюй і повідомляй про події спільноти",
+      "sourcePriorities": "Налаштуй пріоритет джерел",
+      "weatherThresholds": "Налаштуй пороги погоди",
+      "fineTuneSources": "Точно налаштуй свої джерела"
+    },
+    "upgradeSoon": "Оновлення скоро буде доступним."
+  },
+  "map": {
+    "activeIncidents_one": "1 активна подія поблизу",
+    "activeIncidents_few": "{{count}} активні події поблизу",
+    "activeIncidents_many": "{{count}} активних подій поблизу",
+    "activeIncidents_other": "{{count}} активних подій поблизу",
+    "noActiveIncidents": "У цій області немає активних подій"
+  },
+  "nav": {
+    "overview": "Огляд",
+    "alerts": "Сповіщення"
   }
 }

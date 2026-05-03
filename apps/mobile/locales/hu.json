@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Még nincsenek szavazatok"
   },
   "notificationType": {
     "start": "Starting now",
@@ -399,5 +400,26 @@
       "message": "Biztosan ki szeretne jelentkezni?",
       "confirm": "Kijelentkezés"
     }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Állíts be személyes emlékeztetőket",
+      "unlimitedLocations": "Korlátlan helyek követése",
+      "removeAds": "Hirdetések eltávolítása",
+      "communityEvents": "Közösségi események létrehozása és jelentése",
+      "sourcePriorities": "Forrásprioritások beállítása",
+      "weatherThresholds": "Időjárási küszöbértékek beállítása",
+      "fineTuneSources": "Finomhangold a forrásokat"
+    },
+    "upgradeSoon": "A frissítés hamarosan elérhető lesz."
+  },
+  "map": {
+    "activeIncidents_one": "1 aktív esemény a közelben",
+    "activeIncidents_other": "{{count}} aktív esemény a közelben",
+    "noActiveIncidents": "Nincsenek aktív események ezen a területen"
+  },
+  "nav": {
+    "overview": "Áttekintés",
+    "alerts": "Riasztások"
   }
 }

@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "Táto udalosť sa týka tvojej oblasti.",
-    "unavailable": "Detaily udalosti nie sú dostupné."
+    "unavailable": "Detaily udalosti nie sú dostupné.",
+    "noVotes": "Zatiaľ žiadne hlasy"
   },
   "alerts": {
     "noNotifications": "Zatiaľ žiadne notifikácie"
@@ -402,5 +403,27 @@
       "message": "Naozaj sa chcete odhlásiť?",
       "confirm": "Odhlásiť sa"
     }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Nastav si osobné pripomienky",
+      "unlimitedLocations": "Sleduj neobmedzene veľa lokalít",
+      "removeAds": "Odstráň reklamy",
+      "communityEvents": "Vytváraj a hlás komunitné udalosti",
+      "sourcePriorities": "Nastav prioritu zdrojov",
+      "weatherThresholds": "Nastav prahy pre počasie",
+      "fineTuneSources": "Jemne nalaď svoje zdroje"
+    },
+    "upgradeSoon": "Vylepšenie bude čoskoro k dispozícii."
+  },
+  "map": {
+    "activeIncidents_one": "1 aktívna udalosť v okolí",
+    "activeIncidents_few": "{{count}} aktívne udalosti v okolí",
+    "activeIncidents_other": "{{count}} aktívnych udalostí v okolí",
+    "noActiveIncidents": "V tejto oblasti nie sú žiadne aktívne udalosti"
+  },
+  "nav": {
+    "overview": "Prehľad",
+    "alerts": "Upozornenia"
   }
 }
