@@ -8,6 +8,7 @@ import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
 import type { MapPin } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { EventStatusBadge } from '../ui/event-status-badge';
 
 interface PinCalloutProps {
   pin: MapPin;
@@ -17,7 +18,6 @@ export function PinCallout({ pin }: PinCalloutProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const style = MAP_PIN_STYLES[pin.source];
-  const isUpcoming = pin.status === 'upcoming';
   // Traffic incidents have no /events/{id} page (pin.id is a TomTom
   // incidentId, not an eventId). Teasers never render this callout —
   // map.tsx skips <Callout> entirely when pin.isTeaser.
@@ -41,23 +41,7 @@ export function PinCallout({ pin }: PinCalloutProps) {
           {pin.locality ? <Text style={[styles.meta, { color: colors.textMuted }]}>{pin.locality}</Text> : null}
           <Text style={[styles.meta, { color: colors.textMuted }]}>{formatTimeAgo(pin.timestamp)}</Text>
         </View>
-        <View
-          style={[
-            styles.statusBadge,
-            isUpcoming
-              ? { backgroundColor: colors.severity.info.bg }
-              : { backgroundColor: colors.severity.critical.bg },
-          ]}
-        >
-          <Text
-            style={[
-              styles.statusText,
-              { color: isUpcoming ? colors.severity.info.text : colors.severity.critical.text },
-            ]}
-          >
-            {isUpcoming ? t('mapPinStatus.upcoming') : t('mapPinStatus.active')}
-          </Text>
-        </View>
+        <EventStatusBadge status={pin.status} />
       </View>
 
       {showViewDetails && (
@@ -110,15 +94,6 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: theme.fontSize.xs,
-  },
-  statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 2,
-    borderRadius: theme.radius.full,
-  },
-  statusText: {
-    fontSize: 10,
-    ...theme.font.medium,
   },
   cta: {
     flexDirection: 'row',

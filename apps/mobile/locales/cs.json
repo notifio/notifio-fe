@@ -368,5 +368,12 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nenastaveno",
     "invalidValue": "Zadejte platné číslo"
+  },
+  "event": {
+    "status": {
+      "active": "Aktivní",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    }
   }
 }

@@ -364,5 +364,12 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nincs beállítva",
     "invalidValue": "Adjon meg érvényes számot"
+  },
+  "event": {
+    "status": {
+      "active": "Aktív",
+      "upcoming": "Tervezett",
+      "resolved": "Befejezett"
+    }
   }
 }

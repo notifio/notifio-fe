@@ -364,5 +364,12 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Not set",
     "invalidValue": "Enter a valid number"
+  },
+  "event": {
+    "status": {
+      "active": "Active",
+      "upcoming": "Planned",
+      "resolved": "Resolved"
+    }
   }
 }

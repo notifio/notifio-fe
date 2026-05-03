@@ -367,5 +367,12 @@
     "deleteConfirm": "Odstrániť túto prahovú hodnotu?",
     "notSet": "Nenastavené",
     "invalidValue": "Zadajte platné číslo"
+  },
+  "event": {
+    "status": {
+      "active": "Aktívne",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    }
   }
 }

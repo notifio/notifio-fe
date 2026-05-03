@@ -232,5 +232,12 @@
     "humidity": "Páratartalom",
     "pressure": "Légnyomás",
     "deleteConfirm": "Eltávolítod ezt a küszöböt?"
+  },
+  "event": {
+    "status": {
+      "active": "Aktív",
+      "upcoming": "Tervezett",
+      "resolved": "Befejezett"
+    }
   }
 }

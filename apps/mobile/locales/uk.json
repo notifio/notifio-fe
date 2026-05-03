@@ -367,5 +367,12 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Не встановлено",
     "invalidValue": "Введіть дійсне число"
+  },
+  "event": {
+    "status": {
+      "active": "Активні",
+      "upcoming": "Заплановані",
+      "resolved": "Завершені"
+    }
   }
 }
