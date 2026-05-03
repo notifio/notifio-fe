@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "No votes yet"
   },
   "notificationType": {
     "start": "Starting now",
@@ -364,5 +365,61 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Not set",
     "invalidValue": "Enter a valid number"
+  },
+  "event": {
+    "status": {
+      "active": "Active",
+      "upcoming": "Planned",
+      "resolved": "Resolved"
+    }
+  },
+  "settings": {
+    "language": "Language",
+    "languageCountryDefault": "Use country default",
+    "preferences": "Preferences",
+    "data": "Data",
+    "privacy": "Privacy",
+    "app": "App",
+    "subscription": "Subscription",
+    "locations": "Locations",
+    "notifications": "Notifications",
+    "appearance": "Appearance",
+    "digest": "Digest",
+    "dataSources": "Data Sources",
+    "privacyAndConsents": "Privacy & Consents",
+    "exportData": "Export My Data",
+    "deleteAccount": "Delete Account",
+    "about": "About",
+    "profile": "Profile",
+    "profileCountry": "Country",
+    "profileMemberSince": "Member since",
+    "placeholder": "Coming soon",
+    "placeholderSubtitle": "This feature is under development.",
+    "signOutConfirm": {
+      "title": "Sign Out",
+      "message": "Are you sure you want to sign out?",
+      "confirm": "Sign Out"
+    }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Set personal reminders",
+      "unlimitedLocations": "Track unlimited locations",
+      "removeAds": "Remove ads",
+      "communityEvents": "Create and report community events",
+      "sourcePriorities": "Set source priorities",
+      "weatherThresholds": "Set weather thresholds",
+      "fineTuneSources": "Fine-tune your sources"
+    },
+    "upgradeSoon": "Upgrade will be available soon."
+  },
+  "map": {
+    "activeIncidents_one": "1 active incident nearby",
+    "activeIncidents_other": "{{count}} active incidents nearby",
+    "noActiveIncidents": "No active incidents in this area"
+  },
+  "nav": {
+    "overview": "Overview",
+    "alerts": "Alerts"
   }
 }

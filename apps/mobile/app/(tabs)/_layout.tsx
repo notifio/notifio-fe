@@ -1,5 +1,6 @@
 import { IconBell, IconLayoutDashboard, IconMap, IconSettings } from '@tabler/icons-react-native';
 import { Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { DeletionBanner } from '../../components/banners/deletion-banner';
@@ -10,15 +11,20 @@ import { theme } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
-const TAB_SCREENS: { name: string; title: string; icon: TablerIcon }[] = [
-  { name: 'index', title: 'Overview', icon: IconLayoutDashboard },
-  { name: 'alerts', title: 'Alerts', icon: IconBell },
-  { name: 'map', title: 'Map', icon: IconMap },
-  { name: 'settings', title: 'Settings', icon: IconSettings },
+// i18n keys instead of literal titles — resolved at render so the tab
+// bar follows the active locale. nav.map + nav.settings come from
+// shared (Step 11 avatar menu); nav.overview + nav.alerts are
+// mobile-only (web uses nav.dashboard / nav.notifications instead).
+const TAB_SCREENS: { name: string; titleKey: string; icon: TablerIcon }[] = [
+  { name: 'index', titleKey: 'nav.overview', icon: IconLayoutDashboard },
+  { name: 'alerts', titleKey: 'nav.alerts', icon: IconBell },
+  { name: 'map', titleKey: 'nav.map', icon: IconMap },
+  { name: 'settings', titleKey: 'nav.settings', icon: IconSettings },
 ];
 
 export default function TabLayout() {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const { deletionScheduledAt, cancelDeletion } = useDeletionStatus();
 
   const handleCancelDeletion = async () => {
@@ -50,7 +56,7 @@ export default function TabLayout() {
             key={tab.name}
             name={tab.name}
             options={{
-              title: tab.title,
+              title: t(tab.titleKey),
               tabBarIcon: ({ color }) => <Icon icon={tab.icon} size={22} color={color} />,
             }}
           />

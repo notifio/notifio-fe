@@ -1,5 +1,6 @@
 import { IconClock } from '@tabler/icons-react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { theme } from '../../lib/theme';
@@ -7,18 +8,19 @@ import { useAppTheme } from '../../providers/theme-provider';
 
 export default function PlaceholderScreen() {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const { title } = useLocalSearchParams<{ title?: string }>();
 
   return (
     <>
-      <Stack.Screen options={{ title: title ?? 'Coming Soon' }} />
+      <Stack.Screen options={{ title: title ?? t('settings.placeholder') }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={[styles.iconCircle, { backgroundColor: colors.surface }]}>
           <IconClock size={32} color={colors.textMuted} />
         </View>
-        <Text style={[styles.title, { color: colors.text }]}>Coming soon</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('settings.placeholder')}</Text>
         <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-          This feature is under development.
+          {t('settings.placeholderSubtitle')}
         </Text>
       </View>
     </>

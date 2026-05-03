@@ -14,6 +14,7 @@ import {
 } from '@tabler/icons-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // Use subpath imports to avoid barrel export pulling in h3-js (Hermes incompatible)
@@ -66,6 +67,7 @@ interface WeatherCardProps {
 
 export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false, pollen }: WeatherCardProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
 
   const toggleChip = (chip: ExpandedChip) =>
@@ -81,7 +83,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
         <Text style={[styles.errorText, { color: colors.severity.critical.text }]}>{error}</Text>
         {onRetry && (
           <Pressable onPress={onRetry} style={[styles.retryButton, { backgroundColor: colors.severity.critical.border }]}>
-            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>Try again</Text>
+            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>{t('common.tryAgain')}</Text>
           </Pressable>
         )}
       </View>
@@ -118,7 +120,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
           {formatTemp(weather.temperature)}
         </Text>
         <Text style={[styles.feelsLike, { color: color70 }]}>
-          Feels like {formatTemp(weather.feelsLike)}
+          {t('weather.feelsLike')} {formatTemp(weather.feelsLike)}
         </Text>
       </View>
 

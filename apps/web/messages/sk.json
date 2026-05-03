@@ -509,5 +509,12 @@
     "humidity": "Vlhkosť",
     "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstrániť túto prahovú hodnotu?"
+  },
+  "event": {
+    "status": {
+      "active": "Aktívne",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    }
   }
 }

@@ -105,7 +105,8 @@
   },
   "events": {
     "coversYourArea": "This event covers your area.",
-    "unavailable": "Event details not available."
+    "unavailable": "Event details not available.",
+    "noVotes": "Поки що немає голосів"
   },
   "alerts": {
     "noNotifications": "Поки що немає сповіщень"
@@ -367,5 +368,63 @@
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Не встановлено",
     "invalidValue": "Введіть дійсне число"
+  },
+  "event": {
+    "status": {
+      "active": "Активні",
+      "upcoming": "Заплановані",
+      "resolved": "Завершені"
+    }
+  },
+  "settings": {
+    "language": "Мова",
+    "languageCountryDefault": "Використати країнні налаштування",
+    "preferences": "Налаштування",
+    "data": "Дані",
+    "privacy": "Конфіденційність",
+    "app": "Додаток",
+    "subscription": "Підписка",
+    "locations": "Локації",
+    "notifications": "Сповіщення",
+    "appearance": "Вигляд",
+    "digest": "Зведення",
+    "dataSources": "Джерела даних",
+    "privacyAndConsents": "Конфіденційність і згоди",
+    "exportData": "Експортувати мої дані",
+    "deleteAccount": "Видалити обліковий запис",
+    "about": "Про додаток",
+    "profile": "Профіль",
+    "profileCountry": "Країна",
+    "profileMemberSince": "Учасник з",
+    "placeholder": "Незабаром",
+    "placeholderSubtitle": "Ця функція в розробці.",
+    "signOutConfirm": {
+      "title": "Вийти",
+      "message": "Ви впевнені, що хочете вийти?",
+      "confirm": "Вийти"
+    }
+  },
+  "upsell": {
+    "messages": {
+      "personalReminders": "Налаштуй особисті нагадування",
+      "unlimitedLocations": "Відстежуй необмежену кількість локацій",
+      "removeAds": "Прибери рекламу",
+      "communityEvents": "Створюй і повідомляй про події спільноти",
+      "sourcePriorities": "Налаштуй пріоритет джерел",
+      "weatherThresholds": "Налаштуй пороги погоди",
+      "fineTuneSources": "Точно налаштуй свої джерела"
+    },
+    "upgradeSoon": "Оновлення скоро буде доступним."
+  },
+  "map": {
+    "activeIncidents_one": "1 активна подія поблизу",
+    "activeIncidents_few": "{{count}} активні події поблизу",
+    "activeIncidents_many": "{{count}} активних подій поблизу",
+    "activeIncidents_other": "{{count}} активних подій поблизу",
+    "noActiveIncidents": "У цій області немає активних подій"
+  },
+  "nav": {
+    "overview": "Огляд",
+    "alerts": "Сповіщення"
   }
 }

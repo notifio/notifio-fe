@@ -1,4 +1,5 @@
 import { IconBell } from '@tabler/icons-react-native';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { shadows, theme } from '../../lib/theme';
@@ -12,6 +13,7 @@ interface MapStatusCardProps {
 
 export function MapStatusCard({ alertCount }: MapStatusCardProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const hasAlerts = alertCount > 0;
 
   return (
@@ -25,8 +27,8 @@ export function MapStatusCard({ alertCount }: MapStatusCardProps) {
           )}
           <Text style={[styles.text, { color: hasAlerts ? colors.text : colors.textMuted }]}>
             {hasAlerts
-              ? `${alertCount} active incident${alertCount === 1 ? '' : 's'} nearby`
-              : 'No active incidents in this area'}
+              ? t('map.activeIncidents', { count: alertCount })
+              : t('map.noActiveIncidents')}
           </Text>
         </View>
       </Card>
