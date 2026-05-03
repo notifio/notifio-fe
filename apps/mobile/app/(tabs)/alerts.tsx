@@ -11,7 +11,7 @@ import { RemindersTabContent } from '../../components/reminders/reminders-tab-co
 import { ProGate } from '../../components/ui/pro-gate';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
-import { theme } from '../../lib/theme';
+import { SPACING } from '../../lib/spacing';
 import { useAppTheme } from '../../providers/theme-provider';
 
 type TabKey = 'history' | 'events' | 'reminders';
@@ -35,12 +35,20 @@ export default function FeedScreen() {
   };
 
   return (
-    <ScreenLayout header={<ScreenHeader title={t('screens.alerts.title')} subtitle={t('screens.alerts.subtitle')} />}>
+    <ScreenLayout
+      header={
+        <ScreenHeader
+          title={t('screens.alerts.title')}
+          subtitle={t('screens.alerts.subtitle')}
+          style={{ paddingTop: SPACING.headerTop, marginBottom: SPACING.headerToTabs }}
+        />
+      }
+    >
       {/* Tab bar — orange underline + orange text for active state
           (matches web). flex:1 per tab + adjustsFontSizeToFit so
           long Slovak labels like "Pripomienky" never wrap mid-word
           on iPhone 16e (~131pt per tab). */}
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { marginBottom: SPACING.tabsToContent }]}>
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -71,13 +79,18 @@ export default function FeedScreen() {
         })}
       </View>
 
-      {activeTab === 'history' && <AlertList onAlertPress={handleAlertPress} />}
-      {activeTab === 'events' && <MyEventsList />}
-      {activeTab === 'reminders' && (
-        <ProGate requiredTier="PRO">
-          <RemindersTabContent />
-        </ProGate>
-      )}
+      {/* Tab content — top breathing room comes from tabBar's
+          marginBottom (SPACING.tabsToContent), so each tab's first
+          child renders flush against that gap. */}
+      <View style={styles.tabContent}>
+        {activeTab === 'history' && <AlertList onAlertPress={handleAlertPress} />}
+        {activeTab === 'events' && <MyEventsList />}
+        {activeTab === 'reminders' && (
+          <ProGate requiredTier="PRO">
+            <RemindersTabContent />
+          </ProGate>
+        )}
+      </View>
     </ScreenLayout>
   );
 }
@@ -85,16 +98,19 @@ export default function FeedScreen() {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
   },
   tabButton: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.md,
+    paddingHorizontal: 8,
+    paddingVertical: SPACING.tabPadV,
     borderBottomWidth: 2,
   },
   tabText: {
-    fontSize: theme.fontSize.sm,
+    fontSize: 14,
+  },
+  tabContent: {
+    flex: 1,
   },
 });

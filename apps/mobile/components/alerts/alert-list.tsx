@@ -9,6 +9,7 @@ import { AlertCard } from './alert-card';
 import { FilterSheet } from './filter-sheet';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { isResolved } from '../../lib/alert-card-utils';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { Icon } from '../ui/icon';
@@ -181,12 +182,16 @@ const styles = StyleSheet.create({
   chipRow: {
     // flexGrow: 0 — without this the horizontal ScrollView fills the
     // parent's available height and chip Pressables stretch vertically.
+    flex: 1,
     flexGrow: 0,
-    flexShrink: 1,
   },
   chipRowContent: {
-    gap: theme.spacing.sm,
+    gap: 6,
     alignItems: 'center',
+    // paddingLeft adds air after the parent row's gap so the first
+    // chip doesn't visually touch the Filter button.
+    paddingLeft: 4,
+    paddingRight: SPACING.screenH,
   },
   chip: {
     height: 32,
@@ -199,9 +204,10 @@ const styles = StyleSheet.create({
   filterTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.xl,
-    marginBottom: theme.spacing.md,
-    gap: theme.spacing.sm,
+    paddingHorizontal: SPACING.screenH,
+    paddingVertical: SPACING.subControlPadV,
+    marginBottom: SPACING.subControlBottom,
+    gap: 12,
   },
   filterButton: {
     flexDirection: 'row',
@@ -234,14 +240,14 @@ const styles = StyleSheet.create({
     ...theme.font.medium,
   },
   list: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: SPACING.cardGap,
   },
   emptyContainer: {
     flex: 1,

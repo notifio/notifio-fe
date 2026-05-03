@@ -17,6 +17,7 @@ import type { PersonalReminder } from '@notifio/api-client';
 
 import { ReminderFormModal } from './reminder-form-modal';
 import { useReminders } from '../../hooks/use-reminders';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -186,26 +187,26 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   list: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: SPACING.cardGap,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: theme.radius.xl,
     borderWidth: 1,
-    padding: theme.spacing.lg,
+    padding: SPACING.cardPad,
     gap: theme.spacing.md,
   },
   itemContent: {
     flex: 1,
-    gap: theme.spacing.xs,
+    gap: SPACING.cardTitleToMeta,
   },
   itemTitle: {
     fontSize: theme.fontSize.md,

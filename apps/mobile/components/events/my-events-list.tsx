@@ -8,6 +8,7 @@ import type { UserEvent } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
 import { useUserEvents } from '../../hooks/use-user-events';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { Icon } from '../ui/icon';
@@ -172,20 +173,20 @@ export function MyEventsList() {
 
 const styles = StyleSheet.create({
   list: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: SPACING.cardGap,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: theme.spacing.md,
-    padding: theme.spacing.md,
+    padding: SPACING.cardPad,
     borderRadius: theme.radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
   },

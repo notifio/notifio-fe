@@ -7,6 +7,7 @@ import { Calendar, type DateData } from 'react-native-calendars';
 import type { PersonalReminder } from '@notifio/api-client';
 
 import { useReminders } from '../../hooks/use-reminders';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -167,29 +168,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   calendar: {
     borderRadius: theme.radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
-    marginBottom: theme.spacing.lg,
+    marginBottom: SPACING.calendarToDayHeader,
   },
   sectionHeader: {
     fontSize: theme.fontSize.xs,
     letterSpacing: 0.5,
     ...theme.font.semibold,
-    marginBottom: theme.spacing.sm,
+    marginBottom: SPACING.dayHeaderToContent,
   },
   dayList: {
-    gap: theme.spacing.sm,
+    gap: SPACING.cardGap,
   },
   dayRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.md,
-    padding: theme.spacing.md,
+    padding: SPACING.cardPad,
     borderRadius: theme.radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
   },
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
   dayRowText: {
     flex: 1,
     minWidth: 0,
-    gap: 2,
+    gap: SPACING.cardTitleToMeta,
   },
   dayRowTitle: {
     fontSize: theme.fontSize.sm,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   emptyInline: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.sm,
+    gap: SPACING.emptyStateIconToText,
     paddingVertical: theme.spacing.md,
   },
   emptyInlineText: {

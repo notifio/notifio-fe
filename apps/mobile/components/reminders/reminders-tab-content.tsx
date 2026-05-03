@@ -7,6 +7,7 @@ import { ReminderCalendarView } from './reminder-calendar-view';
 import { ReminderFormModal } from './reminder-form-modal';
 import { ReminderList } from './reminder-list';
 import { useReminders } from '../../hooks/use-reminders';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -107,8 +108,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   toggleRow: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing.sm,
+    paddingHorizontal: SPACING.screenH,
+    paddingVertical: SPACING.subControlPadV,
+    marginBottom: SPACING.subControlBottom,
   },
   toggle: {
     alignSelf: 'flex-start',
@@ -128,8 +130,8 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: theme.spacing.xl,
-    right: theme.spacing.xl,
+    bottom: SPACING.fabBottom,
+    right: SPACING.fabRight,
     width: 56,
     height: 56,
     borderRadius: 28,
