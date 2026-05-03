@@ -1,4 +1,4 @@
-import { IconClock, IconPlus } from '@tabler/icons-react-native';
+import { IconClock } from '@tabler/icons-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -17,6 +17,7 @@ import type { PersonalReminder } from '@notifio/api-client';
 
 import { ReminderFormModal } from './reminder-form-modal';
 import { useReminders } from '../../hooks/use-reminders';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -161,17 +162,9 @@ export function ReminderList() {
         }
       />
 
-      {/* FAB */}
-      <Pressable
-        onPress={() => {
-          setEditingReminder(undefined);
-          setShowForm(true);
-        }}
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-      >
-        <IconPlus size={24} color={colors.textInverse} />
-      </Pressable>
-
+      {/* Edit-only modal — create flow is owned by RemindersTabContent
+          parent so its FAB is visible on both List and Calendar views.
+          This instance only opens via row tap (handleItemPress). */}
       <ReminderFormModal
         visible={showForm}
         onClose={handleCloseForm}
@@ -194,26 +187,26 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   list: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: SPACING.cardGap,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: theme.radius.xl,
     borderWidth: 1,
-    padding: theme.spacing.lg,
+    padding: SPACING.cardPad,
     gap: theme.spacing.md,
   },
   itemContent: {
     flex: 1,
-    gap: theme.spacing.xs,
+    gap: SPACING.cardTitleToMeta,
   },
   itemTitle: {
     fontSize: theme.fontSize.md,
@@ -256,20 +249,5 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: theme.fontSize.md,
     ...theme.font.medium,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing.xl,
-    right: theme.spacing.xl,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
 });

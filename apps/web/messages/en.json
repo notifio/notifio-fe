@@ -53,7 +53,8 @@
     "title": "Notifications",
     "tabs": {
       "history": "History",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "events": "Events"
     },
     "filters": {
       "all": "All",

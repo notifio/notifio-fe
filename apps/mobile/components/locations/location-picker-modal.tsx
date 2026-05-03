@@ -53,7 +53,7 @@ export function LocationPickerModal({
   // has it). Used to fail with a generic toast when a FREE user typed
   // anything in the box. Gate the input — non-eligible users see a
   // disabled field with a small lock badge instead.
-  const canSetCustomLabel = membership?.features.includes('custom_labels') ?? false;
+  const canSetCustomLabel = membership?.current?.features.includes('custom_labels') ?? false;
 
   const [region, setRegion] = useState<Region>(
     editLocation

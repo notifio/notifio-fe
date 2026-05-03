@@ -1,7 +1,8 @@
 import { IconCheck, IconMapPin, IconTrash, IconX } from '@tabler/icons-react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 import { sharedColors } from '@notifio/ui';
 
@@ -10,6 +11,7 @@ import { Card } from '../../components/ui/card';
 import { Icon } from '../../components/ui/icon';
 import { SectionLabel } from '../../components/ui/section-label';
 import { useEventDetail } from '../../hooks/use-event-detail';
+import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -24,7 +26,7 @@ function formatDate(iso: string): string {
 }
 
 export default function EventDetailScreen() {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
   const { t } = useTranslation();
   const router = useRouter();
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
@@ -85,6 +87,33 @@ export default function EventDetailScreen() {
     <>
       <Stack.Screen options={{ title: t('eventDetail.title') }} />
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
+        {/* Map preview — non-interactive, brand-orange marker at the
+            event's coords. Mirrors web's EventMapHeader; iOS uses
+            Apple Maps native dark mode, Android uses the same custom
+            dark JSON the main map tab uses. */}
+        <View style={styles.mapPreview}>
+          <MapView
+            style={styles.mapPreviewMap}
+            initialRegion={{
+              latitude: event.location.lat,
+              longitude: event.location.lng,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            pitchEnabled={false}
+            userInterfaceStyle={isDark ? 'dark' : 'light'}
+            customMapStyle={Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined}
+          >
+            <Marker
+              coordinate={{ latitude: event.location.lat, longitude: event.location.lng }}
+              pinColor="#FF7A2F"
+            />
+          </MapView>
+        </View>
+
         {/* Category + status */}
         <View style={styles.headerRow}>
           <View style={[styles.categoryBadge, { backgroundColor: colors.surface }]}>
@@ -216,6 +245,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: theme.fontSize.md,
+  },
+  mapPreview: {
+    height: 160,
+    borderRadius: theme.radius.lg,
+    overflow: 'hidden',
+    marginTop: theme.spacing.md,
+  },
+  mapPreviewMap: {
+    flex: 1,
   },
   headerRow: {
     flexDirection: 'row',

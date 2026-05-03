@@ -51,19 +51,28 @@ export function ReminderListView({
           <button
             onClick={() => onCreate()}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+            aria-label={t('reminders.newReminder')}
           >
             <IconPlus size={14} />
-            {t('reminders.newReminder')}
+            {/* Below sm: icon-only to avoid clipping at narrow widths
+                (e.g. 344px Galaxy Z Fold 5). Label text returns at sm. */}
+            <span className="hidden sm:inline">{t('reminders.newReminder')}</span>
           </button>
         </div>
       ) : (
         <div className="space-y-2">
           {reminders.map((r) => (
             <div key={r.reminderId} className="rounded-xl bg-card p-4">
-              <div className="flex items-start gap-3">
+              {/* Two-row layout below sm (title block stacks above
+                  actions row) so the title gets full width to breathe
+                  at 344-400px viewports. Single-row preserved at sm+. */}
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-text-primary">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* min-w-0 + break-words: title shrinks before
+                        wrapping mid-word. Long Slovak titles still
+                        wrap at word boundaries instead of break-anywhere. */}
+                    <span className="min-w-0 break-words text-sm font-semibold text-text-primary">
                       {r.title}
                     </span>
                     <span className="rounded bg-card px-1.5 py-0.5 text-[10px] font-medium text-muted">
@@ -76,7 +85,7 @@ export function ReminderListView({
                     )}
                   </div>
                   {r.description && (
-                    <p className="mt-0.5 text-xs text-muted">{r.description}</p>
+                    <p className="mt-0.5 break-words text-xs text-muted">{r.description}</p>
                   )}
                   <p className="mt-1 text-xs text-text-secondary">
                     {new Date(r.triggerAt).toLocaleString(undefined, {
@@ -84,7 +93,10 @@ export function ReminderListView({
                     })}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                {/* Actions row: aligns end below sm (its own flex row
+                    on the second card line); shrink-0 + items-center
+                    in the sm+ layout so icons never compress. */}
+                <div className="flex shrink-0 items-center justify-end gap-2">
                   {togglingId === r.reminderId ? (
                     <IconLoader2 size={18} className="animate-spin text-muted" />
                   ) : (

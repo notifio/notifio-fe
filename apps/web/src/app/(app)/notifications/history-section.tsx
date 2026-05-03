@@ -25,7 +25,9 @@ const CATEGORY_FILTERS: FilterDef[] = [
   { key: 'traffic', prefixes: ['traffic'] },
   { key: 'outages', prefixes: ['outage'] },
   { key: 'pollen', prefixes: ['pollen'] },
-  { key: 'events', prefixes: ['planned-events', 'planned_events', 'earthquake'] },
+  // 'events' chip dropped — duplicates the new top-level Events tab
+  // (user reports). The notificationsPage.filters.events i18n key
+  // becomes dead but kept for now (Step 11.5 cleanup).
 ];
 
 function matchesFilter(category: string, filter: string): boolean {

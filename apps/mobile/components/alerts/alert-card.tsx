@@ -6,7 +6,6 @@ import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared/constants';
 import { formatRelativeTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 
 interface AlertCardProps {
@@ -14,17 +13,10 @@ interface AlertCardProps {
   onPress?: () => void;
 }
 
-const SEVERITY_VARIANT: Record<string, 'info' | 'warning' | 'critical'> = {
-  info: 'info',
-  warning: 'warning',
-  critical: 'critical',
-};
-
 export function AlertCard({ notification, onPress }: AlertCardProps) {
   const { colors } = useAppTheme();
   const categoryNames = CATEGORY_DISPLAY_NAMES[notification.category as AlertCategory];
   const categoryLabel = categoryNames?.en ?? notification.category;
-  const severityVariant = SEVERITY_VARIANT[notification.severity] ?? 'info';
 
   return (
     <Card onPress={onPress}>
@@ -35,18 +27,11 @@ export function AlertCard({ notification, onPress }: AlertCardProps) {
             <Text style={[styles.body, { color: colors.textSecondary }]} numberOfLines={2}>{notification.body}</Text>
           ) : null}
         </View>
-        <Badge variant={severityVariant} label={notification.severity} />
       </View>
       <View style={styles.bottomRow}>
         <Text style={[styles.meta, { color: colors.textMuted }]}>{categoryLabel}</Text>
         <Text style={[styles.metaDot, { color: colors.textMuted }]}>·</Text>
         <Text style={[styles.meta, { color: colors.textMuted }]}>{formatRelativeTime(notification.createdAt)}</Text>
-        {notification.status !== 'sent' && (
-          <>
-            <Text style={[styles.metaDot, { color: colors.textMuted }]}>·</Text>
-            <Text style={[styles.metaStatus, { color: colors.severity.warning.text }]}>{notification.status}</Text>
-          </>
-        )}
       </View>
     </Card>
   );
@@ -80,8 +65,5 @@ const styles = StyleSheet.create({
   metaDot: {
     fontSize: theme.fontSize.sm,
     marginHorizontal: theme.spacing.xs,
-  },
-  metaStatus: {
-    fontSize: theme.fontSize.sm,
   },
 });

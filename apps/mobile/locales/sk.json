@@ -32,7 +32,11 @@
     "tryAgain": "Skúsiť znova",
     "comingSoon": "Čoskoro",
     "ok": "OK",
-    "units": "Jednotky"
+    "units": "Jednotky",
+    "cancel": "Zrušiť",
+    "delete": "Vymazať",
+    "done": "Hotovo",
+    "today": "Dnes"
   },
   "categoryGroups": {
     "weather": "Počasie",
@@ -109,7 +113,16 @@
     "noVotes": "Zatiaľ žiadne hlasy"
   },
   "alerts": {
-    "noNotifications": "Zatiaľ žiadne notifikácie"
+    "noNotifications": "Zatiaľ žiadne notifikácie",
+    "filter": "Filter",
+    "status": "Stav",
+    "filters": {
+      "all": "Všetko",
+      "weather": "Počasie",
+      "traffic": "Doprava",
+      "outages": "Výpadky",
+      "pollen": "Peľ"
+    }
   },
   "notificationType": {
     "start": "Začína",
@@ -303,7 +316,9 @@
     "title": "Pripomienky",
     "tabs": {
       "history": "História",
-      "reminders": "Pripomienky"
+      "reminders": "Pripomienky",
+      "events": "Udalosti",
+      "eventsEmpty": "Žiadne nahlásené udalosti"
     },
     "empty": "Zatiaľ žiadne pripomienky",
     "emptyMessage": "Vytvorte pripomienky pre dôležité udalosti",
@@ -327,7 +342,13 @@
     "delete": "Vymazať",
     "deleteConfirm": "Vymazať túto pripomienku?",
     "deleted": "Pripomienka vymazaná",
-    "error": "Nepodarilo sa uložiť pripomienku"
+    "error": "Nepodarilo sa uložiť pripomienku",
+    "list": "Zoznam",
+    "calendar": {
+      "label": "Kalendár",
+      "empty": "Žiadne pripomienky v tento deň",
+      "emptyInline": "Žiadne pripomienky"
+    }
   },
   "sources": {
     "title": "Zdroje dát",
@@ -425,5 +446,11 @@
   "nav": {
     "overview": "Prehľad",
     "alerts": "Upozornenia"
+  },
+  "myEvents": {
+    "confirmDelete": {
+      "title": "Vymazať hlásenie?",
+      "description": "Túto akciu nie je možné vrátiť späť."
+    }
   }
 }

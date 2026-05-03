@@ -25,6 +25,12 @@ interface ReminderFormModalProps {
   onSave: (body: CreatePersonalReminderInput) => Promise<void>;
   onUpdate?: (id: string, body: UpdatePersonalReminderInput) => Promise<void>;
   editReminder?: PersonalReminder;
+  /**
+   * When opening for create from the calendar view, prefill the date
+   * portion to the day the user selected. Time defaults to now.
+   * Ignored when editReminder is set.
+   */
+  defaultDate?: Date;
 }
 
 const RECURRENCE_OPTIONS: ReminderRecurrence[] = ['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY'];
@@ -35,15 +41,25 @@ export function ReminderFormModal({
   onSave,
   onUpdate,
   editReminder,
+  defaultDate,
 }: ReminderFormModalProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
 
   const [title, setTitle] = useState(editReminder?.title ?? '');
   const [description, setDescription] = useState(editReminder?.description ?? '');
-  const [date, setDate] = useState(
-    editReminder ? new Date(editReminder.triggerAt) : new Date(),
-  );
+  const [date, setDate] = useState(() => {
+    if (editReminder) return new Date(editReminder.triggerAt);
+    if (defaultDate) {
+      // Keep the picked day, but set time to now so the user gets a
+      // sensible default time component (calendar only picks a day).
+      const now = new Date();
+      const d = new Date(defaultDate);
+      d.setHours(now.getHours(), now.getMinutes(), 0, 0);
+      return d;
+    }
+    return new Date();
+  });
   const [recurrence, setRecurrence] = useState<ReminderRecurrence>(
     editReminder?.recurrence ?? 'ONCE',
   );
