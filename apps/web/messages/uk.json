@@ -3,7 +3,8 @@
     "title": "Сповіщення",
     "tabs": {
       "history": "Історія",
-      "reminders": "Нагадування"
+      "reminders": "Нагадування",
+      "events": "Події"
     },
     "filters": {
       "all": "Усі",

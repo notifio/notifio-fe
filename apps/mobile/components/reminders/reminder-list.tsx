@@ -1,4 +1,4 @@
-import { IconClock, IconPlus } from '@tabler/icons-react-native';
+import { IconClock } from '@tabler/icons-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -161,17 +161,9 @@ export function ReminderList() {
         }
       />
 
-      {/* FAB */}
-      <Pressable
-        onPress={() => {
-          setEditingReminder(undefined);
-          setShowForm(true);
-        }}
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-      >
-        <IconPlus size={24} color={colors.textInverse} />
-      </Pressable>
-
+      {/* Edit-only modal — create flow is owned by RemindersTabContent
+          parent so its FAB is visible on both List and Calendar views.
+          This instance only opens via row tap (handleItemPress). */}
       <ReminderFormModal
         visible={showForm}
         onClose={handleCloseForm}
@@ -256,20 +248,5 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: theme.fontSize.md,
     ...theme.font.medium,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing.xl,
-    right: theme.spacing.xl,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
 });

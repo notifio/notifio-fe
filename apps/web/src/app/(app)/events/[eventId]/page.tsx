@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { EventDetail, UserVote } from '@notifio/api-client';
 import { ApiError } from '@notifio/api-client';
 
+import { EventMapHeader } from '@/components/events/event-map-header';
 import { RelativeTime } from '@/components/ui/relative-time';
 import { useToast } from '@/components/ui/toast';
 import { api } from '@/lib/api';
@@ -146,18 +147,9 @@ export default function EventDetailPage() {
         </button>
       </div>
 
-      {/* Map header placeholder */}
-      <div
-        className="flex h-40 items-center justify-center bg-card"
-        style={{ backgroundColor: '#0B1B32' }}
-      >
-        <div className="flex flex-col items-center gap-2">
-          <IconMapPin size={32} className="text-accent" />
-          <span className="text-xs text-muted">
-            {event.location.lat.toFixed(4)}, {event.location.lng.toFixed(4)}
-          </span>
-        </div>
-      </div>
+      {/* Map header — non-interactive MapLibre preview centered on
+          the event with a brand-orange marker. */}
+      <EventMapHeader lat={event.location.lat} lng={event.location.lng} />
 
       {/* Card body */}
       <div className="px-4 py-6 md:px-8">

@@ -32,7 +32,9 @@
     "tryAgain": "Try again",
     "comingSoon": "Coming soon",
     "ok": "OK",
-    "units": "Units"
+    "units": "Units",
+    "cancel": "Zrušit",
+    "delete": "Smazat"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -110,7 +112,14 @@
   },
   "alerts": {
     "all": "Všechny",
-    "noNotifications": "Zatím žádná oznámení"
+    "noNotifications": "Zatím žádná oznámení",
+    "filters": {
+      "all": "Vše",
+      "weather": "Počasí",
+      "traffic": "Doprava",
+      "outages": "Výpadky",
+      "pollen": "Pyl"
+    }
   },
   "notificationType": {
     "start": "Starting now",
@@ -304,7 +313,9 @@
     "title": "Reminders",
     "tabs": {
       "history": "History",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "events": "Události",
+      "eventsEmpty": "Žádné nahlášené události"
     },
     "empty": "No reminders yet",
     "emptyMessage": "Create reminders for important events",
@@ -328,7 +339,12 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this reminder?",
     "deleted": "Reminder deleted",
-    "error": "Failed to save reminder"
+    "error": "Failed to save reminder",
+    "list": "Seznam",
+    "calendar": {
+      "label": "Kalendář",
+      "empty": "Žádná připomenutí v tento den"
+    }
   },
   "sources": {
     "title": "Data Sources",
@@ -426,5 +442,11 @@
   "nav": {
     "overview": "Přehled",
     "alerts": "Upozornění"
+  },
+  "myEvents": {
+    "confirmDelete": {
+      "title": "Smazat hlášení?",
+      "description": "Tuto akci nelze vrátit zpět."
+    }
   }
 }

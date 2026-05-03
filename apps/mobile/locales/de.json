@@ -32,7 +32,9 @@
     "tryAgain": "Try again",
     "comingSoon": "Coming soon",
     "ok": "OK",
-    "units": "Units"
+    "units": "Units",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -300,7 +302,9 @@
     "title": "Reminders",
     "tabs": {
       "history": "History",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "events": "Ereignisse",
+      "eventsEmpty": "Keine gemeldeten Ereignisse"
     },
     "empty": "No reminders yet",
     "emptyMessage": "Create reminders for important events",
@@ -324,7 +328,12 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this reminder?",
     "deleted": "Reminder deleted",
-    "error": "Failed to save reminder"
+    "error": "Failed to save reminder",
+    "list": "Liste",
+    "calendar": {
+      "label": "Kalender",
+      "empty": "Keine Erinnerungen an diesem Tag"
+    }
   },
   "sources": {
     "title": "Data Sources",
@@ -421,5 +430,20 @@
   "nav": {
     "overview": "Übersicht",
     "alerts": "Warnungen"
+  },
+  "alerts": {
+    "filters": {
+      "all": "Alle",
+      "weather": "Wetter",
+      "traffic": "Verkehr",
+      "outages": "Ausfälle",
+      "pollen": "Pollen"
+    }
+  },
+  "myEvents": {
+    "confirmDelete": {
+      "title": "Meldung löschen?",
+      "description": "Diese Aktion kann nicht rückgängig gemacht werden."
+    }
   }
 }

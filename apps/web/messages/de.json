@@ -3,7 +3,8 @@
     "title": "Benachrichtigungen",
     "tabs": {
       "history": "Verlauf",
-      "reminders": "Erinnerungen"
+      "reminders": "Erinnerungen",
+      "events": "Ereignisse"
     },
     "filters": {
       "all": "Alle",

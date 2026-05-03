@@ -32,7 +32,9 @@
     "tryAgain": "Try again",
     "comingSoon": "Coming soon",
     "ok": "OK",
-    "units": "Units"
+    "units": "Units",
+    "cancel": "Скасувати",
+    "delete": "Видалити"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -109,7 +111,14 @@
     "noVotes": "Поки що немає голосів"
   },
   "alerts": {
-    "noNotifications": "Поки що немає сповіщень"
+    "noNotifications": "Поки що немає сповіщень",
+    "filters": {
+      "all": "Усі",
+      "weather": "Погода",
+      "traffic": "Трафік",
+      "outages": "Збої",
+      "pollen": "Пилок"
+    }
   },
   "notificationType": {
     "start": "Starting now",
@@ -303,7 +312,9 @@
     "title": "Reminders",
     "tabs": {
       "history": "History",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "events": "Події",
+      "eventsEmpty": "Немає повідомлених подій"
     },
     "empty": "No reminders yet",
     "emptyMessage": "Create reminders for important events",
@@ -327,7 +338,12 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this reminder?",
     "deleted": "Reminder deleted",
-    "error": "Failed to save reminder"
+    "error": "Failed to save reminder",
+    "list": "Список",
+    "calendar": {
+      "label": "Календар",
+      "empty": "Немає нагадувань на цей день"
+    }
   },
   "sources": {
     "title": "Data Sources",
@@ -426,5 +442,11 @@
   "nav": {
     "overview": "Огляд",
     "alerts": "Сповіщення"
+  },
+  "myEvents": {
+    "confirmDelete": {
+      "title": "Видалити повідомлення?",
+      "description": "Цю дію не можна скасувати."
+    }
   }
 }
