@@ -3,7 +3,8 @@
     "title": "Értesítések",
     "tabs": {
       "history": "Előzmények",
-      "reminders": "Emlékeztetők"
+      "reminders": "Emlékeztetők",
+      "events": "Események"
     },
     "filters": {
       "all": "Összes",

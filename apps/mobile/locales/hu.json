@@ -32,7 +32,11 @@
     "tryAgain": "Try again",
     "comingSoon": "Coming soon",
     "ok": "OK",
-    "units": "Units"
+    "units": "Units",
+    "cancel": "Mégse",
+    "delete": "Törlés",
+    "done": "Kész",
+    "today": "Ma"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -300,7 +304,9 @@
     "title": "Reminders",
     "tabs": {
       "history": "History",
-      "reminders": "Reminders"
+      "reminders": "Reminders",
+      "events": "Események",
+      "eventsEmpty": "Nincsenek bejelentett események"
     },
     "empty": "No reminders yet",
     "emptyMessage": "Create reminders for important events",
@@ -324,7 +330,13 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this reminder?",
     "deleted": "Reminder deleted",
-    "error": "Failed to save reminder"
+    "error": "Failed to save reminder",
+    "list": "Lista",
+    "calendar": {
+      "label": "Naptár",
+      "empty": "Nincs emlékeztető ezen a napon",
+      "emptyInline": "Nincs emlékeztető"
+    }
   },
   "sources": {
     "title": "Data Sources",
@@ -421,5 +433,22 @@
   "nav": {
     "overview": "Áttekintés",
     "alerts": "Riasztások"
+  },
+  "alerts": {
+    "filter": "Szűrő",
+    "status": "Állapot",
+    "filters": {
+      "all": "Mind",
+      "weather": "Időjárás",
+      "traffic": "Forgalom",
+      "outages": "Üzemzavar",
+      "pollen": "Pollen"
+    }
+  },
+  "myEvents": {
+    "confirmDelete": {
+      "title": "Bejelentés törlése?",
+      "description": "Ez a művelet nem visszavonható."
+    }
   }
 }

@@ -58,7 +58,8 @@
     "title": "Notifikácie",
     "tabs": {
       "history": "História",
-      "reminders": "Pripomienky"
+      "reminders": "Pripomienky",
+      "events": "Udalosti"
     },
     "filters": {
       "all": "Všetky",

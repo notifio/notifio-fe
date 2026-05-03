@@ -1,24 +1,42 @@
-import { IconBell } from '@tabler/icons-react-native';
+import { IconAdjustments, IconBell } from '@tabler/icons-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
 import { AlertCard } from './alert-card';
+import { FilterSheet } from './filter-sheet';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { isResolved } from '../../lib/alert-card-utils';
+import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { Icon } from '../ui/icon';
 
 type TabFilter = 'active' | 'ended' | 'all';
 
-const TABS: ReadonlyArray<{ id: TabFilter; labelKey: string }> = [
-  { id: 'active', labelKey: 'alerts.active' },
-  { id: 'ended', labelKey: 'alerts.ended' },
-  { id: 'all', labelKey: 'alerts.all' },
+// Category chip filters — mirrors web's CATEGORY_FILTERS in
+// apps/web/src/app/(app)/notifications/history-section.tsx. Same
+// prefix-matching against NotificationHistoryItem.category. 'events'
+// chip dropped from both apps (overlaps with the new top Events tab).
+// TODO Step 11.5: extract this + web's copy to shared.
+type CategoryFilter = 'all' | 'weather' | 'traffic' | 'outages' | 'pollen';
+
+const CATEGORY_FILTERS: ReadonlyArray<{ id: CategoryFilter; prefixes: string[] }> = [
+  { id: 'all', prefixes: [] },
+  { id: 'weather', prefixes: ['weather'] },
+  { id: 'traffic', prefixes: ['traffic'] },
+  { id: 'outages', prefixes: ['outage'] },
+  { id: 'pollen', prefixes: ['pollen'] },
 ];
+
+function matchesCategory(category: string, filter: CategoryFilter): boolean {
+  if (filter === 'all') return true;
+  const def = CATEGORY_FILTERS.find((f) => f.id === filter);
+  if (!def) return true;
+  return def.prefixes.some((p) => category.startsWith(p));
+}
 
 interface AlertListProps {
   onAlertPress?: (notification: NotificationHistoryItem) => void;
@@ -32,6 +50,11 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const [tab, setTab] = useState<TabFilter>('active');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+
+  // Default status is `active` — count any non-default for the badge.
+  const activeFilterCount = tab === 'active' ? 0 : 1;
 
   // Server fetches active-only when on the Active tab (cheaper round
   // trip); Ended + All fetch the full set so we can client-filter the
@@ -42,10 +65,11 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   });
 
   const filtered = useMemo(() => {
-    if (tab === 'active') return items;
-    if (tab === 'ended') return items.filter((n) => isResolved(n));
-    return items;
-  }, [tab, items]);
+    let base = items;
+    if (tab === 'ended') base = base.filter((n) => isResolved(n));
+    if (categoryFilter !== 'all') base = base.filter((n) => matchesCategory(n.category, categoryFilter));
+    return base;
+  }, [tab, categoryFilter, items]);
 
   const renderItem = useCallback(
     ({ item }: { item: NotificationHistoryItem }) => (
@@ -56,33 +80,71 @@ export function AlertList({ onAlertPress }: AlertListProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.filterBar}>
-        {TABS.map((tabDef) => {
-          const isActive = tab === tabDef.id;
-          return (
-            <Pressable
-              key={tabDef.id}
-              onPress={() => setTab(tabDef.id)}
-              style={[styles.filterButton, isActive && { backgroundColor: colors.text }]}
-            >
-              <Text
+      {/* Top filter row: Filter button (status → bottom sheet) +
+          inline category chips. Filter button shows active-count
+          badge when status filter is non-default. */}
+      <View style={styles.filterTopRow}>
+        <Pressable
+          onPress={() => setFilterSheetOpen(true)}
+          style={[styles.filterButton, { borderColor: colors.border }]}
+        >
+          <IconAdjustments size={14} color={colors.text} />
+          <Text style={[styles.filterButtonText, { color: colors.text }]}>
+            {t('alerts.filter')}
+          </Text>
+          {activeFilterCount > 0 && (
+            <View style={[styles.filterBadge, { backgroundColor: colors.primary }]}>
+              <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+            </View>
+          )}
+        </Pressable>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipRowContent}
+          style={styles.chipRow}
+        >
+          {CATEGORY_FILTERS.map((filter) => {
+            const active = categoryFilter === filter.id;
+            return (
+              <Pressable
+                key={filter.id}
+                onPress={() => setCategoryFilter(filter.id)}
                 style={[
-                  styles.filterText,
-                  { color: colors.textMuted },
-                  isActive && { color: colors.background },
+                  styles.chip,
+                  {
+                    backgroundColor: active ? colors.primary : 'transparent',
+                    borderColor: active ? colors.primary : colors.border,
+                  },
                 ]}
               >
-                {t(tabDef.labelKey)}
-              </Text>
-            </Pressable>
-          );
-        })}
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.chipText,
+                    { color: active ? '#FFFFFF' : colors.textMuted },
+                  ]}
+                >
+                  {t(`alerts.filters.${filter.id}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </View>
+
+      <FilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        status={tab}
+        onStatusChange={setTab}
+      />
 
       <FlatList
         data={filtered}
         renderItem={renderItem}
-        keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         ItemSeparatorComponent={ItemSeparator}
         contentContainerStyle={[styles.list, filtered.length === 0 && styles.emptyList]}
         showsVerticalScrollIndicator={false}
@@ -117,30 +179,75 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  filterBar: {
+  chipRow: {
+    // flexGrow: 0 — without this the horizontal ScrollView fills the
+    // parent's available height and chip Pressables stretch vertically.
+    flex: 1,
+    flexGrow: 0,
+  },
+  chipRowContent: {
+    gap: 6,
+    alignItems: 'center',
+    // paddingLeft adds air after the parent row's gap so the first
+    // chip doesn't visually touch the Filter button.
+    paddingLeft: 4,
+    paddingRight: SPACING.screenH,
+  },
+  chip: {
+    height: 32,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  filterTopRow: {
     flexDirection: 'row',
-    gap: theme.spacing.xs,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.sm,
+    alignItems: 'center',
+    paddingHorizontal: SPACING.screenH,
+    paddingVertical: SPACING.subControlPadV,
+    marginBottom: SPACING.subControlBottom,
+    gap: 12,
   },
   filterButton: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 999,
   },
-  filterText: {
-    fontSize: theme.fontSize.sm,
+  filterButtonText: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.medium,
+  },
+  filterBadge: {
+    minWidth: 16,
+    height: 16,
+    borderRadius: 999,
+    paddingHorizontal: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    ...theme.font.semibold,
+  },
+  chipText: {
+    fontSize: theme.fontSize.xs,
     ...theme.font.medium,
   },
   list: {
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
   },
   separator: {
-    height: theme.spacing.md,
+    height: SPACING.cardGap,
   },
   emptyContainer: {
     flex: 1,

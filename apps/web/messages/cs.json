@@ -3,7 +3,8 @@
     "title": "Oznámení",
     "tabs": {
       "history": "Historie",
-      "reminders": "Připomínky"
+      "reminders": "Připomínky",
+      "events": "Události"
     },
     "filters": {
       "all": "Vše",

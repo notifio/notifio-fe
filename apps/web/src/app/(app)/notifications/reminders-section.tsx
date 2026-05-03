@@ -8,7 +8,6 @@ import type { PersonalReminder } from '@notifio/api-client';
 
 import { ProGate } from '@/components/app/pro-gate';
 import { ReminderFormModal } from '@/components/app/reminder-form-modal';
-import { useMembership } from '@/hooks/use-membership';
 import { useReminders } from '@/hooks/use-reminders';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +16,6 @@ import { ReminderListView } from './reminder-list-view';
 
 export function RemindersSection() {
   const t = useTranslations('notificationsPage');
-  const { isPro } = useMembership();
 
   const {
     reminders,
@@ -75,43 +73,45 @@ export function RemindersSection() {
 
   return (
     <div className="mt-6">
-      {/* Header with new reminder button */}
-      {isPro && (
-        <div className="mb-4 flex justify-end">
+      <ProGate requiredTier="PRO">
+        {/* Header row: List/Calendar toggle (left) + New reminder
+            button (right) on a single line. Both are PRO-only — the
+            ProGate wrapper covers them; the prior `isPro` extra check
+            on the button was redundant. */}
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1 rounded-full bg-card p-1">
+            <button
+              onClick={() => setRemView('list')}
+              className={cn(
+                'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
+                remView === 'list'
+                  ? 'bg-accent text-white'
+                  : 'text-text-secondary hover:text-text-primary',
+              )}
+            >
+              {t('reminders.viewList')}
+            </button>
+            <button
+              onClick={() => setRemView('calendar')}
+              className={cn(
+                'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
+                remView === 'calendar'
+                  ? 'bg-accent text-white'
+                  : 'text-text-secondary hover:text-text-primary',
+              )}
+            >
+              {t('reminders.viewCalendar')}
+            </button>
+          </div>
+
           <button
             onClick={() => openCreate()}
             className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent/90"
+            aria-label={t('reminders.newReminder')}
           >
             <IconPlus size={14} />
-            {t('reminders.newReminder')}
-          </button>
-        </div>
-      )}
-
-      <ProGate requiredTier="PRO">
-        {/* View toggle */}
-        <div className="flex items-center gap-1 rounded-full bg-card p-1">
-          <button
-            onClick={() => setRemView('list')}
-            className={cn(
-              'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
-              remView === 'list'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary',
-            )}
-          >
-            {t('reminders.viewList')}
-          </button>
-          <button
-            onClick={() => setRemView('calendar')}
-            className={cn(
-              'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
-              remView === 'calendar'
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:text-text-primary',
-            )}
-          >
-            {t('reminders.viewCalendar')}
+            {/* Below sm: icon-only at narrow widths to avoid clipping. */}
+            <span className="hidden sm:inline">{t('reminders.newReminder')}</span>
           </button>
         </div>
 

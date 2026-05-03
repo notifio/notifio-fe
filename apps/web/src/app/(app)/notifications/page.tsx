@@ -3,12 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import { EventsSection } from '@/app/(app)/profile/events-section';
 import { cn } from '@/lib/utils';
 
 import { HistorySection } from './history-section';
 import { RemindersSection } from './reminders-section';
 
-type Tab = 'history' | 'reminders';
+type Tab = 'history' | 'events' | 'reminders';
 
 export default function NotificationsPage() {
   const t = useTranslations('notificationsPage');
@@ -23,7 +24,7 @@ export default function NotificationsPage() {
 
       {/* Tab bar */}
       <div className="mt-6 flex border-b border-border">
-        {(['history', 'reminders'] as const).map((tab) => (
+        {(['history', 'events', 'reminders'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -44,6 +45,11 @@ export default function NotificationsPage() {
 
       {/* Tab content */}
       {activeTab === 'history' && <HistorySection />}
+      {activeTab === 'events' && (
+        <div className="mt-6">
+          <EventsSection />
+        </div>
+      )}
       {activeTab === 'reminders' && <RemindersSection />}
     </div>
   );
