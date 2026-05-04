@@ -8,6 +8,7 @@ import type { UserLocation } from '@notifio/api-client';
 
 import { LocationPickerModal } from '../../components/locations/location-picker-modal';
 import { EmptyState } from '../../components/ui/empty-state';
+import { FAB } from '../../components/ui/fab';
 import { Icon } from '../../components/ui/icon';
 import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
@@ -202,13 +203,7 @@ export default function LocationsScreen() {
         )}
 
         {/* Add button */}
-        <Pressable
-          onPress={handleAdd}
-          disabled={!canAddMore}
-          style={[styles.fab, { backgroundColor: canAddMore ? colors.primary : colors.textMuted }]}
-        >
-          <IconPlus size={24} color="#FFFFFF" />
-        </Pressable>
+        <FAB icon={IconPlus} onPress={handleAdd} disabled={!canAddMore} />
       </View>
 
       <LocationPickerModal
@@ -323,20 +318,5 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     padding: theme.spacing.xs,
-  },
-  fab: {
-    position: 'absolute',
-    right: theme.spacing.xl,
-    bottom: theme.spacing['2xl'],
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
   },
 });
