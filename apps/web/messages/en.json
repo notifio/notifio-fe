@@ -489,12 +489,49 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
-    "deleteConfirm": "Remove this threshold?"
+    "deleteConfirm": "Remove this threshold?",
+    "metric": {
+      "highTemperature": "High temperature",
+      "lowTemperature": "Low temperature",
+      "windSpeed": "Wind speed",
+      "rainfall": "Rainfall",
+      "snowfall": "Snowfall"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when the temperature exceeds this value.",
+        "severe": "Extreme heat",
+        "severeDescription": "Severe alert for extremely high temperatures."
+      },
+      "lowTemperature": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when the temperature drops below this value.",
+        "severe": "Frost",
+        "severeDescription": "Severe alert for extremely low temperatures."
+      },
+      "windSpeed": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when wind speed exceeds this value.",
+        "severe": "Severe wind",
+        "severeDescription": "Severe alert for strong winds."
+      },
+      "rainfall": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when rainfall exceeds this value.",
+        "severe": "Heavy rain",
+        "severeDescription": "Severe alert for intense rainfall."
+      },
+      "snowfall": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when snowfall exceeds this value.",
+        "severe": "Heavy snow",
+        "severeDescription": "Severe alert for intense snowfall."
+      }
+    },
+    "loadFailed": "Failed to load thresholds",
+    "saveFailed": "Failed to save threshold",
+    "deleteFailed": "Failed to delete threshold"
   },
   "event": {
     "status": {

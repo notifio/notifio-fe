@@ -227,12 +227,49 @@
     "addThreshold": "Přidat prahovou hodnotu",
     "selectType": "Vyber typ prahu",
     "saved": "Uloženo",
-    "tempHigh": "Vysoká teplota",
-    "tempLow": "Nízká teplota",
-    "windSpeed": "Rychlost větru",
-    "humidity": "Vlhkost",
-    "pressure": "Atmosférický tlak",
-    "deleteConfirm": "Odstranit tento práh?"
+    "deleteConfirm": "Odstranit tento práh?",
+    "metric": {
+      "highTemperature": "Vysoká teplota",
+      "lowTemperature": "Nízká teplota",
+      "windSpeed": "Rychlost větru",
+      "rainfall": "Srážky",
+      "snowfall": "Sněžení"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když teplota překročí tuto hodnotu.",
+        "severe": "Extrémní horko",
+        "severeDescription": "Závažná výstraha při extrémně vysokých teplotách."
+      },
+      "lowTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když teplota klesne pod tuto hodnotu.",
+        "severe": "Mráz",
+        "severeDescription": "Závažná výstraha při extrémně nízkých teplotách."
+      },
+      "windSpeed": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když rychlost větru překročí tuto hodnotu.",
+        "severe": "Silný vítr",
+        "severeDescription": "Závažná výstraha při silném větru."
+      },
+      "rainfall": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když srážky překročí tuto hodnotu.",
+        "severe": "Silný déšť",
+        "severeDescription": "Závažná výstraha při intenzivních srážkách."
+      },
+      "snowfall": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když sněžení překročí tuto hodnotu.",
+        "severe": "Husté sněžení",
+        "severeDescription": "Závažná výstraha při intenzivním sněžení."
+      }
+    },
+    "loadFailed": "Nepodařilo se načíst prahové hodnoty",
+    "saveFailed": "Nepodařilo se uložit prahovou hodnotu",
+    "deleteFailed": "Nepodařilo se odstranit prahovou hodnotu"
   },
   "event": {
     "status": {
