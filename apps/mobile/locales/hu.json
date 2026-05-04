@@ -241,7 +241,8 @@
       "school": "Iskola",
       "gym": "Edzőterem",
       "other": "Egyéb"
-    }
+    },
+    "savedLocationFallback": "Mentett hely"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",

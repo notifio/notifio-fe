@@ -253,7 +253,8 @@
       "school": "Школа",
       "gym": "Спортзал",
       "other": "Інше"
-    }
+    },
+    "savedLocationFallback": "Збережене місце"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",

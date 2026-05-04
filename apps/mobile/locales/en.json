@@ -241,7 +241,8 @@
       "school": "School",
       "gym": "Gym",
       "other": "Other"
-    }
+    },
+    "savedLocationFallback": "Saved location"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",

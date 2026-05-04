@@ -254,7 +254,8 @@
       "school": "Škola",
       "gym": "Posilovna",
       "other": "Jiné"
-    }
+    },
+    "savedLocationFallback": "Uložená lokace"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",

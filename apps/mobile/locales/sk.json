@@ -253,7 +253,8 @@
       "school": "Škola",
       "gym": "Telocvičňa",
       "other": "Iné"
-    }
+    },
+    "savedLocationFallback": "Uložená lokácia"
   },
   "notificationPreferences": {
     "title": "Nastavenia notifikácií",

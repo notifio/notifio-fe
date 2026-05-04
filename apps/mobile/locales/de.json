@@ -241,7 +241,8 @@
       "school": "Schule",
       "gym": "Fitnessstudio",
       "other": "Sonstige"
-    }
+    },
+    "savedLocationFallback": "Gespeicherter Ort"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
