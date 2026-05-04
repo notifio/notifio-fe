@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -17,6 +16,7 @@ import type { PersonalReminder } from '@notifio/api-client';
 
 import { ReminderFormModal } from './reminder-form-modal';
 import { useReminders } from '../../hooks/use-reminders';
+import { confirmDestructive } from '../../lib/confirm';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -62,14 +62,13 @@ export function ReminderList() {
 
   const handleDelete = useCallback(
     (item: PersonalReminder) => {
-      Alert.alert(t('reminders.delete'), t('reminders.deleteConfirm'), [
-        { text: t('common.ok'), style: 'cancel' },
-        {
-          text: t('reminders.delete'),
-          style: 'destructive',
-          onPress: () => deleteReminder(item.reminderId),
-        },
-      ]);
+      confirmDestructive({
+        t,
+        titleKey: 'reminders.delete',
+        descKey: 'reminders.deleteConfirm',
+        confirmKey: 'reminders.delete',
+        onConfirm: () => deleteReminder(item.reminderId),
+      });
     },
     [deleteReminder, t],
   );

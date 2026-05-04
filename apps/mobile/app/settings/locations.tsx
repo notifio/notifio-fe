@@ -2,7 +2,7 @@ import { IconCurrentLocation, IconHome, IconMapPin, IconPencil, IconPlus, IconRe
 import { Stack } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { UserLocation } from '@notifio/api-client';
 
@@ -10,6 +10,7 @@ import { LocationPickerModal } from '../../components/locations/location-picker-
 import { Icon } from '../../components/ui/icon';
 import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
+import { confirmDestructive } from '../../lib/confirm';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -42,10 +43,13 @@ export default function LocationsScreen() {
   }, []);
 
   const handleDelete = useCallback((loc: UserLocation) => {
-    Alert.alert(t('locations.deleteConfirmTitle'), t('locations.deleteConfirm'), [
-      { text: t('common.ok'), style: 'cancel' },
-      { text: t('locations.deleteLocation'), style: 'destructive', onPress: () => removeLocation(loc.locationId) },
-    ]);
+    confirmDestructive({
+      t,
+      titleKey: 'locations.deleteConfirmTitle',
+      descKey: 'locations.deleteConfirm',
+      confirmKey: 'locations.deleteLocation',
+      onConfirm: () => removeLocation(loc.locationId),
+    });
   }, [t, removeLocation]);
 
   const renderItem = useCallback(

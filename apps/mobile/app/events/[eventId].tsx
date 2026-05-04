@@ -1,7 +1,7 @@
 import { IconCheck, IconMapPin, IconTrash, IconX } from '@tabler/icons-react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 import { sharedColors } from '@notifio/ui';
@@ -11,6 +11,7 @@ import { Card } from '../../components/ui/card';
 import { Icon } from '../../components/ui/icon';
 import { SectionLabel } from '../../components/ui/section-label';
 import { useEventDetail } from '../../hooks/use-event-detail';
+import { confirmDestructive } from '../../lib/confirm';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -37,23 +38,29 @@ export default function EventDetailScreen() {
   } = useEventDetail(eventId!);
 
   const handleResolve = () => {
-    Alert.alert(t('eventDetail.owner.resolve'), t('eventDetail.owner.resolveConfirm'), [
-      { text: t('common.ok'), style: 'cancel' },
-      { text: t('eventDetail.owner.resolve'), onPress: async () => {
+    confirmDestructive({
+      t,
+      titleKey: 'eventDetail.owner.resolve',
+      descKey: 'eventDetail.owner.resolveConfirm',
+      confirmKey: 'eventDetail.owner.resolve',
+      onConfirm: async () => {
         const ok = await resolveEvent();
         if (ok) router.back();
-      }},
-    ]);
+      },
+    });
   };
 
   const handleDelete = () => {
-    Alert.alert(t('eventDetail.owner.delete'), t('eventDetail.owner.deleteConfirm'), [
-      { text: t('common.ok'), style: 'cancel' },
-      { text: t('eventDetail.owner.delete'), style: 'destructive', onPress: async () => {
+    confirmDestructive({
+      t,
+      titleKey: 'eventDetail.owner.delete',
+      descKey: 'eventDetail.owner.deleteConfirm',
+      confirmKey: 'eventDetail.owner.delete',
+      onConfirm: async () => {
         const ok = await removeEvent();
         if (ok) router.back();
-      }},
-    ]);
+      },
+    });
   };
 
   if (isLoading) {
