@@ -233,7 +233,7 @@
     "currentLoading": "Standort wird ermittelt…",
     "currentDenied": "Standortzugriff verweigert. In den Einstellungen erlauben.",
     "currentUnavailable": "Standort konnte nicht ermittelt werden. Erneut versuchen.",
-    "currentAccuracy": "Genauigkeit: ~{m} m",
+    "currentAccuracy": "Genauigkeit: ~{{m}} m",
     "savedTitle": "Gespeicherte Orte",
     "labels": {
       "home": "Zuhause",

@@ -245,7 +245,7 @@
     "currentLoading": "Визначаю місце…",
     "currentDenied": "Доступ до геолокації заборонено. Дозволь у налаштуваннях.",
     "currentUnavailable": "Не вдалося отримати місце. Спробуй ще раз.",
-    "currentAccuracy": "Точність: ~{m} м",
+    "currentAccuracy": "Точність: ~{{m}} м",
     "savedTitle": "Збережені місця",
     "labels": {
       "home": "Дім",

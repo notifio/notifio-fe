@@ -233,7 +233,7 @@
     "currentLoading": "Hely meghatározása…",
     "currentDenied": "A hely hozzáférés megtagadva. Engedélyezd a beállításokban.",
     "currentUnavailable": "A hely nem érhető el. Próbáld meg újra.",
-    "currentAccuracy": "Pontosság: ~{m} m",
+    "currentAccuracy": "Pontosság: ~{{m}} m",
     "savedTitle": "Mentett helyek",
     "labels": {
       "home": "Otthon",

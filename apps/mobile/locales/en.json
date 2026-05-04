@@ -233,7 +233,7 @@
     "currentLoading": "Detecting your location…",
     "currentDenied": "Location access denied. Open device settings to allow.",
     "currentUnavailable": "Unable to get a fix. Try again in a moment.",
-    "currentAccuracy": "Accuracy: ~{m} m",
+    "currentAccuracy": "Accuracy: ~{{m}} m",
     "savedTitle": "Saved locations",
     "labels": {
       "home": "Home",

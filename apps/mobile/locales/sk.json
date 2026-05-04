@@ -245,7 +245,7 @@
     "currentLoading": "Zisťujem polohu…",
     "currentDenied": "Prístup k polohe zamietnutý. Povol ho v nastaveniach.",
     "currentUnavailable": "Nepodarilo sa získať polohu. Skús to znova.",
-    "currentAccuracy": "Presnosť: ~{m} m",
+    "currentAccuracy": "Presnosť: ~{{m}} m",
     "savedTitle": "Uložené lokácie",
     "labels": {
       "home": "Domov",
