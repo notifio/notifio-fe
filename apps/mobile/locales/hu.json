@@ -497,5 +497,55 @@
       "errorTitle": "Bejelentkezési hiba",
       "goBack": "Vissza"
     }
+  },
+  "membership": {
+    "popular": "Legnépszerűbb",
+    "currentPlan": "Jelenlegi csomag",
+    "upgradeOnWeb": "Frissítés a weben →",
+    "manageOnWeb": "Kezelés a weben →",
+    "perMonth": "/hó",
+    "features": "Funkciók",
+    "free": {
+      "name": "Free",
+      "description": "Alapvető értesítések ingyen"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Több hely és haladó funkciók"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Teljes irányítás az értesítéseid felett"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 mentett hely",
+          "Időjárás- és levegőminőség-riasztások",
+          "Közlekedési események",
+          "Hálózati kimaradások",
+          "Reklámokkal"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 mentett hely",
+          "Minden Free funkció",
+          "Reklámmentes",
+          "Kiemelt értesítések",
+          "Egyedi értesítési hangok"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Korlátlan hely",
+          "Minden Plus funkció",
+          "Személyes emlékeztetők",
+          "Egyedi időjárási küszöbértékek",
+          "Forráspreferenciák kezelése",
+          "Kiemelt támogatás"
+        ]
+      }
+    }
   }
 }

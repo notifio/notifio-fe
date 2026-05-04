@@ -500,5 +500,55 @@
       "errorTitle": "Chyba přihlášení",
       "goBack": "Zpět"
     }
+  },
+  "membership": {
+    "popular": "Nejoblíbenější",
+    "currentPlan": "Aktuální plán",
+    "upgradeOnWeb": "Upgradovat na webu →",
+    "manageOnWeb": "Spravovat na webu →",
+    "perMonth": "/měsíc",
+    "features": "Funkce",
+    "free": {
+      "name": "Free",
+      "description": "Základní upozornění zdarma"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Více lokací a pokročilé funkce"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Plná kontrola nad notifikacemi"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 uložená lokace",
+          "Upozornění na počasí a kvalitu ovzduší",
+          "Dopravní události",
+          "Výpadky sítí",
+          "S reklamami"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 uložených lokací",
+          "Všechny funkce Free",
+          "Bez reklam",
+          "Prioritní notifikace",
+          "Vlastní zvuky upozornění"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Neomezené lokace",
+          "Všechny funkce Plus",
+          "Osobní připomenutí",
+          "Vlastní prahové hodnoty počasí",
+          "Volba preferovaných zdrojů",
+          "Prioritní podpora"
+        ]
+      }
+    }
   }
 }

@@ -497,5 +497,55 @@
       "errorTitle": "Sign In Error",
       "goBack": "Go back"
     }
+  },
+  "membership": {
+    "popular": "Most popular",
+    "currentPlan": "Current plan",
+    "upgradeOnWeb": "Upgrade on web →",
+    "manageOnWeb": "Manage on web →",
+    "perMonth": "/month",
+    "features": "Features",
+    "free": {
+      "name": "Free",
+      "description": "Get started with basic alerts"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "More locations and advanced features"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Full control over your notifications"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 saved location",
+          "Weather & air quality alerts",
+          "Traffic incidents",
+          "Utility outage alerts",
+          "Ad-supported"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 saved locations",
+          "All Free features",
+          "Ad-free experience",
+          "Priority notifications",
+          "Custom alert sounds"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Unlimited locations",
+          "All Plus features",
+          "Personal reminders",
+          "Custom weather thresholds",
+          "Source preference control",
+          "Priority support"
+        ]
+      }
+    }
   }
 }

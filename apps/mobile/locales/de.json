@@ -497,5 +497,55 @@
       "errorTitle": "Anmeldefehler",
       "goBack": "Zurück"
     }
+  },
+  "membership": {
+    "popular": "Am beliebtesten",
+    "currentPlan": "Aktueller Plan",
+    "upgradeOnWeb": "Im Web upgraden →",
+    "manageOnWeb": "Im Web verwalten →",
+    "perMonth": "/Monat",
+    "features": "Funktionen",
+    "free": {
+      "name": "Free",
+      "description": "Grundlegende Warnungen kostenlos"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Mehr Standorte und erweiterte Funktionen"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Volle Kontrolle über deine Benachrichtigungen"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 gespeicherter Standort",
+          "Wetter- und Luftqualitätswarnungen",
+          "Verkehrsereignisse",
+          "Versorgungsausfälle",
+          "Mit Werbung"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 gespeicherte Standorte",
+          "Alle Free-Funktionen",
+          "Werbefrei",
+          "Prioritätsbenachrichtigungen",
+          "Eigene Benachrichtigungstöne"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Unbegrenzte Standorte",
+          "Alle Plus-Funktionen",
+          "Persönliche Erinnerungen",
+          "Eigene Wetter-Schwellenwerte",
+          "Quellenpräferenzen",
+          "Prioritäts-Support"
+        ]
+      }
+    }
   }
 }
