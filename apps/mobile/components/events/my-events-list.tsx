@@ -8,6 +8,7 @@ import type { UserEvent } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
 import { useUserEvents } from '../../hooks/use-user-events';
+import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -19,7 +20,7 @@ function ItemSeparator() {
 
 export function MyEventsList() {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { events, isLoading, error, refresh, updateEvent, deleteEvent } = useUserEvents();
 
@@ -96,12 +97,7 @@ export function MyEventsList() {
               </View>
             </View>
             <Text style={[styles.meta, { color: colors.textMuted }]}>
-              {new Date(item.createdAt).toLocaleString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              {formatDateTime(item.createdAt, i18n.language)}
             </Text>
           </View>
 
@@ -129,7 +125,7 @@ export function MyEventsList() {
         </Pressable>
       );
     },
-    [colors, handlePress, handleResolve, confirmDelete, t],
+    [colors, handlePress, handleResolve, confirmDelete, t, i18n.language],
   );
 
   if (error) {

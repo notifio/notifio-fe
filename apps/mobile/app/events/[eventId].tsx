@@ -12,23 +12,14 @@ import { Icon } from '../../components/ui/icon';
 import { SectionLabel } from '../../components/ui/section-label';
 import { useEventDetail } from '../../hooks/use-event-detail';
 import { confirmDestructive } from '../../lib/confirm';
+import { formatDateTime } from '../../lib/format';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export default function EventDetailScreen() {
   const { colors, isDark } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
 
@@ -157,14 +148,14 @@ export default function EventDetailScreen() {
             )}
             <View style={styles.detailRow}>
               <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('eventDetail.details.reportedAt')}</Text>
-              <Text style={[styles.detailValue, { color: colors.text }]}>{formatDate(event.eventFrom)}</Text>
+              <Text style={[styles.detailValue, { color: colors.text }]}>{formatDateTime(event.eventFrom, i18n.language)}</Text>
             </View>
             {event.eventTo && (
               <View style={styles.detailRow}>
                 <Text style={[styles.detailLabel, { color: colors.textMuted }]}>
                   {isResolved ? t('eventDetail.details.resolvedAt') : t('eventDetail.details.expiresAt')}
                 </Text>
-                <Text style={[styles.detailValue, { color: colors.text }]}>{formatDate(event.eventTo)}</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>{formatDateTime(event.eventTo, i18n.language)}</Text>
               </View>
             )}
           </View>

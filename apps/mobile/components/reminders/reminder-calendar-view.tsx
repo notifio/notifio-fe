@@ -7,6 +7,7 @@ import { Calendar, type DateData } from 'react-native-calendars';
 import type { PersonalReminder } from '@notifio/api-client';
 
 import { useReminders } from '../../hooks/use-reminders';
+import { formatDateKey, formatDayHeader, formatTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -18,30 +19,6 @@ interface ReminderCalendarViewProps {
   onReminderPress?: (reminder: PersonalReminder) => void;
 }
 
-/**
- * Date → 'YYYY-MM-DD' (local time, react-native-calendars' expected
- * key format). Avoids the date-fns dep — same output as
- * date-fns.format(date, 'yyyy-MM-dd') in local TZ.
- */
-function ymd(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-/**
- * "PONDELOK 3. MÁJA" style header for the inline reminder list.
- * Uses native toLocaleDateString — locale comes from the active i18n
- * language so it follows the app's setting without a date-fns dep.
- */
-function formatDayHeader(iso: string, locale: string): string {
-  const d = new Date(`${iso}T00:00:00`);
-  const weekday = d.toLocaleDateString(locale, { weekday: 'long' });
-  const day = d.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
-  return `${weekday} ${day}`.toUpperCase();
-}
-
 export function ReminderCalendarView({
   selectedDate,
   onSelectedDateChange,
@@ -51,13 +28,10 @@ export function ReminderCalendarView({
   const { colors, isDark } = useAppTheme();
   const { reminders } = useReminders();
 
-  const todayKey = ymd(new Date());
-  const isToday = selectedDate === todayKey;
-
   const markedDates = useMemo(() => {
     const map: Record<string, { marked?: boolean; dotColor?: string; selected?: boolean; selectedColor?: string }> = {};
     for (const r of reminders) {
-      const key = ymd(new Date(r.triggerAt));
+      const key = formatDateKey(new Date(r.triggerAt));
       map[key] = { ...(map[key] ?? {}), marked: true, dotColor: colors.primary };
     }
     map[selectedDate] = { ...(map[selectedDate] ?? {}), selected: true, selectedColor: colors.primary };
@@ -65,14 +39,13 @@ export function ReminderCalendarView({
   }, [reminders, selectedDate, colors.primary]);
 
   const remindersOnSelectedDate = useMemo(
-    () => reminders.filter((r) => ymd(new Date(r.triggerAt)) === selectedDate),
+    () => reminders.filter((r) => formatDateKey(new Date(r.triggerAt)) === selectedDate),
     [reminders, selectedDate],
   );
 
   const calendarKey = isDark ? 'dark' : 'light';
 
-  const headerLabel = formatDayHeader(selectedDate, i18n.language);
-  const headerPrefix = isToday ? `${t('common.today').toUpperCase()} · ` : '';
+  const headerLabel = formatDayHeader(selectedDate, i18n.language, t('common.today'));
 
   return (
     <ScrollView
@@ -117,7 +90,7 @@ export function ReminderCalendarView({
       />
 
       <Text style={[styles.sectionHeader, { color: colors.textMuted }]} numberOfLines={1}>
-        {headerPrefix}{headerLabel}
+        {headerLabel}
       </Text>
 
       <View style={styles.dayList}>
@@ -143,9 +116,7 @@ export function ReminderCalendarView({
                   {r.title}
                 </Text>
                 <Text style={[styles.dayRowMeta, { color: colors.textMuted }]}>
-                  {new Date(r.triggerAt).toLocaleTimeString(undefined, {
-                    hour: '2-digit', minute: '2-digit',
-                  })}
+                  {formatTime(r.triggerAt, i18n.language)}
                 </Text>
               </View>
               {!r.enabled && (

@@ -17,25 +17,15 @@ import type { PersonalReminder } from '@notifio/api-client';
 import { ReminderFormModal } from './reminder-form-modal';
 import { useReminders } from '../../hooks/use-reminders';
 import { confirmDestructive } from '../../lib/confirm';
+import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
 
-function formatTriggerDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 export function ReminderList() {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     reminders,
     isLoading,
@@ -92,7 +82,7 @@ export function ReminderList() {
           </Text>
           <View style={styles.itemMeta}>
             <Text style={[styles.itemDate, { color: colors.textMuted }]}>
-              {formatTriggerDate(item.triggerAt)}
+              {formatDateTime(item.triggerAt, i18n.language)}
             </Text>
             {item.recurrence !== 'ONCE' && (
               <View style={[styles.badge, { backgroundColor: `${colors.primary}18` }]}>
@@ -111,7 +101,7 @@ export function ReminderList() {
         />
       </Pressable>
     ),
-    [colors, handleDelete, handleItemPress, t, toggleEnabled],
+    [colors, handleDelete, handleItemPress, t, i18n.language, toggleEnabled],
   );
 
   if (isLoading && reminders.length === 0) {
