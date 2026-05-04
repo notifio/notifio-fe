@@ -25,7 +25,7 @@ import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyl
 import { AqiIndicator } from './aqi-indicator';
 import { PollenChip, PollenDetailPanel } from './pollen-indicator';
 import { commonStyles } from '../../lib/common-styles';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 const WEATHER_ICON_MAP: Record<string, Icon> = {
@@ -43,13 +43,6 @@ const WEATHER_ICON_MAP: Record<string, Icon> = {
 
 function getWeatherIcon(iconName: string): Icon {
   return WEATHER_ICON_MAP[iconName] ?? IconTemperature;
-}
-
-function withOpacity(hexColor: string, opacity: number): string {
-  const alpha = Math.round(opacity * 255)
-    .toString(16)
-    .padStart(2, '0');
-  return `${hexColor}${alpha}`;
 }
 
 type ExpandedChip = 'aqi' | 'pollen' | null;

@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -17,24 +16,16 @@ import type { PersonalReminder } from '@notifio/api-client';
 
 import { ReminderFormModal } from './reminder-form-modal';
 import { useReminders } from '../../hooks/use-reminders';
+import { confirmDestructive } from '../../lib/confirm';
+import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-
-function formatTriggerDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+import { EmptyState } from '../ui/empty-state';
 
 export function ReminderList() {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     reminders,
     isLoading,
@@ -62,14 +53,13 @@ export function ReminderList() {
 
   const handleDelete = useCallback(
     (item: PersonalReminder) => {
-      Alert.alert(t('reminders.delete'), t('reminders.deleteConfirm'), [
-        { text: t('common.ok'), style: 'cancel' },
-        {
-          text: t('reminders.delete'),
-          style: 'destructive',
-          onPress: () => deleteReminder(item.reminderId),
-        },
-      ]);
+      confirmDestructive({
+        t,
+        titleKey: 'reminders.delete',
+        descKey: 'reminders.deleteConfirm',
+        confirmKey: 'reminders.delete',
+        onConfirm: () => deleteReminder(item.reminderId),
+      });
     },
     [deleteReminder, t],
   );
@@ -92,10 +82,10 @@ export function ReminderList() {
           </Text>
           <View style={styles.itemMeta}>
             <Text style={[styles.itemDate, { color: colors.textMuted }]}>
-              {formatTriggerDate(item.triggerAt)}
+              {formatDateTime(item.triggerAt, i18n.language)}
             </Text>
             {item.recurrence !== 'ONCE' && (
-              <View style={[styles.badge, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.badge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <Text style={[styles.badgeText, { color: colors.primary }]}>
                   {t(`reminders.recurrenceOptions.${item.recurrence}`)}
                 </Text>
@@ -106,12 +96,12 @@ export function ReminderList() {
         <Switch
           value={item.enabled}
           onValueChange={(val) => toggleEnabled(item.reminderId, val)}
-          trackColor={{ false: colors.border, true: `${colors.primary}66` }}
+          trackColor={{ false: colors.border, true: withOpacity(colors.primary, 0.4) }}
           thumbColor={item.enabled ? colors.primary : colors.textMuted}
         />
       </Pressable>
     ),
-    [colors, handleDelete, handleItemPress, t, toggleEnabled],
+    [colors, handleDelete, handleItemPress, t, i18n.language, toggleEnabled],
   );
 
   if (isLoading && reminders.length === 0) {
@@ -150,15 +140,11 @@ export function ReminderList() {
           />
         }
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <IconClock size={48} color={colors.textMuted} />
-            <Text style={[styles.emptyTitle, { color: colors.textMuted }]}>
-              {t('reminders.empty')}
-            </Text>
-            <Text style={[styles.emptyMessage, { color: colors.textMuted }]}>
-              {t('reminders.emptyMessage')}
-            </Text>
-          </View>
+          <EmptyState
+            icon={IconClock}
+            title={t('reminders.empty')}
+            message={t('reminders.emptyMessage')}
+          />
         }
       />
 
@@ -228,20 +214,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: theme.fontSize.xs,
     ...theme.font.medium,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  emptyTitle: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
-  },
-  emptyMessage: {
-    fontSize: theme.fontSize.sm,
-    textAlign: 'center',
   },
   errorText: {
     fontSize: theme.fontSize.md,

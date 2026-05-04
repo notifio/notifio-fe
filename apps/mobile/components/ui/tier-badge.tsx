@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { MembershipTier } from '@notifio/api-client';
 import { tierColors } from '@notifio/ui';
 
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 
 interface TierBadgeProps {
   tier: MembershipTier;
@@ -21,7 +21,7 @@ export function TierBadge({ tier, size = 'sm' }: TierBadgeProps) {
   const isSmall = size === 'sm';
 
   return (
-    <View style={[styles.badge, { backgroundColor: `${color}18` }, isSmall ? styles.sm : styles.md]}>
+    <View style={[styles.badge, { backgroundColor: withOpacity(color, 0.094) }, isSmall ? styles.sm : styles.md]}>
       <Text style={[styles.label, { color }, isSmall ? styles.labelSm : styles.labelMd]}>
         {tier}
       </Text>

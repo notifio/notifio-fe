@@ -2,15 +2,17 @@ import { IconCurrentLocation, IconHome, IconMapPin, IconPencil, IconPlus, IconRe
 import { Stack } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { UserLocation } from '@notifio/api-client';
 
 import { LocationPickerModal } from '../../components/locations/location-picker-modal';
+import { EmptyState } from '../../components/ui/empty-state';
 import { Icon } from '../../components/ui/icon';
 import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
-import { theme } from '../../lib/theme';
+import { confirmDestructive } from '../../lib/confirm';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 function formatCoord(lat: number, lng: number): string {
@@ -42,10 +44,13 @@ export default function LocationsScreen() {
   }, []);
 
   const handleDelete = useCallback((loc: UserLocation) => {
-    Alert.alert(t('locations.deleteConfirmTitle'), t('locations.deleteConfirm'), [
-      { text: t('common.ok'), style: 'cancel' },
-      { text: t('locations.deleteLocation'), style: 'destructive', onPress: () => removeLocation(loc.locationId) },
-    ]);
+    confirmDestructive({
+      t,
+      titleKey: 'locations.deleteConfirmTitle',
+      descKey: 'locations.deleteConfirm',
+      confirmKey: 'locations.deleteLocation',
+      onConfirm: () => removeLocation(loc.locationId),
+    });
   }, [t, removeLocation]);
 
   const renderItem = useCallback(
@@ -63,7 +68,7 @@ export default function LocationsScreen() {
                   {displayLabel}
                 </Text>
                 {isHome && (
-                  <View style={[styles.homeBadge, { backgroundColor: `${colors.primary}18` }]}>
+                  <View style={[styles.homeBadge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                     <IconHome size={12} color={colors.primary} />
                   </View>
                 )}
@@ -187,15 +192,11 @@ export default function LocationsScreen() {
               </View>
             }
             ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Icon icon={IconMapPin} size={48} color={colors.textMuted} />
-                <Text style={[styles.emptyTitle, { color: colors.text }]}>
-                  {t('locations.emptyTitle')}
-                </Text>
-                <Text style={[styles.emptyMessage, { color: colors.textMuted }]}>
-                  {t('locations.emptyMessage')}
-                </Text>
-              </View>
+              <EmptyState
+                icon={IconMapPin}
+                title={t('locations.emptyTitle')}
+                message={t('locations.emptyMessage')}
+              />
             }
           />
         )}
@@ -322,20 +323,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     padding: theme.spacing.xs,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  emptyTitle: {
-    fontSize: theme.fontSize.lg,
-    ...theme.font.bold,
-  },
-  emptyMessage: {
-    fontSize: theme.fontSize.md,
-    textAlign: 'center',
   },
   fab: {
     position: 'absolute',

@@ -7,7 +7,8 @@ import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native
 import type { WeatherWarning, WeatherWarningSeverity } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
-import { theme } from '../../lib/theme';
+import { formatTime } from '../../lib/format';
+import { theme, withOpacity } from '../../lib/theme';
 
 const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
   red: 3,
@@ -27,14 +28,6 @@ const SEVERITY_TEXT: Record<WeatherWarningSeverity, string> = {
   yellow: '#78350F',
 };
 
-function formatTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } catch {
-    return '';
-  }
-}
-
 interface WeatherWarningsBannerProps {
   warnings: WeatherWarning[];
 }
@@ -42,7 +35,7 @@ interface WeatherWarningsBannerProps {
 export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) {
 
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   if (warnings.length === 0) return null;
@@ -81,7 +74,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
             {top.headline}
           </Text>
           <Text style={[styles.time, { color: textColor }]}>
-            {formatTime(top.validUntil)}
+            {formatTime(top.validUntil, i18n.language)}
           </Text>
           {sorted.length > 1 && (
             <View style={styles.badge}>
@@ -95,14 +88,14 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
 
         {/* Expanded detail */}
         {expanded && (
-          <View style={[styles.detail, { borderTopColor: `${textColor}26` }]}>
+          <View style={[styles.detail, { borderTopColor: withOpacity(textColor, 0.15) }]}>
             {top.description ? (
               <Text style={[styles.description, { color: textColor }]}>
                 {top.description}
               </Text>
             ) : null}
             <Text style={[styles.source, { color: textColor }]}>
-              {top.provider} · {t('weatherWarnings.validUntil')} {formatTime(top.validUntil)}
+              {top.provider} · {t('weatherWarnings.validUntil')} {formatTime(top.validUntil, i18n.language)}
             </Text>
           </View>
         )}

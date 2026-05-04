@@ -4,6 +4,7 @@ import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'reac
 
 import { MAP_PIN_STYLES, SOURCE_REQUIRED_TIER } from '../../lib/map-pin-config';
 import type { MapPinSource } from '../../lib/normalize-pins';
+import { withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -54,7 +55,7 @@ export function UpsellSheet({ source, onClose }: UpsellSheetProps) {
           </Pressable>
 
           <View style={styles.headerRow}>
-            <View style={[styles.iconWrap, { backgroundColor: `${style.color}29` }]}>
+            <View style={[styles.iconWrap, { backgroundColor: withOpacity(style.color, 0.16) }]}>
               <Icon size={22} color={style.color} strokeWidth={2.2} />
             </View>
             <View style={styles.titleColumn}>
@@ -100,7 +101,7 @@ function TierBadgePill({ tier }: { tier: 'PLUS' | 'PRO' }) {
   return (
     <View
       style={{
-        backgroundColor: `${color}29`,
+        backgroundColor: withOpacity(color, 0.16),
         paddingHorizontal: 8,
         paddingVertical: 2,
         borderRadius: 4,

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useMembership } from '../../hooks/use-membership';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -39,7 +39,7 @@ export function UpsellCard() {
         styles.container,
         {
           borderColor: colors.primary,
-          backgroundColor: `${colors.primary}0D`,
+          backgroundColor: withOpacity(colors.primary, 0.05),
         },
       ]}
     >

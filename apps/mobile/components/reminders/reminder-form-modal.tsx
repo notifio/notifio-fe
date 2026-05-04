@@ -16,6 +16,7 @@ import {
 
 import type { CreatePersonalReminderInput, PersonalReminder, ReminderRecurrence, UpdatePersonalReminderInput } from '@notifio/api-client';
 
+import { formatDate, formatTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -44,7 +45,7 @@ export function ReminderFormModal({
   defaultDate,
 }: ReminderFormModalProps) {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [title, setTitle] = useState(editReminder?.title ?? '');
   const [description, setDescription] = useState(editReminder?.description ?? '');
@@ -115,16 +116,8 @@ export function ReminderFormModal({
     }
   };
 
-  const formattedDate = date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-
-  const formattedTime = date.toLocaleTimeString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const formattedDate = formatDate(date.toISOString(), i18n.language);
+  const formattedTime = formatTime(date.toISOString(), i18n.language);
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">

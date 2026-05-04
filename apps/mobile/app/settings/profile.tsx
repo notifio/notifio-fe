@@ -7,24 +7,13 @@ import { TierBadge } from '../../components/ui/tier-badge';
 import { useAuth } from '../../hooks/use-auth';
 import { useMembership } from '../../hooks/use-membership';
 import { useProfile } from '../../hooks/use-profile';
+import { formatDate } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export default function ProfileScreen() {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { profile, isLoading, error, refetch } = useProfile();
   const { tier } = useMembership();
@@ -81,7 +70,7 @@ export default function ProfileScreen() {
               {profile?.createdAt && (
                 <View style={styles.detailRow}>
                   <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('settings.profileMemberSince')}</Text>
-                  <Text style={[styles.detailValue, { color: colors.text }]}>{formatDate(profile.createdAt)}</Text>
+                  <Text style={[styles.detailValue, { color: colors.text }]}>{formatDate(profile.createdAt, i18n.language)}</Text>
                 </View>
               )}
             </View>

@@ -8,10 +8,11 @@ import type { UserEvent } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
 import { useUserEvents } from '../../hooks/use-user-events';
+import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-import { Icon } from '../ui/icon';
+import { EmptyState } from '../ui/empty-state';
 
 function ItemSeparator() {
   return <View style={styles.separator} />;
@@ -19,7 +20,7 @@ function ItemSeparator() {
 
 export function MyEventsList() {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { events, isLoading, error, refresh, updateEvent, deleteEvent } = useUserEvents();
 
@@ -96,12 +97,7 @@ export function MyEventsList() {
               </View>
             </View>
             <Text style={[styles.meta, { color: colors.textMuted }]}>
-              {new Date(item.createdAt).toLocaleString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              {formatDateTime(item.createdAt, i18n.language)}
             </Text>
           </View>
 
@@ -129,13 +125,13 @@ export function MyEventsList() {
         </Pressable>
       );
     },
-    [colors, handlePress, handleResolve, confirmDelete, t],
+    [colors, handlePress, handleResolve, confirmDelete, t, i18n.language],
   );
 
   if (error) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: colors.danger }]}>{error}</Text>
+      <View style={styles.errorContainer}>
+        <Text style={[styles.errorText, { color: colors.danger }]}>{error}</Text>
       </View>
     );
   }
@@ -159,12 +155,7 @@ export function MyEventsList() {
         isLoading ? (
           <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
         ) : (
-          <View style={styles.emptyContainer}>
-            <Icon icon={IconAlertTriangle} size={48} color={colors.textMuted} />
-            <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-              {t('reminders.tabs.eventsEmpty')}
-            </Text>
-          </View>
+          <EmptyState icon={IconAlertTriangle} message={t('reminders.tabs.eventsEmpty')} />
         )
       }
     />
@@ -229,13 +220,13 @@ const styles = StyleSheet.create({
   meta: {
     fontSize: theme.fontSize.xs,
   },
-  emptyContainer: {
+  errorContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     gap: theme.spacing.md,
   },
-  emptyText: {
+  errorText: {
     fontSize: theme.fontSize.md,
     textAlign: 'center',
   },
