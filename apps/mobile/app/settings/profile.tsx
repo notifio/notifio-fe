@@ -6,7 +6,10 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { TierBadge } from '../../components/ui/tier-badge';
 import { useAuth } from '../../hooks/use-auth';
 import { useMembership } from '../../hooks/use-membership';
+import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { useProfile } from '../../hooks/use-profile';
+import { useReminders } from '../../hooks/use-reminders';
+import { useUserEvents } from '../../hooks/use-user-events';
 import { formatDate } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -17,6 +20,15 @@ export default function ProfileScreen() {
   const { user } = useAuth();
   const { profile, isLoading, error, refetch } = useProfile();
   const { tier } = useMembership();
+
+  // Stats row — three lifetime/active counts shown after the details
+  // card. Each hook owns its own loading state; we display "—" while
+  // pending so the row doesn't lie about a fresh account.
+  const { total: notificationsTotal, isLoading: notificationsLoading } = useNotificationHistory();
+  const { events, isLoading: eventsLoading } = useUserEvents();
+  const { reminders, isLoading: remindersLoading } = useReminders();
+  const eventsCount = events.length;
+  const remindersActive = reminders.filter((r) => r.enabled).length;
 
   const displayName =
     user?.user_metadata?.full_name ??
@@ -74,10 +86,43 @@ export default function ProfileScreen() {
                 </View>
               )}
             </View>
+
+            {/* Stats row */}
+            <View style={[styles.statsRow, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <StatCell
+                value={notificationsLoading ? '—' : notificationsTotal}
+                label={t('profile.stats.notifications')}
+              />
+              <View style={[styles.statsDivider, { backgroundColor: colors.border }]} />
+              <StatCell
+                value={eventsLoading ? '—' : eventsCount}
+                label={t('profile.stats.events')}
+              />
+              <View style={[styles.statsDivider, { backgroundColor: colors.border }]} />
+              <StatCell
+                value={remindersLoading ? '—' : remindersActive}
+                label={t('profile.stats.reminders')}
+              />
+            </View>
           </View>
         )}
       </View>
     </>
+  );
+}
+
+function StatCell({ value, label }: { value: number | string; label: string }) {
+  const { colors } = useAppTheme();
+  return (
+    <View style={styles.statCell}>
+      <Text style={[styles.statValue, { color: colors.text }]}>{value}</Text>
+      <Text
+        style={[styles.statLabel, { color: colors.textMuted }]}
+        numberOfLines={2}
+      >
+        {label}
+      </Text>
+    </View>
   );
 }
 
@@ -155,5 +200,33 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: theme.fontSize.sm,
     ...theme.font.medium,
+  },
+  statsRow: {
+    marginTop: theme.spacing.lg,
+    width: '100%',
+    flexDirection: 'row',
+    borderRadius: theme.radius.xl,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  statsDivider: {
+    width: StyleSheet.hairlineWidth,
+  },
+  statCell: {
+    flex: 1,
+    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.sm,
+    alignItems: 'center',
+    gap: 4,
+  },
+  statValue: {
+    fontSize: 24,
+    ...theme.font.semibold,
+  },
+  statLabel: {
+    fontSize: 11,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });

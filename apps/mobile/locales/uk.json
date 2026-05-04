@@ -54,7 +54,12 @@
     "theme": "Theme",
     "themeSystem": "System",
     "signOut": "Sign out",
-    "version": "Version"
+    "version": "Version",
+    "stats": {
+      "notifications": "Отримані сповіщення",
+      "events": "Повідомлені події",
+      "reminders": "Активні нагадування"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifications",
@@ -240,7 +245,7 @@
     "currentLoading": "Визначаю місце…",
     "currentDenied": "Доступ до геолокації заборонено. Дозволь у налаштуваннях.",
     "currentUnavailable": "Не вдалося отримати місце. Спробуй ще раз.",
-    "currentAccuracy": "Точність: ~{m} м",
+    "currentAccuracy": "Точність: ~{{m}} м",
     "savedTitle": "Збережені місця",
     "labels": {
       "home": "Дім",
@@ -248,7 +253,8 @@
       "school": "Школа",
       "gym": "Спортзал",
       "other": "Інше"
-    }
+    },
+    "savedLocationFallback": "Збережене місце"
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -406,14 +412,48 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Не встановлено",
-    "invalidValue": "Введіть дійсне число"
+    "invalidValue": "Введіть дійсне число",
+    "metric": {
+      "highTemperature": "Висока температура",
+      "lowTemperature": "Низька температура",
+      "windSpeed": "Швидкість вітру",
+      "rainfall": "Опади",
+      "snowfall": "Снігопад"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли температура перевищує це значення.",
+        "severe": "Екстремальна спека",
+        "severeDescription": "Серйозне попередження при надзвичайно високих температурах."
+      },
+      "lowTemperature": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли температура опускається нижче цього значення.",
+        "severe": "Мороз",
+        "severeDescription": "Серйозне попередження при надзвичайно низьких температурах."
+      },
+      "windSpeed": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли швидкість вітру перевищує це значення.",
+        "severe": "Сильний вітер",
+        "severeDescription": "Серйозне попередження при сильному вітрі."
+      },
+      "rainfall": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли опади перевищують це значення.",
+        "severe": "Сильний дощ",
+        "severeDescription": "Серйозне попередження при інтенсивних опадах."
+      },
+      "snowfall": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли снігопад перевищує це значення.",
+        "severe": "Сильний снігопад",
+        "severeDescription": "Серйозне попередження при інтенсивному снігопаді."
+      }
+    }
   },
   "event": {
     "status": {
@@ -495,5 +535,92 @@
       "errorTitle": "Помилка входу",
       "goBack": "Назад"
     }
+  },
+  "membership": {
+    "popular": "Найпопулярніший",
+    "currentPlan": "Поточний план",
+    "upgradeOnWeb": "Поліпшити в інтернеті →",
+    "manageOnWeb": "Керувати в інтернеті →",
+    "perMonth": "/місяць",
+    "features": "Функції",
+    "free": {
+      "name": "Free",
+      "description": "Базові сповіщення безкоштовно"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Більше локацій та розширені функції"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Повний контроль над сповіщеннями"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 збережена локація",
+          "Сповіщення про погоду та якість повітря",
+          "Дорожні події",
+          "Відключення мереж",
+          "З рекламою"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 збережених локацій",
+          "Усі функції Free",
+          "Без реклами",
+          "Пріоритетні сповіщення",
+          "Власні звуки сповіщень"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Необмежена кількість локацій",
+          "Усі функції Plus",
+          "Особисті нагадування",
+          "Власні порогові значення погоди",
+          "Налаштування пріоритетних джерел",
+          "Пріоритетна підтримка"
+        ]
+      }
+    }
+  },
+  "sourcePreferences": {
+    "title": "Бажані джерела",
+    "description": "Встанови бажане джерело даних для кожної категорії. Джерело з найвищим пріоритетом використовуватиметься першим.",
+    "onlySource": "Єдине доступне джерело",
+    "auto": "Автоматично (за рейтингом спільноти)",
+    "saved": "Збережено",
+    "reorderHint": "Використовуйте стрілки для зміни порядку",
+    "moveUp": "Перемістити вгору",
+    "moveDown": "Перемістити вниз",
+    "upsellTitle": "Для PRO учасників",
+    "upsellDescription": "Оберіть власний порядок джерел сповіщень.",
+    "viewPlans": "Переглянути плани"
+  },
+  "about": {
+    "tagline": "Гіперлокальні сповіщення для Словаччини",
+    "version": "Версія",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Юридичне",
+      "privacy": "Політика конфіденційності",
+      "terms": "Умови використання"
+    },
+    "support": {
+      "section": "Підтримка",
+      "contact": "Зв'язатися з підтримкою"
+    },
+    "dataSources": {
+      "section": "Джерела даних",
+      "intro": "Notifio використовує дані від цих постачальників:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Зроблено з",
+      "after": "у Словаччині"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }

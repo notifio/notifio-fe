@@ -1,4 +1,8 @@
 import type {
+  UserPreferencesResponse,
+  UpdatePreferencesRequest,
+} from './preferences-sprint2.js';
+import type {
   WeatherResponse,
   TrafficResponse,
   TrafficFlowResponse,
@@ -11,8 +15,6 @@ import type {
   UserLocationsResponse,
   CreateLocationBody,
   UpdateLocationBody,
-  UserPreferencesResponse,
-  UpdatePreferencesRequest,
   MembershipDetails,
   RegisterDeviceBody,
   DeviceRegistrationResponse,
@@ -66,8 +68,6 @@ export type {
   UserLocationsResponse,
   CreateLocationBody,
   UpdateLocationBody,
-  UserPreferencesResponse,
-  UpdatePreferencesRequest,
   MembershipDetails,
   RegisterDeviceBody,
   DeviceRegistrationResponse,
@@ -78,13 +78,26 @@ export type {
   ApiResponse,
 } from './shared-types.js';
 
+// Sprint 2 augmentation — sendNotifications/showOnMap split + per-location
+// override + top-level QuietHours. preferences-sprint2.ts extends the base
+// shared types; we re-export under the original names so all consumers see
+// the augmented shape via a single `import type { ... } from '@notifio/api-client'`
+// path. Drop this block when @notifio/shared publishes the matching schema
+// bump and the types come from ./shared-types.js again.
+export type {
+  UserPreferencesResponse,
+  UpdatePreferencesRequest,
+  UpdatePreferenceItem,
+  NotificationPreferenceItem,
+  NotificationCategoryResponse,
+  QuietHours,
+} from './preferences-sprint2.js';
+
 // Re-export shared enums/types that apps may need
 export type {
   LocationLabel,
   MembershipTier,
   Platform,
-  NotificationPreferenceItem,
-  NotificationCategoryResponse,
   NotificationDeliveryStatus,
   NotificationTrigger,
   AlertCategory,

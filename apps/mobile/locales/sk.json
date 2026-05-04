@@ -54,7 +54,12 @@
     "theme": "Téma",
     "themeSystem": "Systém",
     "signOut": "Odhlásiť sa",
-    "version": "Verzia"
+    "version": "Verzia",
+    "stats": {
+      "notifications": "Prijaté notifikácie",
+      "events": "Nahlásené udalosti",
+      "reminders": "Aktívne pripomienky"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifikácie",
@@ -240,7 +245,7 @@
     "currentLoading": "Zisťujem polohu…",
     "currentDenied": "Prístup k polohe zamietnutý. Povol ho v nastaveniach.",
     "currentUnavailable": "Nepodarilo sa získať polohu. Skús to znova.",
-    "currentAccuracy": "Presnosť: ~{m} m",
+    "currentAccuracy": "Presnosť: ~{{m}} m",
     "savedTitle": "Uložené lokácie",
     "labels": {
       "home": "Domov",
@@ -248,7 +253,8 @@
       "school": "Škola",
       "gym": "Telocvičňa",
       "other": "Iné"
-    }
+    },
+    "savedLocationFallback": "Uložená lokácia"
   },
   "notificationPreferences": {
     "title": "Nastavenia notifikácií",
@@ -406,14 +412,48 @@
     "addThreshold": "Pridať prahovú hodnotu",
     "selectType": "Vyberte typ prahovej hodnoty",
     "saved": "Uložené",
-    "tempHigh": "Vysoká teplota",
-    "tempLow": "Nízka teplota",
-    "windSpeed": "Rýchlosť vetra",
-    "humidity": "Vlhkosť",
-    "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstrániť túto prahovú hodnotu?",
     "notSet": "Nenastavené",
-    "invalidValue": "Zadajte platné číslo"
+    "invalidValue": "Zadajte platné číslo",
+    "metric": {
+      "highTemperature": "Vysoká teplota",
+      "lowTemperature": "Nízka teplota",
+      "windSpeed": "Rýchlosť vetra",
+      "rainfall": "Zrážky",
+      "snowfall": "Sneženie"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď teplota presiahne túto hodnotu.",
+        "severe": "Extrémne teplo",
+        "severeDescription": "Závažná výstraha pri extrémne vysokých teplotách."
+      },
+      "lowTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď teplota klesne pod túto hodnotu.",
+        "severe": "Mráz",
+        "severeDescription": "Závažná výstraha pri extrémne nízkych teplotách."
+      },
+      "windSpeed": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď rýchlosť vetra presiahne túto hodnotu.",
+        "severe": "Silný vietor",
+        "severeDescription": "Závažná výstraha pri silnom vetre."
+      },
+      "rainfall": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď zrážky presiahnu túto hodnotu.",
+        "severe": "Silný dážď",
+        "severeDescription": "Závažná výstraha pri intenzívnych zrážkach."
+      },
+      "snowfall": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď sneženie presiahne túto hodnotu.",
+        "severe": "Husté sneženie",
+        "severeDescription": "Závažná výstraha pri intenzívnom snežení."
+      }
+    }
   },
   "event": {
     "status": {
@@ -494,5 +534,92 @@
       "errorTitle": "Chyba prihlásenia",
       "goBack": "Späť"
     }
+  },
+  "membership": {
+    "popular": "Najobľúbenejší",
+    "currentPlan": "Aktuálny plán",
+    "upgradeOnWeb": "Vylepšiť na webe →",
+    "manageOnWeb": "Spravovať na webe →",
+    "perMonth": "/mesiac",
+    "features": "Funkcie",
+    "free": {
+      "name": "Free",
+      "description": "Základné upozornenia zadarmo"
+    },
+    "plus": {
+      "name": "Plus",
+      "description": "Viac lokácií a pokročilé funkcie"
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Plná kontrola nad notifikáciami"
+    },
+    "tiers": {
+      "FREE": {
+        "features": [
+          "1 uložená lokácia",
+          "Upozornenia na počasie a kvalitu ovzdušia",
+          "Dopravné udalosti",
+          "Výpadky sietí",
+          "S reklamami"
+        ]
+      },
+      "PLUS": {
+        "features": [
+          "5 uložených lokácií",
+          "Všetky funkcie Free",
+          "Bez reklám",
+          "Prioritné notifikácie",
+          "Vlastné zvuky upozornení"
+        ]
+      },
+      "PRO": {
+        "features": [
+          "Neobmedzené lokácie",
+          "Všetky funkcie Plus",
+          "Osobné pripomienky",
+          "Vlastné prahové hodnoty počasia",
+          "Voľba preferovaných zdrojov",
+          "Prioritná podpora"
+        ]
+      }
+    }
+  },
+  "sourcePreferences": {
+    "title": "Preferované zdroje",
+    "description": "Nastavte preferovaný zdroj dát pre každú kategóriu. Zdroj s najvyššou prioritou bude použitý prednostne.",
+    "onlySource": "Jediný dostupný zdroj",
+    "auto": "Auto (podľa hodnotení komunity)",
+    "saved": "Uložené",
+    "reorderHint": "Použite šípky na zmenu poradia",
+    "moveUp": "Posunúť hore",
+    "moveDown": "Posunúť dole",
+    "upsellTitle": "Pre PRO členov",
+    "upsellDescription": "Vyberte si vlastné poradie zdrojov notifikácií.",
+    "viewPlans": "Zobraziť plány"
+  },
+  "about": {
+    "tagline": "Hyperlokálne upozornenia pre Slovensko",
+    "version": "Verzia",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Právne",
+      "privacy": "Zásady ochrany osobných údajov",
+      "terms": "Podmienky používania"
+    },
+    "support": {
+      "section": "Podpora",
+      "contact": "Kontaktovať podporu"
+    },
+    "dataSources": {
+      "section": "Zdroje údajov",
+      "intro": "Notifio používa údaje od týchto poskytovateľov:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Vyrobené s",
+      "after": "na Slovensku"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }
