@@ -11,6 +11,7 @@ import { useMembership } from '../../hooks/use-membership';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
+import { TogglePill } from '../ui/toggle-pill';
 
 const SLOVAKIA_REGION: Region = {
   latitude: 48.67,
@@ -152,25 +153,12 @@ export function LocationPickerModal({
         {/* Label pills */}
         <View style={styles.labelRow}>
           {LABEL_VALUES.map((value) => (
-            <Pressable
+            <TogglePill
               key={value}
+              active={label === value}
+              label={t(`locations.labels.${value}`)}
               onPress={() => setLabel(value)}
-              style={[
-                styles.labelPill,
-                label === value
-                  ? { backgroundColor: colors.primary }
-                  : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.labelPillText,
-                  { color: label === value ? colors.textInverse : colors.text },
-                ]}
-              >
-                {t(`locations.labels.${value}`)}
-              </Text>
-            </Pressable>
+            />
           ))}
         </View>
 
@@ -270,15 +258,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: theme.spacing.sm,
-  },
-  labelPill: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radius.full,
-  },
-  labelPillText: {
-    fontSize: theme.fontSize.xs,
-    ...theme.font.medium,
   },
   input: {
     height: 44,
