@@ -22,6 +22,12 @@ function formatCoord(lat: number, lng: number): string {
   return `${Math.abs(lat).toFixed(3)}°${ns}, ${Math.abs(lng).toFixed(3)}°${ew}`;
 }
 
+const KNOWN_LABEL_CODES = ['home', 'work', 'school', 'gym', 'other'] as const;
+type KnownLabelCode = (typeof KNOWN_LABEL_CODES)[number];
+function isKnownLabelCode(code: unknown): code is KnownLabelCode {
+  return typeof code === 'string' && (KNOWN_LABEL_CODES as readonly string[]).includes(code);
+}
+
 export default function LocationsScreen() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
@@ -56,13 +62,19 @@ export default function LocationsScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: UserLocation }) => {
-      // Fall back to local i18n keys when BE returns an empty label.name
-      // (defense in depth — list shouldn't render blank if BE locale data
-      // is incomplete). Priority: customLabel → BE label.name → local key.
+      // Priority chain — first non-empty wins:
+      //   1. customLabel (user free-text, PRO/PLUS only)
+      //   2. BE-supplied label.name (when populated)
+      //   3. local i18n locations.labels.{code} for known codes
+      //   4. savedLocationFallback (when code is unknown/undefined or
+      //      missing — avoids rendering literal "locations.labels.undefined")
+      const code = item.label?.code;
+      const codeKey = isKnownLabelCode(code)
+        ? t(`locations.labels.${code}`)
+        : t('locations.savedLocationFallback');
       const displayLabel =
-        item.customLabel ??
-        (item.label.name?.trim() || t(`locations.labels.${item.label.code}`));
-      const isHome = item.label.code === 'home';
+        item.customLabel ?? (item.label?.name?.trim() || codeKey);
+      const isHome = code === 'home';
 
       return (
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
