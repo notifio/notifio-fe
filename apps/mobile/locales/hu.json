@@ -400,14 +400,34 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nincs beállítva",
-    "invalidValue": "Adjon meg érvényes számot"
+    "invalidValue": "Adjon meg érvényes számot",
+    "metric": {
+      "highTemperature": "Magas hőmérséklet",
+      "lowTemperature": "Alacsony hőmérséklet",
+      "windSpeed": "Szélsebesség"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Figyelmeztetés",
+        "warningDescription": "Első szintű riasztás, ha a hőmérséklet meghaladja ezt az értéket.",
+        "severe": "Extrém hőség",
+        "severeDescription": "Súlyos riasztás extrém magas hőmérsékletek esetén."
+      },
+      "lowTemperature": {
+        "warning": "Figyelmeztetés",
+        "warningDescription": "Első szintű riasztás, ha a hőmérséklet ez alá az érték alá csökken.",
+        "severe": "Fagy",
+        "severeDescription": "Súlyos riasztás extrém alacsony hőmérsékletek esetén."
+      },
+      "windSpeed": {
+        "warning": "Figyelmeztetés",
+        "warningDescription": "Első szintű riasztás, ha a szélsebesség meghaladja ezt az értéket.",
+        "severe": "Erős szél",
+        "severeDescription": "Súlyos riasztás erős szél esetén."
+      }
+    }
   },
   "event": {
     "status": {

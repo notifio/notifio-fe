@@ -412,14 +412,34 @@
     "addThreshold": "Pridať prahovú hodnotu",
     "selectType": "Vyberte typ prahovej hodnoty",
     "saved": "Uložené",
-    "tempHigh": "Vysoká teplota",
-    "tempLow": "Nízka teplota",
-    "windSpeed": "Rýchlosť vetra",
-    "humidity": "Vlhkosť",
-    "pressure": "Atmosférický tlak",
     "deleteConfirm": "Odstrániť túto prahovú hodnotu?",
     "notSet": "Nenastavené",
-    "invalidValue": "Zadajte platné číslo"
+    "invalidValue": "Zadajte platné číslo",
+    "metric": {
+      "highTemperature": "Vysoká teplota",
+      "lowTemperature": "Nízka teplota",
+      "windSpeed": "Rýchlosť vetra"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď teplota presiahne túto hodnotu.",
+        "severe": "Extrémne teplo",
+        "severeDescription": "Závažná výstraha pri extrémne vysokých teplotách."
+      },
+      "lowTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď teplota klesne pod túto hodnotu.",
+        "severe": "Mráz",
+        "severeDescription": "Závažná výstraha pri extrémne nízkych teplotách."
+      },
+      "windSpeed": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď rýchlosť vetra presiahne túto hodnotu.",
+        "severe": "Silný vietor",
+        "severeDescription": "Závažná výstraha pri silnom vetre."
+      }
+    }
   },
   "event": {
     "status": {

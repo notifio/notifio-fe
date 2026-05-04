@@ -412,14 +412,34 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Не встановлено",
-    "invalidValue": "Введіть дійсне число"
+    "invalidValue": "Введіть дійсне число",
+    "metric": {
+      "highTemperature": "Висока температура",
+      "lowTemperature": "Низька температура",
+      "windSpeed": "Швидкість вітру"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли температура перевищує це значення.",
+        "severe": "Екстремальна спека",
+        "severeDescription": "Серйозне попередження при надзвичайно високих температурах."
+      },
+      "lowTemperature": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли температура опускається нижче цього значення.",
+        "severe": "Мороз",
+        "severeDescription": "Серйозне попередження при надзвичайно низьких температурах."
+      },
+      "windSpeed": {
+        "warning": "Попередження",
+        "warningDescription": "Перший рівень сповіщення, коли швидкість вітру перевищує це значення.",
+        "severe": "Сильний вітер",
+        "severeDescription": "Серйозне попередження при сильному вітрі."
+      }
+    }
   },
   "event": {
     "status": {

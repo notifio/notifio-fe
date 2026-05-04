@@ -400,14 +400,34 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nicht festgelegt",
-    "invalidValue": "Gültige Zahl eingeben"
+    "invalidValue": "Gültige Zahl eingeben",
+    "metric": {
+      "highTemperature": "Hohe Temperatur",
+      "lowTemperature": "Niedrige Temperatur",
+      "windSpeed": "Windgeschwindigkeit"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Warnung",
+        "warningDescription": "Erste Warnstufe, wenn die Temperatur diesen Wert überschreitet.",
+        "severe": "Extreme Hitze",
+        "severeDescription": "Schwere Warnung bei extrem hohen Temperaturen."
+      },
+      "lowTemperature": {
+        "warning": "Warnung",
+        "warningDescription": "Erste Warnstufe, wenn die Temperatur unter diesen Wert fällt.",
+        "severe": "Frost",
+        "severeDescription": "Schwere Warnung bei extrem niedrigen Temperaturen."
+      },
+      "windSpeed": {
+        "warning": "Warnung",
+        "warningDescription": "Erste Warnstufe, wenn die Windgeschwindigkeit diesen Wert überschreitet.",
+        "severe": "Starker Wind",
+        "severeDescription": "Schwere Warnung bei starkem Wind."
+      }
+    }
   },
   "event": {
     "status": {

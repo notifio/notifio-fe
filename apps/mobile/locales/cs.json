@@ -413,14 +413,34 @@
     "addThreshold": "Add threshold",
     "selectType": "Select threshold type",
     "saved": "Saved",
-    "tempHigh": "High temperature",
-    "tempLow": "Low temperature",
-    "windSpeed": "Wind speed",
-    "humidity": "Humidity",
-    "pressure": "Atmospheric pressure",
     "deleteConfirm": "Remove this threshold?",
     "notSet": "Nenastaveno",
-    "invalidValue": "Zadejte platné číslo"
+    "invalidValue": "Zadejte platné číslo",
+    "metric": {
+      "highTemperature": "Vysoká teplota",
+      "lowTemperature": "Nízká teplota",
+      "windSpeed": "Rychlost větru"
+    },
+    "tier": {
+      "highTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když teplota překročí tuto hodnotu.",
+        "severe": "Extrémní horko",
+        "severeDescription": "Závažná výstraha při extrémně vysokých teplotách."
+      },
+      "lowTemperature": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když teplota klesne pod tuto hodnotu.",
+        "severe": "Mráz",
+        "severeDescription": "Závažná výstraha při extrémně nízkých teplotách."
+      },
+      "windSpeed": {
+        "warning": "Výstraha",
+        "warningDescription": "První úroveň upozornění, když rychlost větru překročí tuto hodnotu.",
+        "severe": "Silný vítr",
+        "severeDescription": "Závažná výstraha při silném větru."
+      }
+    }
   },
   "event": {
     "status": {
