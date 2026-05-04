@@ -14,6 +14,7 @@ import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
+import { TogglePill } from '../ui/toggle-pill';
 
 const GPS_DELTA = 0.01;
 
@@ -120,15 +121,15 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
       <View style={[styles.upsellIcon, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
         <IconCrown size={24} color={colors.primary} />
       </View>
-      <Text style={[styles.upsellTitle, { color: colors.text }]}>PLUS Feature</Text>
+      <Text style={[styles.upsellTitle, { color: colors.text }]}>{t('eventReport.upsell.title')}</Text>
       <Text style={[styles.upsellDesc, { color: colors.textMuted }]}>
-        Event reporting requires a PLUS subscription.
+        {t('eventReport.upsell.description')}
       </Text>
       <Pressable
-        onPress={() => showToast.info('Coming soon', 'Upgrade will be available soon.')}
+        onPress={() => showToast.info(t('common.comingSoon'), t('upsell.upgradeSoon'))}
         style={[styles.upsellButton, { backgroundColor: colors.primary }]}
       >
-        <Text style={[styles.upsellButtonText, { color: colors.textInverse }]}>Upgrade</Text>
+        <Text style={[styles.upsellButtonText, { color: colors.textInverse }]}>{t('eventReport.upsell.cta')}</Text>
       </Pressable>
     </View>
   );
@@ -219,25 +220,14 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
           {t('eventReport.radius')}
         </Text>
         <View style={styles.radiusRow}>
-          {RADIUS_STEPS.map((step, idx) => {
-            const isActive = idx === radiusIdx;
-            return (
-              <Pressable
-                key={step}
-                onPress={() => setRadiusIdx(idx)}
-                style={[
-                  styles.radiusPill,
-                  isActive
-                    ? { backgroundColor: colors.primary }
-                    : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
-                ]}
-              >
-                <Text style={[styles.radiusPillText, { color: isActive ? colors.textInverse : colors.text }]}>
-                  {formatRadius(step)}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {RADIUS_STEPS.map((step, idx) => (
+            <TogglePill
+              key={step}
+              active={idx === radiusIdx}
+              label={formatRadius(step)}
+              onPress={() => setRadiusIdx(idx)}
+            />
+          ))}
         </View>
       </View>
     </FullScreenModal>
@@ -335,15 +325,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: theme.spacing.sm,
-  },
-  radiusPill: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radius.full,
-  },
-  radiusPillText: {
-    fontSize: theme.fontSize.xs,
-    ...theme.font.medium,
   },
   submitButton: {
     flexDirection: 'row',

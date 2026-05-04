@@ -36,7 +36,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "done": "Done",
-    "today": "Today"
+    "today": "Today",
+    "close": "Close"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -188,7 +189,9 @@
     "deleting": "Scheduling deletion...",
     "scheduled": "Deletion scheduled",
     "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
-    "error": "Failed to process request"
+    "error": "Failed to process request",
+    "cancelSuccess": "Account deletion cancelled",
+    "cancelError": "Failed to cancel deletion"
   },
   "dataExport": {
     "title": "Export My Data",
@@ -226,7 +229,14 @@
     "currentDenied": "Location access denied. Open device settings to allow.",
     "currentUnavailable": "Unable to get a fix. Try again in a moment.",
     "currentAccuracy": "Accuracy: ~{m} m",
-    "savedTitle": "Saved locations"
+    "savedTitle": "Saved locations",
+    "labels": {
+      "home": "Home",
+      "work": "Work",
+      "school": "School",
+      "gym": "Gym",
+      "other": "Other"
+    }
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -265,8 +275,10 @@
       "delete": "Delete event",
       "deleteConfirm": "Permanently delete this event?",
       "deleted": "Event deleted",
-      "error": "Failed to update event"
-    }
+      "error": "Failed to update event",
+      "sectionTitle": "Owner Actions"
+    },
+    "notFound": "Event not found"
   },
   "eventReport": {
     "title": "Report an Event",
@@ -276,7 +288,12 @@
     "submit": "Report Event",
     "submitting": "Reporting...",
     "success": "Event reported successfully",
-    "error": "Failed to report event"
+    "error": "Failed to report event",
+    "upsell": {
+      "title": "PLUS Feature",
+      "description": "Event reporting requires a PLUS subscription.",
+      "cta": "Upgrade"
+    }
   },
   "digest": {
     "title": "Notification Digest",
@@ -428,7 +445,9 @@
   "map": {
     "activeIncidents_one": "1 active incident nearby",
     "activeIncidents_other": "{{count}} active incidents nearby",
-    "noActiveIncidents": "No active incidents in this area"
+    "noActiveIncidents": "No active incidents in this area",
+    "refreshing": "Refreshing...",
+    "loadingData": "Loading map data..."
   },
   "nav": {
     "overview": "Overview",
@@ -449,6 +468,21 @@
     "confirmDelete": {
       "title": "Delete report?",
       "description": "This action cannot be undone."
+    }
+  },
+  "auth": {
+    "welcome": {
+      "title": "Welcome to Notifio",
+      "description": "Real-time alerts for your area — weather, traffic, outages, and more.",
+      "getStarted": "Get Started",
+      "alreadyHaveAccount": "I already have an account"
+    },
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to your Notifio account to continue.",
+      "signIn": "Sign In",
+      "errorTitle": "Sign In Error",
+      "goBack": "Go back"
     }
   }
 }

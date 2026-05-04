@@ -17,6 +17,7 @@ import { formatDate, formatTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
+import { TogglePill } from '../ui/toggle-pill';
 
 interface ReminderFormModalProps {
   visible: boolean;
@@ -260,31 +261,14 @@ export function ReminderFormModal({
             {t('reminders.recurrence')}
           </Text>
           <View style={styles.pillRow}>
-            {RECURRENCE_OPTIONS.map((option) => {
-              const isActive = recurrence === option;
-              return (
-                <Pressable
-                  key={option}
-                  onPress={() => setRecurrence(option)}
-                  style={[
-                    styles.pill,
-                    {
-                      backgroundColor: isActive ? colors.primary : 'transparent',
-                      borderColor: colors.border,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.pillText,
-                      { color: isActive ? colors.background : colors.textMuted },
-                    ]}
-                  >
-                    {t(`reminders.recurrenceOptions.${option}`)}
-                  </Text>
-                </Pressable>
-              );
-            })}
+            {RECURRENCE_OPTIONS.map((option) => (
+              <TogglePill
+                key={option}
+                active={recurrence === option}
+                label={t(`reminders.recurrenceOptions.${option}`)}
+                onPress={() => setRecurrence(option)}
+              />
+            ))}
           </View>
         </View>
       </View>
@@ -336,16 +320,6 @@ const styles = StyleSheet.create({
   pillRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
-  },
-  pill: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-  },
-  pillText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
   },
   saveButton: {
     borderRadius: theme.radius.lg,

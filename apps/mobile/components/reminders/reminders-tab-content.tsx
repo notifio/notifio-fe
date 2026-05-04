@@ -10,6 +10,7 @@ import { useReminders } from '../../hooks/use-reminders';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { FAB } from '../ui/fab';
 
 type ViewMode = 'list' | 'calendar';
 
@@ -85,12 +86,7 @@ export function RemindersTabContent() {
 
       {/* FAB — parent-level, visible on both List and Calendar views.
           Tapping it opens the create-only ReminderFormModal below. */}
-      <Pressable
-        onPress={() => setShowCreateForm(true)}
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-      >
-        <IconPlus size={24} color={colors.textInverse} />
-      </Pressable>
+      <FAB icon={IconPlus} onPress={() => setShowCreateForm(true)} />
 
       <ReminderFormModal
         visible={showCreateForm}
@@ -127,20 +123,5 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: theme.fontSize.xs,
     ...theme.font.medium,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: SPACING.fabBottom,
-    right: SPACING.fabRight,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
 });

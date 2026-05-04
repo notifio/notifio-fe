@@ -13,6 +13,7 @@ import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
+import { TogglePill } from '../ui/toggle-pill';
 
 type TabFilter = 'active' | 'ended' | 'all';
 
@@ -105,32 +106,14 @@ export function AlertList({ onAlertPress }: AlertListProps) {
           contentContainerStyle={styles.chipRowContent}
           style={styles.chipRow}
         >
-          {CATEGORY_FILTERS.map((filter) => {
-            const active = categoryFilter === filter.id;
-            return (
-              <Pressable
-                key={filter.id}
-                onPress={() => setCategoryFilter(filter.id)}
-                style={[
-                  styles.chip,
-                  {
-                    backgroundColor: active ? colors.primary : 'transparent',
-                    borderColor: active ? colors.primary : colors.border,
-                  },
-                ]}
-              >
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    styles.chipText,
-                    { color: active ? '#FFFFFF' : colors.textMuted },
-                  ]}
-                >
-                  {t(`alerts.filters.${filter.id}`)}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {CATEGORY_FILTERS.map((filter) => (
+            <TogglePill
+              key={filter.id}
+              active={categoryFilter === filter.id}
+              label={t(`alerts.filters.${filter.id}`)}
+              onPress={() => setCategoryFilter(filter.id)}
+            />
+          ))}
         </ScrollView>
       </View>
 
@@ -188,14 +171,6 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     paddingRight: SPACING.screenH,
   },
-  chip: {
-    height: 32,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: 999,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
   filterTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -229,10 +204,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 10,
     ...theme.font.semibold,
-  },
-  chipText: {
-    fontSize: theme.fontSize.xs,
-    ...theme.font.medium,
   },
   list: {
     paddingHorizontal: SPACING.screenH,

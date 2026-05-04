@@ -36,7 +36,8 @@
     "cancel": "Zrušit",
     "delete": "Smazat",
     "done": "Hotovo",
-    "today": "Dnes"
+    "today": "Dnes",
+    "close": "Zavřít"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -201,7 +202,9 @@
     "deleting": "Scheduling deletion...",
     "scheduled": "Deletion scheduled",
     "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
-    "error": "Failed to process request"
+    "error": "Failed to process request",
+    "cancelSuccess": "Mazání účtu zrušeno",
+    "cancelError": "Nepodařilo se zrušit mazání"
   },
   "dataExport": {
     "title": "Export My Data",
@@ -239,7 +242,14 @@
     "currentDenied": "Přístup k poloze zamítnut. Povol ho v nastavení.",
     "currentUnavailable": "Nepodařilo se získat polohu. Zkus to znovu.",
     "currentAccuracy": "Přesnost: ~{m} m",
-    "savedTitle": "Uložené lokace"
+    "savedTitle": "Uložené lokace",
+    "labels": {
+      "home": "Domov",
+      "work": "Práce",
+      "school": "Škola",
+      "gym": "Posilovna",
+      "other": "Jiné"
+    }
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -278,8 +288,10 @@
       "delete": "Delete event",
       "deleteConfirm": "Permanently delete this event?",
       "deleted": "Event deleted",
-      "error": "Failed to update event"
-    }
+      "error": "Failed to update event",
+      "sectionTitle": "Akce vlastníka"
+    },
+    "notFound": "Událost nenalezena"
   },
   "eventReport": {
     "title": "Report an Event",
@@ -289,7 +301,12 @@
     "submit": "Report Event",
     "submitting": "Reporting...",
     "success": "Event reported successfully",
-    "error": "Failed to report event"
+    "error": "Failed to report event",
+    "upsell": {
+      "title": "Funkce PLUS",
+      "description": "Nahlašování událostí vyžaduje předplatné PLUS.",
+      "cta": "Vylepšit"
+    }
   },
   "digest": {
     "title": "Notification Digest",
@@ -442,7 +459,9 @@
     "activeIncidents_one": "1 aktivní událost v okolí",
     "activeIncidents_few": "{{count}} aktivní události v okolí",
     "activeIncidents_other": "{{count}} aktivních událostí v okolí",
-    "noActiveIncidents": "V této oblasti nejsou žádné aktivní události"
+    "noActiveIncidents": "V této oblasti nejsou žádné aktivní události",
+    "refreshing": "Obnovuji...",
+    "loadingData": "Načítám mapu..."
   },
   "nav": {
     "overview": "Přehled",
@@ -452,6 +471,21 @@
     "confirmDelete": {
       "title": "Smazat hlášení?",
       "description": "Tuto akci nelze vrátit zpět."
+    }
+  },
+  "auth": {
+    "welcome": {
+      "title": "Vítejte v Notifio",
+      "description": "Upozornění v reálném čase pro vaši oblast — počasí, doprava, výpadky a další.",
+      "getStarted": "Začít",
+      "alreadyHaveAccount": "Už mám účet"
+    },
+    "login": {
+      "title": "Vítejte zpět",
+      "description": "Přihlaste se do svého účtu Notifio a pokračujte.",
+      "signIn": "Přihlásit se",
+      "errorTitle": "Chyba přihlášení",
+      "goBack": "Zpět"
     }
   }
 }

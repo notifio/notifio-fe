@@ -30,9 +30,9 @@ export default function TabLayout() {
   const handleCancelDeletion = async () => {
     try {
       await cancelDeletion();
-      showToast.success('Account deletion cancelled');
+      showToast.success(t('deletion.cancelSuccess'));
     } catch {
-      showToast.error('Failed to cancel deletion');
+      showToast.error(t('deletion.cancelError'));
     }
   };
 
