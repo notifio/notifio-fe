@@ -406,7 +406,9 @@
     "metric": {
       "highTemperature": "Hohe Temperatur",
       "lowTemperature": "Niedrige Temperatur",
-      "windSpeed": "Windgeschwindigkeit"
+      "windSpeed": "Windgeschwindigkeit",
+      "rainfall": "Niederschlag",
+      "snowfall": "Schneefall"
     },
     "tier": {
       "highTemperature": {
@@ -426,6 +428,18 @@
         "warningDescription": "Erste Warnstufe, wenn die Windgeschwindigkeit diesen Wert überschreitet.",
         "severe": "Starker Wind",
         "severeDescription": "Schwere Warnung bei starkem Wind."
+      },
+      "rainfall": {
+        "warning": "Warnung",
+        "warningDescription": "Erste Warnstufe, wenn der Niederschlag diesen Wert überschreitet.",
+        "severe": "Starkregen",
+        "severeDescription": "Schwere Warnung bei intensivem Niederschlag."
+      },
+      "snowfall": {
+        "warning": "Warnung",
+        "warningDescription": "Erste Warnstufe, wenn der Schneefall diesen Wert überschreitet.",
+        "severe": "Starker Schneefall",
+        "severeDescription": "Schwere Warnung bei intensivem Schneefall."
       }
     }
   },

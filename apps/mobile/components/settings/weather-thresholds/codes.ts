@@ -1,10 +1,15 @@
-import { IconTemperature, IconWind } from '@tabler/icons-react-native';
+import { IconCloudRain, IconSnowflake, IconTemperature, IconWind } from '@tabler/icons-react-native';
 
 import type { TablerIcon } from '../../ui/icon';
 
 export type WeatherThresholdTier = 'warning' | 'severe';
 
-export type WeatherMetric = 'highTemperature' | 'lowTemperature' | 'windSpeed';
+export type WeatherMetric =
+  | 'highTemperature'
+  | 'lowTemperature'
+  | 'windSpeed'
+  | 'rainfall'
+  | 'snowfall';
 
 export interface WeatherThresholdMetricConfig {
   metric: WeatherMetric;
@@ -67,6 +72,32 @@ export const WEATHER_THRESHOLD_METRICS: readonly WeatherThresholdMetricConfig[] 
     tiers: {
       warning: { code: 'wind_warning', labelKey: 'windSpeed.warning' },
       severe: { code: 'severe_wind_warning', labelKey: 'windSpeed.severe' },
+    },
+  },
+  {
+    metric: 'rainfall',
+    icon: IconCloudRain,
+    unit: 'mm/h',
+    min: 1,
+    max: 50,
+    step: 1,
+    defaults: { warning: 10, severe: 25 },
+    tiers: {
+      warning: { code: 'rain_warning', labelKey: 'rainfall.warning' },
+      severe: { code: 'heavy_rain_warning', labelKey: 'rainfall.severe' },
+    },
+  },
+  {
+    metric: 'snowfall',
+    icon: IconSnowflake,
+    unit: 'cm/h',
+    min: 1,
+    max: 30,
+    step: 1,
+    defaults: { warning: 5, severe: 15 },
+    tiers: {
+      warning: { code: 'snow_warning', labelKey: 'snowfall.warning' },
+      severe: { code: 'heavy_snow_warning', labelKey: 'snowfall.severe' },
     },
   },
 ] as const;

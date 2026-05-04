@@ -418,7 +418,9 @@
     "metric": {
       "highTemperature": "Vysoká teplota",
       "lowTemperature": "Nízka teplota",
-      "windSpeed": "Rýchlosť vetra"
+      "windSpeed": "Rýchlosť vetra",
+      "rainfall": "Zrážky",
+      "snowfall": "Sneženie"
     },
     "tier": {
       "highTemperature": {
@@ -438,6 +440,18 @@
         "warningDescription": "Prvá úroveň upozornenia, keď rýchlosť vetra presiahne túto hodnotu.",
         "severe": "Silný vietor",
         "severeDescription": "Závažná výstraha pri silnom vetre."
+      },
+      "rainfall": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď zrážky presiahnu túto hodnotu.",
+        "severe": "Silný dážď",
+        "severeDescription": "Závažná výstraha pri intenzívnych zrážkach."
+      },
+      "snowfall": {
+        "warning": "Výstraha",
+        "warningDescription": "Prvá úroveň upozornenia, keď sneženie presiahne túto hodnotu.",
+        "severe": "Husté sneženie",
+        "severeDescription": "Závažná výstraha pri intenzívnom snežení."
       }
     }
   },

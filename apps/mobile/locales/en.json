@@ -406,7 +406,9 @@
     "metric": {
       "highTemperature": "High temperature",
       "lowTemperature": "Low temperature",
-      "windSpeed": "Wind speed"
+      "windSpeed": "Wind speed",
+      "rainfall": "Rainfall",
+      "snowfall": "Snowfall"
     },
     "tier": {
       "highTemperature": {
@@ -426,6 +428,18 @@
         "warningDescription": "First-tier alert when wind speed exceeds this value.",
         "severe": "Severe wind",
         "severeDescription": "Severe alert for strong winds."
+      },
+      "rainfall": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when rainfall exceeds this value.",
+        "severe": "Heavy rain",
+        "severeDescription": "Severe alert for intense rainfall."
+      },
+      "snowfall": {
+        "warning": "Warning",
+        "warningDescription": "First-tier alert when snowfall exceeds this value.",
+        "severe": "Heavy snow",
+        "severeDescription": "Severe alert for intense snowfall."
       }
     }
   },

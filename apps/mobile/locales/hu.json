@@ -406,7 +406,9 @@
     "metric": {
       "highTemperature": "Magas hőmérséklet",
       "lowTemperature": "Alacsony hőmérséklet",
-      "windSpeed": "Szélsebesség"
+      "windSpeed": "Szélsebesség",
+      "rainfall": "Csapadék",
+      "snowfall": "Hóesés"
     },
     "tier": {
       "highTemperature": {
@@ -426,6 +428,18 @@
         "warningDescription": "Első szintű riasztás, ha a szélsebesség meghaladja ezt az értéket.",
         "severe": "Erős szél",
         "severeDescription": "Súlyos riasztás erős szél esetén."
+      },
+      "rainfall": {
+        "warning": "Figyelmeztetés",
+        "warningDescription": "Első szintű riasztás, ha a csapadék meghaladja ezt az értéket.",
+        "severe": "Erős eső",
+        "severeDescription": "Súlyos riasztás intenzív csapadék esetén."
+      },
+      "snowfall": {
+        "warning": "Figyelmeztetés",
+        "warningDescription": "Első szintű riasztás, ha a hóesés meghaladja ezt az értéket.",
+        "severe": "Heves havazás",
+        "severeDescription": "Súlyos riasztás intenzív havazás esetén."
       }
     }
   },
