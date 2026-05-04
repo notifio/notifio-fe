@@ -595,5 +595,29 @@
     "upsellTitle": "Für PRO-Mitglieder",
     "upsellDescription": "Wähle deine eigene Reihenfolge der Benachrichtigungsquellen.",
     "viewPlans": "Pläne anzeigen"
+  },
+  "about": {
+    "tagline": "Hyperlokale Warnmeldungen für die Slowakei",
+    "version": "Version",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Rechtliches",
+      "privacy": "Datenschutzerklärung",
+      "terms": "Nutzungsbedingungen"
+    },
+    "support": {
+      "section": "Support",
+      "contact": "Support kontaktieren"
+    },
+    "dataSources": {
+      "section": "Datenquellen",
+      "intro": "Notifio nutzt Daten dieser Anbieter:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Hergestellt mit",
+      "after": "in der Slowakei"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }

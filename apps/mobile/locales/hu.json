@@ -595,5 +595,29 @@
     "upsellTitle": "PRO tagoknak",
     "upsellDescription": "Válaszd ki saját értesítésforrás-sorrended.",
     "viewPlans": "Csomagok megtekintése"
+  },
+  "about": {
+    "tagline": "Hiperlokális értesítések Szlovákiához",
+    "version": "Verzió",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Jogi információk",
+      "privacy": "Adatvédelmi szabályzat",
+      "terms": "Felhasználási feltételek"
+    },
+    "support": {
+      "section": "Támogatás",
+      "contact": "Kapcsolat a támogatással"
+    },
+    "dataSources": {
+      "section": "Adatforrások",
+      "intro": "A Notifio a következő szolgáltatóktól használ adatokat:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Készült Szlovákiában",
+      "after": ""
+    },
+    "copyright": "© 2026 Notifio"
   }
 }

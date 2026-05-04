@@ -595,5 +595,29 @@
     "upsellTitle": "For PRO members",
     "upsellDescription": "Choose your own notification source order.",
     "viewPlans": "View plans"
+  },
+  "about": {
+    "tagline": "Hyperlocal alerts for Slovakia",
+    "version": "Version",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "support": {
+      "section": "Support",
+      "contact": "Contact support"
+    },
+    "dataSources": {
+      "section": "Data sources",
+      "intro": "Notifio uses data from these providers:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Made with",
+      "after": "in Slovakia"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }

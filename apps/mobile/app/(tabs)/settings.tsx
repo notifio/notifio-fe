@@ -57,9 +57,6 @@ export default function SettingsScreen() {
     });
   };
 
-  const pushPlaceholder = (title: string) =>
-    router.push({ pathname: '/settings/placeholder', params: { title } });
-
   return (
     <ScreenLayout scrollable header={<ScreenHeader title={t('settings.title')} />}>
       {/* Profile summary */}
@@ -121,7 +118,7 @@ export default function SettingsScreen() {
       {/* App */}
       <SectionLabel label={t('settings.app')} />
       <Card>
-        <SettingsRow icon={IconInfoCircle} label={t('settings.about')} value="0.1.0" onPress={() => pushPlaceholder(t('settings.about'))} />
+        <SettingsRow icon={IconInfoCircle} label={t('settings.about')} onPress={() => router.push('/settings/about')} />
         <SettingsRow icon={IconLogout} label={t('auth.signOut')} danger onPress={handleSignOut} />
       </Card>
 

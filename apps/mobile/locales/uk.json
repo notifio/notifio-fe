@@ -598,5 +598,29 @@
     "upsellTitle": "Для PRO учасників",
     "upsellDescription": "Оберіть власний порядок джерел сповіщень.",
     "viewPlans": "Переглянути плани"
+  },
+  "about": {
+    "tagline": "Гіперлокальні сповіщення для Словаччини",
+    "version": "Версія",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Юридичне",
+      "privacy": "Політика конфіденційності",
+      "terms": "Умови використання"
+    },
+    "support": {
+      "section": "Підтримка",
+      "contact": "Зв'язатися з підтримкою"
+    },
+    "dataSources": {
+      "section": "Джерела даних",
+      "intro": "Notifio використовує дані від цих постачальників:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Зроблено з",
+      "after": "у Словаччині"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }

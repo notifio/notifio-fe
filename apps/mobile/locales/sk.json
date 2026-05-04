@@ -597,5 +597,29 @@
     "upsellTitle": "Pre PRO členov",
     "upsellDescription": "Vyberte si vlastné poradie zdrojov notifikácií.",
     "viewPlans": "Zobraziť plány"
+  },
+  "about": {
+    "tagline": "Hyperlokálne upozornenia pre Slovensko",
+    "version": "Verzia",
+    "build": "Build {{build}}",
+    "legal": {
+      "section": "Právne",
+      "privacy": "Zásady ochrany osobných údajov",
+      "terms": "Podmienky používania"
+    },
+    "support": {
+      "section": "Podpora",
+      "contact": "Kontaktovať podporu"
+    },
+    "dataSources": {
+      "section": "Zdroje údajov",
+      "intro": "Notifio používa údaje od týchto poskytovateľov:",
+      "providers": "SHMÚ · MeteoAlarm · OpenWeatherMap · Open-Meteo · Google Maps · TomTom · ZSE · SSE · VSE · BVS · SPP"
+    },
+    "madeIn": {
+      "before": "Vyrobené s",
+      "after": "na Slovensku"
+    },
+    "copyright": "© 2026 Notifio"
   }
 }
