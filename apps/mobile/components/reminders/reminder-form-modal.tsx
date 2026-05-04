@@ -1,13 +1,10 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { IconX } from '@tabler/icons-react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -19,6 +16,7 @@ import type { CreatePersonalReminderInput, PersonalReminder, ReminderRecurrence,
 import { formatDate, formatTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { FullScreenModal } from '../ui/fullscreen-modal';
 
 interface ReminderFormModalProps {
   visible: boolean;
@@ -119,208 +117,182 @@ export function ReminderFormModal({
   const formattedDate = formatDate(date.toISOString(), i18n.language);
   const formattedTime = formatTime(date.toISOString(), i18n.language);
 
+  const footer = (
+    <Pressable
+      onPress={handleSave}
+      disabled={!canSave || saving}
+      style={[
+        styles.saveButton,
+        { backgroundColor: canSave ? colors.primary : colors.border },
+      ]}
+    >
+      {saving ? (
+        <ActivityIndicator size="small" color={colors.textInverse} />
+      ) : (
+        <Text style={[styles.saveText, { color: colors.textInverse }]}>
+          {saving ? t('reminders.saving') : t('reminders.save')}
+        </Text>
+      )}
+    </Pressable>
+  );
+
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View style={[styles.modal, { backgroundColor: colors.background }]}>
-        {/* Header */}
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            {isEditing ? t('reminders.edit') : t('reminders.create')}
+    <FullScreenModal
+      visible={visible}
+      onClose={onClose}
+      title={isEditing ? t('reminders.edit') : t('reminders.create')}
+      footer={footer}
+    >
+      <View style={styles.bodyContent}>
+        {/* Title */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>
+            {t('reminders.titleLabel')}
           </Text>
-          <Pressable onPress={onClose} hitSlop={8}>
-            <IconX size={24} color={colors.textMuted} />
-          </Pressable>
+          <TextInput
+            style={[
+              styles.input,
+              {
+                color: colors.text,
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
+            value={title}
+            onChangeText={setTitle}
+            placeholder={t('reminders.titlePlaceholder')}
+            placeholderTextColor={colors.textMuted}
+          />
         </View>
 
-        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
-          {/* Title */}
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>
-              {t('reminders.titleLabel')}
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  color: colors.text,
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                },
-              ]}
-              value={title}
-              onChangeText={setTitle}
-              placeholder={t('reminders.titlePlaceholder')}
-              placeholderTextColor={colors.textMuted}
-            />
-          </View>
-
-          {/* Description */}
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>
-              {t('reminders.descriptionLabel')}
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                styles.multilineInput,
-                {
-                  color: colors.text,
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                },
-              ]}
-              value={description}
-              onChangeText={setDescription}
-              placeholder={t('reminders.descriptionPlaceholder')}
-              placeholderTextColor={colors.textMuted}
-              multiline
-              numberOfLines={3}
-              textAlignVertical="top"
-            />
-          </View>
-
-          {/* Date & Time */}
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>
-              {t('reminders.dateLabel')}
-            </Text>
-            <Pressable
-              onPress={() => setShowDatePicker(true)}
-              style={[
-                styles.dateButton,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                },
-              ]}
-            >
-              <Text style={[styles.dateText, { color: colors.text }]}>
-                {formattedDate} {formattedTime}
-              </Text>
-            </Pressable>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={date}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                onChange={handleDateChange}
-              />
-            )}
-
-            {Platform.OS === 'ios' && showDatePicker && (
-              <Pressable
-                onPress={() => {
-                  setShowDatePicker(false);
-                  setShowTimePicker(true);
-                }}
-                style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
-              >
-                <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
-                  {t('common.ok')}
-                </Text>
-              </Pressable>
-            )}
-
-            {showTimePicker && (
-              <DateTimePicker
-                value={date}
-                mode="time"
-                display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                onChange={handleTimeChange}
-              />
-            )}
-
-            {Platform.OS === 'ios' && showTimePicker && (
-              <Pressable
-                onPress={() => setShowTimePicker(false)}
-                style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
-              >
-                <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
-                  {t('common.ok')}
-                </Text>
-              </Pressable>
-            )}
-          </View>
-
-          {/* Recurrence */}
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>
-              {t('reminders.recurrence')}
-            </Text>
-            <View style={styles.pillRow}>
-              {RECURRENCE_OPTIONS.map((option) => {
-                const isActive = recurrence === option;
-                return (
-                  <Pressable
-                    key={option}
-                    onPress={() => setRecurrence(option)}
-                    style={[
-                      styles.pill,
-                      {
-                        backgroundColor: isActive ? colors.text : colors.surface,
-                        borderColor: colors.border,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.pillText,
-                        { color: isActive ? colors.background : colors.textMuted },
-                      ]}
-                    >
-                      {t(`reminders.recurrenceOptions.${option}`)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-        </ScrollView>
-
-        {/* Save button */}
-        <View style={[styles.footer, { borderTopColor: colors.border }]}>
-          <Pressable
-            onPress={handleSave}
-            disabled={!canSave || saving}
+        {/* Description */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>
+            {t('reminders.descriptionLabel')}
+          </Text>
+          <TextInput
             style={[
-              styles.saveButton,
-              { backgroundColor: canSave ? colors.primary : colors.border },
+              styles.input,
+              styles.multilineInput,
+              {
+                color: colors.text,
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
+            value={description}
+            onChangeText={setDescription}
+            placeholder={t('reminders.descriptionPlaceholder')}
+            placeholderTextColor={colors.textMuted}
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+          />
+        </View>
+
+        {/* Date & Time */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>
+            {t('reminders.dateLabel')}
+          </Text>
+          <Pressable
+            onPress={() => setShowDatePicker(true)}
+            style={[
+              styles.dateButton,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
             ]}
           >
-            {saving ? (
-              <ActivityIndicator size="small" color={colors.textInverse} />
-            ) : (
-              <Text style={[styles.saveText, { color: colors.textInverse }]}>
-                {saving ? t('reminders.saving') : t('reminders.save')}
-              </Text>
-            )}
+            <Text style={[styles.dateText, { color: colors.text }]}>
+              {formattedDate} {formattedTime}
+            </Text>
           </Pressable>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'inline' : 'default'}
+              onChange={handleDateChange}
+            />
+          )}
+
+          {Platform.OS === 'ios' && showDatePicker && (
+            <Pressable
+              onPress={() => {
+                setShowDatePicker(false);
+                setShowTimePicker(true);
+              }}
+              style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
+            >
+              <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
+                {t('common.ok')}
+              </Text>
+            </Pressable>
+          )}
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={date}
+              mode="time"
+              display={Platform.OS === 'ios' ? 'inline' : 'default'}
+              onChange={handleTimeChange}
+            />
+          )}
+
+          {Platform.OS === 'ios' && showTimePicker && (
+            <Pressable
+              onPress={() => setShowTimePicker(false)}
+              style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
+            >
+              <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
+                {t('common.ok')}
+              </Text>
+            </Pressable>
+          )}
+        </View>
+
+        {/* Recurrence */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.textSecondary }]}>
+            {t('reminders.recurrence')}
+          </Text>
+          <View style={styles.pillRow}>
+            {RECURRENCE_OPTIONS.map((option) => {
+              const isActive = recurrence === option;
+              return (
+                <Pressable
+                  key={option}
+                  onPress={() => setRecurrence(option)}
+                  style={[
+                    styles.pill,
+                    {
+                      backgroundColor: isActive ? colors.primary : 'transparent',
+                      borderColor: colors.border,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.pillText,
+                      { color: isActive ? colors.background : colors.textMuted },
+                    ]}
+                  >
+                    {t(`reminders.recurrenceOptions.${option}`)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
       </View>
-    </Modal>
+    </FullScreenModal>
   );
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.lg,
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    fontSize: theme.fontSize.lg,
-    ...theme.font.semibold,
-  },
-  body: {
-    flex: 1,
-  },
   bodyContent: {
     padding: theme.spacing.xl,
     gap: theme.spacing.xl,
@@ -374,10 +346,6 @@ const styles = StyleSheet.create({
   pillText: {
     fontSize: theme.fontSize.sm,
     ...theme.font.medium,
-  },
-  footer: {
-    padding: theme.spacing.xl,
-    borderTopWidth: 1,
   },
   saveButton: {
     borderRadius: theme.radius.lg,

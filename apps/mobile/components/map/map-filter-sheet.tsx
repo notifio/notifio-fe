@@ -1,8 +1,7 @@
-import { IconAdjustments, IconX } from '@tabler/icons-react-native';
+import { IconAdjustments } from '@tabler/icons-react-native';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { sharedColors } from '@notifio/ui';
 
@@ -16,6 +15,7 @@ import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { AdPlaceholder } from '../monetization/ad-placeholder';
+import { BottomSheet } from '../ui/bottom-sheet';
 
 interface MapFilterSheetProps {
   activeFilters: Set<MapPinSource>;
@@ -44,11 +44,6 @@ export function MapFilterSheet({
 
   const triggerBg = isDark ? 'rgba(14,34,63,0.92)' : 'rgba(255,255,255,0.95)';
   const triggerBorder = isDark ? 'rgba(31,58,95,0.7)' : 'rgba(226,232,240,0.9)';
-  const sheetBg = isDark ? '#162D4F' : '#FFFFFF';
-  const sheetBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)';
-  const handleColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(14,34,63,0.2)';
-  const closeBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(14,34,63,0.06)';
-  const headerBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)';
 
   const sourceCounts = useMemo(() => {
     const map = new Map<MapPinSource, number>();
@@ -103,69 +98,37 @@ export function MapFilterSheet({
         </Pressable>
       </View>
 
-      <Modal
+      <BottomSheet
         visible={isOpen}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setIsOpen(false)}
+        onClose={() => setIsOpen(false)}
+        title={t('mapFilters.title')}
+        maxHeight="85%"
+        minHeight="50%"
+        scrollable
       >
-        <View style={styles.modalRoot}>
-          {/* Backdrop is a sibling, not a parent — taps inside the sheet
-              can't bubble here, and the ScrollView can claim the
-              vertical-scroll responder freely. */}
-          <Pressable style={styles.backdrop} onPress={() => setIsOpen(false)} />
-
-          <View
-            style={[styles.sheet, { backgroundColor: sheetBg, borderColor: sheetBorder }]}
-          >
-            <View style={styles.handleWrap}>
-              <View style={[styles.handle, { backgroundColor: handleColor }]} />
-            </View>
-
-            <View style={[styles.header, { borderBottomColor: headerBorder }]}>
-              <Text style={[styles.headerTitle, { color: colors.text }]}>
-                {t('mapFilters.title')}
-              </Text>
-              <Pressable
-                onPress={() => setIsOpen(false)}
-                hitSlop={8}
-                style={[styles.closeButton, { backgroundColor: closeBg }]}
-              >
-                <IconX size={16} color={colors.text} />
-              </Pressable>
-            </View>
-
-            <SafeAreaView edges={['bottom']} style={styles.safeArea}>
-              <ScrollView
-                style={styles.body}
-                contentContainerStyle={styles.bodyContent}
-                showsVerticalScrollIndicator={false}
-              >
-                {MAP_FILTER_SOURCES.map((source) => (
-                  <FilterRow
-                    key={source}
-                    source={source}
-                    isActive={activeFilters.has(source)}
-                    count={sourceCounts.get(source) ?? 0}
-                    tier={tier}
-                    onToggle={onToggle}
-                    onLockedRowTap={onLockedRowTap}
-                    trafficSubsWithData={trafficSubsWithData}
-                    trafficTypeCounts={trafficTypeCounts}
-                    activeTrafficTypes={activeTrafficTypes}
-                    trafficIsActive={trafficIsActive}
-                    trafficIsPartial={trafficIsPartial}
-                    onToggleTrafficType={onToggleTrafficType}
-                  />
-                ))}
-                <View style={styles.adWrap}>
-                  <AdPlaceholder variant="inline" />
-                </View>
-              </ScrollView>
-            </SafeAreaView>
+        <View style={styles.bodyContent}>
+          {MAP_FILTER_SOURCES.map((source) => (
+            <FilterRow
+              key={source}
+              source={source}
+              isActive={activeFilters.has(source)}
+              count={sourceCounts.get(source) ?? 0}
+              tier={tier}
+              onToggle={onToggle}
+              onLockedRowTap={onLockedRowTap}
+              trafficSubsWithData={trafficSubsWithData}
+              trafficTypeCounts={trafficTypeCounts}
+              activeTrafficTypes={activeTrafficTypes}
+              trafficIsActive={trafficIsActive}
+              trafficIsPartial={trafficIsPartial}
+              onToggleTrafficType={onToggleTrafficType}
+            />
+          ))}
+          <View style={styles.adWrap}>
+            <AdPlaceholder variant="inline" />
           </View>
         </View>
-      </Modal>
+      </BottomSheet>
     </>
   );
 }
@@ -199,57 +162,6 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: sharedColors.accent,
-  },
-  modalRoot: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
-  sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    maxHeight: '85%',
-    minHeight: '50%',
-  },
-  safeArea: {
-    flex: 1,
-    minHeight: 0,
-  },
-  handleWrap: {
-    paddingTop: 8,
-    paddingBottom: 4,
-    alignItems: 'center',
-  },
-  handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  headerTitle: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.semibold,
-  },
-  closeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  body: {
-    flex: 1,
   },
   bodyContent: {
     paddingVertical: theme.spacing.xs,
