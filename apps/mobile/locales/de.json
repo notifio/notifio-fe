@@ -243,7 +243,15 @@
     "saveChanges": "Save changes",
     "saving": "Saving...",
     "saved": "Preferences saved",
-    "error": "Failed to save preferences"
+    "error": "Failed to save preferences",
+    "showOnMap": "Auf der Karte anzeigen",
+    "sendNotifications": "Benachrichtigungen senden",
+    "perSubcategory": "Unterkategorien",
+    "quietHours": "Ruhezeit",
+    "quietHoursEnabled": "Ruhezeit aktiv",
+    "quietHoursFrom": "Von",
+    "quietHoursTo": "Bis",
+    "quietHoursProOnly": "Ruhezeiten erfordern eine höhere Mitgliedschaftsstufe."
   },
   "eventDetail": {
     "title": "Event Details",

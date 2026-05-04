@@ -91,12 +91,17 @@ export type {
   Platform,
 } from '@notifio/shared';
 
-// Preference types
+// Preference types — Sprint 2 augmentation overrides the shared shape
+// with the split-toggle + per-location fields. Callers see the new
+// shape under the original type names.
 export type {
   UserPreferencesResponse,
   NotificationPreferenceItem,
   NotificationCategoryResponse,
-} from '@notifio/shared';
+  QuietHours,
+  UpdatePreferenceItem,
+  UpdatePreferencesRequest,
+} from './preferences-sprint2.js';
 
 // Device types
 export type {
@@ -113,13 +118,13 @@ export type {
   NotificationSeverity,
 } from '@notifio/shared';
 
-// Request body types
+// Request body types — UpdatePreferencesRequest re-exported from the
+// Sprint 2 augmentation above, not from @notifio/shared.
 export type {
   RegisterDeviceBody,
   RefreshTokenBody,
   CreateLocationBody,
   UpdateLocationBody,
-  UpdatePreferencesRequest,
   UpgradeMembershipBody,
   DowngradeMembershipBody,
 } from '@notifio/shared';
