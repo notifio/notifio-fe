@@ -52,6 +52,12 @@ export interface ResolvedColors {
     utility_outage: AlertTypeStyle;
     event: AlertTypeStyle;
   };
+  sheet: {
+    bg: string;
+    border: string;
+    handle: string;
+    closeBg: string;
+  };
 }
 
 interface ThemeContextValue {
@@ -105,6 +111,12 @@ function buildColors(isDark: boolean): ResolvedColors {
       air_quality: { icon: alertTypeColors.air_quality, bg: alertTypeTints[tintMode].air_quality },
       utility_outage: { icon: alertTypeColors.utility_outage, bg: alertTypeTints[tintMode].utility_outage },
       event: { icon: alertTypeColors.event, bg: alertTypeTints[tintMode].event },
+    },
+    sheet: {
+      bg:      isDark ? '#162D4F'                : '#FFFFFF',
+      border:  isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)',
+      handle:  isDark ? 'rgba(255,255,255,0.2)'  : 'rgba(14,34,63,0.2)',
+      closeBg: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(14,34,63,0.06)',
     },
   };
 }

@@ -44,11 +44,6 @@ export function MapFilterSheet({
 
   const triggerBg = isDark ? 'rgba(14,34,63,0.92)' : 'rgba(255,255,255,0.95)';
   const triggerBorder = isDark ? 'rgba(31,58,95,0.7)' : 'rgba(226,232,240,0.9)';
-  const sheetBg = isDark ? '#162D4F' : '#FFFFFF';
-  const sheetBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)';
-  const handleColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(14,34,63,0.2)';
-  const closeBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(14,34,63,0.06)';
-  const headerBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)';
 
   const sourceCounts = useMemo(() => {
     const map = new Map<MapPinSource, number>();
@@ -116,20 +111,20 @@ export function MapFilterSheet({
           <Pressable style={styles.backdrop} onPress={() => setIsOpen(false)} />
 
           <View
-            style={[styles.sheet, { backgroundColor: sheetBg, borderColor: sheetBorder }]}
+            style={[styles.sheet, { backgroundColor: colors.sheet.bg, borderColor: colors.sheet.border }]}
           >
             <View style={styles.handleWrap}>
-              <View style={[styles.handle, { backgroundColor: handleColor }]} />
+              <View style={[styles.handle, { backgroundColor: colors.sheet.handle }]} />
             </View>
 
-            <View style={[styles.header, { borderBottomColor: headerBorder }]}>
+            <View style={[styles.header, { borderBottomColor: colors.sheet.border }]}>
               <Text style={[styles.headerTitle, { color: colors.text }]}>
                 {t('mapFilters.title')}
               </Text>
               <Pressable
                 onPress={() => setIsOpen(false)}
                 hitSlop={8}
-                style={[styles.closeButton, { backgroundColor: closeBg }]}
+                style={[styles.closeButton, { backgroundColor: colors.sheet.closeBg }]}
               >
                 <IconX size={16} color={colors.text} />
               </Pressable>
