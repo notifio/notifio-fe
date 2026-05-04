@@ -2,12 +2,13 @@ import { IconCurrentLocation, IconLock } from '@tabler/icons-react-native';
 import * as ExpoLocation from 'expo-location';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
 
 import { useMembership } from '../../hooks/use-membership';
+import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
@@ -39,7 +40,7 @@ export function LocationPickerModal({
   onUpdate,
   editLocation,
 }: LocationPickerModalProps) {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
   const { t } = useTranslation();
   const { membership } = useMembership();
   const mapRef = useRef<MapView>(null);
@@ -124,6 +125,10 @@ export function LocationPickerModal({
           initialRegion={region}
           onRegionChangeComplete={setRegion}
           showsUserLocation
+          // iOS Apple Maps native dark mode
+          userInterfaceStyle={isDark ? 'dark' : 'light'}
+          // Android Google Maps custom dark style
+          customMapStyle={Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined}
         />
         {/* Center pin overlay */}
         <View style={styles.pinOverlay} pointerEvents="none">
