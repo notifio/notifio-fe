@@ -1,91 +1,142 @@
 'use client';
 
-import { IconCheck, IconLoader2, IconPlus, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconCloudRain,
+  IconLoader2,
+  IconPlus,
+  IconSnowflake,
+  IconTemperature,
+  IconWind,
+  IconX,
+} from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { UserWeatherThreshold } from '@notifio/api-client';
 
 import { ProGate } from '@/components/app/pro-gate';
+import { useToast } from '@/components/ui/toast';
 import { api } from '@/lib/api';
 
-interface ThresholdConfig {
-  subcategoryCode: string;
-  labelKey: string;
+// ── Canonical config (mirrors mobile) ───────────────────────────────
+
+type WeatherMetric =
+  | 'highTemperature'
+  | 'lowTemperature'
+  | 'windSpeed'
+  | 'rainfall'
+  | 'snowfall';
+
+interface MetricConfig {
+  metric: WeatherMetric;
+  icon: typeof IconTemperature;
+  unit: string;
   min: number;
   max: number;
   step: number;
-  unit: string;
-  defaultValue: number;
+  defaults: { warning: number; severe: number };
+  tiers: {
+    warning: { code: string; thumbColor: string };
+    severe: { code: string; thumbColor: string };
+  };
   trackGradient: string;
-  thumbColor: string;
 }
 
-const THRESHOLD_CONFIGS: ThresholdConfig[] = [
+/**
+ * Canonical Weather Intelligence subcategory codes confirmed against
+ * notifio-api/src/services/user-weather-threshold.service.ts. BE rejects
+ * anything outside this set with HTTP 400. Mirrors the mobile config.
+ *
+ * Two tiers per metric: a softer "warning" + a sharper "severe" variant.
+ * Severe tier uses metric-specific labels in i18n (Frost / Severe wind /
+ * Heavy rain / Heavy snow / Extreme heat) rather than a generic word.
+ */
+const WEATHER_THRESHOLD_METRICS: readonly MetricConfig[] = [
   {
-    subcategoryCode: 'temp_high',
-    labelKey: 'tempHigh',
+    metric: 'highTemperature',
+    icon: IconTemperature,
+    unit: '°C',
     min: 20,
     max: 45,
     step: 1,
-    unit: '°C',
-    defaultValue: 35,
-    trackGradient: 'linear-gradient(to right, #34C759, #FF7A2F)',
-    thumbColor: '#FF7A2F',
+    defaults: { warning: 28, severe: 35 },
+    tiers: {
+      warning: { code: 'heat_warning', thumbColor: '#FF7A2F' },
+      severe: { code: 'extreme_heat_warning', thumbColor: '#FF3B30' },
+    },
+    trackGradient: 'linear-gradient(to right, #34C759, #FF7A2F, #FF3B30)',
   },
   {
-    subcategoryCode: 'temp_low',
-    labelKey: 'tempLow',
-    min: -20,
-    max: 10,
+    metric: 'lowTemperature',
+    icon: IconTemperature,
+    unit: '°C',
+    min: -30,
+    max: 5,
     step: 1,
-    unit: '°C',
-    defaultValue: -5,
-    trackGradient: 'linear-gradient(to right, #3A86FF, #34C759)',
-    thumbColor: '#3A86FF',
+    defaults: { warning: -5, severe: -15 },
+    tiers: {
+      warning: { code: 'low_temperature_warning', thumbColor: '#3A86FF' },
+      severe: { code: 'frost_warning', thumbColor: '#1E40AF' },
+    },
+    trackGradient: 'linear-gradient(to right, #1E40AF, #3A86FF, #34C759)',
   },
   {
-    subcategoryCode: 'wind_speed',
-    labelKey: 'windSpeed',
-    min: 20,
-    max: 120,
-    step: 5,
+    metric: 'windSpeed',
+    icon: IconWind,
     unit: 'km/h',
-    defaultValue: 60,
-    trackGradient: 'linear-gradient(to right, #34C759, #F5D547)',
-    thumbColor: '#F5D547',
+    min: 30,
+    max: 130,
+    step: 5,
+    defaults: { warning: 50, severe: 80 },
+    tiers: {
+      warning: { code: 'wind_warning', thumbColor: '#F5D547' },
+      severe: { code: 'severe_wind_warning', thumbColor: '#FF3B30' },
+    },
+    trackGradient: 'linear-gradient(to right, #34C759, #F5D547, #FF3B30)',
   },
   {
-    subcategoryCode: 'humidity',
-    labelKey: 'humidity',
-    min: 40,
-    max: 100,
-    step: 5,
-    unit: '%',
-    defaultValue: 80,
-    trackGradient: 'linear-gradient(to right, #34C759, #3A86FF)',
-    thumbColor: '#3A86FF',
+    metric: 'rainfall',
+    icon: IconCloudRain,
+    unit: 'mm/h',
+    min: 1,
+    max: 50,
+    step: 1,
+    defaults: { warning: 10, severe: 25 },
+    tiers: {
+      warning: { code: 'rain_warning', thumbColor: '#3A86FF' },
+      severe: { code: 'heavy_rain_warning', thumbColor: '#1E40AF' },
+    },
+    trackGradient: 'linear-gradient(to right, #34C759, #3A86FF, #1E40AF)',
   },
   {
-    subcategoryCode: 'pressure',
-    labelKey: 'pressure',
-    min: 970,
-    max: 1050,
-    step: 5,
-    unit: 'hPa',
-    defaultValue: 1000,
-    trackGradient: 'linear-gradient(to right, #6B7280, #9CA3AF)',
-    thumbColor: '#9CA3AF',
+    metric: 'snowfall',
+    icon: IconSnowflake,
+    unit: 'cm/h',
+    min: 1,
+    max: 30,
+    step: 1,
+    defaults: { warning: 5, severe: 15 },
+    tiers: {
+      warning: { code: 'snow_warning', thumbColor: '#9CA3AF' },
+      severe: { code: 'heavy_snow_warning', thumbColor: '#6B7280' },
+    },
+    trackGradient: 'linear-gradient(to right, #34C759, #9CA3AF, #6B7280)',
   },
 ];
 
+// ── Page ─────────────────────────────────────────────────────────────
+
 export default function WeatherThresholdsPage() {
   const t = useTranslations('weatherThresholds');
+  const toast = useToast();
+
   const [thresholds, setThresholds] = useState<UserWeatherThreshold[]>([]);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [addMenuOpen, setAddMenuOpen] = useState(false);
-  const [deletingCode, setDeletingCode] = useState<string | null>(null);
+  const [deletingMetric, setDeletingMetric] = useState<WeatherMetric | null>(null);
+
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debounceRefs = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const addMenuRef = useRef<HTMLDivElement>(null);
@@ -107,30 +158,50 @@ export default function WeatherThresholdsPage() {
       try {
         const data = await api.getWeatherThresholds();
         setThresholds(data);
-      } catch {
-        // silently fail
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : t('loadFailed');
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const configuredCodes = new Set(thresholds.map((t) => t.subcategoryCode));
-  const availableToAdd = THRESHOLD_CONFIGS.filter((c) => !configuredCodes.has(c.subcategoryCode));
+  const findValue = (code: string): number | null =>
+    thresholds.find((th) => th.subcategoryCode === code)?.threshold ?? null;
 
+  const isMetricConfigured = (m: MetricConfig): boolean =>
+    findValue(m.tiers.warning.code) !== null || findValue(m.tiers.severe.code) !== null;
+
+  const configuredMetrics = WEATHER_THRESHOLD_METRICS.filter(isMetricConfigured);
+  const availableToAdd = WEATHER_THRESHOLD_METRICS.filter((m) => !isMetricConfigured(m));
+
+  const flashSaved = () => {
+    setSaved(true);
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
+  };
+
+  /**
+   * Debounced single-tier save — fires on each slider drag stop. Web's
+   * UX is per-slider (not a "save both" button), so each tier writes
+   * independently. Errors surface via toast — no more silent fail.
+   */
   const handleSliderChange = useCallback(
     (subcategoryCode: string, value: number) => {
       // Optimistic update
-      setThresholds((prev) =>
-        prev.map((th) =>
-          th.subcategoryCode === subcategoryCode
-            ? { ...th, threshold: value }
-            : th,
-        ),
-      );
+      setThresholds((prev) => {
+        const idx = prev.findIndex((th) => th.subcategoryCode === subcategoryCode);
+        if (idx >= 0) {
+          return prev.map((th) =>
+            th.subcategoryCode === subcategoryCode ? { ...th, threshold: value } : th,
+          );
+        }
+        return [...prev, { subcategoryCode, threshold: value, updatedAt: new Date().toISOString() } as UserWeatherThreshold];
+      });
 
-      // Debounced save
       const existing = debounceRefs.current.get(subcategoryCode);
       if (existing) clearTimeout(existing);
       debounceRefs.current.set(
@@ -138,47 +209,64 @@ export default function WeatherThresholdsPage() {
         setTimeout(async () => {
           try {
             await api.setWeatherThreshold({ subcategoryCode, threshold: value });
-            setSaved(true);
-            if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-            saveTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
-          } catch {
-            // silently fail
+            flashSaved();
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : t('saveFailed');
+            toast.error(msg);
           }
         }, 500),
       );
     },
-    [],
+    [t, toast],
   );
 
   const handleAdd = useCallback(
-    async (config: ThresholdConfig) => {
+    async (config: MetricConfig) => {
       setAddMenuOpen(false);
       try {
-        const result = await api.setWeatherThreshold({
-          subcategoryCode: config.subcategoryCode,
-          threshold: config.defaultValue,
-        });
-        setThresholds((prev) => [...prev, result]);
-      } catch {
-        // silently fail
+        const [warningResult, severeResult] = await Promise.all([
+          api.setWeatherThreshold({
+            subcategoryCode: config.tiers.warning.code,
+            threshold: config.defaults.warning,
+          }),
+          api.setWeatherThreshold({
+            subcategoryCode: config.tiers.severe.code,
+            threshold: config.defaults.severe,
+          }),
+        ]);
+        setThresholds((prev) => [...prev, warningResult, severeResult]);
+        flashSaved();
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : t('saveFailed');
+        toast.error(msg);
       }
     },
-    [],
+    [t, toast],
   );
 
-  const handleDelete = useCallback(
-    async (subcategoryCode: string) => {
-      setDeletingCode(subcategoryCode);
+  const handleDeleteMetric = useCallback(
+    async (m: MetricConfig) => {
+      setDeletingMetric(m.metric);
       try {
-        await api.deleteWeatherThreshold(subcategoryCode);
-        setThresholds((prev) => prev.filter((th) => th.subcategoryCode !== subcategoryCode));
-      } catch {
-        // silently fail
+        await Promise.all([
+          api.deleteWeatherThreshold(m.tiers.warning.code),
+          api.deleteWeatherThreshold(m.tiers.severe.code),
+        ]);
+        setThresholds((prev) =>
+          prev.filter(
+            (th) =>
+              th.subcategoryCode !== m.tiers.warning.code &&
+              th.subcategoryCode !== m.tiers.severe.code,
+          ),
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : t('deleteFailed');
+        toast.error(msg);
       } finally {
-        setDeletingCode(null);
+        setDeletingMetric(null);
       }
     },
-    [],
+    [t, toast],
   );
 
   return (
@@ -206,80 +294,63 @@ export default function WeatherThresholdsPage() {
             </div>
           ) : (
             <>
-              {thresholds.map((threshold) => {
-                const config = THRESHOLD_CONFIGS.find(
-                  (c) => c.subcategoryCode === threshold.subcategoryCode,
-                );
-                if (!config) return null;
-
-                const percent = ((threshold.threshold - config.min) / (config.max - config.min)) * 100;
+              {configuredMetrics.map((config) => {
+                const Icon = config.icon;
+                const warningValue = findValue(config.tiers.warning.code) ?? config.defaults.warning;
+                const severeValue = findValue(config.tiers.severe.code) ?? config.defaults.severe;
+                const isDeleting = deletingMetric === config.metric;
 
                 return (
                   <div
-                    key={threshold.subcategoryCode}
+                    key={config.metric}
                     className="rounded-xl p-4"
                     style={{ backgroundColor: '#0B1B32' }}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-text-primary">
-                        {t(config.labelKey)}
-                      </span>
                       <div className="flex items-center gap-2">
-                        <span
-                          className="text-sm font-bold"
-                          style={{ color: config.thumbColor }}
-                        >
-                          {threshold.threshold}{config.unit}
+                        <Icon size={16} className="text-muted" />
+                        <span className="text-sm font-medium text-text-primary">
+                          {t(`metric.${config.metric}`)}
                         </span>
-                        <button
-                          onClick={() => handleDelete(threshold.subcategoryCode)}
-                          disabled={deletingCode === threshold.subcategoryCode}
-                          className="rounded p-1 text-muted transition-colors hover:bg-white/10 hover:text-danger disabled:opacity-50"
-                        >
-                          {deletingCode === threshold.subcategoryCode ? (
-                            <IconLoader2 size={14} className="animate-spin" />
-                          ) : (
-                            <IconX size={14} />
-                          )}
-                        </button>
                       </div>
+                      <button
+                        onClick={() => handleDeleteMetric(config)}
+                        disabled={isDeleting}
+                        className="rounded p-1 text-muted transition-colors hover:bg-white/10 hover:text-danger disabled:opacity-50"
+                      >
+                        {isDeleting ? (
+                          <IconLoader2 size={14} className="animate-spin" />
+                        ) : (
+                          <IconX size={14} />
+                        )}
+                      </button>
                     </div>
 
-                    {/* Slider */}
-                    <div className="relative mt-3">
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{ background: config.trackGradient }}
-                      />
-                      <input
-                        type="range"
-                        min={config.min}
-                        max={config.max}
-                        step={config.step}
-                        value={threshold.threshold}
-                        onChange={(e) =>
-                          handleSliderChange(
-                            threshold.subcategoryCode,
-                            Number(e.target.value),
-                          )
-                        }
-                        className="absolute inset-0 h-1.5 w-full cursor-pointer appearance-none bg-transparent [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#0B1B32] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#0B1B32] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:appearance-none"
-                      />
-                      {/* Thumb circle overlay positioned by percent */}
-                      <div
-                        className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
-                        style={{
-                          left: `${percent}%`,
-                          backgroundColor: config.thumbColor,
-                          borderColor: '#0B1B32',
-                        }}
-                      />
-                    </div>
+                    <TierSlider
+                      tierLabel={t(`tier.${config.metric}.warning`)}
+                      tierDescription={t(`tier.${config.metric}.warningDescription`)}
+                      value={warningValue}
+                      unit={config.unit}
+                      min={config.min}
+                      max={config.max}
+                      step={config.step}
+                      thumbColor={config.tiers.warning.thumbColor}
+                      trackGradient={config.trackGradient}
+                      onChange={(v) => handleSliderChange(config.tiers.warning.code, v)}
+                    />
 
-                    <div className="mt-1.5 flex justify-between text-[10px] text-muted">
-                      <span>{config.min}{config.unit}</span>
-                      <span>{config.max}{config.unit}</span>
-                    </div>
+                    <TierSlider
+                      tierLabel={t(`tier.${config.metric}.severe`)}
+                      tierDescription={t(`tier.${config.metric}.severeDescription`)}
+                      value={severeValue}
+                      unit={config.unit}
+                      min={config.min}
+                      max={config.max}
+                      step={config.step}
+                      thumbColor={config.tiers.severe.thumbColor}
+                      trackGradient={config.trackGradient}
+                      onChange={(v) => handleSliderChange(config.tiers.severe.code, v)}
+                    />
                   </div>
                 );
               })}
@@ -297,19 +368,19 @@ export default function WeatherThresholdsPage() {
 
                   {addMenuOpen && (
                     <div className="absolute left-0 right-0 top-full z-10 mt-1 rounded-xl border border-border bg-card p-1 shadow-lg">
-                      {availableToAdd.map((config) => (
-                        <button
-                          key={config.subcategoryCode}
-                          onClick={() => handleAdd(config)}
-                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-text-primary transition-colors hover:bg-background"
-                        >
-                          <div
-                            className="h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: config.thumbColor }}
-                          />
-                          {t(config.labelKey)}
-                        </button>
-                      ))}
+                      {availableToAdd.map((config) => {
+                        const Icon = config.icon;
+                        return (
+                          <button
+                            key={config.metric}
+                            onClick={() => handleAdd(config)}
+                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-text-primary transition-colors hover:bg-background"
+                          >
+                            <Icon size={14} className="text-muted" />
+                            {t(`metric.${config.metric}`)}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -319,5 +390,74 @@ export default function WeatherThresholdsPage() {
         </div>
       </div>
     </ProGate>
+  );
+}
+
+// ── Tier slider section ──────────────────────────────────────────────
+
+interface TierSliderProps {
+  tierLabel: string;
+  tierDescription: string;
+  value: number;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  thumbColor: string;
+  trackGradient: string;
+  onChange: (value: number) => void;
+}
+
+function TierSlider({
+  tierLabel,
+  tierDescription,
+  value,
+  unit,
+  min,
+  max,
+  step,
+  thumbColor,
+  trackGradient,
+  onChange,
+}: TierSliderProps) {
+  const percent = ((value - min) / (max - min)) * 100;
+  return (
+    <div className="mt-3 border-t border-white/5 pt-3 first-of-type:border-t-0 first-of-type:pt-0">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: thumbColor }}>
+            {tierLabel}
+          </span>
+          <span className="text-[11px] text-muted">{tierDescription}</span>
+        </div>
+        <span className="text-sm font-bold" style={{ color: thumbColor }}>
+          {value}{unit}
+        </span>
+      </div>
+      <div className="relative mt-3">
+        <div className="h-1.5 rounded-full" style={{ background: trackGradient }} />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="absolute inset-0 h-1.5 w-full cursor-pointer appearance-none bg-transparent [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#0B1B32] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#0B1B32] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:appearance-none"
+        />
+        <div
+          className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
+          style={{
+            left: `${percent}%`,
+            backgroundColor: thumbColor,
+            borderColor: '#0B1B32',
+          }}
+        />
+      </div>
+      <div className="mt-1.5 flex justify-between text-[10px] text-muted">
+        <span>{min}{unit}</span>
+        <span>{max}{unit}</span>
+      </div>
+    </div>
   );
 }
