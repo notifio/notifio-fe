@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import type { MembershipTier } from '@notifio/api-client';
 
 import { useMembership } from '../../hooks/use-membership';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -41,7 +41,7 @@ export function ProGate({ requiredTier, children, fallback }: ProGateProps) {
 
   return (
     <View style={[styles.container, { borderColor: colors.border, backgroundColor: colors.surface }]}>
-      <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+      <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
         <IconCrown size={24} color={colors.primary} />
       </View>
       <Text style={[styles.title, { color: colors.text }]}>

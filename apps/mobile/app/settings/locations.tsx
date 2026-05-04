@@ -12,7 +12,7 @@ import { Icon } from '../../components/ui/icon';
 import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
 import { confirmDestructive } from '../../lib/confirm';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 function formatCoord(lat: number, lng: number): string {
@@ -68,7 +68,7 @@ export default function LocationsScreen() {
                   {displayLabel}
                 </Text>
                 {isHome && (
-                  <View style={[styles.homeBadge, { backgroundColor: `${colors.primary}18` }]}>
+                  <View style={[styles.homeBadge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                     <IconHome size={12} color={colors.primary} />
                   </View>
                 )}

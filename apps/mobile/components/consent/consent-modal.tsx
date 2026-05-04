@@ -5,7 +5,7 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Te
 
 import type { ConsentState } from '@notifio/api-client';
 
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -57,7 +57,7 @@ export function ConsentModal({ consents, onSave }: ConsentModalProps) {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
-            <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+            <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
               <IconShieldLock size={24} color={colors.primary} />
             </View>
             <Text style={[styles.title, { color: colors.text }]}>
@@ -86,7 +86,7 @@ export function ConsentModal({ consents, onSave }: ConsentModalProps) {
                         {t(`consent.categories.${code}.name`)}
                       </Text>
                       {isRequired && (
-                        <View style={[styles.requiredBadge, { backgroundColor: `${colors.primary}18` }]}>
+                        <View style={[styles.requiredBadge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                           <Text style={[styles.requiredText, { color: colors.primary }]}>
                             {t('consent.required')}
                           </Text>

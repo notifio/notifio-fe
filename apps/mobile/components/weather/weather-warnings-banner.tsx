@@ -8,7 +8,7 @@ import type { WeatherWarning, WeatherWarningSeverity } from '@notifio/api-client
 import { sharedColors } from '@notifio/ui';
 
 import { formatTime } from '../../lib/format';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 
 const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
   red: 3,
@@ -88,7 +88,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
 
         {/* Expanded detail */}
         {expanded && (
-          <View style={[styles.detail, { borderTopColor: `${textColor}26` }]}>
+          <View style={[styles.detail, { borderTopColor: withOpacity(textColor, 0.15) }]}>
             {top.description ? (
               <Text style={[styles.description, { color: textColor }]}>
                 {top.description}

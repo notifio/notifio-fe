@@ -99,3 +99,24 @@ export const shadows = {
     elevation: 3,
   },
 } as const;
+
+/**
+ * Append an alpha channel to a 6-digit hex color. Returns the input
+ * unchanged if it isn't a 6-digit hex string (rgba inputs and named
+ * colors must be pre-converted by the caller).
+ *
+ *   withOpacity('#FF7A2F', 0.18) → '#ff7a2f2e'
+ *   withOpacity('#1D9E75', 0.2)  → '#1d9e7533'
+ *
+ * Output suffix is lowercase to match the original inline definitions
+ * in weather-card.tsx / aqi-indicator.tsx.
+ */
+export function withOpacity(hexColor: string, opacity: number): string {
+  if (!hexColor.startsWith('#') || hexColor.length !== 7) {
+    if (__DEV__) console.warn(`[withOpacity] expected 6-digit hex, got: ${hexColor}`);
+    return hexColor;
+  }
+  const a = Math.round(Math.max(0, Math.min(1, opacity)) * 255);
+  const aHex = a.toString(16).padStart(2, '0');
+  return `${hexColor}${aHex}`;
+}

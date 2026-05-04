@@ -6,7 +6,7 @@ import { ActivityIndicator, StyleSheet, Switch, Text, View } from 'react-native'
 import { Card } from '../../components/ui/card';
 import { SectionLabel } from '../../components/ui/section-label';
 import { api } from '../../lib/api';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useConsents } from '../../providers/consent-provider';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -63,7 +63,7 @@ export default function PrivacyScreen() {
                           {t(`consent.categories.${code}.name`)}
                         </Text>
                         {isRequired && (
-                          <View style={[styles.requiredBadge, { backgroundColor: `${colors.primary}18` }]}>
+                          <View style={[styles.requiredBadge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                             <Text style={[styles.requiredText, { color: colors.primary }]}>
                               {t('consent.required')}
                             </Text>

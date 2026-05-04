@@ -14,7 +14,7 @@ import { useEventDetail } from '../../hooks/use-event-detail';
 import { confirmDestructive } from '../../lib/confirm';
 import { formatDateTime } from '../../lib/format';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 export default function EventDetailScreen() {
@@ -120,7 +120,7 @@ export default function EventDetailScreen() {
               {event.subcategory ? ` — ${event.subcategory.name}` : ''}
             </Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: isResolved ? colors.border : `${sharedColors.success}20` }]}>
+          <View style={[styles.statusBadge, { backgroundColor: isResolved ? colors.border : withOpacity(sharedColors.success, 0.125) }]}>
             <Text style={[styles.statusText, { color: isResolved ? colors.textMuted : sharedColors.success }]}>
               {isResolved ? t('eventDetail.status.resolved') : t('eventDetail.status.active')}
             </Text>
@@ -181,7 +181,7 @@ export default function EventDetailScreen() {
               style={[
                 styles.voteButton,
                 { borderColor: sharedColors.success },
-                userVote?.voted && userVote.isValid && { backgroundColor: `${sharedColors.success}20` },
+                userVote?.voted && userVote.isValid && { backgroundColor: withOpacity(sharedColors.success, 0.125) },
                 (voting || (userVote?.voted && !userVote.isValid)) && styles.voteDimmed,
               ]}
             >
@@ -194,7 +194,7 @@ export default function EventDetailScreen() {
               style={[
                 styles.voteButton,
                 { borderColor: sharedColors.danger },
-                userVote?.voted && userVote.isValid === false && { backgroundColor: `${sharedColors.danger}20` },
+                userVote?.voted && userVote.isValid === false && { backgroundColor: withOpacity(sharedColors.danger, 0.125) },
                 (voting || (userVote?.voted && userVote.isValid !== false)) && styles.voteDimmed,
               ]}
             >

@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getPinStyle } from '../../lib/map-pin-config';
 import type { MapPin } from '../../lib/normalize-pins';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 interface ClusterEventsSheetProps {
@@ -95,7 +95,7 @@ export function ClusterEventsSheet({ visible, events, onClose }: ClusterEventsSh
                     onPress={() => handleEventTap(event.id)}
                     activeOpacity={0.7}
                   >
-                    <View style={[styles.iconWrap, { backgroundColor: `${style.color}29` }]}>
+                    <View style={[styles.iconWrap, { backgroundColor: withOpacity(style.color, 0.16) }]}>
                       <Icon size={18} color={style.color} strokeWidth={2.2} />
                     </View>
                     <View style={styles.rowText}>

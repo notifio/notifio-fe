@@ -19,7 +19,7 @@ import { useReminders } from '../../hooks/use-reminders';
 import { confirmDestructive } from '../../lib/confirm';
 import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
 
@@ -85,7 +85,7 @@ export function ReminderList() {
               {formatDateTime(item.triggerAt, i18n.language)}
             </Text>
             {item.recurrence !== 'ONCE' && (
-              <View style={[styles.badge, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.badge, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <Text style={[styles.badgeText, { color: colors.primary }]}>
                   {t(`reminders.recurrenceOptions.${item.recurrence}`)}
                 </Text>
@@ -96,7 +96,7 @@ export function ReminderList() {
         <Switch
           value={item.enabled}
           onValueChange={(val) => toggleEnabled(item.reminderId, val)}
-          trackColor={{ false: colors.border, true: `${colors.primary}66` }}
+          trackColor={{ false: colors.border, true: withOpacity(colors.primary, 0.4) }}
           thumbColor={item.enabled ? colors.primary : colors.textMuted}
         />
       </Pressable>
