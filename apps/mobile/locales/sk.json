@@ -54,7 +54,12 @@
     "theme": "Téma",
     "themeSystem": "Systém",
     "signOut": "Odhlásiť sa",
-    "version": "Verzia"
+    "version": "Verzia",
+    "stats": {
+      "notifications": "Prijaté notifikácie",
+      "events": "Nahlásené udalosti",
+      "reminders": "Aktívne pripomienky"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifikácie",

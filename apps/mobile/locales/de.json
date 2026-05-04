@@ -54,7 +54,12 @@
     "theme": "Theme",
     "themeSystem": "System",
     "signOut": "Sign out",
-    "version": "Version"
+    "version": "Version",
+    "stats": {
+      "notifications": "Erhaltene Benachrichtigungen",
+      "events": "Gemeldete Ereignisse",
+      "reminders": "Aktive Erinnerungen"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifications",

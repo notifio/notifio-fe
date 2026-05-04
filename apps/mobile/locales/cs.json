@@ -54,7 +54,12 @@
     "theme": "Theme",
     "themeSystem": "System",
     "signOut": "Sign out",
-    "version": "Version"
+    "version": "Version",
+    "stats": {
+      "notifications": "Přijaté notifikace",
+      "events": "Nahlášené události",
+      "reminders": "Aktivní připomenutí"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifications",

@@ -54,7 +54,12 @@
     "theme": "Theme",
     "themeSystem": "System",
     "signOut": "Sign out",
-    "version": "Version"
+    "version": "Version",
+    "stats": {
+      "notifications": "Beérkezett értesítések",
+      "events": "Bejelentett események",
+      "reminders": "Aktív emlékeztetők"
+    }
   },
   "permissions": {
     "pushNotifications": "Push notifications",
