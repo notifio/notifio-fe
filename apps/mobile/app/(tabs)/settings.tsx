@@ -106,7 +106,7 @@ export default function SettingsScreen() {
       <SectionLabel label={t('settings.data')} />
       <Card>
         <SettingsRow icon={IconDatabase} label={t('settings.dataSources')} onPress={() => router.push('/settings/sources')} />
-        <SettingsRow icon={IconStar} label={t('settings.sourcePreferences')} badge="PRO" onPress={() => pushPlaceholder(t('settings.sourcePreferences'))} />
+        <SettingsRow icon={IconStar} label={t('settings.sourcePreferences')} badge="PRO" onPress={() => router.push('/settings/source-preferences')} />
         <SettingsRow icon={IconTemperature} label={t('settings.weatherThresholds')} badge="PRO" onPress={() => router.push('/settings/weather-thresholds')} />
       </Card>
 

@@ -551,5 +551,18 @@
         ]
       }
     }
+  },
+  "sourcePreferences": {
+    "title": "Preferované zdroje",
+    "description": "Nastav si preferovaný zdroj dat pro každou kategorii. Zdroj s nejvyšší prioritou bude použit jako první.",
+    "onlySource": "Jediný dostupný zdroj",
+    "auto": "Automaticky (podle hodnocení komunity)",
+    "saved": "Uloženo",
+    "reorderHint": "Použij šipky pro změnu pořadí",
+    "moveUp": "Posunout nahoru",
+    "moveDown": "Posunout dolů",
+    "upsellTitle": "Pro PRO členy",
+    "upsellDescription": "Vyber si vlastní pořadí zdrojů notifikací.",
+    "viewPlans": "Zobrazit plány"
   }
 }

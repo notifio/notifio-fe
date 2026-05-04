@@ -548,5 +548,18 @@
         ]
       }
     }
+  },
+  "sourcePreferences": {
+    "title": "Preferred sources",
+    "description": "Set your preferred data source for each category. The source with highest priority will be used first.",
+    "onlySource": "Only available source",
+    "auto": "Auto (by community rating)",
+    "saved": "Saved",
+    "reorderHint": "Use arrows to change order",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "upsellTitle": "For PRO members",
+    "upsellDescription": "Choose your own notification source order.",
+    "viewPlans": "View plans"
   }
 }

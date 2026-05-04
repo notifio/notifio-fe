@@ -548,5 +548,18 @@
         ]
       }
     }
+  },
+  "sourcePreferences": {
+    "title": "Preferált források",
+    "description": "Állítsd be a preferált adatforrást minden kategóriához. A legmagasabb prioritású forrás kerül elsőként felhasználásra.",
+    "onlySource": "Egyetlen elérhető forrás",
+    "auto": "Automatikus (közösségi értékelés alapján)",
+    "saved": "Mentve",
+    "reorderHint": "Használd a nyilakat a sorrend módosításához",
+    "moveUp": "Mozgatás felfelé",
+    "moveDown": "Mozgatás lefelé",
+    "upsellTitle": "PRO tagoknak",
+    "upsellDescription": "Válaszd ki saját értesítésforrás-sorrended.",
+    "viewPlans": "Csomagok megtekintése"
   }
 }

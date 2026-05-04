@@ -548,5 +548,18 @@
         ]
       }
     }
+  },
+  "sourcePreferences": {
+    "title": "Bevorzugte Quellen",
+    "description": "Lege deine bevorzugte Datenquelle für jede Kategorie fest. Die Quelle mit der höchsten Priorität wird zuerst verwendet.",
+    "onlySource": "Einzige verfügbare Quelle",
+    "auto": "Automatisch (nach Community-Bewertung)",
+    "saved": "Gespeichert",
+    "reorderHint": "Verwende die Pfeile zum Ändern der Reihenfolge",
+    "moveUp": "Nach oben verschieben",
+    "moveDown": "Nach unten verschieben",
+    "upsellTitle": "Für PRO-Mitglieder",
+    "upsellDescription": "Wähle deine eigene Reihenfolge der Benachrichtigungsquellen.",
+    "viewPlans": "Pläne anzeigen"
   }
 }
