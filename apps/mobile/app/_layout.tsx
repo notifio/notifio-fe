@@ -1,3 +1,4 @@
+import type { Session } from '@supabase/supabase-js';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,6 +24,41 @@ SplashScreen.preventAutoHideAsync();
 // AsyncStorage read finishes a frame or two later.
 void bootstrapLocale();
 
+/**
+ * Filip BUG-1 (4.5.2026 audit, Sprint 1 #4): user reported the mobile
+ * app prompts login on every cold start while push notifications keep
+ * arriving. Race condition source — splash hid as soon as `isReady`
+ * (auth + onboarding loaded) flipped, but the routing effect that
+ * `router.replace`s into the correct group fires AFTER that. Net result:
+ * splash → Expo Router's default Stack screen (often /(auth)/welcome
+ * on a fresh navigator) → routing effect kicks in → final screen. User
+ * sees a flash of the login screen even though they were authed.
+ *
+ * Fix: gate `SplashScreen.hideAsync()` on segments-aligned-with-target.
+ * We compute which group the user *should* be in given their session
+ * and onboarding state, then keep splash visible until `useSegments()`
+ * actually returns that group. This way the user only sees the splash
+ * → final destination transition, never the auth flash in between.
+ */
+function isSplashReady(
+  isReady: boolean,
+  session: Session | null,
+  hasCompletedOnboarding: boolean,
+  segments: string[],
+): boolean {
+  if (!isReady) return false;
+  const group = segments[0] ?? null;
+  if (group === null) return false; // navigator hasn't settled yet
+
+  // No session → must be inside (auth) group
+  if (!session) return group === '(auth)';
+  // Authed but not onboarded → must be on the onboarding screen
+  if (!hasCompletedOnboarding) return group === 'onboarding';
+  // Authed + onboarded → any non-auth, non-onboarding group is fine
+  // (covers (tabs), settings, events deep-links).
+  return group !== '(auth)' && group !== 'onboarding';
+}
+
 function RootNavigator() {
   const { session, isLoading: isAuthLoading } = useAuth();
   const { hasCompletedOnboarding, isOnboardingLoaded } = useOnboarding();
@@ -30,12 +66,18 @@ function RootNavigator() {
   const router = useRouter();
 
   const isReady = !isAuthLoading && isOnboardingLoaded;
+  const splashReady = isSplashReady(
+    isReady,
+    session,
+    hasCompletedOnboarding,
+    segments as string[],
+  );
 
   useEffect(() => {
-    if (isReady) {
+    if (splashReady) {
       SplashScreen.hideAsync();
     }
-  }, [isReady]);
+  }, [splashReady]);
 
   useEffect(() => {
     if (!isReady) return;
