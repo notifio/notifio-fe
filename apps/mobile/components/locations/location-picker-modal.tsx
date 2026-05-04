@@ -1,8 +1,8 @@
-import { IconCurrentLocation, IconLock, IconX } from '@tabler/icons-react-native';
+import { IconCurrentLocation, IconLock } from '@tabler/icons-react-native';
 import * as ExpoLocation from 'expo-location';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
@@ -10,6 +10,7 @@ import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocatio
 import { useMembership } from '../../hooks/use-membership';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { FullScreenModal } from '../ui/fullscreen-modal';
 
 const SLOVAKIA_REGION: Region = {
   latitude: 48.67,
@@ -113,146 +114,119 @@ export function LocationPickerModal({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" statusBarTranslucent>
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* Header */}
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <Pressable onPress={onClose} hitSlop={8}>
-            <IconX size={22} color={colors.text} />
-          </Pressable>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
-            {isEdit ? t('locations.editLocation') : t('locations.addLocation')}
-          </Text>
-          <View style={styles.headerSpacer} />
+    <FullScreenModal
+      visible={visible}
+      onClose={onClose}
+      title={isEdit ? t('locations.editLocation') : t('locations.addLocation')}
+      presentation="fullScreen"
+      scrollable={false}
+    >
+      {/* Map */}
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={region}
+          onRegionChangeComplete={setRegion}
+          showsUserLocation
+        />
+        {/* Center pin overlay */}
+        <View style={styles.pinOverlay} pointerEvents="none">
+          <View style={[styles.pin, { backgroundColor: colors.primary }]} />
+          <View style={[styles.pinShadow, { backgroundColor: colors.primary }]} />
         </View>
 
-        {/* Map */}
-        <View style={styles.mapContainer}>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={region}
-            onRegionChangeComplete={setRegion}
-            showsUserLocation
-          />
-          {/* Center pin overlay */}
-          <View style={styles.pinOverlay} pointerEvents="none">
-            <View style={[styles.pin, { backgroundColor: colors.primary }]} />
-            <View style={[styles.pinShadow, { backgroundColor: colors.primary }]} />
-          </View>
+        {/* GPS button */}
+        <Pressable
+          onPress={handleGps}
+          style={[styles.gpsButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        >
+          {gpsLoading ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <IconCurrentLocation size={20} color={colors.primary} />
+          )}
+        </Pressable>
+      </View>
 
-          {/* GPS button */}
-          <Pressable
-            onPress={handleGps}
-            style={[styles.gpsButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          >
-            {gpsLoading ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <IconCurrentLocation size={20} color={colors.primary} />
-            )}
-          </Pressable>
-        </View>
+      {/* Form */}
+      <View style={[styles.form, { borderTopColor: colors.border }]}>
+        <Text style={[styles.coordText, { color: colors.textMuted }]}>
+          {region.latitude.toFixed(5)}, {region.longitude.toFixed(5)}
+        </Text>
 
-        {/* Form */}
-        <View style={[styles.form, { borderTopColor: colors.border }]}>
-          <Text style={[styles.coordText, { color: colors.textMuted }]}>
-            {region.latitude.toFixed(5)}, {region.longitude.toFixed(5)}
-          </Text>
-
-          {/* Label pills */}
-          <View style={styles.labelRow}>
-            {LABELS.map((opt) => (
-              <Pressable
-                key={opt.value}
-                onPress={() => setLabel(opt.value)}
+        {/* Label pills */}
+        <View style={styles.labelRow}>
+          {LABELS.map((opt) => (
+            <Pressable
+              key={opt.value}
+              onPress={() => setLabel(opt.value)}
+              style={[
+                styles.labelPill,
+                label === opt.value
+                  ? { backgroundColor: colors.primary }
+                  : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
+              ]}
+            >
+              <Text
                 style={[
-                  styles.labelPill,
-                  label === opt.value
-                    ? { backgroundColor: colors.primary }
-                    : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
+                  styles.labelPillText,
+                  { color: label === opt.value ? colors.textInverse : colors.text },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.labelPillText,
-                    { color: label === opt.value ? colors.textInverse : colors.text },
-                  ]}
-                >
-                  {opt.label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          {/* Custom label — gated behind PLUS membership */}
-          <View>
-            <TextInput
-              value={canSetCustomLabel ? customLabel : ''}
-              onChangeText={canSetCustomLabel ? setCustomLabel : undefined}
-              editable={canSetCustomLabel}
-              placeholder={
-                canSetCustomLabel
-                  ? t('locations.labelPlaceholder')
-                  : t('locations.customLabelPlusOnly')
-              }
-              placeholderTextColor={colors.textMuted}
-              style={[
-                styles.input,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                  color: colors.text,
-                  paddingRight: canSetCustomLabel ? theme.spacing.lg : 40,
-                },
-                !canSetCustomLabel && styles.inputDisabled,
-              ]}
-            />
-            {!canSetCustomLabel && (
-              <View style={styles.lockBadge} pointerEvents="none">
-                <IconLock size={14} color={colors.textMuted} />
-              </View>
-            )}
-          </View>
-
-          {/* Save */}
-          <Pressable
-            onPress={handleSave}
-            disabled={saving}
-            style={[styles.saveButton, { backgroundColor: colors.primary }, saving && styles.disabled]}
-          >
-            {saving && <ActivityIndicator size="small" color={colors.textInverse} style={styles.spinner} />}
-            <Text style={[styles.saveText, { color: colors.textInverse }]}>
-              {saving ? t('locations.saving') : t('locations.save')}
-            </Text>
-          </Pressable>
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
         </View>
+
+        {/* Custom label — gated behind PLUS membership */}
+        <View>
+          <TextInput
+            value={canSetCustomLabel ? customLabel : ''}
+            onChangeText={canSetCustomLabel ? setCustomLabel : undefined}
+            editable={canSetCustomLabel}
+            placeholder={
+              canSetCustomLabel
+                ? t('locations.labelPlaceholder')
+                : t('locations.customLabelPlusOnly')
+            }
+            placeholderTextColor={colors.textMuted}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                color: colors.text,
+                paddingRight: canSetCustomLabel ? theme.spacing.lg : 40,
+              },
+              !canSetCustomLabel && styles.inputDisabled,
+            ]}
+          />
+          {!canSetCustomLabel && (
+            <View style={styles.lockBadge} pointerEvents="none">
+              <IconLock size={14} color={colors.textMuted} />
+            </View>
+          )}
+        </View>
+
+        {/* Save */}
+        <Pressable
+          onPress={handleSave}
+          disabled={saving}
+          style={[styles.saveButton, { backgroundColor: colors.primary }, saving && styles.disabled]}
+        >
+          {saving && <ActivityIndicator size="small" color={colors.textInverse} style={styles.spinner} />}
+          <Text style={[styles.saveText, { color: colors.textInverse }]}>
+            {saving ? t('locations.saving') : t('locations.save')}
+          </Text>
+        </Pressable>
       </View>
-    </Modal>
+    </FullScreenModal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing['4xl'],
-    paddingBottom: theme.spacing.md,
-    borderBottomWidth: 1,
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: theme.fontSize.md,
-    ...theme.font.semibold,
-  },
-  headerSpacer: {
-    width: 22,
-  },
   mapContainer: {
     flex: 1,
   },
