@@ -1,11 +1,8 @@
-import { IconX } from '@tabler/icons-react-native';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -14,6 +11,7 @@ import {
 
 import { theme, withOpacity } from '../../../lib/theme';
 import { useAppTheme } from '../../../providers/theme-provider';
+import { FullScreenModal } from '../../ui/fullscreen-modal';
 import type { TablerIcon } from '../../ui/icon';
 import { Icon } from '../../ui/icon';
 
@@ -92,120 +90,95 @@ export function EditSheet({
   const keyboardType = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric';
   const hasCurrent = currentValue !== null && currentValue !== undefined;
 
-  return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <View style={[styles.modal, { backgroundColor: colors.background }]}>
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <View style={styles.headerLeft}>
-            {icon && (
-              <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
-                <Icon icon={icon} size={20} color={colors.primary} />
-              </View>
-            )}
-            <Text style={[styles.headerTitle, { color: colors.text }]}>{label}</Text>
-          </View>
-          <Pressable onPress={onClose} hitSlop={8}>
-            <IconX size={24} color={colors.textMuted} />
-          </Pressable>
-        </View>
+  const headerLeft = icon ? (
+    <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
+      <Icon icon={icon} size={20} color={colors.primary} />
+    </View>
+  ) : undefined;
 
-        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
-          <View style={styles.field}>
-            <View
-              style={[
-                styles.inputRow,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: showError ? colors.danger : colors.border,
-                },
-              ]}
-            >
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
-                value={text}
-                onChangeText={setText}
-                keyboardType={keyboardType}
-                placeholder="0"
-                placeholderTextColor={colors.textMuted}
-                autoFocus
-              />
-              <Text style={[styles.unitSuffix, { color: colors.textMuted }]}>{unit}</Text>
-            </View>
-            {showError && (
-              <Text style={[styles.error, { color: colors.danger }]}>{invalidValueLabel}</Text>
-            )}
-          </View>
-        </ScrollView>
-
-        <View style={[styles.footer, { borderTopColor: colors.border }]}>
-          {hasCurrent && (
-            <Pressable
-              onPress={handleRemove}
-              disabled={removing || saving}
-              style={[
-                styles.removeButton,
-                { borderColor: colors.danger },
-                (removing || saving) && styles.disabled,
-              ]}
-            >
-              {removing ? (
-                <ActivityIndicator size="small" color={colors.danger} />
-              ) : (
-                <Text style={[styles.removeText, { color: colors.danger }]}>{removeLabel}</Text>
-              )}
-            </Pressable>
+  const footer = (
+    <View style={styles.footerRow}>
+      {hasCurrent && (
+        <Pressable
+          onPress={handleRemove}
+          disabled={removing || saving}
+          style={[
+            styles.removeButton,
+            { borderColor: colors.danger },
+            (removing || saving) && styles.disabled,
+          ]}
+        >
+          {removing ? (
+            <ActivityIndicator size="small" color={colors.danger} />
+          ) : (
+            <Text style={[styles.removeText, { color: colors.danger }]}>{removeLabel}</Text>
           )}
-          <Pressable
-            onPress={handleSave}
-            disabled={!canSave}
+        </Pressable>
+      )}
+      <Pressable
+        onPress={handleSave}
+        disabled={!canSave}
+        style={[
+          styles.saveButton,
+          { backgroundColor: colors.primary },
+          !canSave && styles.disabled,
+        ]}
+      >
+        {saving ? (
+          <ActivityIndicator size="small" color={colors.textInverse} />
+        ) : (
+          <Text style={[styles.saveText, { color: colors.textInverse }]}>{saveLabel}</Text>
+        )}
+      </Pressable>
+    </View>
+  );
+
+  return (
+    <FullScreenModal
+      visible={visible}
+      onClose={onClose}
+      title={label}
+      headerLeft={headerLeft}
+      footer={footer}
+    >
+      <View style={styles.bodyContent}>
+        <View style={styles.field}>
+          <View
             style={[
-              styles.saveButton,
-              { backgroundColor: colors.primary },
-              !canSave && styles.disabled,
+              styles.inputRow,
+              {
+                backgroundColor: colors.surface,
+                borderColor: showError ? colors.danger : colors.border,
+              },
             ]}
           >
-            {saving ? (
-              <ActivityIndicator size="small" color={colors.textInverse} />
-            ) : (
-              <Text style={[styles.saveText, { color: colors.textInverse }]}>{saveLabel}</Text>
-            )}
-          </Pressable>
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              value={text}
+              onChangeText={setText}
+              keyboardType={keyboardType}
+              placeholder="0"
+              placeholderTextColor={colors.textMuted}
+              autoFocus
+            />
+            <Text style={[styles.unitSuffix, { color: colors.textMuted }]}>{unit}</Text>
+          </View>
+          {showError && (
+            <Text style={[styles.error, { color: colors.danger }]}>{invalidValueLabel}</Text>
+          )}
         </View>
       </View>
-    </Modal>
+    </FullScreenModal>
   );
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.lg,
-    borderBottomWidth: 1,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-  },
   iconCircle: {
     width: 36,
     height: 36,
     borderRadius: theme.radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: theme.fontSize.lg,
-    ...theme.font.semibold,
-  },
-  body: {
-    flex: 1,
   },
   bodyContent: {
     padding: theme.spacing.xl,
@@ -234,11 +207,9 @@ const styles = StyleSheet.create({
   error: {
     fontSize: theme.fontSize.sm,
   },
-  footer: {
+  footerRow: {
     flexDirection: 'row',
     gap: theme.spacing.md,
-    padding: theme.spacing.xl,
-    borderTopWidth: 1,
   },
   saveButton: {
     flex: 1,

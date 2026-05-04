@@ -33,23 +33,20 @@ export function UpsellSheet({ source, onClose }: UpsellSheetProps) {
     onClose();
   };
 
-  const sheetBg = isDark ? '#162D4F' : '#FFFFFF';
-  const cardBorder = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(14,34,63,0.08)';
   const subtitleColor = isDark ? '#8B9BB5' : 'rgba(14,34,63,0.6)';
-  const closeBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(14,34,63,0.06)';
   const bulletsBg = isDark ? 'rgba(0,0,0,0.16)' : 'rgba(14,34,63,0.04)';
 
   return (
     <Modal visible animationType="slide" transparent onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable
-          style={[styles.sheet, { backgroundColor: sheetBg, borderColor: cardBorder }]}
+          style={[styles.sheet, { backgroundColor: colors.sheet.bg, borderColor: colors.sheet.border }]}
           onPress={() => undefined}
         >
           <Pressable
             onPress={onClose}
             hitSlop={8}
-            style={[styles.closeBtn, { backgroundColor: closeBg }]}
+            style={[styles.closeBtn, { backgroundColor: colors.sheet.closeBg }]}
           >
             <IconX size={16} color={colors.text} />
           </Pressable>
