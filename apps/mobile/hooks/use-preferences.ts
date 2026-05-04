@@ -14,8 +14,23 @@ interface UsePreferencesResult {
   saving: boolean;
   error: string | null;
   hasChanges: boolean;
+  /**
+   * @deprecated Sprint 2 (B3 split). Calls `toggleSendNotifications` for
+   * compatibility with screens that haven't migrated to the two-toggle
+   * model yet.
+   */
   toggleItem: (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => void;
+  /** @deprecated Sprint 2: prefer `toggleCategorySend` / `toggleCategoryShow`. */
   toggleCategory: (categoryCode: string, enabled: boolean) => void;
+  /** Sprint 2 / B3: toggle push delivery for one item (subcategory-level). */
+  toggleSendNotifications: (categoryCode: string, subcategoryCode: string | null, value: boolean) => void;
+  /** Sprint 2 / B3: toggle map pin visibility for one item (subcategory-level). */
+  toggleShowOnMap: (categoryCode: string, subcategoryCode: string | null, value: boolean) => void;
+  /** Sprint 2 / B3: bulk toggle every item under a category for either axis. */
+  toggleCategorySend: (categoryCode: string, value: boolean) => void;
+  toggleCategoryShow: (categoryCode: string, value: boolean) => void;
+  /** Sprint 2: global quiet hours (PRO-gated). Pass `null` start+end to clear. */
+  setQuietHours: (start: string | null, end: string | null) => void;
   setDisplay: (key: 'theme' | 'units' | 'weatherProvider', value: string) => void;
   savePreferences: () => Promise<void>;
   cancelChanges: () => void;
@@ -53,31 +68,88 @@ export function usePreferences(): UsePreferencesResult {
     return JSON.stringify(serverPrefs) !== JSON.stringify(localPrefs);
   }, [serverPrefs, localPrefs]);
 
-  const toggleItem = useCallback((categoryCode: string, subcategoryCode: string | null, enabled: boolean) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      for (const cat of next.notifications) {
-        for (const item of cat.items) {
-          if (item.categoryCode === categoryCode && item.subcategoryCode === subcategoryCode) {
-            item.enabled = enabled;
+  const updateItems = useCallback(
+    (
+      categoryCode: string,
+      subcategoryCode: string | null | 'ANY',
+      mutator: (item: UserPreferencesResponse['notifications'][number]['items'][number]) => void,
+    ) => {
+      setLocalPrefs((prev) => {
+        if (!prev) return prev;
+        const next = clonePrefs(prev);
+        for (const cat of next.notifications) {
+          if (cat.categoryCode !== categoryCode) continue;
+          for (const item of cat.items) {
+            if (subcategoryCode === 'ANY' || item.subcategoryCode === subcategoryCode) {
+              mutator(item);
+            }
           }
         }
-      }
-      return next;
-    });
-  }, []);
+        return next;
+      });
+    },
+    [],
+  );
 
-  const toggleCategory = useCallback((categoryCode: string, enabled: boolean) => {
+  const toggleSendNotifications = useCallback(
+    (categoryCode: string, subcategoryCode: string | null, value: boolean) => {
+      updateItems(categoryCode, subcategoryCode, (item) => {
+        item.sendNotifications = value;
+        item.enabled = value; // backwards-compat shim
+      });
+    },
+    [updateItems],
+  );
+
+  const toggleShowOnMap = useCallback(
+    (categoryCode: string, subcategoryCode: string | null, value: boolean) => {
+      updateItems(categoryCode, subcategoryCode, (item) => {
+        item.showOnMap = value;
+      });
+    },
+    [updateItems],
+  );
+
+  const toggleCategorySend = useCallback(
+    (categoryCode: string, value: boolean) => {
+      updateItems(categoryCode, 'ANY', (item) => {
+        item.sendNotifications = value;
+        item.enabled = value;
+      });
+    },
+    [updateItems],
+  );
+
+  const toggleCategoryShow = useCallback(
+    (categoryCode: string, value: boolean) => {
+      updateItems(categoryCode, 'ANY', (item) => {
+        item.showOnMap = value;
+      });
+    },
+    [updateItems],
+  );
+
+  const toggleItem = useCallback(
+    (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => {
+      // Pre-Sprint-2 callers — route through toggleSendNotifications so
+      // the shim keeps single-toggle screens working until they migrate.
+      toggleSendNotifications(categoryCode, subcategoryCode, enabled);
+    },
+    [toggleSendNotifications],
+  );
+
+  const toggleCategory = useCallback(
+    (categoryCode: string, enabled: boolean) => {
+      toggleCategorySend(categoryCode, enabled);
+    },
+    [toggleCategorySend],
+  );
+
+  const setQuietHours = useCallback((start: string | null, end: string | null) => {
     setLocalPrefs((prev) => {
       if (!prev) return prev;
       const next = clonePrefs(prev);
-      const cat = next.notifications.find((c) => c.categoryCode === categoryCode);
-      if (cat) {
-        for (const item of cat.items) {
-          item.enabled = enabled;
-        }
-      }
+      next.quietHours = { start, end };
       return next;
     });
   }, []);
@@ -97,10 +169,14 @@ export function usePreferences(): UsePreferencesResult {
     setError(null);
     try {
       const displayChanged = JSON.stringify(serverPrefs.display) !== JSON.stringify(localPrefs.display);
+      const quietHoursChanged =
+        JSON.stringify(serverPrefs.quietHours) !== JSON.stringify(localPrefs.quietHours);
+
       const changedNotifications: Array<{
         categoryCode: string;
         subcategoryCode: string | null;
-        enabled: boolean;
+        sendNotifications: boolean;
+        showOnMap: boolean;
       }> = [];
 
       for (const localCat of localPrefs.notifications) {
@@ -109,11 +185,14 @@ export function usePreferences(): UsePreferencesResult {
           const serverItem = serverCat?.items.find(
             (i) => i.categoryCode === localItem.categoryCode && i.subcategoryCode === localItem.subcategoryCode,
           );
-          if (!serverItem || serverItem.enabled !== localItem.enabled) {
+          const sendChanged = !serverItem || serverItem.sendNotifications !== localItem.sendNotifications;
+          const showChanged = !serverItem || serverItem.showOnMap !== localItem.showOnMap;
+          if (sendChanged || showChanged) {
             changedNotifications.push({
               categoryCode: localItem.categoryCode,
               subcategoryCode: localItem.subcategoryCode,
-              enabled: localItem.enabled,
+              sendNotifications: localItem.sendNotifications,
+              showOnMap: localItem.showOnMap,
             });
           }
         }
@@ -126,6 +205,9 @@ export function usePreferences(): UsePreferencesResult {
           theme: localPrefs.display.theme as 'system' | 'light' | 'dark',
           units: localPrefs.display.units as 'metric' | 'imperial',
         };
+      }
+      if (quietHoursChanged) {
+        request.quietHours = localPrefs.quietHours;
       }
       if (changedNotifications.length > 0) {
         request.notifications = changedNotifications;
@@ -157,6 +239,11 @@ export function usePreferences(): UsePreferencesResult {
     hasChanges,
     toggleItem,
     toggleCategory,
+    toggleSendNotifications,
+    toggleShowOnMap,
+    toggleCategorySend,
+    toggleCategoryShow,
+    setQuietHours,
     setDisplay,
     savePreferences,
     cancelChanges,

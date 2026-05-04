@@ -243,7 +243,15 @@
     "saveChanges": "Save changes",
     "saving": "Saving...",
     "saved": "Preferences saved",
-    "error": "Failed to save preferences"
+    "error": "Failed to save preferences",
+    "showOnMap": "Megjelenítés a térképen",
+    "sendNotifications": "Értesítések küldése",
+    "perSubcategory": "Alkategóriák",
+    "quietHours": "Csendes órák",
+    "quietHoursEnabled": "Csendes órák aktívak",
+    "quietHoursFrom": "Tól",
+    "quietHoursTo": "Ig",
+    "quietHoursProOnly": "A csendes órákhoz magasabb előfizetési szint szükséges."
   },
   "eventDetail": {
     "title": "Event Details",

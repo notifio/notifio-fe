@@ -255,7 +255,15 @@
     "saveChanges": "Uložiť zmeny",
     "saving": "Ukladám...",
     "saved": "Preferencie uložené",
-    "error": "Nepodarilo sa uložiť preferencie"
+    "error": "Nepodarilo sa uložiť preferencie",
+    "showOnMap": "Zobraziť na mape",
+    "sendNotifications": "Posielať notifikácie",
+    "perSubcategory": "Sub-kategórie",
+    "quietHours": "Tichý čas",
+    "quietHoursEnabled": "Tichý čas aktívny",
+    "quietHoursFrom": "Od",
+    "quietHoursTo": "Do",
+    "quietHoursProOnly": "Tichý čas vyžaduje vyšší členský plán."
   },
   "eventDetail": {
     "title": "Detail udalosti",

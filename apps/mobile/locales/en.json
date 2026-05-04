@@ -243,7 +243,15 @@
     "saveChanges": "Save changes",
     "saving": "Saving...",
     "saved": "Preferences saved",
-    "error": "Failed to save preferences"
+    "error": "Failed to save preferences",
+    "showOnMap": "Show on map",
+    "sendNotifications": "Send notifications",
+    "perSubcategory": "Subcategories",
+    "quietHours": "Quiet hours",
+    "quietHoursEnabled": "Quiet hours enabled",
+    "quietHoursFrom": "From",
+    "quietHoursTo": "To",
+    "quietHoursProOnly": "Quiet hours require a higher membership tier."
   },
   "eventDetail": {
     "title": "Event Details",
