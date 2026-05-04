@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 
 import { useDeletionStatus } from '../../hooks/use-deletion-status';
 import { api } from '../../lib/api';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -42,7 +42,7 @@ export default function DeleteAccountScreen() {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         {scheduled ? (
           <View style={styles.centered}>
-            <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+            <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
               <IconCheck size={28} color={colors.primary} />
             </View>
             <Text style={[styles.scheduledTitle, { color: colors.text }]}>

@@ -8,7 +8,6 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Alert,
   LayoutAnimation,
   Pressable,
   ScrollView,
@@ -21,6 +20,7 @@ import {
 import type { SourceSummary } from '@notifio/api-client';
 
 import { useSources } from '../../hooks/use-sources';
+import { confirmDestructive } from '../../lib/confirm';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -179,14 +179,13 @@ export default function SourcesScreen() {
 
   const handleDelete = useCallback(
     (sourceAdapterId: number) => () => {
-      Alert.alert(t('sources.deleteRating'), t('sources.deleteConfirm'), [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: t('sources.deleteRating'),
-          style: 'destructive',
-          onPress: () => deleteRating(sourceAdapterId),
-        },
-      ]);
+      confirmDestructive({
+        t,
+        titleKey: 'sources.deleteRating',
+        descKey: 'sources.deleteConfirm',
+        confirmKey: 'sources.deleteRating',
+        onConfirm: () => deleteRating(sourceAdapterId),
+      });
     },
     [deleteRating, t],
   );

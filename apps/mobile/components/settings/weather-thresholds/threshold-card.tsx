@@ -2,7 +2,7 @@ import { IconChevronRight } from '@tabler/icons-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatThresholdValue } from './codes';
-import { theme } from '../../../lib/theme';
+import { theme, withOpacity } from '../../../lib/theme';
 import { useAppTheme } from '../../../providers/theme-provider';
 import type { TablerIcon } from '../../ui/icon';
 import { Icon } from '../../ui/icon';
@@ -37,7 +37,7 @@ export function ThresholdCard({
         pressed && styles.pressed,
       ]}
     >
-      <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+      <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
         <Icon icon={icon} size={20} color={colors.primary} />
       </View>
       <View style={styles.textCol}>

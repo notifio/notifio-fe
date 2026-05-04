@@ -4,14 +4,7 @@ import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native
 import { AQ_COMPONENT_INFO, getAqiStyle } from '@notifio/shared/air-quality';
 import type { AirQualityData } from '@notifio/shared/types';
 
-import { theme } from '../../lib/theme';
-
-function withOpacity(hexColor: string, opacity: number): string {
-  const alpha = Math.round(opacity * 255)
-    .toString(16)
-    .padStart(2, '0');
-  return `${hexColor}${alpha}`;
-}
+import { theme, withOpacity } from '../../lib/theme';
 
 interface AqiIndicatorProps {
   airQuality: AirQualityData | null;

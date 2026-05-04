@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 
-import { theme } from '../../../lib/theme';
+import { theme, withOpacity } from '../../../lib/theme';
 import { useAppTheme } from '../../../providers/theme-provider';
 import type { TablerIcon } from '../../ui/icon';
 import { Icon } from '../../ui/icon';
@@ -98,7 +98,7 @@ export function EditSheet({
         <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <View style={styles.headerLeft}>
             {icon && (
-              <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <Icon icon={icon} size={20} color={colors.primary} />
               </View>
             )}

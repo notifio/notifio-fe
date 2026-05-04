@@ -17,7 +17,7 @@ import {
 } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '../../components/ui/card';
 import { ScreenHeader } from '../../components/ui/screen-header';
@@ -27,6 +27,7 @@ import { SettingsRow } from '../../components/ui/settings-row';
 import { TierBadge } from '../../components/ui/tier-badge';
 import { useAuth } from '../../hooks/use-auth';
 import { useMembership } from '../../hooks/use-membership';
+import { confirmDestructive } from '../../lib/confirm';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -46,14 +47,14 @@ export default function SettingsScreen() {
   const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
   const handleSignOut = () => {
-    Alert.alert(
-      t('settings.signOutConfirm.title'),
-      t('settings.signOutConfirm.message'),
-      [
-        { text: t('settings.cancel'), style: 'cancel' },
-        { text: t('settings.signOutConfirm.confirm'), style: 'destructive', onPress: signOut },
-      ],
-    );
+    confirmDestructive({
+      t,
+      titleKey: 'settings.signOutConfirm.title',
+      descKey: 'settings.signOutConfirm.message',
+      cancelKey: 'settings.cancel',
+      confirmKey: 'settings.signOutConfirm.confirm',
+      onConfirm: signOut,
+    });
   };
 
   const pushPlaceholder = (title: string) =>

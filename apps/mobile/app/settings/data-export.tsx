@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useDataExport } from '../../hooks/use-data-export';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -34,7 +34,7 @@ export default function DataExportScreen() {
         <View style={styles.content}>
           {state === 'idle' && (
             <>
-              <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <IconDownload size={28} color={colors.primary} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>
@@ -78,7 +78,7 @@ export default function DataExportScreen() {
 
           {state === 'ready' && (
             <>
-              <View style={[styles.iconCircle, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <IconCheck size={28} color={colors.primary} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>

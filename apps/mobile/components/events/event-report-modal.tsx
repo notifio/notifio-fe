@@ -10,7 +10,7 @@ import type { UserEventCategory } from '@notifio/api-client';
 import { useEventCategories } from '../../hooks/use-event-categories';
 import { useMembership } from '../../hooks/use-membership';
 import { api } from '../../lib/api';
-import { theme } from '../../lib/theme';
+import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -143,7 +143,7 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
                         style={[
                           styles.categoryRow,
                           { borderColor: isSelected ? colors.primary : colors.border },
-                          isSelected && { backgroundColor: `${colors.primary}10` },
+                          isSelected && { backgroundColor: withOpacity(colors.primary, 0.063) },
                         ]}
                       >
                         <Text style={[styles.categoryName, { color: isSelected ? colors.primary : colors.text }]}>
@@ -230,7 +230,7 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
             </Pressable>
           ) : (
             <View style={[styles.upsellCard, { borderColor: colors.border, backgroundColor: colors.surface }]}>
-              <View style={[styles.upsellIcon, { backgroundColor: `${colors.primary}18` }]}>
+              <View style={[styles.upsellIcon, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
                 <IconCrown size={24} color={colors.primary} />
               </View>
               <Text style={[styles.upsellTitle, { color: colors.text }]}>PLUS Feature</Text>
