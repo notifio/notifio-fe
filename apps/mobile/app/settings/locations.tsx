@@ -56,7 +56,12 @@ export default function LocationsScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: UserLocation }) => {
-      const displayLabel = item.customLabel ?? item.label.name;
+      // Fall back to local i18n keys when BE returns an empty label.name
+      // (defense in depth — list shouldn't render blank if BE locale data
+      // is incomplete). Priority: customLabel → BE label.name → local key.
+      const displayLabel =
+        item.customLabel ??
+        (item.label.name?.trim() || t(`locations.labels.${item.label.code}`));
       const isHome = item.label.code === 'home';
 
       return (
@@ -88,7 +93,7 @@ export default function LocationsScreen() {
         </View>
       );
     },
-    [colors, handleEdit, handleDelete],
+    [colors, handleEdit, handleDelete, t],
   );
 
   // ── LOC-2: current-position block, rendered above the saved list ──

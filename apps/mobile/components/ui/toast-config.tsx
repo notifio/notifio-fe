@@ -60,13 +60,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     paddingRight: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
+    // Vertical padding lives on textContainer instead of the row so
+    // accentBar can self-stretch the full toast height. Putting it
+    // on the container would shrink children into the padded inner
+    // box and leave gaps above/below the colored band.
   },
   accentBar: {
     width: 4,
     alignSelf: 'stretch',
-    borderTopLeftRadius: theme.radius.xl,
-    borderBottomLeftRadius: theme.radius.xl,
   },
   icon: {
     marginLeft: theme.spacing.md,
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    paddingVertical: theme.spacing.md,
   },
   title: {
     fontSize: theme.fontSize.md,

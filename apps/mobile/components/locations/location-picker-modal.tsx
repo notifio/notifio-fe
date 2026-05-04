@@ -89,19 +89,33 @@ export function LocationPickerModal({
       // Don't ship customLabel up if the user isn't entitled — saves a
       // round-trip and prevents the BE rejection error. Users without
       // the feature see the input disabled in the form below anyway.
+      //
+      // On EDIT, an empty customLabel must be sent as `null` so the BE
+      // clears the persisted value (UpdateLocationBodySchema accepts
+      // `null`). Omitting the key would leave the previous custom label
+      // in place. The CreateLocationBodySchema is `optional` (not
+      // nullable), so on CREATE we omit instead.
       const trimmedCustom = customLabel.trim();
-      const body = {
+      const customLabelOnEdit =
+        trimmedCustom && canSetCustomLabel
+          ? { customLabel: trimmedCustom }
+          : { customLabel: null };
+      const customLabelOnCreate =
+        trimmedCustom && canSetCustomLabel
+          ? { customLabel: trimmedCustom }
+          : {};
+
+      const baseBody = {
         lat: region.latitude,
         lng: region.longitude,
         label,
-        ...(trimmedCustom && canSetCustomLabel ? { customLabel: trimmedCustom } : {}),
       };
 
       let success: boolean;
       if (isEdit && onUpdate) {
-        success = await onUpdate(editLocation.locationId, body);
+        success = await onUpdate(editLocation.locationId, { ...baseBody, ...customLabelOnEdit });
       } else {
-        success = await onSave(body as CreateLocationBody);
+        success = await onSave({ ...baseBody, ...customLabelOnCreate } as CreateLocationBody);
       }
       if (success) onClose();
     } finally {
