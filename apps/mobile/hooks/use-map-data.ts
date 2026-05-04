@@ -67,7 +67,7 @@ function buildDisabledSources(prefs: UserPreferencesResponse | null): Set<MapPin
   if (!prefs) return disabled;
   for (const cat of prefs.notifications) {
     if (cat.items.length === 0) continue;
-    const allDisabled = cat.items.every((i) => !i.enabled);
+    const allDisabled = cat.items.every((i) => !i.showOnMap);
     if (!allDisabled) continue;
     for (const src of mapCategoryToSources(cat.categoryCode)) {
       disabled.add(src);
