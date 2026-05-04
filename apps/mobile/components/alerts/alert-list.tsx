@@ -12,7 +12,7 @@ import { isResolved } from '../../lib/alert-card-utils';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-import { Icon } from '../ui/icon';
+import { EmptyState } from '../ui/empty-state';
 
 type TabFilter = 'active' | 'ended' | 'all';
 
@@ -162,12 +162,7 @@ export function AlertList({ onAlertPress }: AlertListProps) {
           isLoading ? (
             <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
           ) : (
-            <View style={styles.emptyContainer}>
-              <Icon icon={IconBell} size={48} color={colors.textMuted} />
-              <Text style={[styles.emptyText, { color: colors.textMuted }]}>
-                {t('alerts.noNotifications')}
-              </Text>
-            </View>
+            <EmptyState icon={IconBell} message={t('alerts.noNotifications')} />
           )
         }
       />
@@ -248,15 +243,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: SPACING.cardGap,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  emptyText: {
-    fontSize: theme.fontSize.md,
   },
   footer: {
     paddingVertical: theme.spacing.lg,

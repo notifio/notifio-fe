@@ -20,6 +20,7 @@ import { confirmDestructive } from '../../lib/confirm';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { EmptyState } from '../ui/empty-state';
 
 function formatTriggerDate(iso: string): string {
   const d = new Date(iso);
@@ -149,15 +150,11 @@ export function ReminderList() {
           />
         }
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <IconClock size={48} color={colors.textMuted} />
-            <Text style={[styles.emptyTitle, { color: colors.textMuted }]}>
-              {t('reminders.empty')}
-            </Text>
-            <Text style={[styles.emptyMessage, { color: colors.textMuted }]}>
-              {t('reminders.emptyMessage')}
-            </Text>
-          </View>
+          <EmptyState
+            icon={IconClock}
+            title={t('reminders.empty')}
+            message={t('reminders.emptyMessage')}
+          />
         }
       />
 
@@ -227,20 +224,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: theme.fontSize.xs,
     ...theme.font.medium,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  emptyTitle: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
-  },
-  emptyMessage: {
-    fontSize: theme.fontSize.sm,
-    textAlign: 'center',
   },
   errorText: {
     fontSize: theme.fontSize.md,

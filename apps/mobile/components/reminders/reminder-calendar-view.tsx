@@ -10,6 +10,7 @@ import { useReminders } from '../../hooks/use-reminders';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { EmptyState } from '../ui/empty-state';
 
 interface ReminderCalendarViewProps {
   selectedDate: string;
@@ -121,12 +122,11 @@ export function ReminderCalendarView({
 
       <View style={styles.dayList}>
         {remindersOnSelectedDate.length === 0 ? (
-          <View style={styles.emptyInline}>
-            <IconClock size={16} color={colors.textMuted} />
-            <Text style={[styles.emptyInlineText, { color: colors.textMuted }]}>
-              {t('reminders.calendar.emptyInline')}
-            </Text>
-          </View>
+          <EmptyState
+            variant="compact"
+            icon={IconClock}
+            message={t('reminders.calendar.emptyInline')}
+          />
         ) : (
           remindersOnSelectedDate.map((r) => (
             <Pressable
@@ -217,14 +217,5 @@ const styles = StyleSheet.create({
   pausedText: {
     fontSize: 10,
     ...theme.font.medium,
-  },
-  emptyInline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.emptyStateIconToText,
-    paddingVertical: theme.spacing.md,
-  },
-  emptyInlineText: {
-    fontSize: theme.fontSize.sm,
   },
 });

@@ -7,6 +7,7 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from '
 import type { UserLocation } from '@notifio/api-client';
 
 import { LocationPickerModal } from '../../components/locations/location-picker-modal';
+import { EmptyState } from '../../components/ui/empty-state';
 import { Icon } from '../../components/ui/icon';
 import { useCurrentPosition } from '../../hooks/use-current-position';
 import { useLocations } from '../../hooks/use-locations';
@@ -191,15 +192,11 @@ export default function LocationsScreen() {
               </View>
             }
             ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Icon icon={IconMapPin} size={48} color={colors.textMuted} />
-                <Text style={[styles.emptyTitle, { color: colors.text }]}>
-                  {t('locations.emptyTitle')}
-                </Text>
-                <Text style={[styles.emptyMessage, { color: colors.textMuted }]}>
-                  {t('locations.emptyMessage')}
-                </Text>
-              </View>
+              <EmptyState
+                icon={IconMapPin}
+                title={t('locations.emptyTitle')}
+                message={t('locations.emptyMessage')}
+              />
             }
           />
         )}
@@ -326,20 +323,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     padding: theme.spacing.xs,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  emptyTitle: {
-    fontSize: theme.fontSize.lg,
-    ...theme.font.bold,
-  },
-  emptyMessage: {
-    fontSize: theme.fontSize.md,
-    textAlign: 'center',
   },
   fab: {
     position: 'absolute',
