@@ -1,17 +1,73 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { TrafficFlowResponse } from '@notifio/api-client';
+import type { TrafficFlowResponse, UserPreferencesResponse } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
-import { type MapPin, normalizeMapPins } from '@/lib/normalize-pins';
+import { type MapPin, type MapPinSource, normalizeMapPins } from '@/lib/normalize-pins';
 
 import { safeFetch } from './use-map-data/fetch-utils';
 import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from './use-map-data/geo-utils';
 import type { ViewportCache } from './use-map-data/types';
+import { usePreferences } from './use-preferences';
 
 const VIEWPORT_REFRESH_MS = 2 * 60 * 1000;
+
+/**
+ * Filip BUG-2 (4.5.2026, Sprint 1 #6): user disabled "Doprava" in
+ * Settings → Notifications, but traffic pins kept appearing on the map
+ * and push notifications kept arriving. Mirrors the mobile fix in
+ * fix/fe-mobile-map-respect-prefs — same logic, same category→source
+ * mapping. Web map renderer (MapLibre) consumes `pins` from this hook
+ * directly, so filtering at the hook boundary handles all callers.
+ *
+ * Sprint 2 (B3 schema split) will replace this single-toggle filter
+ * with a separate flg_show_on_map field per the team workflow header
+ * in BACKLOG.md (notifio-api repo). Until then, "vypnem Dopravu"
+ * hides pins AND blocks push in lockstep — one toggle, both effects.
+ */
+function mapCategoryToSources(categoryCode: string): MapPinSource[] {
+  if (categoryCode === 'weather_warning') return ['weather_alerts', 'weather_forecast'];
+  if (categoryCode === 'traffic') return ['traffic'];
+
+  switch (categoryCode) {
+    case 'outage_electric':
+      return ['electricity'];
+    case 'outage_water':
+      return ['water'];
+    case 'outage_gas':
+      return ['gas'];
+    case 'outage_heat':
+      return ['heat'];
+    case 'air_quality':
+      return ['air_quality'];
+    case 'pollen':
+      return ['pollen'];
+    case 'hydrology':
+      return ['hydrology'];
+    case 'wildfire':
+      return ['wildfire'];
+    case 'outage_internet':
+      return ['outage_internet'];
+    default:
+      return [];
+  }
+}
+
+function buildDisabledSources(prefs: UserPreferencesResponse | null): Set<MapPinSource> {
+  const disabled = new Set<MapPinSource>();
+  if (!prefs) return disabled;
+  for (const cat of prefs.notifications) {
+    if (cat.items.length === 0) continue;
+    const allDisabled = cat.items.every((i) => !i.enabled);
+    if (!allDisabled) continue;
+    for (const src of mapCategoryToSources(cat.categoryCode)) {
+      disabled.add(src);
+    }
+  }
+  return disabled;
+}
 
 export function useMapData(center: { lat: number; lng: number } | null) {
   const [pins, setPins] = useState<MapPin[]>([]);
@@ -19,6 +75,9 @@ export function useMapData(center: { lat: number; lng: number } | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { preferences } = usePreferences();
+  const disabledSources = useMemo(() => buildDisabledSources(preferences), [preferences]);
 
   const lastFetchCenter = useRef<{ lat: number; lng: number } | null>(null);
   const fetchingRef = useRef(false);
@@ -119,5 +178,24 @@ export function useMapData(center: { lat: number; lng: number } | null) {
     }
   }, [center, fetchViewport]);
 
-  return { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh };
+  // Pref-aware filtering — see header note. Cheap memoised filter; the
+  // hook still caches raw pins per viewport so toggling preferences
+  // doesn't trigger a refetch.
+  const filteredPins = useMemo(
+    () => (disabledSources.size === 0 ? pins : pins.filter((p) => !disabledSources.has(p.source))),
+    [pins, disabledSources],
+  );
+  const filteredFlowSegments = useMemo(
+    () => (disabledSources.has('traffic') ? null : flowSegments),
+    [flowSegments, disabledSources],
+  );
+
+  return {
+    pins: filteredPins,
+    flowSegments: filteredFlowSegments,
+    isLoading,
+    isAutoRefreshing,
+    error,
+    refresh,
+  };
 }
