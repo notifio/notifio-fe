@@ -2,6 +2,7 @@ import { IconPlus, IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
 import { Callout, Marker, Polyline } from 'react-native-maps';
@@ -17,6 +18,7 @@ import { MapPinMarker } from '../../components/map/map-pin-marker';
 import { MapStatusCard } from '../../components/map/map-status-card';
 import { PinCallout } from '../../components/map/pin-callout';
 import { UpsellSheet } from '../../components/monetization/upsell-sheet';
+import { FAB } from '../../components/ui/fab';
 import { useMapData } from '../../hooks/use-map-data';
 import { useMembership } from '../../hooks/use-membership';
 import {
@@ -77,6 +79,7 @@ export default function MapScreen() {
   const [clusterChildren, setClusterChildren] = useState<MapPin[]>([]);
   const [clusterSheetOpen, setClusterSheetOpen] = useState(false);
   const { tier } = useMembership();
+  const { t } = useTranslation();
   // Mobile's `useMembership` already coerces missing data to FREE, but
   // be explicit so the call site reads the same as web.
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
@@ -305,7 +308,7 @@ export default function MapScreen() {
           <View style={[styles.loadingPill, { backgroundColor: loadingPillBg }]}>
             <ActivityIndicator size="small" color={colors.textMuted} />
             <Text style={[styles.loadingText, { color: colors.textMuted }]}>
-              {isAutoRefreshing ? 'Refreshing...' : 'Loading map data...'}
+              {isAutoRefreshing ? t('map.refreshing') : t('map.loadingData')}
             </Text>
           </View>
         </View>
@@ -325,14 +328,7 @@ export default function MapScreen() {
       <MapStatusCard alertCount={filteredPins.length} />
 
       {/* FAB — Report event */}
-      <View style={styles.fabContainer}>
-        <Pressable
-          onPress={() => setShowReportModal(true)}
-          style={[styles.fab, { backgroundColor: colors.primary }]}
-        >
-          <IconPlus size={24} color="#FFFFFF" />
-        </Pressable>
-      </View>
+      <FAB icon={IconPlus} onPress={() => setShowReportModal(true)} bottom={100} />
 
       <EventReportModal
         visible={showReportModal}
@@ -391,22 +387,5 @@ const styles = StyleSheet.create({
   retryButton: {
     padding: theme.spacing.xs,
     borderRadius: theme.radius.full,
-  },
-  fabContainer: {
-    position: 'absolute',
-    right: theme.spacing.xl,
-    bottom: 100,
-  },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
 });

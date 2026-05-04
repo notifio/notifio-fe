@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconBellRinging } from '@tabler/icons-react-native';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 import { NotificationCategoryList } from '../../components/notifications/notification-category-list';
@@ -21,6 +22,7 @@ const GROUP_TO_ALERT_TYPES: Record<string, AlertType[]> = {
 };
 
 export default function NotificationsScreen() {
+  const { t } = useTranslation();
   const { completeOnboarding } = useOnboarding();
   const notificationCtx = useContext(NotificationContext);
 
@@ -57,9 +59,9 @@ export default function NotificationsScreen() {
 
       if (!notificationCtx?.hasPermission) {
         Alert.alert(
-          'Notifications Disabled',
-          'You can enable notifications later in Settings.',
-          [{ text: 'OK' }],
+          t('onboarding.notificationsDisabledTitle'),
+          t('onboarding.notificationsDisabledMessage'),
+          [{ text: t('common.ok') }],
         );
       }
     } catch (err) {
@@ -76,10 +78,10 @@ export default function NotificationsScreen() {
   return (
     <OnboardingScreen
       icon={IconBellRinging}
-      title="What matters to you?"
-      description="Choose the types of alerts you want to receive."
-      primaryAction={{ title: 'Enable Notifications', onPress: handleEnable }}
-      secondaryAction={{ title: 'Skip for now', onPress: handleSkip }}
+      title={t('onboarding.notificationsTitle')}
+      description={t('onboarding.notificationsDescription')}
+      primaryAction={{ title: t('onboarding.enableNotifications'), onPress: handleEnable }}
+      secondaryAction={{ title: t('onboarding.skipForNow'), onPress: handleSkip }}
     >
       <NotificationCategoryList
         groupValues={groupValues}

@@ -1,5 +1,6 @@
 import { IconX } from '@tabler/icons-react-native';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   KeyboardAvoidingView,
   Modal,
@@ -57,6 +58,7 @@ export function FullScreenModal({
   children,
 }: FullScreenModalProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   // iOS pageSheet renders card-style with system gap above/below; iOS
@@ -94,7 +96,7 @@ export function FullScreenModal({
             onPress={onClose}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Close"
+            accessibilityLabel={t('common.close')}
           >
             <IconX size={24} color={colors.textMuted} />
           </Pressable>

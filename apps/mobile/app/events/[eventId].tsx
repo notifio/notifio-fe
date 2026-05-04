@@ -72,7 +72,7 @@ export default function EventDetailScreen() {
         <View style={[styles.centered, { backgroundColor: colors.background }]}>
           <Icon icon={IconMapPin} size={48} color={colors.textMuted} />
           <Text style={[styles.errorText, { color: colors.textMuted }]}>
-            {error ?? 'Event not found'}
+            {error ?? t('eventDetail.notFound')}
           </Text>
         </View>
       </>
@@ -207,7 +207,7 @@ export default function EventDetailScreen() {
         {/* Owner actions */}
         {isOwner && !isResolved && (
           <>
-            <SectionLabel label="Owner Actions" />
+            <SectionLabel label={t('eventDetail.owner.sectionTitle')} />
             <Card>
               <Pressable onPress={handleResolve} style={styles.ownerRow}>
                 <IconCheck size={18} color={colors.primary} />

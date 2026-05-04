@@ -36,7 +36,8 @@
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "done": "Fertig",
-    "today": "Heute"
+    "today": "Heute",
+    "close": "Schließen"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -188,7 +189,9 @@
     "deleting": "Scheduling deletion...",
     "scheduled": "Deletion scheduled",
     "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
-    "error": "Failed to process request"
+    "error": "Failed to process request",
+    "cancelSuccess": "Kontolöschung abgebrochen",
+    "cancelError": "Löschung konnte nicht abgebrochen werden"
   },
   "dataExport": {
     "title": "Export My Data",
@@ -226,7 +229,14 @@
     "currentDenied": "Standortzugriff verweigert. In den Einstellungen erlauben.",
     "currentUnavailable": "Standort konnte nicht ermittelt werden. Erneut versuchen.",
     "currentAccuracy": "Genauigkeit: ~{m} m",
-    "savedTitle": "Gespeicherte Orte"
+    "savedTitle": "Gespeicherte Orte",
+    "labels": {
+      "home": "Zuhause",
+      "work": "Arbeit",
+      "school": "Schule",
+      "gym": "Fitnessstudio",
+      "other": "Sonstige"
+    }
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -265,8 +275,10 @@
       "delete": "Delete event",
       "deleteConfirm": "Permanently delete this event?",
       "deleted": "Event deleted",
-      "error": "Failed to update event"
-    }
+      "error": "Failed to update event",
+      "sectionTitle": "Eigentümer-Aktionen"
+    },
+    "notFound": "Ereignis nicht gefunden"
   },
   "eventReport": {
     "title": "Report an Event",
@@ -276,7 +288,12 @@
     "submit": "Report Event",
     "submitting": "Reporting...",
     "success": "Event reported successfully",
-    "error": "Failed to report event"
+    "error": "Failed to report event",
+    "upsell": {
+      "title": "PLUS-Funktion",
+      "description": "Das Melden von Ereignissen erfordert ein PLUS-Abonnement.",
+      "cta": "Upgraden"
+    }
   },
   "digest": {
     "title": "Notification Digest",
@@ -428,7 +445,9 @@
   "map": {
     "activeIncidents_one": "1 aktives Ereignis in der Nähe",
     "activeIncidents_other": "{{count}} aktive Ereignisse in der Nähe",
-    "noActiveIncidents": "Keine aktiven Ereignisse in diesem Gebiet"
+    "noActiveIncidents": "Keine aktiven Ereignisse in diesem Gebiet",
+    "refreshing": "Aktualisiere...",
+    "loadingData": "Lade Kartendaten..."
   },
   "nav": {
     "overview": "Übersicht",
@@ -449,6 +468,21 @@
     "confirmDelete": {
       "title": "Meldung löschen?",
       "description": "Diese Aktion kann nicht rückgängig gemacht werden."
+    }
+  },
+  "auth": {
+    "welcome": {
+      "title": "Willkommen bei Notifio",
+      "description": "Echtzeit-Warnungen für deine Region — Wetter, Verkehr, Ausfälle und mehr.",
+      "getStarted": "Loslegen",
+      "alreadyHaveAccount": "Ich habe bereits ein Konto"
+    },
+    "login": {
+      "title": "Willkommen zurück",
+      "description": "Melde dich in deinem Notifio-Konto an, um fortzufahren.",
+      "signIn": "Anmelden",
+      "errorTitle": "Anmeldefehler",
+      "goBack": "Zurück"
     }
   }
 }

@@ -1,4 +1,5 @@
 import { IconCrown } from '@tabler/icons-react-native';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { MembershipTier } from '@notifio/api-client';
@@ -19,6 +20,7 @@ interface ProGateProps {
 export function ProGate({ requiredTier, children, fallback }: ProGateProps) {
   const { colors } = useAppTheme();
   const { tier, isLoading } = useMembership();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -51,7 +53,7 @@ export function ProGate({ requiredTier, children, fallback }: ProGateProps) {
         This feature requires a {requiredTier} subscription.
       </Text>
       <Pressable
-        onPress={() => showToast.info('Coming soon', 'Upgrade will be available soon.')}
+        onPress={() => showToast.info(t('common.comingSoon'), t('upsell.upgradeSoon'))}
         style={[styles.button, { backgroundColor: colors.primary }]}
       >
         <Text style={[styles.buttonText, { color: colors.textInverse }]}>Upgrade</Text>
