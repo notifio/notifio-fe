@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LayoutAnimation, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NotificationCategoryResponse } from '@notifio/api-client';
@@ -37,6 +38,7 @@ export function NotificationCategoryList({
   onToggleGroup,
   disabled,
 }: NotificationCategoryListProps) {
+  const { t } = useTranslation();
   const isFullMode = categories != null && categories.length > 0;
 
   if (isFullMode) {
@@ -58,7 +60,7 @@ export function NotificationCategoryList({
         <Card key={def.groupKey}>
           <ToggleRow
             icon={def.icon}
-            label={def.groupKey.charAt(0).toUpperCase() + def.groupKey.slice(1)}
+            label={t(`categoryGroups.${def.groupKey}`)}
             value={groupValues?.[def.groupKey] ?? true}
             onValueChange={(v) => onToggleGroup(def.groupKey, v)}
             disabled={disabled}
@@ -80,6 +82,7 @@ interface FullModeProps {
 }
 
 function FullModeList({ categories, onToggleItem, onToggleCategory, onToggleGroup, disabled }: FullModeProps) {
+  const { t } = useTranslation();
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set(CATEGORY_GROUPS.map((g) => g.groupKey)));
 
   const toggleExpand = (groupKey: string) => {
@@ -126,7 +129,7 @@ function FullModeList({ categories, onToggleItem, onToggleCategory, onToggleGrou
             <Pressable onPress={() => toggleExpand(group.groupKey)}>
               <ToggleRow
                 icon={group.icon}
-                label={group.groupKey.charAt(0).toUpperCase() + group.groupKey.slice(1)}
+                label={t(`categoryGroups.${group.groupKey}`)}
                 value={someEnabled}
                 onValueChange={(v) => handleGroupToggle(group, v)}
                 disabled={disabled}

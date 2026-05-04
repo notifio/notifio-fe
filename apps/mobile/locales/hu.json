@@ -36,7 +36,8 @@
     "cancel": "Mégse",
     "delete": "Törlés",
     "done": "Kész",
-    "today": "Ma"
+    "today": "Ma",
+    "close": "Bezárás"
   },
   "categoryGroups": {
     "weather": "Weather",
@@ -188,7 +189,9 @@
     "deleting": "Scheduling deletion...",
     "scheduled": "Deletion scheduled",
     "scheduledMessage": "Your account will be deleted in 24 hours. You can cancel anytime from the banner at the top of the app.",
-    "error": "Failed to process request"
+    "error": "Failed to process request",
+    "cancelSuccess": "Fiók törlése megszakítva",
+    "cancelError": "Nem sikerült megszakítani a törlést"
   },
   "dataExport": {
     "title": "Export My Data",
@@ -226,7 +229,14 @@
     "currentDenied": "A hely hozzáférés megtagadva. Engedélyezd a beállításokban.",
     "currentUnavailable": "A hely nem érhető el. Próbáld meg újra.",
     "currentAccuracy": "Pontosság: ~{m} m",
-    "savedTitle": "Mentett helyek"
+    "savedTitle": "Mentett helyek",
+    "labels": {
+      "home": "Otthon",
+      "work": "Munka",
+      "school": "Iskola",
+      "gym": "Edzőterem",
+      "other": "Egyéb"
+    }
   },
   "notificationPreferences": {
     "title": "Notification Preferences",
@@ -265,8 +275,10 @@
       "delete": "Delete event",
       "deleteConfirm": "Permanently delete this event?",
       "deleted": "Event deleted",
-      "error": "Failed to update event"
-    }
+      "error": "Failed to update event",
+      "sectionTitle": "Tulajdonosi műveletek"
+    },
+    "notFound": "Az esemény nem található"
   },
   "eventReport": {
     "title": "Report an Event",
@@ -276,7 +288,12 @@
     "submit": "Report Event",
     "submitting": "Reporting...",
     "success": "Event reported successfully",
-    "error": "Failed to report event"
+    "error": "Failed to report event",
+    "upsell": {
+      "title": "PLUS funkció",
+      "description": "Az események jelentéséhez PLUS előfizetés szükséges.",
+      "cta": "Frissítés"
+    }
   },
   "digest": {
     "title": "Notification Digest",
@@ -428,7 +445,9 @@
   "map": {
     "activeIncidents_one": "1 aktív esemény a közelben",
     "activeIncidents_other": "{{count}} aktív esemény a közelben",
-    "noActiveIncidents": "Nincsenek aktív események ezen a területen"
+    "noActiveIncidents": "Nincsenek aktív események ezen a területen",
+    "refreshing": "Frissítés...",
+    "loadingData": "Térképadatok betöltése..."
   },
   "nav": {
     "overview": "Áttekintés",
@@ -449,6 +468,21 @@
     "confirmDelete": {
       "title": "Bejelentés törlése?",
       "description": "Ez a művelet nem visszavonható."
+    }
+  },
+  "auth": {
+    "welcome": {
+      "title": "Üdvözöl a Notifio",
+      "description": "Valós idejű értesítések a környékedről — időjárás, közlekedés, áramszünetek és más.",
+      "getStarted": "Kezdjük",
+      "alreadyHaveAccount": "Már van fiókom"
+    },
+    "login": {
+      "title": "Üdv újra itt",
+      "description": "Jelentkezz be a Notifio fiókodba a folytatáshoz.",
+      "signIn": "Bejelentkezés",
+      "errorTitle": "Bejelentkezési hiba",
+      "goBack": "Vissza"
     }
   }
 }

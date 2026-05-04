@@ -120,15 +120,15 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
       <View style={[styles.upsellIcon, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
         <IconCrown size={24} color={colors.primary} />
       </View>
-      <Text style={[styles.upsellTitle, { color: colors.text }]}>PLUS Feature</Text>
+      <Text style={[styles.upsellTitle, { color: colors.text }]}>{t('eventReport.upsell.title')}</Text>
       <Text style={[styles.upsellDesc, { color: colors.textMuted }]}>
-        Event reporting requires a PLUS subscription.
+        {t('eventReport.upsell.description')}
       </Text>
       <Pressable
-        onPress={() => showToast.info('Coming soon', 'Upgrade will be available soon.')}
+        onPress={() => showToast.info(t('common.comingSoon'), t('upsell.upgradeSoon'))}
         style={[styles.upsellButton, { backgroundColor: colors.primary }]}
       >
-        <Text style={[styles.upsellButtonText, { color: colors.textInverse }]}>Upgrade</Text>
+        <Text style={[styles.upsellButtonText, { color: colors.textInverse }]}>{t('eventReport.upsell.cta')}</Text>
       </Pressable>
     </View>
   );

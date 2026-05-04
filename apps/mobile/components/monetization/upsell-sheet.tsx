@@ -29,7 +29,7 @@ export function UpsellSheet({ source, onClose }: UpsellSheetProps) {
   const Icon = style.icon;
 
   const handleUpgrade = () => {
-    showToast.info('Coming soon', 'Upgrade will be available soon.');
+    showToast.info(t('common.comingSoon'), t('upsell.upgradeSoon'));
     onClose();
   };
 

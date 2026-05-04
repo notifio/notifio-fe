@@ -2,6 +2,7 @@ import { IconPlus, IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
 import { Callout, Marker, Polyline } from 'react-native-maps';
@@ -77,6 +78,7 @@ export default function MapScreen() {
   const [clusterChildren, setClusterChildren] = useState<MapPin[]>([]);
   const [clusterSheetOpen, setClusterSheetOpen] = useState(false);
   const { tier } = useMembership();
+  const { t } = useTranslation();
   // Mobile's `useMembership` already coerces missing data to FREE, but
   // be explicit so the call site reads the same as web.
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
@@ -305,7 +307,7 @@ export default function MapScreen() {
           <View style={[styles.loadingPill, { backgroundColor: loadingPillBg }]}>
             <ActivityIndicator size="small" color={colors.textMuted} />
             <Text style={[styles.loadingText, { color: colors.textMuted }]}>
-              {isAutoRefreshing ? 'Refreshing...' : 'Loading map data...'}
+              {isAutoRefreshing ? t('map.refreshing') : t('map.loadingData')}
             </Text>
           </View>
         </View>

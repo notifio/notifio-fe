@@ -1,11 +1,13 @@
 import { IconMapPin } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 
 export default function LocationScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const goToNotifications = () => router.push('/onboarding/notifications');
 
@@ -17,10 +19,10 @@ export default function LocationScreen() {
   return (
     <OnboardingScreen
       icon={IconMapPin}
-      title="Your location"
-      description="We use your location to send you relevant alerts about weather, traffic, and outages near you."
-      primaryAction={{ title: 'Allow Location', onPress: handleAllowLocation }}
-      secondaryAction={{ title: 'Skip for now', onPress: goToNotifications }}
+      title={t('onboarding.locationTitle')}
+      description={t('onboarding.locationDescription')}
+      primaryAction={{ title: t('onboarding.allowLocation'), onPress: handleAllowLocation }}
+      secondaryAction={{ title: t('onboarding.skipForNow'), onPress: goToNotifications }}
     />
   );
 }

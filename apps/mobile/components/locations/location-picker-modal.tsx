@@ -21,13 +21,7 @@ const SLOVAKIA_REGION: Region = {
 
 const GPS_DELTA = 0.01;
 
-const LABELS: { value: LocationLabel; label: string }[] = [
-  { value: 'home', label: 'Home' },
-  { value: 'work', label: 'Work' },
-  { value: 'school', label: 'School' },
-  { value: 'gym', label: 'Gym' },
-  { value: 'other', label: 'Other' },
-];
+const LABEL_VALUES: LocationLabel[] = ['home', 'work', 'school', 'gym', 'other'];
 
 interface LocationPickerModalProps {
   visible: boolean;
@@ -157,13 +151,13 @@ export function LocationPickerModal({
 
         {/* Label pills */}
         <View style={styles.labelRow}>
-          {LABELS.map((opt) => (
+          {LABEL_VALUES.map((value) => (
             <Pressable
-              key={opt.value}
-              onPress={() => setLabel(opt.value)}
+              key={value}
+              onPress={() => setLabel(value)}
               style={[
                 styles.labelPill,
-                label === opt.value
+                label === value
                   ? { backgroundColor: colors.primary }
                   : { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
               ]}
@@ -171,10 +165,10 @@ export function LocationPickerModal({
               <Text
                 style={[
                   styles.labelPillText,
-                  { color: label === opt.value ? colors.textInverse : colors.text },
+                  { color: label === value ? colors.textInverse : colors.text },
                 ]}
               >
-                {opt.label}
+                {t(`locations.labels.${value}`)}
               </Text>
             </Pressable>
           ))}

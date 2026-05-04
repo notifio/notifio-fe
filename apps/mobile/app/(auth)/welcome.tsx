@@ -1,19 +1,21 @@
 import { IconBroadcast } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <OnboardingScreen
       showBrand
       icon={IconBroadcast}
-      title="Welcome to Notifio"
-      description="Real-time alerts for your area — weather, traffic, outages, and more."
-      primaryAction={{ title: 'Get Started', onPress: () => router.push('/(auth)/login') }}
-      secondaryAction={{ title: 'I already have an account', onPress: () => router.push('/(auth)/login') }}
+      title={t('auth.welcome.title')}
+      description={t('auth.welcome.description')}
+      primaryAction={{ title: t('auth.welcome.getStarted'), onPress: () => router.push('/(auth)/login') }}
+      secondaryAction={{ title: t('auth.welcome.alreadyHaveAccount'), onPress: () => router.push('/(auth)/login') }}
     />
   );
 }
