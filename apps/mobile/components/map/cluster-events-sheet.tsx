@@ -1,21 +1,13 @@
-import { IconChevronRight, IconX } from '@tabler/icons-react-native';
+import { IconChevronRight } from '@tabler/icons-react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { getPinStyle } from '../../lib/map-pin-config';
 import type { MapPin } from '../../lib/normalize-pins';
 import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { BottomSheet } from '../ui/bottom-sheet';
 
 interface ClusterEventsSheetProps {
   visible: boolean;
@@ -54,124 +46,51 @@ export function ClusterEventsSheet({ visible, events, onClose }: ClusterEventsSh
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={styles.modalRoot}>
-        <Pressable style={styles.backdrop} onPress={onClose} />
+    <BottomSheet
+      visible={visible}
+      onClose={onClose}
+      title={t(headerKey, { count: events.length })}
+      maxHeight="75%"
+      minHeight="40%"
+      scrollable
+    >
+      {events.map((event) => {
+        const style = getPinStyle(event);
+        const Icon = style.icon;
+        const subtitle = event.locality || event.description;
 
-        <View style={[styles.sheet, { backgroundColor: colors.sheet.bg, borderColor: colors.sheet.border }]}>
-          <View style={styles.handleWrap}>
-            <View style={[styles.handle, { backgroundColor: colors.sheet.handle }]} />
-          </View>
-
-          <View style={[styles.header, { borderBottomColor: colors.sheet.border }]}>
-            <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
-              {t(headerKey, { count: events.length })}
-            </Text>
-            <Pressable
-              onPress={onClose}
-              hitSlop={8}
-              style={[styles.closeButton, { backgroundColor: colors.sheet.closeBg }]}
-            >
-              <IconX size={16} color={colors.text} />
-            </Pressable>
-          </View>
-
-          <SafeAreaView edges={['bottom']} style={styles.safeArea}>
-            <ScrollView style={styles.body} showsVerticalScrollIndicator={false}>
-              {events.map((event) => {
-                const style = getPinStyle(event);
-                const Icon = style.icon;
-                const subtitle = event.locality || event.description;
-
-                return (
-                  <TouchableOpacity
-                    key={event.id}
-                    style={styles.row}
-                    onPress={() => handleEventTap(event.id)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[styles.iconWrap, { backgroundColor: withOpacity(style.color, 0.16) }]}>
-                      <Icon size={18} color={style.color} strokeWidth={2.2} />
-                    </View>
-                    <View style={styles.rowText}>
-                      <Text style={[styles.rowTitle, { color: colors.text }]} numberOfLines={1}>
-                        {event.title || t('mapCluster.untitledEvent')}
-                      </Text>
-                      {!!subtitle && (
-                        <Text
-                          style={[styles.rowSubtitle, { color: subtitleColor }]}
-                          numberOfLines={1}
-                        >
-                          {subtitle}
-                        </Text>
-                      )}
-                    </View>
-                    <IconChevronRight size={16} color={chevronColor} />
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </SafeAreaView>
-        </View>
-      </View>
-    </Modal>
+        return (
+          <TouchableOpacity
+            key={event.id}
+            style={styles.row}
+            onPress={() => handleEventTap(event.id)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.iconWrap, { backgroundColor: withOpacity(style.color, 0.16) }]}>
+              <Icon size={18} color={style.color} strokeWidth={2.2} />
+            </View>
+            <View style={styles.rowText}>
+              <Text style={[styles.rowTitle, { color: colors.text }]} numberOfLines={1}>
+                {event.title || t('mapCluster.untitledEvent')}
+              </Text>
+              {!!subtitle && (
+                <Text
+                  style={[styles.rowSubtitle, { color: subtitleColor }]}
+                  numberOfLines={1}
+                >
+                  {subtitle}
+                </Text>
+              )}
+            </View>
+            <IconChevronRight size={16} color={chevronColor} />
+          </TouchableOpacity>
+        );
+      })}
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  modalRoot: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
-  sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    maxHeight: '75%',
-    minHeight: '40%',
-  },
-  handleWrap: {
-    paddingTop: 8,
-    paddingBottom: 4,
-    alignItems: 'center',
-  },
-  handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: theme.fontSize.md,
-    ...theme.font.semibold,
-  },
-  closeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: theme.spacing.sm,
-  },
-  safeArea: {
-    flex: 1,
-    minHeight: 0,
-  },
-  body: {
-    flex: 1,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
