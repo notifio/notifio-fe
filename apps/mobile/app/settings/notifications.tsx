@@ -22,10 +22,8 @@ export default function NotificationsScreen() {
     saving,
     error,
     hasChanges,
-    toggleSendNotifications,
-    toggleShowOnMap,
-    toggleCategorySend,
-    toggleCategoryShow,
+    toggleItem,
+    toggleCategory,
     setQuietHours,
     savePreferences,
     cancelChanges,
@@ -57,10 +55,8 @@ export default function NotificationsScreen() {
           <>
             <NotificationPrefsList
               categories={preferences.notifications}
-              onToggleSendNotifications={toggleSendNotifications}
-              onToggleShowOnMap={toggleShowOnMap}
-              onToggleCategorySend={toggleCategorySend}
-              onToggleCategoryShow={toggleCategoryShow}
+              onToggleItem={toggleItem}
+              onToggleCategory={toggleCategory}
               disabled={saving}
             />
 
