@@ -10,6 +10,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -56,6 +57,15 @@ export function FullScreenModal({
   children,
 }: FullScreenModalProps) {
   const { colors } = useAppTheme();
+  const insets = useSafeAreaInsets();
+
+  // iOS pageSheet renders card-style with system gap above/below; iOS
+  // fullScreen and all of Android (statusBarTranslucent set below) need
+  // explicit insets so the header doesn't overlap the status bar/notch
+  // and the footer clears the home indicator.
+  const needsInsets = presentation === 'fullScreen' || Platform.OS === 'android';
+  const headerPaddingTop = needsInsets ? insets.top + 12 : theme.spacing.lg;
+  const footerPaddingBottom = needsInsets ? insets.bottom + 12 : theme.spacing.xl;
 
   const body = scrollable ? (
     <ScrollView
@@ -71,7 +81,7 @@ export function FullScreenModal({
 
   const content = (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border, paddingTop: headerPaddingTop }]}>
         <View style={styles.headerLeft}>
           {headerLeft}
           <Text style={[styles.headerTitle, { color: colors.text }]} numberOfLines={1}>
@@ -94,7 +104,7 @@ export function FullScreenModal({
       {body}
 
       {footer && (
-        <View style={[styles.footer, { borderTopColor: colors.border }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, paddingBottom: footerPaddingBottom }]}>
           {footer}
         </View>
       )}

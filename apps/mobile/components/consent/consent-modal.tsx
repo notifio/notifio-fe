@@ -2,6 +2,7 @@ import { IconShieldLock } from '@tabler/icons-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { ConsentState } from '@notifio/api-client';
 
@@ -17,6 +18,7 @@ interface ConsentModalProps {
 export function ConsentModal({ consents, onSave }: ConsentModalProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const [decisions, setDecisions] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -54,7 +56,7 @@ export function ConsentModal({ consents, onSave }: ConsentModalProps) {
   return (
     <Modal visible animationType="slide" transparent={false} statusBarTranslucent>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + theme.spacing.lg }]} showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
             <View style={[styles.iconCircle, { backgroundColor: withOpacity(colors.primary, 0.094) }]}>
@@ -111,7 +113,7 @@ export function ConsentModal({ consents, onSave }: ConsentModalProps) {
         </ScrollView>
 
         {/* Submit button */}
-        <View style={[styles.footer, { borderTopColor: colors.border }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, paddingBottom: insets.bottom + theme.spacing.lg }]}>
           <Pressable
             onPress={handleSave}
             disabled={saving}
@@ -134,7 +136,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing['4xl'],
     paddingBottom: theme.spacing.xl,
   },
   header: {
