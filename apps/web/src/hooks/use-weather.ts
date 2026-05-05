@@ -1,9 +1,9 @@
 'use client';
 
 import type { WeatherData } from '@notifio/shared';
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 
 import { api } from '@/lib/api';
-import { DEFAULT_LOCATION } from '@/lib/location';
 
 import { useApiQuery } from './use-api-query';
 

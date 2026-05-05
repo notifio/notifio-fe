@@ -3,8 +3,9 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import type { MapPin } from '@notifio/shared/map';
+
 import { getPinStyle } from '../../lib/map-pin-config';
-import type { MapPin } from '../../lib/normalize-pins';
 import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { BottomSheet } from '../ui/bottom-sheet';

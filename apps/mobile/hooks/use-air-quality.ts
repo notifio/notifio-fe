@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import type { AirQualityData } from '@notifio/shared/types';
 
 import { api } from '../lib/api';
-import { DEFAULT_LOCATION } from '../lib/location';
 
 export function useAirQuality() {
   const [airQuality, setAirQuality] = useState<AirQualityData | null>(null);

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import type { WeatherData } from '@notifio/shared/types';
 
+
 import { api } from '../lib/api';
-import { DEFAULT_LOCATION } from '../lib/location';
 
 export function useWeather() {
   const [weather, setWeather] = useState<WeatherData | null>(null);

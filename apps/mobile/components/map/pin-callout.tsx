@@ -2,10 +2,10 @@ import { IconChevronRight } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import type { MapPin } from '@notifio/shared/map';
 import { formatTimeAgo } from '@notifio/shared/weather';
 
 import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
-import type { MapPin } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EventStatusBadge } from '../ui/event-status-badge';

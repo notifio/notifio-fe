@@ -2,8 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import type { AlertCategory, NotificationHistoryItem } from '@notifio/api-client';
 import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared/constants';
+import { formatRelativeTime } from '@notifio/shared/format';
 
-import { formatRelativeTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { Card } from '../ui/card';

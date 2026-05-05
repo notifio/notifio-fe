@@ -1,17 +1,19 @@
+import { IconBell } from '@tabler/icons-react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LayoutAnimation, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NotificationCategoryResponse } from '@notifio/api-client';
+import { CATEGORY_GROUPS } from '@notifio/shared/map';
 
-import { CATEGORY_GROUPS } from '../../lib/category-groups';
+import { CATEGORY_GROUP_ICONS } from '../../lib/category-groups';
 import { theme } from '../../lib/theme';
 import { Card } from '../ui/card';
 import { ToggleRow } from '../ui/toggle-row';
 
 interface ResolvedGroup {
   groupKey: string;
-  icon: typeof CATEGORY_GROUPS[number]['icon'];
+  icon: typeof CATEGORY_GROUP_ICONS[keyof typeof CATEGORY_GROUP_ICONS];
   categories: NotificationCategoryResponse[];
 }
 
@@ -59,7 +61,7 @@ export function NotificationCategoryList({
       {CATEGORY_GROUPS.map((def) => (
         <Card key={def.groupKey}>
           <ToggleRow
-            icon={def.icon}
+            icon={CATEGORY_GROUP_ICONS[def.groupKey]}
             label={t(`categoryGroups.${def.groupKey}`)}
             value={groupValues?.[def.groupKey] ?? true}
             onValueChange={(v) => onToggleGroup(def.groupKey, v)}
@@ -103,7 +105,7 @@ function FullModeList({ categories, onToggleItem, onToggleCategory, onToggleGrou
     const cats = categories.filter((c) => def.categoryCodes.includes(c.categoryCode));
     if (cats.length === 0) continue;
     for (const c of cats) matched.add(c.categoryCode);
-    groups.push({ groupKey: def.groupKey, icon: def.icon, categories: cats });
+    groups.push({ groupKey: def.groupKey, icon: CATEGORY_GROUP_ICONS[def.groupKey] ?? IconBell, categories: cats });
   }
 
   const ungrouped = categories.filter((c) => !matched.has(c.categoryCode));

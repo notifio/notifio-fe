@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { formatRelativeTime } from '@/lib/format';
+import { formatRelativeTime } from '@notifio/shared/format';
 
 interface RelativeTimeProps {
   iso: string;

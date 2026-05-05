@@ -4,11 +4,12 @@ import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
+import { CATEGORY_GROUPS } from '@notifio/shared/map';
+
 import { NotificationCategoryList } from '../../components/notifications/notification-category-list';
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import type { AlertType } from '../../lib/alert-config';
-import { CATEGORY_GROUPS } from '../../lib/category-groups';
 import { NotificationContext } from '../../providers/notification-provider';
 
 const ONBOARDING_ALERT_TYPES_KEY = 'onboarding_alert_types';

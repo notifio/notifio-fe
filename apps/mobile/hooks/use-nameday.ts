@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import type { NamedayResponse } from '@notifio/api-client';
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 
 import { api } from '../lib/api';
-import { DEFAULT_LOCATION } from '../lib/location';
 
 let cachedNameday: NamedayResponse | null = null;
 

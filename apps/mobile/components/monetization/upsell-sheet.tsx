@@ -2,8 +2,9 @@ import { IconCheck, IconX } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { MAP_PIN_STYLES, SOURCE_REQUIRED_TIER } from '../../lib/map-pin-config';
-import type { MapPinSource } from '../../lib/normalize-pins';
+import { SOURCE_REQUIRED_TIER, type MapPinSource } from '@notifio/shared/map';
+
+import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
 import { withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';

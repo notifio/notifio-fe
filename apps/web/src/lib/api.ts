@@ -1,4 +1,5 @@
-import { ApiError, createNotifioClient } from '@notifio/api-client';
+import { createNotifioClient } from '@notifio/api-client';
+import { handleApiError } from '@notifio/shared/api';
 
 import { createClient } from '@/lib/supabase/client';
 
@@ -37,25 +38,16 @@ function dispatchRateLimited(seconds: number) {
   }
 }
 
-// Global listener: intercept known API error statuses
+// Global listener: intercept known API error statuses. Classification is
+// shared (`@notifio/shared/api`); web wires the platform-specific sinks
+// here. CustomEvent shapes are preserved exactly so existing listeners
+// (ConsentGate, ApiErrorToaster) keep working unchanged.
 if (typeof window !== 'undefined') {
   window.addEventListener('unhandledrejection', (event) => {
-    const reason = event.reason;
-    if (!(reason instanceof ApiError)) return;
-
-    if (reason.status === 451) {
-      dispatchConsentRequired();
-    } else if (reason.status === 429) {
-      // Try to parse Retry-After from the error body
-      let seconds = 60;
-      try {
-        const parsed = JSON.parse(reason.body);
-        if (typeof parsed.retryAfter === 'number') seconds = parsed.retryAfter;
-      } catch {
-        // fallback to default
-      }
-      dispatchRateLimited(seconds);
-    }
+    handleApiError(event.reason, {
+      onConsentRequired: dispatchConsentRequired,
+      onRateLimited: (retryAfter) => dispatchRateLimited(retryAfter ?? 60),
+    });
   });
 }
 
