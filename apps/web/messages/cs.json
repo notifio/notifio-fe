@@ -1,39 +1,4 @@
 {
-  "notificationsPage": {
-    "title": "Oznámení",
-    "tabs": {
-      "history": "Historie",
-      "reminders": "Připomínky",
-      "events": "Události"
-    },
-    "filters": {
-      "all": "Vše",
-      "weather": "Počasí",
-      "traffic": "Doprava",
-      "outages": "Výpadky",
-      "pollen": "Pyl",
-      "events": "Události"
-    },
-    "history": {
-      "today": "Dnes",
-      "yesterday": "Včera",
-      "older": "Starší",
-      "empty": "Zatím žádná oznámení",
-      "markAllRead": "Označit vše jako přečtené"
-    },
-    "reminders": {
-      "viewList": "Seznam",
-      "viewCalendar": "Kalendář",
-      "newReminder": "Nová připomínka",
-      "empty": "Zatím žádné připomínky. Vytvoř si jednu a dostaneš push notifikaci v určený čas.",
-      "enabled": "Aktivní",
-      "disabled": "Pozastavená",
-      "daily": "denně",
-      "weekly": "týdně",
-      "monthly": "měsíčně",
-      "once": "jednorázově"
-    }
-  },
   "categoryBadge": {
     "traffic": "Doprava",
     "weather": "Počasí",
@@ -46,100 +11,6 @@
     "name_day": "Svátek",
     "pollen": "Pyl",
     "air_quality": "Kvalita ovzduší"
-  },
-  "profile": {
-    "title": "Profil",
-    "memberSince": "Členem od {date}",
-    "manageBilling": "Spravovat fakturaci",
-    "upgradePlan": "Vylepšit",
-    "locations": {
-      "title": "Uložené lokace",
-      "description": "Upozornění jsou posílána podle tvých uložených lokací",
-      "add": "Přidat lokaci",
-      "edit": "Upravit",
-      "delete": "Smazat",
-      "deleteConfirm": "Odstranit tuto lokaci?",
-      "name": "Název lokace",
-      "namePlaceholder": "např. Domov, Práce",
-      "useCurrentLocation": "Použít aktuální polohu",
-      "label": "Štítek",
-      "maxReached": "Dosažen limit lokací ({max} pro tvůj plán)",
-      "empty": "Žádné uložené lokace. Přidej si jednu a začni dostávat lokální upozornění.",
-      "save": "Uložit",
-      "cancel": "Zrušit"
-    },
-    "myEvents": {
-      "title": "Moje hlášení",
-      "empty": "Zatím jsi nenahlásil žádnou událost",
-      "resolved": "Vyřešeno",
-      "active": "Aktivní",
-      "resolve": "Označit jako vyřešené"
-    },
-    "account": {
-      "title": "Účet",
-      "signOut": "Odhlásit se",
-      "deleteAccount": "Smazat účet",
-      "deleteConfirm": "Tímto trvale smažeš svůj účet a všechna data. Toto nelze vrátit zpět.",
-      "deleteVerify": "Pro potvrzení napiš SMAZAT"
-    },
-    "yourData": {
-      "title": "Tvoje data",
-      "description": "Stáhni si kopii všech svých Notifio dat.",
-      "download": "Stáhnout moje data",
-      "preparing": "Připravuji export...",
-      "ready": "Tvůj export je připraven. Odkaz ke stažení vyprší za 24 hodin.",
-      "downloadZip": "Stáhnout ZIP",
-      "expiresIn": "Vyprší za {time}",
-      "failed": "Export selhal. Zkus to prosím znovu."
-    },
-    "deletion": {
-      "pending": "Čeká na smazání",
-      "description": "Všechna data budou odstraněna za {time}. Změnil jsi názor?",
-      "cancel": "Zrušit smazání",
-      "cancelled": "Smazání zrušeno"
-    }
-  },
-  "events": {
-    "reportButton": "Nahlásit",
-    "selectCategory": "Co se stalo?",
-    "pinLocation": "Místo",
-    "pickLocation": "Místo (klikni do mapy nebo přetáhni špendlík)",
-    "radius": "Zasažený rádius",
-    "submit": "Odeslat",
-    "cancel": "Zrušit",
-    "success": "Událost nahlášena",
-    "myEvents": "Moje hlášení",
-    "resolve": "Vyřešit",
-    "credibility": "Důvěryhodnost",
-    "votes": "{count} hlasů",
-    "validVotes": "{count} platných",
-    "invalidVotes": "{count} neplatných",
-    "notEnoughVotes": "Zatím není dost hlasů ({current}/5 potřeba)",
-    "stillHappening": "Stále se děje?",
-    "confirm": "Potvrdit",
-    "deny": "Zamítnout",
-    "yes": "Ano",
-    "no": "Ne",
-    "alreadyVoted": "Už jsi hlasoval",
-    "upgradeToVote": "Upgrade pro hlasování",
-    "delete": "Smazat",
-    "deleteConfirm": "Smazat tuto událost? Toto nelze vrátit zpět.",
-    "deleted": "Událost smazána",
-    "detail": {
-      "title": "Detail události",
-      "source": "Zdroj",
-      "reported": "Nahlášeno",
-      "radius": "Rádius",
-      "activeSince": "Aktivní od",
-      "ends": "Končí",
-      "ongoing": "Probíhá",
-      "communityReport": "Komunitní hlášení",
-      "active": "Aktivní",
-      "resolved": "Vyřešeno",
-      "notFound": "Událost nenalezena",
-      "backToDashboard": "Zpět na přehled"
-    },
-    "resolveFailed": "Událost se nepodařilo vyřešit"
   },
   "landing": {
     "hero": {
@@ -201,6 +72,41 @@
       "contact": "Kontakt"
     }
   },
+  "notificationsPage": {
+    "title": "Oznámení",
+    "tabs": {
+      "history": "Historie",
+      "reminders": "Připomínky",
+      "events": "Události"
+    },
+    "filters": {
+      "all": "Vše",
+      "weather": "Počasí",
+      "traffic": "Doprava",
+      "outages": "Výpadky",
+      "pollen": "Pyl",
+      "events": "Události"
+    },
+    "history": {
+      "today": "Dnes",
+      "yesterday": "Včera",
+      "older": "Starší",
+      "empty": "Zatím žádná oznámení",
+      "markAllRead": "Označit vše jako přečtené"
+    },
+    "reminders": {
+      "viewList": "Seznam",
+      "viewCalendar": "Kalendář",
+      "newReminder": "Nová připomínka",
+      "empty": "Zatím žádné připomínky. Vytvoř si jednu a dostaneš push notifikaci v určený čas.",
+      "enabled": "Aktivní",
+      "disabled": "Pozastavená",
+      "daily": "denně",
+      "weekly": "týdně",
+      "monthly": "měsíčně",
+      "once": "jednorázově"
+    }
+  },
   "setupPrompt": {
     "title": "Začni s notifikacemi",
     "descriptionBoth": "Povol přístup k poloze a push notifikace, abys dostával upozornění o počasí, dopravě a výpadcích ve své oblasti v reálném čase.",
@@ -212,70 +118,5 @@
     "compactBoth": "Zapni polohu a notifikace, abys zde viděl upozornění",
     "compactPushOnly": "Zapni push notifikace, abys zde viděl upozornění",
     "compactGeoOnly": "Přidej lokaci, abys zde viděl upozornění"
-  },
-  "sourcePreferences": {
-    "title": "Preferované zdroje",
-    "description": "Nastav si preferovaný zdroj dat pro každou kategorii. Zdroj s nejvyšší prioritou bude použit jako první.",
-    "onlySource": "Jediný dostupný zdroj",
-    "auto": "Automaticky (podle hodnocení komunity)",
-    "saved": "Uloženo",
-    "dragToReorder": "Tažením změníš pořadí priorit"
-  },
-  "weatherThresholds": {
-    "title": "Prahové hodnoty počasí",
-    "description": "Nastav vlastní prahové hodnoty pro upozornění o počasí. Dostaneš notifikaci, když hodnoty přesáhnou tvé prahy.",
-    "addThreshold": "Přidat prahovou hodnotu",
-    "selectType": "Vyber typ prahu",
-    "saved": "Uloženo",
-    "deleteConfirm": "Odstranit tento práh?",
-    "metric": {
-      "highTemperature": "Vysoká teplota",
-      "lowTemperature": "Nízká teplota",
-      "windSpeed": "Rychlost větru",
-      "rainfall": "Srážky",
-      "snowfall": "Sněžení"
-    },
-    "tier": {
-      "highTemperature": {
-        "warning": "Výstraha",
-        "warningDescription": "První úroveň upozornění, když teplota překročí tuto hodnotu.",
-        "severe": "Extrémní horko",
-        "severeDescription": "Závažná výstraha při extrémně vysokých teplotách."
-      },
-      "lowTemperature": {
-        "warning": "Výstraha",
-        "warningDescription": "První úroveň upozornění, když teplota klesne pod tuto hodnotu.",
-        "severe": "Mráz",
-        "severeDescription": "Závažná výstraha při extrémně nízkých teplotách."
-      },
-      "windSpeed": {
-        "warning": "Výstraha",
-        "warningDescription": "První úroveň upozornění, když rychlost větru překročí tuto hodnotu.",
-        "severe": "Silný vítr",
-        "severeDescription": "Závažná výstraha při silném větru."
-      },
-      "rainfall": {
-        "warning": "Výstraha",
-        "warningDescription": "První úroveň upozornění, když srážky překročí tuto hodnotu.",
-        "severe": "Silný déšť",
-        "severeDescription": "Závažná výstraha při intenzivních srážkách."
-      },
-      "snowfall": {
-        "warning": "Výstraha",
-        "warningDescription": "První úroveň upozornění, když sněžení překročí tuto hodnotu.",
-        "severe": "Husté sněžení",
-        "severeDescription": "Závažná výstraha při intenzivním sněžení."
-      }
-    },
-    "loadFailed": "Nepodařilo se načíst prahové hodnoty",
-    "saveFailed": "Nepodařilo se uložit prahovou hodnotu",
-    "deleteFailed": "Nepodařilo se odstranit prahovou hodnotu"
-  },
-  "event": {
-    "status": {
-      "active": "Aktivní",
-      "upcoming": "Plánované",
-      "resolved": "Ukončené"
-    }
   }
 }

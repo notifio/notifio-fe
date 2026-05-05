@@ -1,39 +1,4 @@
 {
-  "notificationsPage": {
-    "title": "Benachrichtigungen",
-    "tabs": {
-      "history": "Verlauf",
-      "reminders": "Erinnerungen",
-      "events": "Ereignisse"
-    },
-    "filters": {
-      "all": "Alle",
-      "weather": "Wetter",
-      "traffic": "Verkehr",
-      "outages": "Ausfälle",
-      "pollen": "Pollen",
-      "events": "Ereignisse"
-    },
-    "history": {
-      "today": "Heute",
-      "yesterday": "Gestern",
-      "older": "Älter",
-      "empty": "Noch keine Benachrichtigungen",
-      "markAllRead": "Alle als gelesen markieren"
-    },
-    "reminders": {
-      "viewList": "Liste",
-      "viewCalendar": "Kalender",
-      "newReminder": "Neue Erinnerung",
-      "empty": "Noch keine Erinnerungen. Erstelle eine, um Push-Benachrichtigungen zu einem bestimmten Zeitpunkt zu erhalten.",
-      "enabled": "Aktiv",
-      "disabled": "Pausiert",
-      "daily": "täglich",
-      "weekly": "wöchentlich",
-      "monthly": "monatlich",
-      "once": "einmalig"
-    }
-  },
   "categoryBadge": {
     "traffic": "Verkehr",
     "weather": "Wetter",
@@ -46,100 +11,6 @@
     "name_day": "Namenstag",
     "pollen": "Pollen",
     "air_quality": "Luftqualität"
-  },
-  "profile": {
-    "title": "Profil",
-    "memberSince": "Mitglied seit {date}",
-    "manageBilling": "Abrechnung verwalten",
-    "upgradePlan": "Upgrade",
-    "locations": {
-      "title": "Gespeicherte Orte",
-      "description": "Warnungen werden basierend auf deinen gespeicherten Orten gesendet",
-      "add": "Ort hinzufügen",
-      "edit": "Bearbeiten",
-      "delete": "Löschen",
-      "deleteConfirm": "Diesen Ort entfernen?",
-      "name": "Ortsname",
-      "namePlaceholder": "z. B. Zuhause, Arbeit",
-      "useCurrentLocation": "Aktuellen Standort verwenden",
-      "label": "Bezeichnung",
-      "maxReached": "Ortslimit erreicht ({max} für deinen Plan)",
-      "empty": "Keine gespeicherten Orte. Füge einen hinzu, um lokale Warnungen zu erhalten.",
-      "save": "Speichern",
-      "cancel": "Abbrechen"
-    },
-    "myEvents": {
-      "title": "Meine Meldungen",
-      "empty": "Du hast noch keine Ereignisse gemeldet",
-      "resolved": "Behoben",
-      "active": "Aktiv",
-      "resolve": "Als behoben markieren"
-    },
-    "account": {
-      "title": "Konto",
-      "signOut": "Abmelden",
-      "deleteAccount": "Konto löschen",
-      "deleteConfirm": "Dies löscht dein Konto und alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.",
-      "deleteVerify": "Tippe LÖSCHEN zur Bestätigung"
-    },
-    "yourData": {
-      "title": "Deine Daten",
-      "description": "Lade eine Kopie all deiner Notifio-Daten herunter.",
-      "download": "Meine Daten herunterladen",
-      "preparing": "Export wird vorbereitet...",
-      "ready": "Dein Export ist bereit. Der Download-Link läuft in 24 Stunden ab.",
-      "downloadZip": "ZIP herunterladen",
-      "expiresIn": "Läuft ab in {time}",
-      "failed": "Export fehlgeschlagen. Bitte erneut versuchen."
-    },
-    "deletion": {
-      "pending": "Löschung ausstehend",
-      "description": "Alle Daten werden in {time} entfernt. Hast du deine Meinung geändert?",
-      "cancel": "Löschung abbrechen",
-      "cancelled": "Löschung abgebrochen"
-    }
-  },
-  "events": {
-    "reportButton": "Melden",
-    "selectCategory": "Was ist passiert?",
-    "pinLocation": "Standort",
-    "pickLocation": "Standort (auf Karte klicken oder Pin ziehen)",
-    "radius": "Betroffener Radius",
-    "submit": "Senden",
-    "cancel": "Abbrechen",
-    "success": "Ereignis gemeldet",
-    "myEvents": "Meine Meldungen",
-    "resolve": "Beheben",
-    "credibility": "Glaubwürdigkeit",
-    "votes": "{count} Stimmen",
-    "validVotes": "{count} gültig",
-    "invalidVotes": "{count} ungültig",
-    "notEnoughVotes": "Noch nicht genug Stimmen ({current}/5 benötigt)",
-    "stillHappening": "Passiert es noch?",
-    "confirm": "Bestätigen",
-    "deny": "Ablehnen",
-    "yes": "Ja",
-    "no": "Nein",
-    "alreadyVoted": "Du hast bereits abgestimmt",
-    "upgradeToVote": "Upgrade zum Abstimmen",
-    "delete": "Löschen",
-    "deleteConfirm": "Dieses Ereignis löschen? Dies kann nicht rückgängig gemacht werden.",
-    "deleted": "Ereignis gelöscht",
-    "detail": {
-      "title": "Ereignisdetail",
-      "source": "Quelle",
-      "reported": "Gemeldet",
-      "radius": "Radius",
-      "activeSince": "Aktiv seit",
-      "ends": "Endet",
-      "ongoing": "Andauernd",
-      "communityReport": "Community-Meldung",
-      "active": "Aktiv",
-      "resolved": "Behoben",
-      "notFound": "Ereignis nicht gefunden",
-      "backToDashboard": "Zurück zum Dashboard"
-    },
-    "resolveFailed": "Ereignis konnte nicht behoben werden"
   },
   "landing": {
     "hero": {
@@ -201,6 +72,41 @@
       "contact": "Kontakt"
     }
   },
+  "notificationsPage": {
+    "title": "Benachrichtigungen",
+    "tabs": {
+      "history": "Verlauf",
+      "reminders": "Erinnerungen",
+      "events": "Ereignisse"
+    },
+    "filters": {
+      "all": "Alle",
+      "weather": "Wetter",
+      "traffic": "Verkehr",
+      "outages": "Ausfälle",
+      "pollen": "Pollen",
+      "events": "Ereignisse"
+    },
+    "history": {
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "older": "Älter",
+      "empty": "Noch keine Benachrichtigungen",
+      "markAllRead": "Alle als gelesen markieren"
+    },
+    "reminders": {
+      "viewList": "Liste",
+      "viewCalendar": "Kalender",
+      "newReminder": "Neue Erinnerung",
+      "empty": "Noch keine Erinnerungen. Erstelle eine, um Push-Benachrichtigungen zu einem bestimmten Zeitpunkt zu erhalten.",
+      "enabled": "Aktiv",
+      "disabled": "Pausiert",
+      "daily": "täglich",
+      "weekly": "wöchentlich",
+      "monthly": "monatlich",
+      "once": "einmalig"
+    }
+  },
   "setupPrompt": {
     "title": "Mit Benachrichtigungen loslegen",
     "descriptionBoth": "Aktiviere den Standortzugriff und Push-Benachrichtigungen, um Echtzeit-Warnungen zu Wetter, Verkehr und Ausfällen in deiner Region zu erhalten.",
@@ -212,70 +118,5 @@
     "compactBoth": "Aktiviere Standort & Benachrichtigungen, um Warnungen hier zu sehen",
     "compactPushOnly": "Aktiviere Push-Benachrichtigungen, um Warnungen hier zu sehen",
     "compactGeoOnly": "Füge einen Ort hinzu, um Warnungen hier zu sehen"
-  },
-  "sourcePreferences": {
-    "title": "Bevorzugte Quellen",
-    "description": "Lege deine bevorzugte Datenquelle für jede Kategorie fest. Die Quelle mit der höchsten Priorität wird zuerst verwendet.",
-    "onlySource": "Einzige verfügbare Quelle",
-    "auto": "Automatisch (nach Community-Bewertung)",
-    "saved": "Gespeichert",
-    "dragToReorder": "Zum Neuordnen ziehen"
-  },
-  "weatherThresholds": {
-    "title": "Wetter-Schwellenwerte",
-    "description": "Lege benutzerdefinierte Schwellenwerte für Wetterwarnungen fest. Du wirst benachrichtigt, wenn Werte deine Schwellen überschreiten.",
-    "addThreshold": "Schwellenwert hinzufügen",
-    "selectType": "Schwellenwerttyp auswählen",
-    "saved": "Gespeichert",
-    "deleteConfirm": "Diesen Schwellenwert entfernen?",
-    "metric": {
-      "highTemperature": "Hohe Temperatur",
-      "lowTemperature": "Niedrige Temperatur",
-      "windSpeed": "Windgeschwindigkeit",
-      "rainfall": "Niederschlag",
-      "snowfall": "Schneefall"
-    },
-    "tier": {
-      "highTemperature": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Temperatur diesen Wert überschreitet.",
-        "severe": "Extreme Hitze",
-        "severeDescription": "Schwere Warnung bei extrem hohen Temperaturen."
-      },
-      "lowTemperature": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Temperatur unter diesen Wert fällt.",
-        "severe": "Frost",
-        "severeDescription": "Schwere Warnung bei extrem niedrigen Temperaturen."
-      },
-      "windSpeed": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Windgeschwindigkeit diesen Wert überschreitet.",
-        "severe": "Starker Wind",
-        "severeDescription": "Schwere Warnung bei starkem Wind."
-      },
-      "rainfall": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn der Niederschlag diesen Wert überschreitet.",
-        "severe": "Starkregen",
-        "severeDescription": "Schwere Warnung bei intensivem Niederschlag."
-      },
-      "snowfall": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn der Schneefall diesen Wert überschreitet.",
-        "severe": "Starker Schneefall",
-        "severeDescription": "Schwere Warnung bei intensivem Schneefall."
-      }
-    },
-    "loadFailed": "Schwellenwerte konnten nicht geladen werden",
-    "saveFailed": "Schwellenwert konnte nicht gespeichert werden",
-    "deleteFailed": "Schwellenwert konnte nicht gelöscht werden"
-  },
-  "event": {
-    "status": {
-      "active": "Aktiv",
-      "upcoming": "Geplant",
-      "resolved": "Beendet"
-    }
   }
 }

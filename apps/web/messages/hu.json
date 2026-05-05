@@ -1,39 +1,4 @@
 {
-  "notificationsPage": {
-    "title": "Értesítések",
-    "tabs": {
-      "history": "Előzmények",
-      "reminders": "Emlékeztetők",
-      "events": "Események"
-    },
-    "filters": {
-      "all": "Összes",
-      "weather": "Időjárás",
-      "traffic": "Közlekedés",
-      "outages": "Kimaradások",
-      "pollen": "Pollen",
-      "events": "Események"
-    },
-    "history": {
-      "today": "Ma",
-      "yesterday": "Tegnap",
-      "older": "Régebbi",
-      "empty": "Még nincsenek értesítések",
-      "markAllRead": "Összes megjelölése olvasottként"
-    },
-    "reminders": {
-      "viewList": "Lista",
-      "viewCalendar": "Naptár",
-      "newReminder": "Új emlékeztető",
-      "empty": "Még nincsenek emlékeztetők. Hozz létre egyet, hogy adott időpontban push értesítést kapj.",
-      "enabled": "Aktív",
-      "disabled": "Szüneteltetve",
-      "daily": "naponta",
-      "weekly": "hetente",
-      "monthly": "havonta",
-      "once": "egyszeri"
-    }
-  },
   "categoryBadge": {
     "traffic": "Közlekedés",
     "weather": "Időjárás",
@@ -46,100 +11,6 @@
     "name_day": "Névnap",
     "pollen": "Pollen",
     "air_quality": "Levegőminőség"
-  },
-  "profile": {
-    "title": "Profil",
-    "memberSince": "Tag {date} óta",
-    "manageBilling": "Számlázás kezelése",
-    "upgradePlan": "Frissítés",
-    "locations": {
-      "title": "Mentett helyek",
-      "description": "A figyelmeztetéseket a mentett helyek alapján küldjük",
-      "add": "Hely hozzáadása",
-      "edit": "Szerkesztés",
-      "delete": "Törlés",
-      "deleteConfirm": "Eltávolítod ezt a helyet?",
-      "name": "Hely neve",
-      "namePlaceholder": "pl. Otthon, Munka",
-      "useCurrentLocation": "Jelenlegi hely használata",
-      "label": "Címke",
-      "maxReached": "Helykorlát elérve ({max} a csomagodban)",
-      "empty": "Nincsenek mentett helyek. Adj hozzá egyet, hogy helyi figyelmeztetéseket kapj.",
-      "save": "Mentés",
-      "cancel": "Mégse"
-    },
-    "myEvents": {
-      "title": "Saját bejelentések",
-      "empty": "Még nem jelentettél be eseményt",
-      "resolved": "Megoldva",
-      "active": "Aktív",
-      "resolve": "Megoldottnak jelölés"
-    },
-    "account": {
-      "title": "Fiók",
-      "signOut": "Kijelentkezés",
-      "deleteAccount": "Fiók törlése",
-      "deleteConfirm": "Ez véglegesen törli a fiókodat és minden adatot. Ez nem vonható vissza.",
-      "deleteVerify": "Megerősítéshez írd be: TÖRLÉS"
-    },
-    "yourData": {
-      "title": "Az adataid",
-      "description": "Tölts le egy másolatot az összes Notifio adatodról.",
-      "download": "Adataim letöltése",
-      "preparing": "Export előkészítése...",
-      "ready": "Az export kész. A letöltési link 24 órán belül lejár.",
-      "downloadZip": "ZIP letöltése",
-      "expiresIn": "Lejár: {time}",
-      "failed": "Az export sikertelen. Kérlek próbáld újra."
-    },
-    "deletion": {
-      "pending": "Törlés függőben",
-      "description": "Minden adat törlésre kerül {time} múlva. Meggondoltad magad?",
-      "cancel": "Törlés visszavonása",
-      "cancelled": "Törlés visszavonva"
-    }
-  },
-  "events": {
-    "reportButton": "Bejelentés",
-    "selectCategory": "Mi történt?",
-    "pinLocation": "Hely",
-    "pickLocation": "Hely (kattints a térképre vagy húzd a tűt)",
-    "radius": "Érintett sugár",
-    "submit": "Küldés",
-    "cancel": "Mégse",
-    "success": "Esemény bejelentve",
-    "myEvents": "Saját bejelentések",
-    "resolve": "Megoldás",
-    "credibility": "Hitelesség",
-    "votes": "{count} szavazat",
-    "validVotes": "{count} érvényes",
-    "invalidVotes": "{count} érvénytelen",
-    "notEnoughVotes": "Még nincs elég szavazat ({current}/5 szükséges)",
-    "stillHappening": "Még mindig történik?",
-    "confirm": "Megerősítés",
-    "deny": "Elutasítás",
-    "yes": "Igen",
-    "no": "Nem",
-    "alreadyVoted": "Már szavaztál",
-    "upgradeToVote": "Frissítés a szavazáshoz",
-    "delete": "Törlés",
-    "deleteConfirm": "Törlöd ezt az eseményt? Ez nem vonható vissza.",
-    "deleted": "Esemény törölve",
-    "detail": {
-      "title": "Esemény részletei",
-      "source": "Forrás",
-      "reported": "Bejelentve",
-      "radius": "Sugár",
-      "activeSince": "Aktív ettől:",
-      "ends": "Vége",
-      "ongoing": "Folyamatban",
-      "communityReport": "Közösségi bejelentés",
-      "active": "Aktív",
-      "resolved": "Megoldva",
-      "notFound": "Esemény nem található",
-      "backToDashboard": "Vissza az irányítópultra"
-    },
-    "resolveFailed": "Az esemény megoldása sikertelen"
   },
   "landing": {
     "hero": {
@@ -201,6 +72,41 @@
       "contact": "Kapcsolat"
     }
   },
+  "notificationsPage": {
+    "title": "Értesítések",
+    "tabs": {
+      "history": "Előzmények",
+      "reminders": "Emlékeztetők",
+      "events": "Események"
+    },
+    "filters": {
+      "all": "Összes",
+      "weather": "Időjárás",
+      "traffic": "Közlekedés",
+      "outages": "Kimaradások",
+      "pollen": "Pollen",
+      "events": "Események"
+    },
+    "history": {
+      "today": "Ma",
+      "yesterday": "Tegnap",
+      "older": "Régebbi",
+      "empty": "Még nincsenek értesítések",
+      "markAllRead": "Összes megjelölése olvasottként"
+    },
+    "reminders": {
+      "viewList": "Lista",
+      "viewCalendar": "Naptár",
+      "newReminder": "Új emlékeztető",
+      "empty": "Még nincsenek emlékeztetők. Hozz létre egyet, hogy adott időpontban push értesítést kapj.",
+      "enabled": "Aktív",
+      "disabled": "Szüneteltetve",
+      "daily": "naponta",
+      "weekly": "hetente",
+      "monthly": "havonta",
+      "once": "egyszeri"
+    }
+  },
   "setupPrompt": {
     "title": "Kezdj el az értesítésekkel",
     "descriptionBoth": "Engedélyezd a helyhez való hozzáférést és a push értesítéseket, hogy valós idejű figyelmeztetéseket kapj az időjárásról, közlekedésről és kimaradásokról a környékeden.",
@@ -212,70 +118,5 @@
     "compactBoth": "Engedélyezd a helyet és értesítéseket, hogy itt láss figyelmeztetéseket",
     "compactPushOnly": "Engedélyezd a push értesítéseket, hogy itt láss figyelmeztetéseket",
     "compactGeoOnly": "Adj hozzá helyet, hogy itt láss figyelmeztetéseket"
-  },
-  "sourcePreferences": {
-    "title": "Preferált források",
-    "description": "Állítsd be a preferált adatforrást minden kategóriához. A legmagasabb prioritású forrás kerül elsőként felhasználásra.",
-    "onlySource": "Egyetlen elérhető forrás",
-    "auto": "Automatikus (közösségi értékelés alapján)",
-    "saved": "Mentve",
-    "dragToReorder": "Húzd a sorrend megváltoztatásához"
-  },
-  "weatherThresholds": {
-    "title": "Időjárási küszöbértékek",
-    "description": "Állíts be saját küszöbértékeket időjárási figyelmeztetésekhez. Értesítést kapsz, ha az értékek meghaladják a küszöböket.",
-    "addThreshold": "Küszöbérték hozzáadása",
-    "selectType": "Válassz küszöbtípust",
-    "saved": "Mentve",
-    "deleteConfirm": "Eltávolítod ezt a küszöböt?",
-    "metric": {
-      "highTemperature": "Magas hőmérséklet",
-      "lowTemperature": "Alacsony hőmérséklet",
-      "windSpeed": "Szélsebesség",
-      "rainfall": "Csapadék",
-      "snowfall": "Hóesés"
-    },
-    "tier": {
-      "highTemperature": {
-        "warning": "Figyelmeztetés",
-        "warningDescription": "Első szintű riasztás, ha a hőmérséklet meghaladja ezt az értéket.",
-        "severe": "Extrém hőség",
-        "severeDescription": "Súlyos riasztás extrém magas hőmérsékletek esetén."
-      },
-      "lowTemperature": {
-        "warning": "Figyelmeztetés",
-        "warningDescription": "Első szintű riasztás, ha a hőmérséklet ez alá az érték alá csökken.",
-        "severe": "Fagy",
-        "severeDescription": "Súlyos riasztás extrém alacsony hőmérsékletek esetén."
-      },
-      "windSpeed": {
-        "warning": "Figyelmeztetés",
-        "warningDescription": "Első szintű riasztás, ha a szélsebesség meghaladja ezt az értéket.",
-        "severe": "Erős szél",
-        "severeDescription": "Súlyos riasztás erős szél esetén."
-      },
-      "rainfall": {
-        "warning": "Figyelmeztetés",
-        "warningDescription": "Első szintű riasztás, ha a csapadék meghaladja ezt az értéket.",
-        "severe": "Erős eső",
-        "severeDescription": "Súlyos riasztás intenzív csapadék esetén."
-      },
-      "snowfall": {
-        "warning": "Figyelmeztetés",
-        "warningDescription": "Első szintű riasztás, ha a hóesés meghaladja ezt az értéket.",
-        "severe": "Heves havazás",
-        "severeDescription": "Súlyos riasztás intenzív havazás esetén."
-      }
-    },
-    "loadFailed": "Nem sikerült betölteni a küszöbértékeket",
-    "saveFailed": "Nem sikerült menteni a küszöbértéket",
-    "deleteFailed": "Nem sikerült törölni a küszöbértéket"
-  },
-  "event": {
-    "status": {
-      "active": "Aktív",
-      "upcoming": "Tervezett",
-      "resolved": "Befejezett"
-    }
   }
 }

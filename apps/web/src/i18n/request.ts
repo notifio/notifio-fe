@@ -49,9 +49,10 @@ export default getRequestConfig(async () => {
   // Shared bundle has full sk/en + en-fallback for cs/hu/de/uk.
   const shared = getSharedMessages(locale);
 
-  // Web-local messages: app-specific copy (landing, profile, events, …)
-  // not part of the shared cross-app set. cs/hu/de/uk fall back to en
-  // until manually translated; en falls back to sk as a last resort.
+  // Web-local messages: app-specific namespaces not present in shared
+  // (categoryBadge, landing, notificationsPage, setupPrompt). cs/hu/de/uk
+  // fall back to en until manually translated; en falls back to sk as a
+  // last resort.
   let web: Record<string, unknown> = {};
   const webFallbackChain: string[] = [locale, "en", "sk"];
   for (const candidate of webFallbackChain) {
@@ -63,7 +64,10 @@ export default getRequestConfig(async () => {
     }
   }
 
-  const messages = deepMerge(shared, web);
+  // Shared wins on overlapping namespaces — it's the source of truth
+  // post-i18n-sync. Web-local only contributes namespaces shared doesn't
+  // have; any stale local copy of a shared namespace is overridden.
+  const messages = deepMerge(web, shared);
 
   if (process.env.NODE_ENV === "development") {
     const required = ["common", "auth", "settings", "pushSetup", "locationBanner", "map", "alerts", "nav", "landing"];

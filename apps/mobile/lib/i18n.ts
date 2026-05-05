@@ -3,67 +3,32 @@ import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// Use the package's public i18n export rather than reaching into
-// `dist/...json` directly. `getSharedMessages(locale)` returns the
-// pre-bundled message map for the requested locale and falls back to
-// the default if the locale is unsupported. This keeps the import
-// surface aligned with the package's `"exports"` field.
+// Single source of truth: every translation lives in `@notifio/shared/i18n`.
+// `getSharedMessages(locale)` returns the pre-bundled message map for the
+// requested locale (falls back to default for unsupported codes).
+//
+// Mobile-local locale files used to live under `./locales/*.json` and merge
+// over shared via deepMerge, but every mobile key was a duplicate of a
+// shared key (some drifted, mostly identical). The local files were deleted
+// after the i18n sync — net change behaviourally is that ~7 drifted strings
+// now match the shared copy. Add mobile-only namespaces back here only if
+// shared genuinely doesn't cover them.
 import {
   getSharedMessages,
   supportedLocales,
   defaultLocale,
 } from '@notifio/shared/i18n';
 
-// Mobile-only locale files (app-specific copy: tabs, onboarding,
-// permissions, screens, etc.). cs/hu/de/uk start as en copies and are
-// translated manually over time; the `fallbackLng` chain below catches
-// any keys that drift out of parity. Imports kept alphabetical to
-// satisfy `import/order`; the resource map below restores logical
-// locale ordering.
-import mobileCs from '../locales/cs.json';
-import mobileDe from '../locales/de.json';
-import mobileEn from '../locales/en.json';
-import mobileHu from '../locales/hu.json';
-import mobileSk from '../locales/sk.json';
-import mobileUk from '../locales/uk.json';
-
-type LocaleMap = Record<string, unknown>;
 type SupportedLocale = (typeof supportedLocales)[number];
 
-function deepMerge(target: LocaleMap, source: LocaleMap): LocaleMap {
-  const result = { ...target };
-  for (const key of Object.keys(source)) {
-    const tv = target[key];
-    const sv = source[key];
-    if (
-      tv && sv &&
-      typeof tv === 'object' && !Array.isArray(tv) &&
-      typeof sv === 'object' && !Array.isArray(sv)
-    ) {
-      result[key] = deepMerge(tv as LocaleMap, sv as LocaleMap);
-    } else {
-      result[key] = sv;
-    }
-  }
-  return result;
-}
-
-const mobileByLocale: Record<SupportedLocale, LocaleMap> = {
-  sk: mobileSk as LocaleMap,
-  en: mobileEn as LocaleMap,
-  cs: mobileCs as LocaleMap,
-  hu: mobileHu as LocaleMap,
-  de: mobileDe as LocaleMap,
-  uk: mobileUk as LocaleMap,
-};
-
-// Build i18next resources by merging shared (cross-app) + mobile (app-
-// specific) for every supported locale.
-const resources = supportedLocales.reduce<Record<string, { translation: LocaleMap }>>((acc, loc) => {
-  const shared = getSharedMessages(loc);
-  acc[loc] = { translation: deepMerge(shared, mobileByLocale[loc]) };
-  return acc;
-}, {});
+// Build i18next resources directly from shared — no merge step needed.
+const resources = supportedLocales.reduce<Record<string, { translation: Record<string, unknown> }>>(
+  (acc, loc) => {
+    acc[loc] = { translation: getSharedMessages(loc) as Record<string, unknown> };
+    return acc;
+  },
+  {},
+);
 
 /** AsyncStorage key for the user-selected locale. Must match what
  *  `setLocale()` writes and what the boot bootstrapping reads. */
