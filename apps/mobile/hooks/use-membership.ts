@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import type { MembershipTier } from '@notifio/api-client';
 
@@ -35,32 +35,25 @@ interface UseMembershipResult {
 }
 
 export function useMembership(): UseMembershipResult {
-  const [membership, setMembership] = useState<MembershipResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<MembershipResponse>({
+    queryKey: ['membership'],
+    queryFn: () => api.getMembership() as unknown as Promise<MembershipResponse>,
+  });
 
-  const fetch = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getMembership();
-      setMembership(data as unknown as MembershipResponse);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load membership');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
+  const membership = query.data ?? null;
   // BE response nests plan details under `current` — flat membership.tier
   // (matching the stale shared MembershipDetails type) was always
   // undefined, defaulting users with real PRO subscriptions to FREE
   // and showing them the upsell card on Reminders tab.
   const tier: MembershipTier = membership?.current?.tier ?? 'FREE';
 
-  return { membership, tier, isLoading, error, refetch: fetch };
+  return {
+    membership,
+    tier,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load membership') : null,
+    refetch: () => {
+      void query.refetch();
+    },
+  };
 }

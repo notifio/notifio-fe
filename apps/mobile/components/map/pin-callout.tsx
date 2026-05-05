@@ -2,8 +2,8 @@ import { IconChevronRight } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 import type { MapPin } from '@notifio/shared/map';
-import { formatTimeAgo } from '@notifio/shared/weather';
 
 import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
 import { theme } from '../../lib/theme';
@@ -16,7 +16,8 @@ interface PinCalloutProps {
 
 export function PinCallout({ pin }: PinCalloutProps) {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as RelativeTimeLocale;
   const style = MAP_PIN_STYLES[pin.source];
   // Traffic incidents have no /events/{id} page (pin.id is a TomTom
   // incidentId, not an eventId). Teasers never render this callout —
@@ -38,17 +39,19 @@ export function PinCallout({ pin }: PinCalloutProps) {
 
       <View style={styles.footer}>
         <View style={styles.footerLeft}>
-          {pin.locality ? <Text style={[styles.meta, { color: colors.textMuted }]}>{pin.locality}</Text> : null}
-          <Text style={[styles.meta, { color: colors.textMuted }]}>{formatTimeAgo(pin.timestamp)}</Text>
+          {pin.locality ? (
+            <Text style={[styles.meta, { color: colors.textMuted }]}>{pin.locality}</Text>
+          ) : null}
+          <Text style={[styles.meta, { color: colors.textMuted }]}>
+            {formatRelativeTime(pin.timestamp, locale)}
+          </Text>
         </View>
         <EventStatusBadge status={pin.status} />
       </View>
 
       {showViewDetails && (
         <View style={[styles.cta, { borderTopColor: colors.border }]}>
-          <Text style={[styles.ctaLabel, { color: colors.primary }]}>
-            {t('map.viewDetails')}
-          </Text>
+          <Text style={[styles.ctaLabel, { color: colors.primary }]}>{t('map.viewDetails')}</Text>
           <IconChevronRight size={14} color={colors.primary} />
         </View>
       )}
