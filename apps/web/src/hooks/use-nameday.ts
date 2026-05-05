@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { ApiError } from '@notifio/api-client';
 
@@ -18,67 +18,57 @@ interface UseNamedayResult {
   isLoading: boolean;
 }
 
-let cached: { todayNames: string[]; upcomingNames: UpcomingDay[]; country: string } | null = null;
-let cachedDate: string | null = null;
+interface NamedayCacheShape {
+  todayNames: string[];
+  upcomingNames: UpcomingDay[];
+  country: string;
+}
+
+const EMPTY_CACHE: NamedayCacheShape = { todayNames: [], upcomingNames: [], country: '' };
 
 function todayKey(): string {
   return new Date().toDateString();
 }
 
+/**
+ * Nameday lookup. Module-level today-keyed cache (`cached`/`cachedDate`)
+ * replaced by RQ — `todayKey()` baked into the queryKey naturally
+ * invalidates on day rollover.
+ *
+ * 404 COUNTRY_UNSUPPORTED responses get caught inside `queryFn` and
+ * resolved to an empty cache shape so the UI hides the card silently
+ * (matches prior behaviour). Non-404 errors propagate to `query.error`.
+ */
 export function useNameday(coords: { lat: number; lng: number } | null): UseNamedayResult {
   const lat = coords?.lat ?? null;
   const lng = coords?.lng ?? null;
-  const isCacheValid = cachedDate === todayKey() && cached !== null;
 
-  const [state, setState] = useState<UseNamedayResult>({
-    todayNames: isCacheValid ? cached!.todayNames : [],
-    upcomingNames: isCacheValid ? cached!.upcomingNames : [],
-    country: isCacheValid ? cached!.country : null,
-    isLoading: !isCacheValid,
+  const query = useQuery<NamedayCacheShape>({
+    queryKey: ['nameday', lat, lng, todayKey()],
+    queryFn: async () => {
+      if (lat === null || lng === null) return EMPTY_CACHE;
+      try {
+        const data = await api.getNameday({ lat, lng, upcoming: 1 });
+        return {
+          todayNames: data.today.names,
+          upcomingNames: data.upcoming ?? [],
+          country: data.country,
+        };
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) {
+          return EMPTY_CACHE;
+        }
+        throw err;
+      }
+    },
+    enabled: lat !== null && lng !== null,
   });
 
-  const fetchNameday = useCallback(async () => {
-    if (lat === null || lng === null) {
-      setState({ todayNames: [], upcomingNames: [], country: null, isLoading: false });
-      return;
-    }
-
-    const today = todayKey();
-    if (cachedDate === today && cached) {
-      setState({ ...cached, isLoading: false });
-      return;
-    }
-
-    setState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      const data = await api.getNameday({
-        lat,
-        lng,
-        upcoming: 1,
-      });
-
-      const result = {
-        todayNames: data.today.names,
-        upcomingNames: data.upcoming ?? [],
-        country: data.country,
-      };
-
-      cached = result;
-      cachedDate = today;
-      setState({ ...result, isLoading: false });
-    } catch (err) {
-      // 404 COUNTRY_UNSUPPORTED — silently hide the card
-      if (err instanceof ApiError && err.status === 404) {
-        cached = { todayNames: [], upcomingNames: [], country: '' };
-        cachedDate = today;
-      }
-      setState({ todayNames: [], upcomingNames: [], country: null, isLoading: false });
-    }
-  }, [lat, lng]);
-
-  useEffect(() => {
-    fetchNameday();
-  }, [fetchNameday]);
-
-  return state;
+  const data = query.data ?? EMPTY_CACHE;
+  return {
+    todayNames: data.todayNames,
+    upcomingNames: data.upcomingNames,
+    country: data.country || null,
+    isLoading: query.isPending && lat !== null && lng !== null,
+  };
 }
