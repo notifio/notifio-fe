@@ -14,11 +14,12 @@ import {
   IconTemperature,
   IconWind,
 } from '@tabler/icons-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared';
+import { formatTemp, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared';
 import type { AirQualityData, WeatherData } from '@notifio/shared';
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 
 import { AqiChip, AqiDetailPanel } from './aqi-indicator';
 import { PollenChip, PollenDetailPanel } from './pollen-indicator';
@@ -94,6 +95,7 @@ export function WeatherCard({
   pollen,
 }: WeatherCardProps) {
   const t = useTranslations('weather');
+  const locale = useLocale() as RelativeTimeLocale;
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
 
   const toggleChip = (chip: ExpandedChip) =>
@@ -219,7 +221,7 @@ export function WeatherCard({
 
       <div className="mt-3 text-right">
         <span className="text-xs" style={{ color: muted40 }}>
-          {formatTimeAgo(weather.updatedAt)}
+          {formatRelativeTime(weather.updatedAt, locale)}
         </span>
       </div>
     </div>

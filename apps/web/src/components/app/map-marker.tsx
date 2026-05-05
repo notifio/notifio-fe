@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { formatTimeAgo } from '@notifio/shared';
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 import type { MapPin } from '@notifio/shared/map';
 
 import { getPinStyle } from '@/lib/map-pin-config';
@@ -10,6 +10,10 @@ interface MapMarkerProps {
   pin: MapPin;
   isExpanded: boolean;
   theme: 'light' | 'dark';
+  /** Threaded from the dashboard-map root client component — `useLocale`
+   *  can't be called here because this subtree is mounted via
+   *  `createRoot()` and lacks the next-intl provider context. */
+  locale: RelativeTimeLocale;
   labels: { upcoming: string; active: string; viewDetails: string };
   clusterCount?: number;
   onToggle: () => void;
@@ -64,6 +68,7 @@ export function MapMarker({
   pin,
   isExpanded,
   theme,
+  locale,
   labels,
   clusterCount,
   onToggle,
@@ -166,7 +171,7 @@ export function MapMarker({
                 </span>
               </div>
               <div style={{ fontSize: '10px', opacity: 0.65, marginTop: '2px' }}>
-                {formatTimeAgo(pin.timestamp)}
+                {formatRelativeTime(pin.timestamp, locale)}
               </div>
 
               {/* Traffic incidents have no /events/{id} page (pin.id is a

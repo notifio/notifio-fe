@@ -2,6 +2,7 @@ import type maplibregl from 'maplibre-gl';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 
+import type { RelativeTimeLocale } from '@notifio/shared/format';
 import type { MapPin } from '@notifio/shared/map';
 
 import { PIN_SOURCE_ID } from '@/lib/map-config';
@@ -22,6 +23,9 @@ export interface SyncMarkersParams {
   Marker: typeof maplibregl.Marker;
   pins: MapPin[];
   theme: 'light' | 'dark';
+  /** next-intl locale, threaded as a prop because the marker subtree
+   *  is mounted via `createRoot()` and has no provider context. */
+  locale: RelativeTimeLocale;
   expandedPinId: string | null;
   labels: { upcoming: string; active: string; viewDetails: string };
   markers: Map<string, MarkerEntry>;
@@ -32,6 +36,7 @@ export interface SyncMarkersParams {
     opts: {
       isExpanded: boolean;
       theme: 'light' | 'dark';
+      locale: RelativeTimeLocale;
       labels: { upcoming: string; active: string; viewDetails: string };
       clusterCount?: number;
       onToggle: () => void;
@@ -48,6 +53,7 @@ export function syncMarkers({
   Marker,
   pins,
   theme,
+  locale,
   expandedPinId,
   labels,
   markers,
@@ -112,6 +118,7 @@ export function syncMarkers({
       renderMarker(root, placeholderPin, {
         isExpanded: false,
         theme,
+        locale,
         labels,
         clusterCount: count,
         onToggle: zoomToCluster,
@@ -141,6 +148,7 @@ export function syncMarkers({
               renderMarker(root, styledPin, {
                 isExpanded: false,
                 theme,
+                locale,
                 labels,
                 clusterCount: count,
                 onToggle: zoomToCluster,
@@ -182,6 +190,7 @@ export function syncMarkers({
     renderMarker(root, pin, {
       isExpanded: expandedPinId === pin.id,
       theme,
+      locale,
       labels,
       onToggle: () => onTogglePin(pin.id),
       onClose: onClosePin,
