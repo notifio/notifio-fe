@@ -7,12 +7,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   MAP_FILTER_SOURCES,
-  MAP_PIN_STYLES,
   SOURCE_REQUIRED_TIER,
-  TRAFFIC_ICON_MAP,
+  TRAFFIC_SUBCATEGORIES,
   TRAFFIC_TYPE_COLORS,
-} from '@/lib/map-pin-config';
-import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
+  type MapPin,
+  type MapPinSource,
+  type MapPinTrafficType,
+} from '@notifio/shared/map';
+
+import { MAP_PIN_STYLES, TRAFFIC_ICON_MAP } from '@/lib/map-pin-config';
 
 import { AdPlaceholder } from './ad-placeholder';
 import { CategoryIcon } from './category-icon';
@@ -24,20 +27,11 @@ import { TierBadge } from './tier-badge';
 // map only needs the three real tiers.
 const TIER_ORDER: Record<'FREE' | 'PLUS' | 'PRO', number> = { FREE: 0, PLUS: 1, PRO: 2 };
 
-const TRAFFIC_SUBCATEGORIES: TrafficIncidentType[] = [
-  'accident',
-  'construction',
-  'road_closure',
-  'congestion',
-  'event',
-  'other',
-];
-
 interface MapFilterBarProps {
   activeFilters: Set<MapPinSource>;
-  activeTrafficTypes: Set<TrafficIncidentType>;
+  activeTrafficTypes: Set<MapPinTrafficType>;
   onToggle: (source: MapPinSource) => void;
-  onToggleTrafficType: (type: TrafficIncidentType) => void;
+  onToggleTrafficType: (type: MapPinTrafficType) => void;
   pins: MapPin[];
   /** Step 8: effective user tier. `null` from anonymous sessions is
    *  coerced to FREE by the caller — this prop never carries `null`. */

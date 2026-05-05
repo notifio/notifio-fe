@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { TrafficFlowResponse, UserPreferencesResponse } from '@notifio/api-client';
 import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from '@notifio/shared/geo';
+import { normalizeMapPins, type MapPin, type MapPinSource } from '@notifio/shared/map';
 
 import { api } from '@/lib/api';
-import { type MapPin, type MapPinSource, normalizeMapPins } from '@/lib/normalize-pins';
 
 import { safeFetch } from './use-map-data/fetch-utils';
 import type { ViewportCache } from './use-map-data/types';

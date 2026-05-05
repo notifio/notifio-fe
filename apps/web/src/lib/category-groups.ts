@@ -6,42 +6,16 @@ import {
   type Icon,
 } from "@tabler/icons-react";
 
-export interface CategoryGroupDef {
-  groupKey: string;
-  icon: Icon;
-  categoryCodes: string[];
-}
-
-export const CATEGORY_GROUPS: CategoryGroupDef[] = [
-  {
-    groupKey: "weather",
-    icon: IconCloudStorm,
-    categoryCodes: [
-      "weather",
-      "weather_warning",
-      "air_quality",
-      "pollen",
-      "earthquake",
-    ],
-  },
-  {
-    groupKey: "traffic",
-    icon: IconCar,
-    categoryCodes: ["traffic"],
-  },
-  {
-    groupKey: "outages",
-    icon: IconBolt,
-    categoryCodes: [
-      "outage_electric",
-      "outage_water",
-      "outage_gas",
-      "outage_heat",
-    ],
-  },
-  {
-    groupKey: "events",
-    icon: IconCalendarEvent,
-    categoryCodes: ["name_day"],
-  },
-];
+/**
+ * Per-platform icon resolver for the cross-platform `CATEGORY_GROUPS`
+ * data exported by `@notifio/shared/map`. Web uses `@tabler/icons-react`
+ * (DOM components); mobile keeps its own equivalent map keyed against
+ * `@tabler/icons-react-native`. Keep keys in lockstep with the shared
+ * `CATEGORY_GROUPS[].groupKey` values.
+ */
+export const CATEGORY_GROUP_ICONS: Record<string, Icon> = {
+  weather: IconCloudStorm,
+  traffic: IconCar,
+  outages: IconBolt,
+  events: IconCalendarEvent,
+};

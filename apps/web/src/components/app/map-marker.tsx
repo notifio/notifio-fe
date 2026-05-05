@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
 import { formatTimeAgo } from '@notifio/shared';
+import type { MapPin } from '@notifio/shared/map';
 
 import { getPinStyle } from '@/lib/map-pin-config';
 import type { PinStyle } from '@/lib/map-pin-config';
-import type { MapPin } from '@/lib/normalize-pins';
 
 interface MapMarkerProps {
   pin: MapPin;
