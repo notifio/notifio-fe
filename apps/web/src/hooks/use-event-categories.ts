@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import type { UserEventCategory } from '@notifio/api-client';
 
@@ -13,45 +13,25 @@ interface UseEventCategoriesResult {
   retry: () => void;
 }
 
-let cachedCategories: UserEventCategory[] | null = null;
-
+/**
+ * Event-category list. Module-level `cachedCategories` replaced by RQ
+ * — `retry` triggers a forced refetch which bypasses `staleTime`.
+ *
+ * Note: the consumer-facing field is `loading` (not `isLoading`) — this
+ * predates RQ; preserved verbatim so call sites don't churn.
+ */
 export function useEventCategories(): UseEventCategoriesResult {
-  const [categories, setCategories] = useState<UserEventCategory[]>(
-    cachedCategories ?? [],
-  );
-  const [loading, setLoading] = useState(cachedCategories === null);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<UserEventCategory[]>({
+    queryKey: ['event-categories'],
+    queryFn: () => api.getEventCategories(),
+  });
 
-  const fetchCategories = useCallback(async () => {
-    if (cachedCategories) {
-      setCategories(cachedCategories);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await api.getEventCategories();
-      cachedCategories = data;
-      setCategories(data);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to load categories';
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  const retry = useCallback(() => {
-    cachedCategories = null;
-    fetchCategories();
-  }, [fetchCategories]);
-
-  return { categories, loading, error, retry };
+  return {
+    categories: query.data ?? [],
+    loading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load categories') : null,
+    retry: () => {
+      void query.refetch();
+    },
+  };
 }
