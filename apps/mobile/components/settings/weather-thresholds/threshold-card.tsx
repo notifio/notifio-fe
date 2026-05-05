@@ -8,11 +8,13 @@ import type { TablerIcon } from '../../ui/icon';
 import { Icon } from '../../ui/icon';
 
 interface ThresholdCardProps {
-  code: string;
   icon: TablerIcon;
   label: string;
   unit: string;
-  currentValue: number | null;
+  warningValue: number | null;
+  severeValue: number | null;
+  warningLabel: string;
+  severeLabel: string;
   notSetLabel: string;
   onPress: () => void;
 }
@@ -21,12 +23,22 @@ export function ThresholdCard({
   icon,
   label,
   unit,
-  currentValue,
+  warningValue,
+  severeValue,
+  warningLabel,
+  severeLabel,
   notSetLabel,
   onPress,
 }: ThresholdCardProps) {
   const { colors } = useAppTheme();
-  const isSet = currentValue !== null && currentValue !== undefined;
+  const hasWarning = warningValue !== null && warningValue !== undefined;
+  const hasSevere = severeValue !== null && severeValue !== undefined;
+  const isSet = hasWarning || hasSevere;
+
+  const statusParts: string[] = [];
+  if (hasWarning) statusParts.push(`${warningLabel} ${formatThresholdValue(warningValue, unit)}`);
+  if (hasSevere) statusParts.push(`${severeLabel} ${formatThresholdValue(severeValue, unit)}`);
+  const statusText = statusParts.join(' · ');
 
   return (
     <Pressable
@@ -43,8 +55,11 @@ export function ThresholdCard({
       <View style={styles.textCol}>
         <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
         {isSet ? (
-          <Text style={[styles.value, { color: colors.textSecondary }]}>
-            {formatThresholdValue(currentValue, unit)}
+          <Text
+            style={[styles.value, { color: colors.textSecondary }]}
+            numberOfLines={1}
+          >
+            {statusText}
           </Text>
         ) : (
           <Text style={[styles.notSet, { color: colors.textMuted }]}>{notSetLabel}</Text>
@@ -77,6 +92,7 @@ const styles = StyleSheet.create({
   textCol: {
     flex: 1,
     gap: 2,
+    minWidth: 0,
   },
   label: {
     fontSize: theme.fontSize.md,

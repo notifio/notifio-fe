@@ -2,16 +2,19 @@ import { IconInfoCircle, IconLock } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import {
+  SOURCE_REQUIRED_TIER,
+  TRAFFIC_TYPE_COLORS,
+  type MapPinSource,
+  type MapPinTrafficType,
+} from '@notifio/shared/map';
+
 import { CategoryIcon } from './category-icon';
 import { MapToggle } from './map-toggle';
 import {
   MAP_PIN_STYLES,
-  SOURCE_REQUIRED_TIER,
   TRAFFIC_ICON_MAP,
-  TRAFFIC_TYPE_COLORS,
-  type TrafficIncidentType,
 } from '../../lib/map-pin-config';
-import type { MapPinSource } from '../../lib/normalize-pins';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { TierBadge } from '../ui/tier-badge';
@@ -25,12 +28,12 @@ interface FilterRowProps {
   tier: 'FREE' | 'PLUS' | 'PRO';
   onToggle: (source: MapPinSource) => void;
   onLockedRowTap?: (source: MapPinSource) => void;
-  trafficSubsWithData: TrafficIncidentType[];
+  trafficSubsWithData: MapPinTrafficType[];
   trafficTypeCounts: Map<string, number>;
-  activeTrafficTypes: Set<TrafficIncidentType>;
+  activeTrafficTypes: Set<MapPinTrafficType>;
   trafficIsActive: boolean;
   trafficIsPartial: boolean;
-  onToggleTrafficType: (type: TrafficIncidentType) => void;
+  onToggleTrafficType: (type: MapPinTrafficType) => void;
 }
 
 export function FilterRow({

@@ -2,20 +2,22 @@ import { IconCurrentLocation, IconLock } from '@tabler/icons-react-native';
 import * as ExpoLocation from 'expo-location';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
+import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
 
 import { useMembership } from '../../hooks/use-membership';
+import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
 import { TogglePill } from '../ui/toggle-pill';
 
 const SLOVAKIA_REGION: Region = {
-  latitude: 48.67,
-  longitude: 19.70,
+  latitude: SLOVAKIA_CENTER.lat,
+  longitude: SLOVAKIA_CENTER.lng,
   latitudeDelta: 4.0,
   longitudeDelta: 4.0,
 };
@@ -39,7 +41,7 @@ export function LocationPickerModal({
   onUpdate,
   editLocation,
 }: LocationPickerModalProps) {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
   const { t } = useTranslation();
   const { membership } = useMembership();
   const mapRef = useRef<MapView>(null);
@@ -88,19 +90,33 @@ export function LocationPickerModal({
       // Don't ship customLabel up if the user isn't entitled — saves a
       // round-trip and prevents the BE rejection error. Users without
       // the feature see the input disabled in the form below anyway.
+      //
+      // On EDIT, an empty customLabel must be sent as `null` so the BE
+      // clears the persisted value (UpdateLocationBodySchema accepts
+      // `null`). Omitting the key would leave the previous custom label
+      // in place. The CreateLocationBodySchema is `optional` (not
+      // nullable), so on CREATE we omit instead.
       const trimmedCustom = customLabel.trim();
-      const body = {
+      const customLabelOnEdit =
+        trimmedCustom && canSetCustomLabel
+          ? { customLabel: trimmedCustom }
+          : { customLabel: null };
+      const customLabelOnCreate =
+        trimmedCustom && canSetCustomLabel
+          ? { customLabel: trimmedCustom }
+          : {};
+
+      const baseBody = {
         lat: region.latitude,
         lng: region.longitude,
         label,
-        ...(trimmedCustom && canSetCustomLabel ? { customLabel: trimmedCustom } : {}),
       };
 
       let success: boolean;
       if (isEdit && onUpdate) {
-        success = await onUpdate(editLocation.locationId, body);
+        success = await onUpdate(editLocation.locationId, { ...baseBody, ...customLabelOnEdit });
       } else {
-        success = await onSave(body as CreateLocationBody);
+        success = await onSave({ ...baseBody, ...customLabelOnCreate } as CreateLocationBody);
       }
       if (success) onClose();
     } finally {
@@ -124,6 +140,10 @@ export function LocationPickerModal({
           initialRegion={region}
           onRegionChangeComplete={setRegion}
           showsUserLocation
+          // iOS Apple Maps native dark mode
+          userInterfaceStyle={isDark ? 'dark' : 'light'}
+          // Android Google Maps custom dark style
+          customMapStyle={Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined}
         />
         {/* Center pin overlay */}
         <View style={styles.pinOverlay} pointerEvents="none">

@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Root } from 'react-dom/client';
 
 import type { TrafficFlowResponse } from '@notifio/api-client';
+import type { MapPin, MapPinSource, MapPinTrafficType } from '@notifio/shared/map';
 
 import type { ClusterMarkerEntry, MarkerEntry } from '@/lib/map/sync-markers';
 import { syncMarkers as syncMarkersImpl } from '@/lib/map/sync-markers';
@@ -22,7 +23,6 @@ import {
   createFlowSource,
   createPinSource,
 } from '@/lib/map-config';
-import type { MapPin, MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
 import { MapMarker } from './map-marker';
 
@@ -56,7 +56,7 @@ function flowToGeoJSON(
 function pinsToGeoJSON(
   pins: MapPin[],
   activeFilters: Set<MapPinSource>,
-  activeTrafficTypes: Set<TrafficIncidentType>
+  activeTrafficTypes: Set<MapPinTrafficType>
 ): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: 'FeatureCollection',
@@ -82,7 +82,7 @@ function pinsToGeoJSON(
 interface DashboardMapProps {
   pins?: MapPin[];
   activeFilters?: Set<MapPinSource>;
-  activeTrafficTypes?: Set<TrafficIncidentType>;
+  activeTrafficTypes?: Set<MapPinTrafficType>;
   flowSegments?: TrafficFlowResponse | null;
   isLoading?: boolean;
   error?: string | null;

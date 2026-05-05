@@ -2,8 +2,9 @@ import type maplibregl from 'maplibre-gl';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 
+import type { MapPin } from '@notifio/shared/map';
+
 import { PIN_SOURCE_ID } from '@/lib/map-config';
-import type { MapPin } from '@/lib/normalize-pins';
 
 export interface MarkerEntry {
   marker: maplibregl.Marker;

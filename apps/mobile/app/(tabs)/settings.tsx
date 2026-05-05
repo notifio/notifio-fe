@@ -57,9 +57,6 @@ export default function SettingsScreen() {
     });
   };
 
-  const pushPlaceholder = (title: string) =>
-    router.push({ pathname: '/settings/placeholder', params: { title } });
-
   return (
     <ScreenLayout scrollable header={<ScreenHeader title={t('settings.title')} />}>
       {/* Profile summary */}
@@ -89,7 +86,7 @@ export default function SettingsScreen() {
       {/* Account */}
       <SectionLabel label={t('settings.account')} />
       <Card>
-        <SettingsRow icon={IconCrown} label={t('settings.subscription')} value={tier} onPress={() => pushPlaceholder(t('settings.subscription'))} />
+        <SettingsRow icon={IconCrown} label={t('settings.subscription')} value={tier} onPress={() => router.push('/settings/subscription')} />
         <SettingsRow icon={IconMapPin} label={t('settings.locations')} onPress={() => router.push('/settings/locations')} />
       </Card>
 
@@ -106,7 +103,7 @@ export default function SettingsScreen() {
       <SectionLabel label={t('settings.data')} />
       <Card>
         <SettingsRow icon={IconDatabase} label={t('settings.dataSources')} onPress={() => router.push('/settings/sources')} />
-        <SettingsRow icon={IconStar} label={t('settings.sourcePreferences')} badge="PRO" onPress={() => pushPlaceholder(t('settings.sourcePreferences'))} />
+        <SettingsRow icon={IconStar} label={t('settings.sourcePreferences')} badge="PRO" onPress={() => router.push('/settings/source-preferences')} />
         <SettingsRow icon={IconTemperature} label={t('settings.weatherThresholds')} badge="PRO" onPress={() => router.push('/settings/weather-thresholds')} />
       </Card>
 
@@ -121,7 +118,7 @@ export default function SettingsScreen() {
       {/* App */}
       <SectionLabel label={t('settings.app')} />
       <Card>
-        <SettingsRow icon={IconInfoCircle} label={t('settings.about')} value="0.1.0" onPress={() => pushPlaceholder(t('settings.about'))} />
+        <SettingsRow icon={IconInfoCircle} label={t('settings.about')} onPress={() => router.push('/settings/about')} />
         <SettingsRow icon={IconLogout} label={t('auth.signOut')} danger onPress={handleSignOut} />
       </Card>
 

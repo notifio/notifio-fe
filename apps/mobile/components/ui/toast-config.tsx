@@ -32,8 +32,17 @@ function ToastBody({ type, text1, text2 }: BaseToastProps & { type: string }) {
   const IconComponent = ICONS[type as keyof typeof ICONS] ?? IconInfoCircle;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <View style={[styles.accentBar, { backgroundColor: accent }]} />
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          borderLeftColor: accent,
+          borderLeftWidth: 4,
+        },
+      ]}
+    >
       <IconComponent size={20} color={accent} style={styles.icon} />
       <View style={styles.textContainer}>
         {text1 ? <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>{text1}</Text> : null}
@@ -60,13 +69,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     paddingRight: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-  },
-  accentBar: {
-    width: 4,
-    alignSelf: 'stretch',
-    borderTopLeftRadius: theme.radius.xl,
-    borderBottomLeftRadius: theme.radius.xl,
+    // The colored accent strip lives on the container's own borderLeft
+    // (set inline per-toast) so it tapers smoothly along the rounded
+    // corners — mirrors web alert-card.tsx's CSS border-left + radius
+    // pattern. Vertical padding stays on textContainer to keep icon
+    // vertically centered against the row's alignItems: 'center'.
   },
   icon: {
     marginLeft: theme.spacing.md,
@@ -74,6 +81,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    paddingVertical: theme.spacing.md,
   },
   title: {
     fontSize: theme.fontSize.md,

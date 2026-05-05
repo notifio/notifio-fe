@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+
 import { AdPlaceholder } from '../../components/monetization/ad-placeholder';
 import { UpsellCard } from '../../components/monetization/upsell-card';
 import { ScreenHeader } from '../../components/ui/screen-header';
@@ -11,7 +13,6 @@ import { useAirQuality } from '../../hooks/use-air-quality';
 import { useNameday } from '../../hooks/use-nameday';
 import { usePollen } from '../../hooks/use-pollen';
 import { useWeather } from '../../hooks/use-weather';
-import { DEFAULT_LOCATION } from '../../lib/location';
 import { theme } from '../../lib/theme';
 
 export default function OverviewScreen() {

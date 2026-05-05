@@ -6,11 +6,12 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 import type { NotificationCategoryResponse } from '@notifio/api-client';
+import { CATEGORY_GROUPS } from '@notifio/shared/map';
 
 import { PreferenceSection } from '@/components/app/settings/preference-section';
 import { Toggle } from '@/components/ui/toggle';
 import { usePreferences } from '@/hooks/use-preferences';
-import { CATEGORY_GROUPS } from '@/lib/category-groups';
+import { CATEGORY_GROUP_ICONS } from '@/lib/category-groups';
 
 interface ResolvedGroup {
   groupKey: string;
@@ -52,7 +53,7 @@ export function NotificationPreferencesSection() {
       resolved.push({
         groupKey: def.groupKey,
         groupLabel: tg(def.groupKey),
-        icon: def.icon,
+        icon: CATEGORY_GROUP_ICONS[def.groupKey] ?? IconBell,
         categories: cats,
       });
     }

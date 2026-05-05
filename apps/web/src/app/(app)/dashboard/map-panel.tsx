@@ -4,6 +4,9 @@ import { IconPlus } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+import { MAP_FILTER_SOURCES, type MapPinSource, type MapPinTrafficType } from '@notifio/shared/map';
+
 import { DashboardMap } from '@/components/app/dashboard-map';
 import { EventReportModal } from '@/components/app/event-report-modal';
 import { MapAdBanner } from '@/components/app/map-ad-banner';
@@ -12,11 +15,8 @@ import { UpsellModal } from '@/components/app/upsell-modal';
 import { useMapData } from '@/hooks/use-map-data';
 import { useMembership } from '@/hooks/use-membership';
 import { api } from '@/lib/api';
-import { DEFAULT_LOCATION } from '@/lib/location';
-import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
-import type { MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 
-const ALL_TRAFFIC_TYPES: TrafficIncidentType[] = [
+const ALL_TRAFFIC_TYPES: MapPinTrafficType[] = [
   'accident',
   'congestion',
   'construction',
@@ -71,7 +71,7 @@ export function MapPanel({
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
-  const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<TrafficIncidentType>>(
+  const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<MapPinTrafficType>>(
     () => new Set(ALL_TRAFFIC_TYPES),
   );
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
@@ -180,7 +180,7 @@ export function MapPanel({
     });
   }, []);
 
-  const toggleTrafficType = useCallback((type: TrafficIncidentType) => {
+  const toggleTrafficType = useCallback((type: MapPinTrafficType) => {
     setActiveTrafficTypes((prev) => {
       const next = new Set(prev);
       if (next.has(type)) {

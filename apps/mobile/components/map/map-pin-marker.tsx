@@ -1,8 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
+import type { MapPin } from '@notifio/shared/map';
+
 import { getPinStyle } from '../../lib/map-pin-config';
-import type { MapPin } from '../../lib/normalize-pins';
 
 const PIN_W = 38;
 const PIN_H = 50;

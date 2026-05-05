@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { TrafficFlowResponse, UserPreferencesResponse } from '@notifio/api-client';
+import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from '@notifio/shared/geo';
+import { normalizeMapPins, type MapPin, type MapPinSource } from '@notifio/shared/map';
 
 import { api } from '@/lib/api';
-import { type MapPin, type MapPinSource, normalizeMapPins } from '@/lib/normalize-pins';
 
 import { safeFetch } from './use-map-data/fetch-utils';
-import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from './use-map-data/geo-utils';
 import type { ViewportCache } from './use-map-data/types';
 import { usePreferences } from './use-preferences';
 
@@ -60,7 +60,7 @@ function buildDisabledSources(prefs: UserPreferencesResponse | null): Set<MapPin
   if (!prefs) return disabled;
   for (const cat of prefs.notifications) {
     if (cat.items.length === 0) continue;
-    const allDisabled = cat.items.every((i) => !i.enabled);
+    const allDisabled = cat.items.every((i) => !i.showOnMap);
     if (!allDisabled) continue;
     for (const src of mapCategoryToSources(cat.categoryCode)) {
       disabled.add(src);

@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import MapView, { type Region } from 'react-native-maps';
 
 import type { UserEventCategory } from '@notifio/api-client';
+import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
 
 import { useEventCategories } from '../../hooks/use-event-categories';
 import { useMembership } from '../../hooks/use-membership';
@@ -43,8 +44,8 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
   const [selectedCategory, setSelectedCategory] = useState<UserEventCategory | null>(null);
   const [radiusIdx, setRadiusIdx] = useState(3); // default 1000m
   const [region, setRegion] = useState<Region>({
-    latitude: initialCenter?.lat ?? 48.67,
-    longitude: initialCenter?.lng ?? 19.70,
+    latitude: initialCenter?.lat ?? SLOVAKIA_CENTER.lat,
+    longitude: initialCenter?.lng ?? SLOVAKIA_CENTER.lng,
     latitudeDelta: GPS_DELTA,
     longitudeDelta: GPS_DELTA,
   });

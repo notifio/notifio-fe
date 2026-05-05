@@ -3,7 +3,10 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { WEATHER_THRESHOLD_CODES } from '../../components/settings/weather-thresholds/codes';
+import {
+  WEATHER_THRESHOLD_METRICS,
+  type WeatherThresholdMetricConfig,
+} from '../../components/settings/weather-thresholds/codes';
 import { EditSheet } from '../../components/settings/weather-thresholds/edit-sheet';
 import { ThresholdCard } from '../../components/settings/weather-thresholds/threshold-card';
 import { ProGate } from '../../components/ui/pro-gate';
@@ -38,14 +41,34 @@ function WeatherThresholdsContent() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const { isLoading, getByCode, setThreshold, removeThreshold } = useWeatherThresholds();
-  const [editingCode, setEditingCode] = useState<string | null>(null);
+  const [editingMetric, setEditingMetric] = useState<WeatherThresholdMetricConfig | null>(null);
 
-  const editingConfig = useMemo(
-    () => WEATHER_THRESHOLD_CODES.find((c) => c.code === editingCode) ?? null,
-    [editingCode],
-  );
+  const editingState = useMemo(() => {
+    if (!editingMetric) return null;
+    const warning = getByCode(editingMetric.tiers.warning.code)?.threshold ?? null;
+    const severe = getByCode(editingMetric.tiers.severe.code)?.threshold ?? null;
+    return {
+      warning,
+      severe,
+      hasAny: warning !== null || severe !== null,
+    };
+  }, [editingMetric, getByCode]);
 
-  const editingValue = editingConfig ? getByCode(editingConfig.code)?.threshold ?? null : null;
+  const handleSave = async (warning: number, severe: number) => {
+    if (!editingMetric) return;
+    await Promise.all([
+      setThreshold(editingMetric.tiers.warning.code, warning),
+      setThreshold(editingMetric.tiers.severe.code, severe),
+    ]);
+  };
+
+  const handleRemove = async () => {
+    if (!editingMetric) return;
+    await Promise.all([
+      removeThreshold(editingMetric.tiers.warning.code),
+      removeThreshold(editingMetric.tiers.severe.code),
+    ]);
+  };
 
   return (
     <ScrollView
@@ -64,41 +87,42 @@ function WeatherThresholdsContent() {
 
       <View style={styles.cards}>
         {isLoading
-          ? WEATHER_THRESHOLD_CODES.map((c) => <SkeletonCard key={c.code} />)
-          : WEATHER_THRESHOLD_CODES.map((c) => {
-              const current = getByCode(c.code);
+          ? WEATHER_THRESHOLD_METRICS.map((m) => <SkeletonCard key={m.metric} />)
+          : WEATHER_THRESHOLD_METRICS.map((m) => {
+              const warningValue = getByCode(m.tiers.warning.code)?.threshold ?? null;
+              const severeValue = getByCode(m.tiers.severe.code)?.threshold ?? null;
               return (
                 <ThresholdCard
-                  key={c.code}
-                  code={c.code}
-                  icon={c.icon}
-                  label={t(`weatherThresholds.${c.labelKey}`)}
-                  unit={c.unit}
-                  currentValue={current ? current.threshold : null}
+                  key={m.metric}
+                  icon={m.icon}
+                  label={t(`weatherThresholds.metric.${m.metric}`)}
+                  unit={m.unit}
+                  warningValue={warningValue}
+                  severeValue={severeValue}
+                  warningLabel={t(`weatherThresholds.tier.${m.metric}.warning`)}
+                  severeLabel={t(`weatherThresholds.tier.${m.metric}.severe`)}
                   notSetLabel={t('weatherThresholds.notSet')}
-                  onPress={() => setEditingCode(c.code)}
+                  onPress={() => setEditingMetric(m)}
                 />
               );
             })}
       </View>
 
       <EditSheet
-        visible={editingConfig !== null}
-        onClose={() => setEditingCode(null)}
-        code={editingConfig?.code ?? null}
-        icon={editingConfig?.icon ?? null}
-        label={editingConfig ? t(`weatherThresholds.${editingConfig.labelKey}`) : ''}
-        unit={editingConfig?.unit ?? ''}
-        currentValue={editingValue}
+        visible={editingMetric !== null}
+        onClose={() => setEditingMetric(null)}
+        metric={editingMetric}
+        metricLabel={editingMetric ? t(`weatherThresholds.metric.${editingMetric.metric}`) : ''}
+        warningLabel={editingMetric ? t(`weatherThresholds.tier.${editingMetric.metric}.warning`) : ''}
+        severeLabel={editingMetric ? t(`weatherThresholds.tier.${editingMetric.metric}.severe`) : ''}
+        warningCurrent={editingState?.warning ?? null}
+        severeCurrent={editingState?.severe ?? null}
+        hasAnyValue={editingState?.hasAny ?? false}
         invalidValueLabel={t('weatherThresholds.invalidValue')}
         saveLabel={t('reminders.save')}
         removeLabel={t('reminders.delete')}
-        onSave={async (value) => {
-          if (editingConfig) await setThreshold(editingConfig.code, value);
-        }}
-        onRemove={async () => {
-          if (editingConfig) await removeThreshold(editingConfig.code);
-        }}
+        onSave={handleSave}
+        onRemove={handleRemove}
       />
     </ScrollView>
   );

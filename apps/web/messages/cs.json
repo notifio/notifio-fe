@@ -1,4 +1,77 @@
 {
+  "categoryBadge": {
+    "traffic": "Doprava",
+    "weather": "Počasí",
+    "weather_warning": "Varování",
+    "outage_electric": "Výpadek",
+    "outage_water": "Výpadek",
+    "outage_heat": "Výpadek",
+    "outage_gas": "Výpadek",
+    "planned_events": "Událost",
+    "name_day": "Svátek",
+    "pollen": "Pyl",
+    "air_quality": "Kvalita ovzduší"
+  },
+  "landing": {
+    "hero": {
+      "title": "Věz, co se děje kolem tebe",
+      "subtitle": "Varování před počasím, dopravní uzávěry, alarmy kvality ovzduší — doručeno na tvůj telefon dřív, než tě zasáhnou."
+    },
+    "features": {
+      "title": "Vše důležité na jednom místě",
+      "subtitle": "Jedna aplikace nahradí pět. Hyperlokální upozornění podle tvé přesné polohy.",
+      "weather": {
+        "title": "Varování před počasím",
+        "description": "Bouřky, silný vítr, mráz a další meteorologická varování."
+      },
+      "traffic": {
+        "title": "Dopravní informace",
+        "description": "Uzávěry, nehody a kolony ve tvém okolí v reálném čase."
+      },
+      "airQuality": {
+        "title": "Kvalita ovzduší",
+        "description": "Smog, prachové částice a alergeny. Věz, kdy zůstat doma."
+      },
+      "outages": {
+        "title": "Výpadky sítí",
+        "description": "Plánované výpadky elektřiny, vody, plynu a tepla ve tvé oblasti."
+      },
+      "location": {
+        "title": "Chytré podle polohy",
+        "description": "Vše funguje automaticky podle toho, kde se právě nacházíš."
+      }
+    },
+    "howItWorks": {
+      "title": "Začni ve 3 krocích",
+      "subtitle": "Žádné registrační formuláře, žádný výběr měst.",
+      "step1": {
+        "title": "Nainstaluj aplikaci",
+        "description": "Stáhni si Notifio z App Store nebo Google Play."
+      },
+      "step2": {
+        "title": "Povol polohu",
+        "description": "Aplikace zjistí, kde jsi, a vyfiltruje upozornění pro tvou oblast."
+      },
+      "step3": {
+        "title": "Dostávej upozornění",
+        "description": "Push notifikace ti řeknou, co se děje kolem tebe."
+      }
+    },
+    "cta": {
+      "title": "Připraven být informovaný?",
+      "subtitle": "Stáhni si Notifio a už nikdy nebudeš zaskočený."
+    },
+    "download": {
+      "ios": "Stáhnout pro iOS",
+      "android": "Stáhnout pro Android"
+    },
+    "footer": {
+      "copyright": "© 2026 Notifio",
+      "privacy": "Ochrana soukromí",
+      "about": "O nás",
+      "contact": "Kontakt"
+    }
+  },
   "notificationsPage": {
     "title": "Oznámení",
     "tabs": {
@@ -34,18 +107,17 @@
       "once": "jednorázově"
     }
   },
-  "categoryBadge": {
-    "traffic": "Doprava",
-    "weather": "Počasí",
-    "weather_warning": "Varování",
-    "outage_electric": "Výpadek",
-    "outage_water": "Výpadek",
-    "outage_heat": "Výpadek",
-    "outage_gas": "Výpadek",
-    "planned_events": "Událost",
-    "name_day": "Svátek",
-    "pollen": "Pyl",
-    "air_quality": "Kvalita ovzduší"
+  "setupPrompt": {
+    "title": "Začni s notifikacemi",
+    "descriptionBoth": "Povol přístup k poloze a push notifikace, abys dostával upozornění o počasí, dopravě a výpadcích ve své oblasti v reálném čase.",
+    "descriptionPushOnly": "Povol push notifikace, abys dostával upozornění pro své uložené lokace v reálném čase.",
+    "descriptionGeoOnly": "Přidej lokaci, abychom věděli, kam ti posílat upozornění.",
+    "enablePush": "Zapnout notifikace",
+    "addLocation": "Přidat lokaci",
+    "setup": "Nastavit",
+    "compactBoth": "Zapni polohu a notifikace, abys zde viděl upozornění",
+    "compactPushOnly": "Zapni push notifikace, abys zde viděl upozornění",
+    "compactGeoOnly": "Přidej lokaci, abys zde viděl upozornění"
   },
   "profile": {
     "title": "Profil",
@@ -141,104 +213,18 @@
     },
     "resolveFailed": "Událost se nepodařilo vyřešit"
   },
-  "landing": {
-    "hero": {
-      "title": "Věz, co se děje kolem tebe",
-      "subtitle": "Varování před počasím, dopravní uzávěry, alarmy kvality ovzduší — doručeno na tvůj telefon dřív, než tě zasáhnou."
-    },
-    "features": {
-      "title": "Vše důležité na jednom místě",
-      "subtitle": "Jedna aplikace nahradí pět. Hyperlokální upozornění podle tvé přesné polohy.",
-      "weather": {
-        "title": "Varování před počasím",
-        "description": "Bouřky, silný vítr, mráz a další meteorologická varování."
-      },
-      "traffic": {
-        "title": "Dopravní informace",
-        "description": "Uzávěry, nehody a kolony ve tvém okolí v reálném čase."
-      },
-      "airQuality": {
-        "title": "Kvalita ovzduší",
-        "description": "Smog, prachové částice a alergeny. Věz, kdy zůstat doma."
-      },
-      "outages": {
-        "title": "Výpadky sítí",
-        "description": "Plánované výpadky elektřiny, vody, plynu a tepla ve tvé oblasti."
-      },
-      "location": {
-        "title": "Chytré podle polohy",
-        "description": "Vše funguje automaticky podle toho, kde se právě nacházíš."
-      }
-    },
-    "howItWorks": {
-      "title": "Začni ve 3 krocích",
-      "subtitle": "Žádné registrační formuláře, žádný výběr měst.",
-      "step1": {
-        "title": "Nainstaluj aplikaci",
-        "description": "Stáhni si Notifio z App Store nebo Google Play."
-      },
-      "step2": {
-        "title": "Povol polohu",
-        "description": "Aplikace zjistí, kde jsi, a vyfiltruje upozornění pro tvou oblast."
-      },
-      "step3": {
-        "title": "Dostávej upozornění",
-        "description": "Push notifikace ti řeknou, co se děje kolem tebe."
-      }
-    },
-    "cta": {
-      "title": "Připraven být informovaný?",
-      "subtitle": "Stáhni si Notifio a už nikdy nebudeš zaskočený."
-    },
-    "download": {
-      "ios": "Stáhnout pro iOS",
-      "android": "Stáhnout pro Android"
-    },
-    "footer": {
-      "copyright": "© 2026 Notifio",
-      "privacy": "Ochrana soukromí",
-      "about": "O nás",
-      "contact": "Kontakt"
-    }
-  },
-  "setupPrompt": {
-    "title": "Začni s notifikacemi",
-    "descriptionBoth": "Povol přístup k poloze a push notifikace, abys dostával upozornění o počasí, dopravě a výpadcích ve své oblasti v reálném čase.",
-    "descriptionPushOnly": "Povol push notifikace, abys dostával upozornění pro své uložené lokace v reálném čase.",
-    "descriptionGeoOnly": "Přidej lokaci, abychom věděli, kam ti posílat upozornění.",
-    "enablePush": "Zapnout notifikace",
-    "addLocation": "Přidat lokaci",
-    "setup": "Nastavit",
-    "compactBoth": "Zapni polohu a notifikace, abys zde viděl upozornění",
-    "compactPushOnly": "Zapni push notifikace, abys zde viděl upozornění",
-    "compactGeoOnly": "Přidej lokaci, abys zde viděl upozornění"
-  },
   "sourcePreferences": {
-    "title": "Preferované zdroje",
-    "description": "Nastav si preferovaný zdroj dat pro každou kategorii. Zdroj s nejvyšší prioritou bude použit jako první.",
-    "onlySource": "Jediný dostupný zdroj",
-    "auto": "Automaticky (podle hodnocení komunity)",
-    "saved": "Uloženo",
     "dragToReorder": "Tažením změníš pořadí priorit"
   },
   "weatherThresholds": {
-    "title": "Prahové hodnoty počasí",
-    "description": "Nastav vlastní prahové hodnoty pro upozornění o počasí. Dostaneš notifikaci, když hodnoty přesáhnou tvé prahy.",
-    "addThreshold": "Přidat prahovou hodnotu",
-    "selectType": "Vyber typ prahu",
-    "saved": "Uloženo",
-    "tempHigh": "Vysoká teplota",
-    "tempLow": "Nízká teplota",
-    "windSpeed": "Rychlost větru",
-    "humidity": "Vlhkost",
-    "pressure": "Atmosférický tlak",
-    "deleteConfirm": "Odstranit tento práh?"
+    "loadFailed": "Nepodařilo se načíst prahové hodnoty",
+    "saveFailed": "Nepodařilo se uložit prahovou hodnotu",
+    "deleteFailed": "Nepodařilo se odstranit prahovou hodnotu"
   },
-  "event": {
-    "status": {
-      "active": "Aktivní",
-      "upcoming": "Plánované",
-      "resolved": "Ukončené"
-    }
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
   }
 }
