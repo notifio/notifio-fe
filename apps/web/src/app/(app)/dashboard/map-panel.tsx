@@ -4,6 +4,8 @@ import { IconPlus } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+
 import { DashboardMap } from '@/components/app/dashboard-map';
 import { EventReportModal } from '@/components/app/event-report-modal';
 import { MapAdBanner } from '@/components/app/map-ad-banner';
@@ -12,7 +14,6 @@ import { UpsellModal } from '@/components/app/upsell-modal';
 import { useMapData } from '@/hooks/use-map-data';
 import { useMembership } from '@/hooks/use-membership';
 import { api } from '@/lib/api';
-import { DEFAULT_LOCATION } from '@/lib/location';
 import { MAP_FILTER_SOURCES } from '@/lib/map-pin-config';
 import type { MapPinSource, TrafficIncidentType } from '@/lib/normalize-pins';
 

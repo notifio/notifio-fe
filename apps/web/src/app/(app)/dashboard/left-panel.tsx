@@ -3,6 +3,8 @@
 import { IconClock } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
+import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+
 import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
@@ -13,7 +15,6 @@ import { useNameday } from '@/hooks/use-nameday';
 import { usePollen } from '@/hooks/use-pollen';
 import { useWeather } from '@/hooks/use-weather';
 import { useWeatherWarnings } from '@/hooks/use-weather-warnings';
-import { DEFAULT_LOCATION } from '@/lib/location';
 
 interface LeftPanelProps {
   userLocation: { lat: number; lng: number } | null;
