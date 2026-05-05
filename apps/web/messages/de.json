@@ -1,4 +1,77 @@
 {
+  "categoryBadge": {
+    "traffic": "Verkehr",
+    "weather": "Wetter",
+    "weather_warning": "Warnung",
+    "outage_electric": "Ausfall",
+    "outage_water": "Ausfall",
+    "outage_heat": "Ausfall",
+    "outage_gas": "Ausfall",
+    "planned_events": "Ereignis",
+    "name_day": "Namenstag",
+    "pollen": "Pollen",
+    "air_quality": "Luftqualität"
+  },
+  "landing": {
+    "hero": {
+      "title": "Wisse, was um dich herum passiert",
+      "subtitle": "Wetterwarnungen, Verkehrssperrungen, Luftqualitätsalarme — auf dein Handy geliefert, bevor sie dich betreffen."
+    },
+    "features": {
+      "title": "Alles Wichtige an einem Ort",
+      "subtitle": "Eine App ersetzt fünf. Hyperlokale Warnungen basierend auf deinem genauen Standort.",
+      "weather": {
+        "title": "Wetterwarnungen",
+        "description": "Stürme, starker Wind, Frost und andere meteorologische Warnungen."
+      },
+      "traffic": {
+        "title": "Verkehrsupdates",
+        "description": "Sperrungen, Unfälle und Staus in deiner Nähe in Echtzeit."
+      },
+      "airQuality": {
+        "title": "Luftqualität",
+        "description": "Smog, Feinstaub und Allergene. Wisse, wann du drinnen bleiben solltest."
+      },
+      "outages": {
+        "title": "Versorgungsausfälle",
+        "description": "Geplante Ausfälle von Strom, Wasser, Gas und Heizung in deiner Region."
+      },
+      "location": {
+        "title": "Standortintelligent",
+        "description": "Alles funktioniert automatisch basierend auf deinem aktuellen Standort."
+      }
+    },
+    "howItWorks": {
+      "title": "In 3 Schritten loslegen",
+      "subtitle": "Keine Anmeldeformulare, keine Stadtauswahl.",
+      "step1": {
+        "title": "App installieren",
+        "description": "Lade Notifio aus dem App Store oder Google Play herunter."
+      },
+      "step2": {
+        "title": "Standort erlauben",
+        "description": "Die App erkennt, wo du bist, und filtert Warnungen für deine Region."
+      },
+      "step3": {
+        "title": "Benachrichtigungen erhalten",
+        "description": "Push-Benachrichtigungen informieren dich über das, was um dich herum passiert."
+      }
+    },
+    "cta": {
+      "title": "Bereit, informiert zu bleiben?",
+      "subtitle": "Lade Notifio herunter und werde nie wieder unvorbereitet erwischt."
+    },
+    "download": {
+      "ios": "Für iOS herunterladen",
+      "android": "Für Android herunterladen"
+    },
+    "footer": {
+      "copyright": "© 2026 Notifio",
+      "privacy": "Datenschutz",
+      "about": "Über uns",
+      "contact": "Kontakt"
+    }
+  },
   "notificationsPage": {
     "title": "Benachrichtigungen",
     "tabs": {
@@ -34,18 +107,17 @@
       "once": "einmalig"
     }
   },
-  "categoryBadge": {
-    "traffic": "Verkehr",
-    "weather": "Wetter",
-    "weather_warning": "Warnung",
-    "outage_electric": "Ausfall",
-    "outage_water": "Ausfall",
-    "outage_heat": "Ausfall",
-    "outage_gas": "Ausfall",
-    "planned_events": "Ereignis",
-    "name_day": "Namenstag",
-    "pollen": "Pollen",
-    "air_quality": "Luftqualität"
+  "setupPrompt": {
+    "title": "Mit Benachrichtigungen loslegen",
+    "descriptionBoth": "Aktiviere den Standortzugriff und Push-Benachrichtigungen, um Echtzeit-Warnungen zu Wetter, Verkehr und Ausfällen in deiner Region zu erhalten.",
+    "descriptionPushOnly": "Aktiviere Push-Benachrichtigungen, um Echtzeit-Warnungen für deine gespeicherten Orte zu erhalten.",
+    "descriptionGeoOnly": "Füge einen Ort hinzu, damit wir wissen, wohin wir Warnungen senden sollen.",
+    "enablePush": "Benachrichtigungen aktivieren",
+    "addLocation": "Ort hinzufügen",
+    "setup": "Einrichten",
+    "compactBoth": "Aktiviere Standort & Benachrichtigungen, um Warnungen hier zu sehen",
+    "compactPushOnly": "Aktiviere Push-Benachrichtigungen, um Warnungen hier zu sehen",
+    "compactGeoOnly": "Füge einen Ort hinzu, um Warnungen hier zu sehen"
   },
   "profile": {
     "title": "Profil",
@@ -141,141 +213,18 @@
     },
     "resolveFailed": "Ereignis konnte nicht behoben werden"
   },
-  "landing": {
-    "hero": {
-      "title": "Wisse, was um dich herum passiert",
-      "subtitle": "Wetterwarnungen, Verkehrssperrungen, Luftqualitätsalarme — auf dein Handy geliefert, bevor sie dich betreffen."
-    },
-    "features": {
-      "title": "Alles Wichtige an einem Ort",
-      "subtitle": "Eine App ersetzt fünf. Hyperlokale Warnungen basierend auf deinem genauen Standort.",
-      "weather": {
-        "title": "Wetterwarnungen",
-        "description": "Stürme, starker Wind, Frost und andere meteorologische Warnungen."
-      },
-      "traffic": {
-        "title": "Verkehrsupdates",
-        "description": "Sperrungen, Unfälle und Staus in deiner Nähe in Echtzeit."
-      },
-      "airQuality": {
-        "title": "Luftqualität",
-        "description": "Smog, Feinstaub und Allergene. Wisse, wann du drinnen bleiben solltest."
-      },
-      "outages": {
-        "title": "Versorgungsausfälle",
-        "description": "Geplante Ausfälle von Strom, Wasser, Gas und Heizung in deiner Region."
-      },
-      "location": {
-        "title": "Standortintelligent",
-        "description": "Alles funktioniert automatisch basierend auf deinem aktuellen Standort."
-      }
-    },
-    "howItWorks": {
-      "title": "In 3 Schritten loslegen",
-      "subtitle": "Keine Anmeldeformulare, keine Stadtauswahl.",
-      "step1": {
-        "title": "App installieren",
-        "description": "Lade Notifio aus dem App Store oder Google Play herunter."
-      },
-      "step2": {
-        "title": "Standort erlauben",
-        "description": "Die App erkennt, wo du bist, und filtert Warnungen für deine Region."
-      },
-      "step3": {
-        "title": "Benachrichtigungen erhalten",
-        "description": "Push-Benachrichtigungen informieren dich über das, was um dich herum passiert."
-      }
-    },
-    "cta": {
-      "title": "Bereit, informiert zu bleiben?",
-      "subtitle": "Lade Notifio herunter und werde nie wieder unvorbereitet erwischt."
-    },
-    "download": {
-      "ios": "Für iOS herunterladen",
-      "android": "Für Android herunterladen"
-    },
-    "footer": {
-      "copyright": "© 2026 Notifio",
-      "privacy": "Datenschutz",
-      "about": "Über uns",
-      "contact": "Kontakt"
-    }
-  },
-  "setupPrompt": {
-    "title": "Mit Benachrichtigungen loslegen",
-    "descriptionBoth": "Aktiviere den Standortzugriff und Push-Benachrichtigungen, um Echtzeit-Warnungen zu Wetter, Verkehr und Ausfällen in deiner Region zu erhalten.",
-    "descriptionPushOnly": "Aktiviere Push-Benachrichtigungen, um Echtzeit-Warnungen für deine gespeicherten Orte zu erhalten.",
-    "descriptionGeoOnly": "Füge einen Ort hinzu, damit wir wissen, wohin wir Warnungen senden sollen.",
-    "enablePush": "Benachrichtigungen aktivieren",
-    "addLocation": "Ort hinzufügen",
-    "setup": "Einrichten",
-    "compactBoth": "Aktiviere Standort & Benachrichtigungen, um Warnungen hier zu sehen",
-    "compactPushOnly": "Aktiviere Push-Benachrichtigungen, um Warnungen hier zu sehen",
-    "compactGeoOnly": "Füge einen Ort hinzu, um Warnungen hier zu sehen"
-  },
   "sourcePreferences": {
-    "title": "Bevorzugte Quellen",
-    "description": "Lege deine bevorzugte Datenquelle für jede Kategorie fest. Die Quelle mit der höchsten Priorität wird zuerst verwendet.",
-    "onlySource": "Einzige verfügbare Quelle",
-    "auto": "Automatisch (nach Community-Bewertung)",
-    "saved": "Gespeichert",
     "dragToReorder": "Zum Neuordnen ziehen"
   },
   "weatherThresholds": {
-    "title": "Wetter-Schwellenwerte",
-    "description": "Lege benutzerdefinierte Schwellenwerte für Wetterwarnungen fest. Du wirst benachrichtigt, wenn Werte deine Schwellen überschreiten.",
-    "addThreshold": "Schwellenwert hinzufügen",
-    "selectType": "Schwellenwerttyp auswählen",
-    "saved": "Gespeichert",
-    "deleteConfirm": "Diesen Schwellenwert entfernen?",
-    "metric": {
-      "highTemperature": "Hohe Temperatur",
-      "lowTemperature": "Niedrige Temperatur",
-      "windSpeed": "Windgeschwindigkeit",
-      "rainfall": "Niederschlag",
-      "snowfall": "Schneefall"
-    },
-    "tier": {
-      "highTemperature": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Temperatur diesen Wert überschreitet.",
-        "severe": "Extreme Hitze",
-        "severeDescription": "Schwere Warnung bei extrem hohen Temperaturen."
-      },
-      "lowTemperature": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Temperatur unter diesen Wert fällt.",
-        "severe": "Frost",
-        "severeDescription": "Schwere Warnung bei extrem niedrigen Temperaturen."
-      },
-      "windSpeed": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn die Windgeschwindigkeit diesen Wert überschreitet.",
-        "severe": "Starker Wind",
-        "severeDescription": "Schwere Warnung bei starkem Wind."
-      },
-      "rainfall": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn der Niederschlag diesen Wert überschreitet.",
-        "severe": "Starkregen",
-        "severeDescription": "Schwere Warnung bei intensivem Niederschlag."
-      },
-      "snowfall": {
-        "warning": "Warnung",
-        "warningDescription": "Erste Warnstufe, wenn der Schneefall diesen Wert überschreitet.",
-        "severe": "Starker Schneefall",
-        "severeDescription": "Schwere Warnung bei intensivem Schneefall."
-      }
-    },
     "loadFailed": "Schwellenwerte konnten nicht geladen werden",
     "saveFailed": "Schwellenwert konnte nicht gespeichert werden",
     "deleteFailed": "Schwellenwert konnte nicht gelöscht werden"
   },
-  "event": {
-    "status": {
-      "active": "Aktiv",
-      "upcoming": "Geplant",
-      "resolved": "Beendet"
-    }
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
   }
 }

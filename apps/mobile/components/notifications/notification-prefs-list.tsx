@@ -1,253 +1,184 @@
+import {
+  IconActivity,
+  IconAlertTriangle,
+  IconBell,
+  IconBolt,
+  IconCake,
+  IconCar,
+  IconChevronDown,
+  IconChevronUp,
+  IconCloudStorm,
+  IconDroplet,
+  IconFlame,
+  IconFlower,
+  IconTemperature,
+  IconWifi,
+  IconWind,
+  type Icon as TablerIconComponent,
+} from '@tabler/icons-react-native';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LayoutAnimation, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
 import type { NotificationCategoryResponse } from '@notifio/api-client';
 
-import { CATEGORY_GROUPS } from '../../lib/category-groups';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-import { Card } from '../ui/card';
-import { ToggleRow } from '../ui/toggle-row';
 
-/**
- * Sprint 2 (B3 split) Notifications-screen list.
- *
- * Each category card surfaces TWO toggles instead of one:
- *   • Show on map      — drives FE map pin visibility
- *   • Send notifications — drives BE push delivery
- * The two axes are orthogonal, matching Filip's product decision: a
- * user can keep traffic pins visible for situational awareness while
- * silencing push, and vice versa.
- *
- * Sub-category items still render with the dual toggles when a category
- * has more than one item (currently only `weather` does, per Filip's
- * call to skip per-subcategory UI for everything else).
- */
-interface ResolvedGroup {
-  groupKey: string;
-  icon: typeof CATEGORY_GROUPS[number]['icon'];
-  categories: NotificationCategoryResponse[];
-}
+const CATEGORY_ICONS: Record<string, TablerIconComponent> = {
+  weather: IconCloudStorm,
+  weather_warning: IconAlertTriangle,
+  air_quality: IconWind,
+  pollen: IconFlower,
+  earthquake: IconActivity,
+  traffic: IconCar,
+  outage_electric: IconBolt,
+  outage_water: IconDroplet,
+  outage_gas: IconFlame,
+  outage_heat: IconTemperature,
+  outage_internet: IconWifi,
+  wildfire: IconFlame,
+  name_day: IconCake,
+};
 
 interface NotificationPrefsListProps {
   categories: NotificationCategoryResponse[];
-  onToggleSendNotifications: (categoryCode: string, subcategoryCode: string | null, value: boolean) => void;
-  onToggleShowOnMap: (categoryCode: string, subcategoryCode: string | null, value: boolean) => void;
-  onToggleCategorySend: (categoryCode: string, value: boolean) => void;
-  onToggleCategoryShow: (categoryCode: string, value: boolean) => void;
+  onToggleItem: (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => void;
+  onToggleCategory: (categoryCode: string, enabled: boolean) => void;
   disabled?: boolean;
 }
 
 export function NotificationPrefsList({
   categories,
-  onToggleSendNotifications,
-  onToggleShowOnMap,
-  onToggleCategorySend,
-  onToggleCategoryShow,
+  onToggleItem,
+  onToggleCategory,
   disabled,
 }: NotificationPrefsListProps) {
-  const { t } = useTranslation();
   const { colors } = useAppTheme();
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
-    () => new Set(CATEGORY_GROUPS.map((g) => g.groupKey)),
-  );
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
 
-  const toggleExpand = (groupKey: string) => {
+  const toggleExpand = (code: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedGroups((prev) => {
+    setExpanded((prev) => {
       const next = new Set(prev);
-      if (next.has(groupKey)) next.delete(groupKey);
-      else next.add(groupKey);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
       return next;
     });
   };
 
-  // Resolve groups from API categories
-  const matched = new Set<string>();
-  const groups: ResolvedGroup[] = [];
-
-  for (const def of CATEGORY_GROUPS) {
-    const cats = categories.filter((c) => def.categoryCodes.includes(c.categoryCode));
-    if (cats.length === 0) continue;
-    for (const c of cats) matched.add(c.categoryCode);
-    groups.push({ groupKey: def.groupKey, icon: def.icon, categories: cats });
-  }
-
-  const ungrouped = categories.filter((c) => !matched.has(c.categoryCode));
-
   return (
     <View style={styles.container}>
-      {groups.map((group) => {
-        const isExpanded = expandedGroups.has(group.groupKey);
+      {categories.map((category) => {
+        const hasChildren = category.items.length > 1;
+        const isExpanded = expanded.has(category.categoryCode);
+        const someEnabled = category.items.some((i) => i.enabled);
+        const Icon = CATEGORY_ICONS[category.categoryCode] ?? IconBell;
 
         return (
-          <Card key={group.groupKey}>
-            <Pressable onPress={() => toggleExpand(group.groupKey)}>
-              <View style={styles.groupHeader}>
-                <Text style={[styles.groupTitle, { color: colors.text }]}>
-                  {t(`categoryGroups.${group.groupKey}`)}
-                </Text>
-                <Text style={[styles.expandHint, { color: colors.textSecondary }]}>
-                  {isExpanded ? '−' : '+'}
-                </Text>
+          <View
+            key={category.categoryCode}
+            style={[
+              styles.card,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
+          >
+            <Pressable
+              onPress={hasChildren ? () => toggleExpand(category.categoryCode) : undefined}
+              disabled={!hasChildren}
+              style={styles.parentRow}
+            >
+              <View style={styles.iconWrap}>
+                <Icon size={18} color={colors.primary} strokeWidth={2} />
               </View>
+              <Text style={[styles.parentTitle, { color: colors.text }]} numberOfLines={1}>
+                {category.categoryName}
+              </Text>
+              {hasChildren && (
+                isExpanded ? (
+                  <IconChevronUp size={14} color={colors.textMuted} strokeWidth={2} />
+                ) : (
+                  <IconChevronDown size={14} color={colors.textMuted} strokeWidth={2} />
+                )
+              )}
+              <Switch
+                value={someEnabled}
+                onValueChange={(v) => onToggleCategory(category.categoryCode, v)}
+                disabled={disabled}
+                trackColor={{ false: colors.border, true: colors.primary }}
+                thumbColor={colors.background}
+              />
             </Pressable>
 
-            {isExpanded && (
-              <View style={styles.groupBody}>
-                {group.categories.map((category) => (
-                  <CategoryCard
-                    key={category.categoryCode}
-                    category={category}
-                    onToggleSend={(sub, v) => onToggleSendNotifications(category.categoryCode, sub, v)}
-                    onToggleShow={(sub, v) => onToggleShowOnMap(category.categoryCode, sub, v)}
-                    onToggleCategorySend={(v) => onToggleCategorySend(category.categoryCode, v)}
-                    onToggleCategoryShow={(v) => onToggleCategoryShow(category.categoryCode, v)}
-                    disabled={disabled}
-                  />
-                ))}
+            {hasChildren && isExpanded && (
+              <View>
+                {category.items.map((item) => {
+                  // BE returns `subcategoryName` (translated) but the shared
+                  // schema doesn't model it yet — read defensively.
+                  const subName = (item as { subcategoryName?: string | null }).subcategoryName;
+                  return (
+                  <View
+                    key={item.preferenceId}
+                    style={[styles.subRow, { borderTopColor: colors.border }]}
+                  >
+                    <Text style={[styles.subTitle, { color: colors.textSecondary }]} numberOfLines={1}>
+                      {subName ?? item.subcategoryCode ?? category.categoryName}
+                    </Text>
+                    <Switch
+                      value={item.enabled}
+                      onValueChange={(v) => onToggleItem(category.categoryCode, item.subcategoryCode, v)}
+                      disabled={disabled}
+                      trackColor={{ false: colors.border, true: colors.primary }}
+                      thumbColor={colors.background}
+                    />
+                  </View>
+                  );
+                })}
               </View>
             )}
-          </Card>
+          </View>
         );
       })}
-
-      {ungrouped.map((category) => (
-        <Card key={category.categoryCode}>
-          <CategoryCard
-            category={category}
-            onToggleSend={(sub, v) => onToggleSendNotifications(category.categoryCode, sub, v)}
-            onToggleShow={(sub, v) => onToggleShowOnMap(category.categoryCode, sub, v)}
-            onToggleCategorySend={(v) => onToggleCategorySend(category.categoryCode, v)}
-            onToggleCategoryShow={(v) => onToggleCategoryShow(category.categoryCode, v)}
-            disabled={disabled}
-          />
-        </Card>
-      ))}
-    </View>
-  );
-}
-
-interface CategoryCardProps {
-  category: NotificationCategoryResponse;
-  onToggleSend: (subcategoryCode: string | null, value: boolean) => void;
-  onToggleShow: (subcategoryCode: string | null, value: boolean) => void;
-  onToggleCategorySend: (value: boolean) => void;
-  onToggleCategoryShow: (value: boolean) => void;
-  disabled?: boolean;
-}
-
-function CategoryCard({
-  category,
-  onToggleSend,
-  onToggleShow,
-  onToggleCategorySend,
-  onToggleCategoryShow,
-  disabled,
-}: CategoryCardProps) {
-  const { t } = useTranslation();
-  const { colors } = useAppTheme();
-
-  const sendOn = category.items.some((i) => i.sendNotifications);
-  const showOn = category.items.some((i) => i.showOnMap);
-  const hasSubcategories = category.items.length > 1;
-
-  return (
-    <View style={styles.category}>
-      <Text style={[styles.categoryTitle, { color: colors.text }]}>{category.categoryName}</Text>
-      <ToggleRow
-        label={t('notificationPreferences.showOnMap')}
-        value={showOn}
-        onValueChange={onToggleCategoryShow}
-        disabled={disabled}
-      />
-      <ToggleRow
-        label={t('notificationPreferences.sendNotifications')}
-        value={sendOn}
-        onValueChange={onToggleCategorySend}
-        disabled={disabled}
-      />
-      {hasSubcategories && (
-        <View style={styles.subcategorySection}>
-          <Text style={[styles.subcategoryLabel, { color: colors.textSecondary }]}>
-            {t('notificationPreferences.perSubcategory')}
-          </Text>
-          {category.items.map((item) => (
-            <View key={item.preferenceId} style={styles.subcategoryRow}>
-              <Text style={[styles.subcategoryName, { color: colors.text }]}>
-                {item.subcategoryCode ?? category.categoryName}
-              </Text>
-              <View style={styles.subToggles}>
-                <ToggleRow
-                  label={t('notificationPreferences.showOnMap')}
-                  value={item.showOnMap}
-                  onValueChange={(v) => onToggleShow(item.subcategoryCode, v)}
-                  disabled={disabled}
-                />
-                <ToggleRow
-                  label={t('notificationPreferences.sendNotifications')}
-                  value={item.sendNotifications}
-                  onValueChange={(v) => onToggleSend(item.subcategoryCode, v)}
-                  disabled={disabled}
-                />
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: theme.spacing.md,
+    gap: 10,
   },
-  groupHeader: {
+  card: {
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  parentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
+    gap: 11,
   },
-  groupTitle: {
+  iconWrap: {
+    width: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  parentTitle: {
+    flex: 1,
     fontSize: theme.fontSize.md,
     ...theme.font.medium,
   },
-  expandHint: {
-    fontSize: theme.fontSize.lg,
-    ...theme.font.medium,
+  subRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 11,
+    paddingLeft: 43,
+    paddingRight: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  groupBody: {
-    gap: theme.spacing.md,
-    paddingTop: theme.spacing.sm,
-  },
-  category: {
-    gap: theme.spacing.xs,
-  },
-  categoryTitle: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.medium,
-    marginBottom: theme.spacing.xs,
-  },
-  subcategorySection: {
-    marginTop: theme.spacing.sm,
-    gap: theme.spacing.sm,
-    paddingLeft: theme.spacing.lg,
-  },
-  subcategoryLabel: {
+  subTitle: {
+    flex: 1,
     fontSize: theme.fontSize.sm,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  subcategoryRow: {
-    gap: theme.spacing.xs,
-  },
-  subcategoryName: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
-  },
-  subToggles: {
-    paddingLeft: theme.spacing.md,
   },
 });
