@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import type { NamedayResponse } from '@notifio/api-client';
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 
 import { api } from '../lib/api';
-
-let cachedNameday: NamedayResponse | null = null;
 
 interface UseNamedayResult {
   nameday: NamedayResponse | null;
@@ -13,37 +11,26 @@ interface UseNamedayResult {
   error: string | null;
 }
 
+/**
+ * Fetches today + N upcoming nameday entries. Previously cached in a
+ * module-level `cachedNameday` variable to dedupe across remounts; React
+ * Query's in-memory + AsyncStorage cache replaces that pattern with no
+ * loss of behaviour.
+ */
 export function useNameday(): UseNamedayResult {
-  const [nameday, setNameday] = useState<NamedayResponse | null>(cachedNameday);
-  const [isLoading, setIsLoading] = useState(cachedNameday === null);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetch = useCallback(async () => {
-    if (cachedNameday) {
-      setNameday(cachedNameday);
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getNameday({
+  const query = useQuery<NamedayResponse>({
+    queryKey: ['nameday', DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng],
+    queryFn: () =>
+      api.getNameday({
         lat: DEFAULT_LOCATION.lat,
         lng: DEFAULT_LOCATION.lng,
         upcoming: 1,
-      });
-      cachedNameday = data;
-      setNameday(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load nameday');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      }),
+  });
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  return { nameday, isLoading, error };
+  return {
+    nameday: query.data ?? null,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load nameday') : null,
+  };
 }

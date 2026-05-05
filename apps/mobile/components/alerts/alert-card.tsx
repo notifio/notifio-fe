@@ -1,8 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { AlertCategory, NotificationHistoryItem } from '@notifio/api-client';
 import { CATEGORY_DISPLAY_NAMES } from '@notifio/shared/constants';
-import { formatRelativeTime } from '@notifio/shared/format';
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -15,6 +16,8 @@ interface AlertCardProps {
 
 export function AlertCard({ notification, onPress }: AlertCardProps) {
   const { colors } = useAppTheme();
+  const { i18n } = useTranslation();
+  const locale = i18n.language as RelativeTimeLocale;
   const categoryNames = CATEGORY_DISPLAY_NAMES[notification.category as AlertCategory];
   const categoryLabel = categoryNames?.en ?? notification.category;
 
@@ -31,7 +34,7 @@ export function AlertCard({ notification, onPress }: AlertCardProps) {
       <View style={styles.bottomRow}>
         <Text style={[styles.meta, { color: colors.textMuted }]}>{categoryLabel}</Text>
         <Text style={[styles.metaDot, { color: colors.textMuted }]}>·</Text>
-        <Text style={[styles.meta, { color: colors.textMuted }]}>{formatRelativeTime(notification.createdAt)}</Text>
+        <Text style={[styles.meta, { color: colors.textMuted }]}>{formatRelativeTime(notification.createdAt, locale)}</Text>
       </View>
     </Card>
   );
