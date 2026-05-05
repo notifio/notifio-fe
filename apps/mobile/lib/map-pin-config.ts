@@ -20,9 +20,13 @@ import {
   IconWindmill,
 } from '@tabler/icons-react-native';
 
-import { alertTypeColors } from '@notifio/ui';
-
-import type { MapPin, MapPinSource } from './normalize-pins';
+import {
+  MAP_PIN_SOURCE_COLORS,
+  MAP_PIN_SOURCE_LABEL_KEYS,
+  TRAFFIC_TYPE_COLORS,
+  type MapPin,
+  type MapPinSource,
+} from '@notifio/shared/map';
 
 export interface PinStyle {
   /** Hex color for marker fill */
@@ -33,15 +37,26 @@ export interface PinStyle {
   icon: Icon;
 }
 
-// Per-incident-type colors (matches web exactly)
-export const TRAFFIC_TYPE_COLORS: Record<string, string> = {
-  accident: '#FF3B30',
-  construction: '#FF7A2F',
-  road_closure: '#991B1B',
-  congestion: '#EAB308',
-  flooding: '#3A86FF',
-  event: '#3A86FF',
-  other: '#6B7A99',
+/**
+ * Per-platform icon resolver. Cross-platform color + label data live in
+ * `@notifio/shared/map`. Mobile maps each pin source to a
+ * `@tabler/icons-react-native` component here; web has an equivalent
+ * map against `@tabler/icons-react`.
+ */
+const MAP_PIN_SOURCE_ICONS: Record<MapPinSource, Icon> = {
+  electricity: IconBolt,
+  water: IconDroplet,
+  heat: IconFlame,
+  gas: IconFlameOff,
+  traffic: IconCarCrash,
+  air_quality: IconWindmill,
+  pollen: IconFlower,
+  hydrology: IconRipple,
+  wildfire: IconCampfire,
+  outage_internet: IconWifiOff,
+  weather_alerts: IconAlertTriangle,
+  weather_forecast: IconCloudBolt,
+  event: IconCalendarEvent,
 };
 
 // Per-incident-type icons (matches web exactly)
@@ -55,78 +70,39 @@ export const TRAFFIC_ICON_MAP: Record<string, Icon> = {
   other: IconInfoCircle,
 };
 
-// Source-level styles. Pin colors match web's map-pin-config exactly.
-const SOURCE_STYLES: Record<MapPinSource, PinStyle> = {
-  electricity: { color: '#EAB308', label: 'mapFilters.electricity', icon: IconBolt },
-  water:       { color: '#3A86FF', label: 'mapFilters.water',       icon: IconDroplet },
-  heat:        { color: '#FF3B30', label: 'mapFilters.heat',        icon: IconFlame },
-  gas:         { color: '#FF7A2F', label: 'mapFilters.gas',         icon: IconFlameOff },
-  traffic:     { color: '#8B5CF6', label: 'mapFilters.traffic',     icon: IconCarCrash },
-  air_quality:      { color: '#1D9E75', label: 'mapFilters.air_quality',      icon: IconWindmill },
-  pollen:           { color: '#A78BFA', label: 'mapFilters.pollen',           icon: IconFlower },
-  hydrology:        { color: '#38BDF8', label: 'mapFilters.hydrology',        icon: IconRipple },
-  wildfire:         { color: '#FB7121', label: 'mapFilters.wildfire',         icon: IconCampfire },
-  outage_internet:  { color: '#8B9BB5', label: 'mapFilters.outage_internet',  icon: IconWifiOff },
-  weather_alerts:   { color: '#F59E0B', label: 'mapFilters.weather_alerts',   icon: IconAlertTriangle },
-  weather_forecast: { color: '#D97706', label: 'mapFilters.weather_forecast', icon: IconCloudBolt },
-  event:       { color: alertTypeColors.event, label: 'mapFilters.events', icon: IconCalendarEvent },
-};
+/**
+ * Pin style for legend / filter rows / upsell sheet. Built once from
+ * shared color+label data + local icon components — same shape the
+ * legacy local `MAP_PIN_STYLES` produced, so call sites don't change.
+ */
+export const MAP_PIN_STYLES: Record<MapPinSource, PinStyle> = Object.fromEntries(
+  (Object.keys(MAP_PIN_SOURCE_COLORS) as MapPinSource[]).map((src) => [
+    src,
+    {
+      color: MAP_PIN_SOURCE_COLORS[src],
+      label: MAP_PIN_SOURCE_LABEL_KEYS[src],
+      icon: MAP_PIN_SOURCE_ICONS[src],
+    },
+  ]),
+) as Record<MapPinSource, PinStyle>;
 
-/** Resolves the visual style for a pin, accounting for traffic incident subtype. */
+/**
+ * Resolves the visual style for a pin, accounting for traffic incident
+ * subtype. Traffic pins with a known `incidentType` get an
+ * incident-specific color + icon; everything else falls back to the
+ * per-source style.
+ */
 export function getPinStyle(pin: MapPin): PinStyle {
   if (pin.source === 'traffic' && pin.incidentType) {
     const trafficColor = TRAFFIC_TYPE_COLORS[pin.incidentType];
-    const TrafficIcon = TRAFFIC_ICON_MAP[pin.incidentType] ?? IconInfoCircle;
+    const trafficIcon = TRAFFIC_ICON_MAP[pin.incidentType] ?? IconInfoCircle;
     if (trafficColor) {
-      return { color: trafficColor, label: 'mapFilters.traffic', icon: TrafficIcon };
+      return {
+        color: trafficColor,
+        label: MAP_PIN_SOURCE_LABEL_KEYS.traffic,
+        icon: trafficIcon,
+      };
     }
   }
-  return SOURCE_STYLES[pin.source];
+  return MAP_PIN_STYLES[pin.source];
 }
-
-export const MAP_PIN_STYLES = SOURCE_STYLES;
-export const MAP_FILTER_SOURCES: MapPinSource[] = [
-  'electricity',
-  'water',
-  'gas',
-  'heat',
-  'traffic',
-  'air_quality',
-  'pollen',
-  'hydrology',
-  'wildfire',
-  'outage_internet',
-  'weather_alerts',
-  'weather_forecast',
-];
-
-export const TRAFFIC_SUBCATEGORIES = [
-  'accident',
-  'construction',
-  'road_closure',
-  'congestion',
-  'event',
-  'other',
-] as const;
-
-export type TrafficIncidentType = typeof TRAFFIC_SUBCATEGORIES[number];
-
-// Step 8: gating tier per source. Mirrors web's map-pin-config + the BE
-// catalogue: only `traffic`, `air_quality`, `pollen` require a paid
-// tier. `event` is the generic teaser fallback so it stays FREE — the
-// effective gating happens on the BE source code via the teaser shim.
-export const SOURCE_REQUIRED_TIER: Record<MapPinSource, 'FREE' | 'PLUS' | 'PRO'> = {
-  electricity: 'FREE',
-  water: 'FREE',
-  gas: 'FREE',
-  heat: 'FREE',
-  traffic: 'PLUS',
-  air_quality: 'PLUS',
-  pollen: 'PRO',
-  hydrology: 'FREE',
-  wildfire: 'FREE',
-  outage_internet: 'FREE',
-  weather_alerts: 'FREE',
-  weather_forecast: 'FREE',
-  event: 'FREE',
-};

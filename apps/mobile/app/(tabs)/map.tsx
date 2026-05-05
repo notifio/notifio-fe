@@ -11,6 +11,13 @@ import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
+import {
+  MAP_FILTER_SOURCES,
+  TRAFFIC_SUBCATEGORIES,
+  type MapPin,
+  type MapPinSource,
+  type MapPinTrafficType,
+} from '@notifio/shared/map';
 
 import { EventReportModal } from '../../components/events/event-report-modal';
 import { ClusterEventsSheet } from '../../components/map/cluster-events-sheet';
@@ -23,13 +30,7 @@ import { UpsellSheet } from '../../components/monetization/upsell-sheet';
 import { FAB } from '../../components/ui/fab';
 import { useMapData } from '../../hooks/use-map-data';
 import { useMembership } from '../../hooks/use-membership';
-import {
-  MAP_FILTER_SOURCES,
-  TRAFFIC_SUBCATEGORIES,
-  type TrafficIncidentType,
-} from '../../lib/map-pin-config';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
-import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
 import { shadows, theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
@@ -89,7 +90,7 @@ export default function MapScreen() {
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
-  const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<TrafficIncidentType>>(
+  const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<MapPinTrafficType>>(
     () => new Set(TRAFFIC_SUBCATEGORIES),
   );
 
@@ -141,7 +142,7 @@ export default function MapScreen() {
     });
   }, []);
 
-  const toggleTrafficType = useCallback((type: TrafficIncidentType) => {
+  const toggleTrafficType = useCallback((type: MapPinTrafficType) => {
     setActiveTrafficTypes((prev) => {
       const next = new Set(prev);
       if (next.has(type)) next.delete(type);
@@ -156,7 +157,7 @@ export default function MapScreen() {
         if (p.isTeaser) return true; // teasers always render — they're the upsell hook
         if (!activeFilters.has(p.source)) return false;
         if (p.source === 'traffic' && p.incidentType) {
-          return activeTrafficTypes.has(p.incidentType as TrafficIncidentType);
+          return activeTrafficTypes.has(p.incidentType as MapPinTrafficType);
         }
         return true;
       }),

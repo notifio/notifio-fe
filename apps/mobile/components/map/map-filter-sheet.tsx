@@ -3,15 +3,16 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { sharedColors } from '@notifio/ui';
-
-import { FilterRow } from './filter-row';
 import {
   MAP_FILTER_SOURCES,
   TRAFFIC_SUBCATEGORIES,
-  type TrafficIncidentType,
-} from '../../lib/map-pin-config';
-import type { MapPin, MapPinSource } from '../../lib/normalize-pins';
+  type MapPin,
+  type MapPinSource,
+  type MapPinTrafficType,
+} from '@notifio/shared/map';
+import { sharedColors } from '@notifio/ui';
+
+import { FilterRow } from './filter-row';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { AdPlaceholder } from '../monetization/ad-placeholder';
@@ -19,9 +20,9 @@ import { BottomSheet } from '../ui/bottom-sheet';
 
 interface MapFilterSheetProps {
   activeFilters: Set<MapPinSource>;
-  activeTrafficTypes: Set<TrafficIncidentType>;
+  activeTrafficTypes: Set<MapPinTrafficType>;
   onToggle: (source: MapPinSource) => void;
-  onToggleTrafficType: (type: TrafficIncidentType) => void;
+  onToggleTrafficType: (type: MapPinTrafficType) => void;
   pins: MapPin[];
   topInset?: number;
   tier?: 'FREE' | 'PLUS' | 'PRO';
