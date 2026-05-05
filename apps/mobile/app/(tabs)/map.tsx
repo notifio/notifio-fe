@@ -10,6 +10,8 @@ import type MapView from 'react-native-maps';
 import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
+
 import { EventReportModal } from '../../components/events/event-report-modal';
 import { ClusterEventsSheet } from '../../components/map/cluster-events-sheet';
 import { MapClusterMarker } from '../../components/map/map-cluster-marker';
@@ -37,8 +39,8 @@ const FALLBACK_DELTA = 4.0;
 const DEBOUNCE_MS = 1500;
 
 const SLOVAKIA_REGION: Region = {
-  latitude: 48.67,
-  longitude: 19.70,
+  latitude: SLOVAKIA_CENTER.lat,
+  longitude: SLOVAKIA_CENTER.lng,
   latitudeDelta: FALLBACK_DELTA,
   longitudeDelta: FALLBACK_DELTA,
 };

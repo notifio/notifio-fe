@@ -6,6 +6,7 @@ import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, TextInput, Vi
 import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
+import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
 
 import { useMembership } from '../../hooks/use-membership';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
@@ -15,8 +16,8 @@ import { FullScreenModal } from '../ui/fullscreen-modal';
 import { TogglePill } from '../ui/toggle-pill';
 
 const SLOVAKIA_REGION: Region = {
-  latitude: 48.67,
-  longitude: 19.70,
+  latitude: SLOVAKIA_CENTER.lat,
+  longitude: SLOVAKIA_CENTER.lng,
   latitudeDelta: 4.0,
   longitudeDelta: 4.0,
 };

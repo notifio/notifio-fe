@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { TrafficFlowSegment } from '@notifio/api-client';
+import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from '@notifio/shared/geo';
 
 import { api } from '../lib/api';
-import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from '../lib/geo-utils';
 import { type MapPin, normalizeMapPins } from '../lib/normalize-pins';
 
 const VIEWPORT_REFRESH_MS = 2 * 60 * 1000;
