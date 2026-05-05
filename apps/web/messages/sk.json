@@ -118,5 +118,113 @@
     "compactBoth": "Povoľte polohu a notifikácie pre zobrazenie upozornení",
     "compactPushOnly": "Povoľte push notifikácie pre zobrazenie upozornení",
     "compactGeoOnly": "Pridajte lokáciu pre zobrazenie upozornení"
+  },
+  "map": {
+    "upcoming": "Plánované"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "Na iPhone posiela Safari push notifikácie iba keď je Notifio nainštalované na domovskej obrazovke. Ťukni na ikonu zdieľania a vyber „Pridať na plochu“."
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Člen od {date}",
+    "manageBilling": "Spravovať fakturáciu",
+    "upgradePlan": "Vylepšiť",
+    "locations": {
+      "title": "Uložené lokácie",
+      "description": "Upozornenia sú odosielané na základe uložených lokácií",
+      "add": "Pridať lokáciu",
+      "edit": "Upraviť",
+      "delete": "Odstrániť",
+      "deleteConfirm": "Odstrániť túto lokáciu?",
+      "name": "Názov lokácie",
+      "namePlaceholder": "napr. Domov, Práca",
+      "useCurrentLocation": "Použiť aktuálnu polohu",
+      "label": "Štítok",
+      "maxReached": "Limit lokácií dosiahnutý ({max} pre váš plán)",
+      "empty": "Žiadne uložené lokácie. Pridajte jednu a začnete dostávať lokálne upozornenia.",
+      "save": "Uložiť",
+      "cancel": "Zrušiť"
+    },
+    "myEvents": {
+      "title": "Moje hlásenia",
+      "empty": "Zatiaľ ste nenahlásili žiadne udalosti",
+      "resolved": "Vyriešené",
+      "active": "Aktívne",
+      "resolve": "Označiť ako vyriešené"
+    },
+    "account": {
+      "title": "Účet",
+      "signOut": "Odhlásiť sa",
+      "deleteAccount": "Zmazať účet",
+      "deleteConfirm": "Toto natrvalo vymaže váš účet a všetky údaje. Túto akciu nie je možné vrátiť.",
+      "deleteVerify": "Napíšte DELETE pre potvrdenie"
+    },
+    "yourData": {
+      "title": "Vaše údaje",
+      "description": "Stiahnite si kópiu všetkých vašich údajov z Notifio.",
+      "download": "Stiahnuť moje údaje",
+      "preparing": "Pripravujem export...",
+      "ready": "Váš export je pripravený. Odkaz na stiahnutie vyprší za 24 hodín.",
+      "downloadZip": "Stiahnuť ZIP",
+      "expiresIn": "Vyprší za {time}",
+      "failed": "Export zlyhal. Skúste to znova."
+    },
+    "deletion": {
+      "pending": "Čaká na vymazanie",
+      "description": "Všetky údaje budú odstránené za {time}. Zmenili ste názor?",
+      "cancel": "Zrušiť vymazanie",
+      "cancelled": "Vymazanie zrušené"
+    }
+  },
+  "events": {
+    "reportButton": "Nahlásiť",
+    "selectCategory": "Čo sa stalo?",
+    "pinLocation": "Poloha",
+    "pickLocation": "Poloha (kliknite na mapu alebo presuňte špendlík)",
+    "radius": "Ovplyvnený okruh",
+    "submit": "Odoslať",
+    "cancel": "Zrušiť",
+    "success": "Udalosť nahlásená",
+    "myEvents": "Moje hlásenia",
+    "resolve": "Vyriešiť",
+    "credibility": "Dôveryhodnosť",
+    "votes": "{count} hlasov",
+    "validVotes": "{count} platných",
+    "invalidVotes": "{count} neplatných",
+    "notEnoughVotes": "Zatiaľ nedostatok hlasov ({current}/5 potrebných)",
+    "stillHappening": "Stále prebieha?",
+    "confirm": "Potvrdiť",
+    "deny": "Zamietnuť",
+    "yes": "Áno",
+    "no": "Nie",
+    "alreadyVoted": "Už ste hlasovali",
+    "upgradeToVote": "Vylepšite pre hlasovanie",
+    "delete": "Odstrániť",
+    "deleteConfirm": "Odstrániť túto udalosť? Táto akcia je nevratná.",
+    "deleted": "Udalosť odstránená",
+    "detail": {
+      "title": "Detail udalosti",
+      "source": "Zdroj",
+      "reported": "Nahlásené",
+      "radius": "Okruh",
+      "activeSince": "Aktívne od",
+      "ends": "Končí",
+      "ongoing": "Prebieha",
+      "communityReport": "Komunitné hlásenie",
+      "active": "Aktívne",
+      "resolved": "Vyriešené",
+      "notFound": "Udalosť sa nenašla",
+      "backToDashboard": "Späť na dashboard"
+    },
+    "resolveFailed": "Nepodarilo sa vyriešiť udalosť"
+  },
+  "sourcePreferences": {
+    "dragToReorder": "Presuňte pre zmenu priority"
+  },
+  "weatherThresholds": {
+    "loadFailed": "Nepodarilo sa načítať prahové hodnoty",
+    "saveFailed": "Nepodarilo sa uložiť prahovú hodnotu",
+    "deleteFailed": "Nepodarilo sa odstrániť prahovú hodnotu"
   }
 }

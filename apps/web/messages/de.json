@@ -118,5 +118,113 @@
     "compactBoth": "Aktiviere Standort & Benachrichtigungen, um Warnungen hier zu sehen",
     "compactPushOnly": "Aktiviere Push-Benachrichtigungen, um Warnungen hier zu sehen",
     "compactGeoOnly": "Füge einen Ort hinzu, um Warnungen hier zu sehen"
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Mitglied seit {date}",
+    "manageBilling": "Abrechnung verwalten",
+    "upgradePlan": "Upgrade",
+    "locations": {
+      "title": "Gespeicherte Orte",
+      "description": "Warnungen werden basierend auf deinen gespeicherten Orten gesendet",
+      "add": "Ort hinzufügen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleteConfirm": "Diesen Ort entfernen?",
+      "name": "Ortsname",
+      "namePlaceholder": "z. B. Zuhause, Arbeit",
+      "useCurrentLocation": "Aktuellen Standort verwenden",
+      "label": "Bezeichnung",
+      "maxReached": "Ortslimit erreicht ({max} für deinen Plan)",
+      "empty": "Keine gespeicherten Orte. Füge einen hinzu, um lokale Warnungen zu erhalten.",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
+    },
+    "myEvents": {
+      "title": "Meine Meldungen",
+      "empty": "Du hast noch keine Ereignisse gemeldet",
+      "resolved": "Behoben",
+      "active": "Aktiv",
+      "resolve": "Als behoben markieren"
+    },
+    "account": {
+      "title": "Konto",
+      "signOut": "Abmelden",
+      "deleteAccount": "Konto löschen",
+      "deleteConfirm": "Dies löscht dein Konto und alle Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.",
+      "deleteVerify": "Tippe LÖSCHEN zur Bestätigung"
+    },
+    "yourData": {
+      "title": "Deine Daten",
+      "description": "Lade eine Kopie all deiner Notifio-Daten herunter.",
+      "download": "Meine Daten herunterladen",
+      "preparing": "Export wird vorbereitet...",
+      "ready": "Dein Export ist bereit. Der Download-Link läuft in 24 Stunden ab.",
+      "downloadZip": "ZIP herunterladen",
+      "expiresIn": "Läuft ab in {time}",
+      "failed": "Export fehlgeschlagen. Bitte erneut versuchen."
+    },
+    "deletion": {
+      "pending": "Löschung ausstehend",
+      "description": "Alle Daten werden in {time} entfernt. Hast du deine Meinung geändert?",
+      "cancel": "Löschung abbrechen",
+      "cancelled": "Löschung abgebrochen"
+    }
+  },
+  "events": {
+    "reportButton": "Melden",
+    "selectCategory": "Was ist passiert?",
+    "pinLocation": "Standort",
+    "pickLocation": "Standort (auf Karte klicken oder Pin ziehen)",
+    "radius": "Betroffener Radius",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "success": "Ereignis gemeldet",
+    "myEvents": "Meine Meldungen",
+    "resolve": "Beheben",
+    "credibility": "Glaubwürdigkeit",
+    "votes": "{count} Stimmen",
+    "validVotes": "{count} gültig",
+    "invalidVotes": "{count} ungültig",
+    "notEnoughVotes": "Noch nicht genug Stimmen ({current}/5 benötigt)",
+    "stillHappening": "Passiert es noch?",
+    "confirm": "Bestätigen",
+    "deny": "Ablehnen",
+    "yes": "Ja",
+    "no": "Nein",
+    "alreadyVoted": "Du hast bereits abgestimmt",
+    "upgradeToVote": "Upgrade zum Abstimmen",
+    "delete": "Löschen",
+    "deleteConfirm": "Dieses Ereignis löschen? Dies kann nicht rückgängig gemacht werden.",
+    "deleted": "Ereignis gelöscht",
+    "detail": {
+      "title": "Ereignisdetail",
+      "source": "Quelle",
+      "reported": "Gemeldet",
+      "radius": "Radius",
+      "activeSince": "Aktiv seit",
+      "ends": "Endet",
+      "ongoing": "Andauernd",
+      "communityReport": "Community-Meldung",
+      "active": "Aktiv",
+      "resolved": "Behoben",
+      "notFound": "Ereignis nicht gefunden",
+      "backToDashboard": "Zurück zum Dashboard"
+    },
+    "resolveFailed": "Ereignis konnte nicht behoben werden"
+  },
+  "sourcePreferences": {
+    "dragToReorder": "Zum Neuordnen ziehen"
+  },
+  "weatherThresholds": {
+    "loadFailed": "Schwellenwerte konnten nicht geladen werden",
+    "saveFailed": "Schwellenwert konnte nicht gespeichert werden",
+    "deleteFailed": "Schwellenwert konnte nicht gelöscht werden"
+  },
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
   }
 }

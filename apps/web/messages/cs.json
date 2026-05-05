@@ -118,5 +118,113 @@
     "compactBoth": "Zapni polohu a notifikace, abys zde viděl upozornění",
     "compactPushOnly": "Zapni push notifikace, abys zde viděl upozornění",
     "compactGeoOnly": "Přidej lokaci, abys zde viděl upozornění"
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Členem od {date}",
+    "manageBilling": "Spravovat fakturaci",
+    "upgradePlan": "Vylepšit",
+    "locations": {
+      "title": "Uložené lokace",
+      "description": "Upozornění jsou posílána podle tvých uložených lokací",
+      "add": "Přidat lokaci",
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "deleteConfirm": "Odstranit tuto lokaci?",
+      "name": "Název lokace",
+      "namePlaceholder": "např. Domov, Práce",
+      "useCurrentLocation": "Použít aktuální polohu",
+      "label": "Štítek",
+      "maxReached": "Dosažen limit lokací ({max} pro tvůj plán)",
+      "empty": "Žádné uložené lokace. Přidej si jednu a začni dostávat lokální upozornění.",
+      "save": "Uložit",
+      "cancel": "Zrušit"
+    },
+    "myEvents": {
+      "title": "Moje hlášení",
+      "empty": "Zatím jsi nenahlásil žádnou událost",
+      "resolved": "Vyřešeno",
+      "active": "Aktivní",
+      "resolve": "Označit jako vyřešené"
+    },
+    "account": {
+      "title": "Účet",
+      "signOut": "Odhlásit se",
+      "deleteAccount": "Smazat účet",
+      "deleteConfirm": "Tímto trvale smažeš svůj účet a všechna data. Toto nelze vrátit zpět.",
+      "deleteVerify": "Pro potvrzení napiš SMAZAT"
+    },
+    "yourData": {
+      "title": "Tvoje data",
+      "description": "Stáhni si kopii všech svých Notifio dat.",
+      "download": "Stáhnout moje data",
+      "preparing": "Připravuji export...",
+      "ready": "Tvůj export je připraven. Odkaz ke stažení vyprší za 24 hodin.",
+      "downloadZip": "Stáhnout ZIP",
+      "expiresIn": "Vyprší za {time}",
+      "failed": "Export selhal. Zkus to prosím znovu."
+    },
+    "deletion": {
+      "pending": "Čeká na smazání",
+      "description": "Všechna data budou odstraněna za {time}. Změnil jsi názor?",
+      "cancel": "Zrušit smazání",
+      "cancelled": "Smazání zrušeno"
+    }
+  },
+  "events": {
+    "reportButton": "Nahlásit",
+    "selectCategory": "Co se stalo?",
+    "pinLocation": "Místo",
+    "pickLocation": "Místo (klikni do mapy nebo přetáhni špendlík)",
+    "radius": "Zasažený rádius",
+    "submit": "Odeslat",
+    "cancel": "Zrušit",
+    "success": "Událost nahlášena",
+    "myEvents": "Moje hlášení",
+    "resolve": "Vyřešit",
+    "credibility": "Důvěryhodnost",
+    "votes": "{count} hlasů",
+    "validVotes": "{count} platných",
+    "invalidVotes": "{count} neplatných",
+    "notEnoughVotes": "Zatím není dost hlasů ({current}/5 potřeba)",
+    "stillHappening": "Stále se děje?",
+    "confirm": "Potvrdit",
+    "deny": "Zamítnout",
+    "yes": "Ano",
+    "no": "Ne",
+    "alreadyVoted": "Už jsi hlasoval",
+    "upgradeToVote": "Upgrade pro hlasování",
+    "delete": "Smazat",
+    "deleteConfirm": "Smazat tuto událost? Toto nelze vrátit zpět.",
+    "deleted": "Událost smazána",
+    "detail": {
+      "title": "Detail události",
+      "source": "Zdroj",
+      "reported": "Nahlášeno",
+      "radius": "Rádius",
+      "activeSince": "Aktivní od",
+      "ends": "Končí",
+      "ongoing": "Probíhá",
+      "communityReport": "Komunitní hlášení",
+      "active": "Aktivní",
+      "resolved": "Vyřešeno",
+      "notFound": "Událost nenalezena",
+      "backToDashboard": "Zpět na přehled"
+    },
+    "resolveFailed": "Událost se nepodařilo vyřešit"
+  },
+  "sourcePreferences": {
+    "dragToReorder": "Tažením změníš pořadí priorit"
+  },
+  "weatherThresholds": {
+    "loadFailed": "Nepodařilo se načíst prahové hodnoty",
+    "saveFailed": "Nepodařilo se uložit prahovou hodnotu",
+    "deleteFailed": "Nepodařilo se odstranit prahovou hodnotu"
+  },
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
   }
 }

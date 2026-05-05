@@ -118,5 +118,113 @@
     "compactBoth": "Engedélyezd a helyet és értesítéseket, hogy itt láss figyelmeztetéseket",
     "compactPushOnly": "Engedélyezd a push értesítéseket, hogy itt láss figyelmeztetéseket",
     "compactGeoOnly": "Adj hozzá helyet, hogy itt láss figyelmeztetéseket"
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Tag {date} óta",
+    "manageBilling": "Számlázás kezelése",
+    "upgradePlan": "Frissítés",
+    "locations": {
+      "title": "Mentett helyek",
+      "description": "A figyelmeztetéseket a mentett helyek alapján küldjük",
+      "add": "Hely hozzáadása",
+      "edit": "Szerkesztés",
+      "delete": "Törlés",
+      "deleteConfirm": "Eltávolítod ezt a helyet?",
+      "name": "Hely neve",
+      "namePlaceholder": "pl. Otthon, Munka",
+      "useCurrentLocation": "Jelenlegi hely használata",
+      "label": "Címke",
+      "maxReached": "Helykorlát elérve ({max} a csomagodban)",
+      "empty": "Nincsenek mentett helyek. Adj hozzá egyet, hogy helyi figyelmeztetéseket kapj.",
+      "save": "Mentés",
+      "cancel": "Mégse"
+    },
+    "myEvents": {
+      "title": "Saját bejelentések",
+      "empty": "Még nem jelentettél be eseményt",
+      "resolved": "Megoldva",
+      "active": "Aktív",
+      "resolve": "Megoldottnak jelölés"
+    },
+    "account": {
+      "title": "Fiók",
+      "signOut": "Kijelentkezés",
+      "deleteAccount": "Fiók törlése",
+      "deleteConfirm": "Ez véglegesen törli a fiókodat és minden adatot. Ez nem vonható vissza.",
+      "deleteVerify": "Megerősítéshez írd be: TÖRLÉS"
+    },
+    "yourData": {
+      "title": "Az adataid",
+      "description": "Tölts le egy másolatot az összes Notifio adatodról.",
+      "download": "Adataim letöltése",
+      "preparing": "Export előkészítése...",
+      "ready": "Az export kész. A letöltési link 24 órán belül lejár.",
+      "downloadZip": "ZIP letöltése",
+      "expiresIn": "Lejár: {time}",
+      "failed": "Az export sikertelen. Kérlek próbáld újra."
+    },
+    "deletion": {
+      "pending": "Törlés függőben",
+      "description": "Minden adat törlésre kerül {time} múlva. Meggondoltad magad?",
+      "cancel": "Törlés visszavonása",
+      "cancelled": "Törlés visszavonva"
+    }
+  },
+  "events": {
+    "reportButton": "Bejelentés",
+    "selectCategory": "Mi történt?",
+    "pinLocation": "Hely",
+    "pickLocation": "Hely (kattints a térképre vagy húzd a tűt)",
+    "radius": "Érintett sugár",
+    "submit": "Küldés",
+    "cancel": "Mégse",
+    "success": "Esemény bejelentve",
+    "myEvents": "Saját bejelentések",
+    "resolve": "Megoldás",
+    "credibility": "Hitelesség",
+    "votes": "{count} szavazat",
+    "validVotes": "{count} érvényes",
+    "invalidVotes": "{count} érvénytelen",
+    "notEnoughVotes": "Még nincs elég szavazat ({current}/5 szükséges)",
+    "stillHappening": "Még mindig történik?",
+    "confirm": "Megerősítés",
+    "deny": "Elutasítás",
+    "yes": "Igen",
+    "no": "Nem",
+    "alreadyVoted": "Már szavaztál",
+    "upgradeToVote": "Frissítés a szavazáshoz",
+    "delete": "Törlés",
+    "deleteConfirm": "Törlöd ezt az eseményt? Ez nem vonható vissza.",
+    "deleted": "Esemény törölve",
+    "detail": {
+      "title": "Esemény részletei",
+      "source": "Forrás",
+      "reported": "Bejelentve",
+      "radius": "Sugár",
+      "activeSince": "Aktív ettől:",
+      "ends": "Vége",
+      "ongoing": "Folyamatban",
+      "communityReport": "Közösségi bejelentés",
+      "active": "Aktív",
+      "resolved": "Megoldva",
+      "notFound": "Esemény nem található",
+      "backToDashboard": "Vissza az irányítópultra"
+    },
+    "resolveFailed": "Az esemény megoldása sikertelen"
+  },
+  "sourcePreferences": {
+    "dragToReorder": "Húzd a sorrend megváltoztatásához"
+  },
+  "weatherThresholds": {
+    "loadFailed": "Nem sikerült betölteni a küszöbértékeket",
+    "saveFailed": "Nem sikerült menteni a küszöbértéket",
+    "deleteFailed": "Nem sikerült törölni a küszöbértéket"
+  },
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
   }
 }

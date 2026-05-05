@@ -118,5 +118,113 @@
     "compactBoth": "Enable location & notifications to see alerts here",
     "compactPushOnly": "Enable push notifications to see alerts here",
     "compactGeoOnly": "Add a location to see alerts here"
+  },
+  "map": {
+    "upcoming": "Upcoming"
+  },
+  "pushSetup": {
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
+  },
+  "profile": {
+    "title": "Profile",
+    "memberSince": "Member since {date}",
+    "manageBilling": "Manage billing",
+    "upgradePlan": "Upgrade",
+    "locations": {
+      "title": "Saved Locations",
+      "description": "Alerts are sent based on your saved locations",
+      "add": "Add location",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Remove this location?",
+      "name": "Location name",
+      "namePlaceholder": "e.g. Home, Work",
+      "useCurrentLocation": "Use current location",
+      "label": "Label",
+      "maxReached": "Location limit reached ({max} for your plan)",
+      "empty": "No saved locations. Add one to start receiving local alerts.",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "myEvents": {
+      "title": "My Reports",
+      "empty": "You haven't reported any events yet",
+      "resolved": "Resolved",
+      "active": "Active",
+      "resolve": "Mark resolved"
+    },
+    "account": {
+      "title": "Account",
+      "signOut": "Sign out",
+      "deleteAccount": "Delete account",
+      "deleteConfirm": "This will permanently delete your account and all data. This cannot be undone.",
+      "deleteVerify": "Type DELETE to confirm"
+    },
+    "yourData": {
+      "title": "Your data",
+      "description": "Download a copy of all your Notifio data.",
+      "download": "Download my data",
+      "preparing": "Preparing export...",
+      "ready": "Your export is ready. The download link expires in 24 hours.",
+      "downloadZip": "Download ZIP",
+      "expiresIn": "Expires in {time}",
+      "failed": "Export failed. Please try again."
+    },
+    "deletion": {
+      "pending": "Deletion pending",
+      "description": "All data will be removed in {time}. Changed your mind?",
+      "cancel": "Cancel deletion",
+      "cancelled": "Deletion cancelled"
+    }
+  },
+  "events": {
+    "reportButton": "Report",
+    "selectCategory": "What happened?",
+    "pinLocation": "Location",
+    "pickLocation": "Location (click map or drag pin)",
+    "radius": "Affected radius",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Event reported",
+    "myEvents": "My reports",
+    "resolve": "Resolve",
+    "credibility": "Credibility",
+    "votes": "{count} votes",
+    "validVotes": "{count} valid",
+    "invalidVotes": "{count} invalid",
+    "notEnoughVotes": "Not enough votes yet ({current}/5 needed)",
+    "stillHappening": "Still happening?",
+    "confirm": "Confirm",
+    "deny": "Deny",
+    "yes": "Yes",
+    "no": "No",
+    "alreadyVoted": "You already voted",
+    "upgradeToVote": "Upgrade to vote",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this event? This cannot be undone.",
+    "deleted": "Event deleted",
+    "detail": {
+      "title": "Event detail",
+      "source": "Source",
+      "reported": "Reported",
+      "radius": "Radius",
+      "activeSince": "Active since",
+      "ends": "Ends",
+      "ongoing": "Ongoing",
+      "communityReport": "Community report",
+      "active": "Active",
+      "resolved": "Resolved",
+      "notFound": "Event not found",
+      "backToDashboard": "Back to dashboard"
+    },
+    "resolveFailed": "Failed to resolve event"
+  },
+  "sourcePreferences": {
+    "dragToReorder": "Drag to reorder priority"
+  },
+  "weatherThresholds": {
+    "loadFailed": "Failed to load thresholds",
+    "saveFailed": "Failed to save threshold",
+    "deleteFailed": "Failed to delete threshold"
   }
 }
