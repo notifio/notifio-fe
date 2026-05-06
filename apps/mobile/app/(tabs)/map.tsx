@@ -1,7 +1,7 @@
 import { IconPlus, IconRefresh } from '@tabler/icons-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import ClusteredMapView from 'react-native-map-clustering';
@@ -24,7 +24,7 @@ import { EventReportModal } from '../../components/events/event-report-modal';
 import { ClusterEventsSheet } from '../../components/map/cluster-events-sheet';
 import { MapClusterMarker } from '../../components/map/map-cluster-marker';
 import { MapFilterSheet } from '../../components/map/map-filter-sheet';
-import { MapPinMarker } from '../../components/map/map-pin-marker';
+import { MapPinMarker, PIN_H } from '../../components/map/map-pin-marker';
 import { MapStatusCard } from '../../components/map/map-status-card';
 import { PinCallout } from '../../components/map/pin-callout';
 import { UpsellSheet } from '../../components/monetization/upsell-sheet';
@@ -69,8 +69,13 @@ export default function MapScreen() {
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mapRef = useRef<MapView | null>(null);
 
-  const { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh } = useMapData(mapCenter);
   const [showReportModal, setShowReportModal] = useState(false);
+  // Lifecycle visibility (β filter sheet "Show on map" section). Active
+  // defaults ON, upcoming defaults OFF. Both flow into useMapData so the
+  // shared normalizer drops upcoming pins server-shape-side when toggle
+  // is off — and to map's filteredPins for the active toggle.
+  const [showActive, setShowActive] = useState(true);
+  const [showUpcoming, setShowUpcoming] = useState(false);
 
   // Step 8: source for the upsell sheet — set by teaser pin taps and
   // locked filter row taps; cleared on close.
@@ -86,6 +91,11 @@ export default function MapScreen() {
   // Mobile's `useMembership` already coerces missing data to FREE, but
   // be explicit so the call site reads the same as web.
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
+
+  const { pins, flowSegments, isLoading, isAutoRefreshing, error, refresh } = useMapData(
+    mapCenter,
+    { showUpcoming, tier: effectiveTier },
+  );
 
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
@@ -155,14 +165,24 @@ export default function MapScreen() {
     () =>
       pins.filter((p) => {
         if (p.isTeaser) return true; // teasers always render — they're the upsell hook
+        // Lifecycle gates. `showUpcoming=false` is also enforced upstream
+        // in normalizeMapPins, so this is mostly defense-in-depth for the
+        // active toggle (no upstream equivalent for that one).
+        if (p.status === 'active' && !showActive) return false;
+        if (p.status === 'upcoming' && !showUpcoming) return false;
         if (!activeFilters.has(p.source)) return false;
         if (p.source === 'traffic' && p.incidentType) {
           return activeTrafficTypes.has(p.incidentType as MapPinTrafficType);
         }
         return true;
       }),
-    [pins, activeFilters, activeTrafficTypes],
+    [pins, activeFilters, activeTrafficTypes, showActive, showUpcoming],
   );
+
+  const clearCategoryFilters = useCallback(() => {
+    setActiveFilters(new Set(MAP_FILTER_SOURCES));
+    setActiveTrafficTypes(new Set(TRAFFIC_SUBCATEGORIES));
+  }, []);
 
   const handleClusterPress = useCallback(
     (
@@ -259,31 +279,12 @@ export default function MapScreen() {
             />
           ))}
         {filteredPins.map((pin) => (
-          <Marker
+          <PinMarker
             key={pin.id}
-            coordinate={{ latitude: pin.lat, longitude: pin.lng }}
-            tracksViewChanges={false}
-            anchor={{ x: 0.5, y: 1 }}
-            // Step 8: teaser pins skip the callout entirely and route
-            // taps to the upsell sheet so the user finds out why
-            // coverage is greyed out.
-            onPress={pin.isTeaser ? () => setUpsellSource(pin.source) : undefined}
-            // Any non-teaser pin whose id maps to /events/{id} navigates
-            // on callout tap. Traffic excluded because pin.id is a
-            // TomTom incidentId, not an eventId.
-            onCalloutPress={
-              !pin.isTeaser && pin.source !== 'traffic' && pin.id
-                ? () => router.push(`/events/${pin.id}`)
-                : undefined
-            }
-          >
-            <MapPinMarker pin={pin} />
-            {!pin.isTeaser && (
-              <Callout tooltip>
-                <PinCallout pin={pin} />
-              </Callout>
-            )}
-          </Marker>
+            pin={pin}
+            onTeaserPress={setUpsellSource}
+            onCalloutPress={(p) => router.push(`/events/${p.id}`)}
+          />
         ))}
       </ClusteredMapView>
 
@@ -296,6 +297,11 @@ export default function MapScreen() {
         topInset={insets.top}
         tier={effectiveTier}
         onLockedRowTap={setUpsellSource}
+        showActive={showActive}
+        showUpcoming={showUpcoming}
+        onToggleShowActive={setShowActive}
+        onToggleShowUpcoming={setShowUpcoming}
+        onClearCategoryFilters={clearCategoryFilters}
       />
 
       <UpsellSheet source={upsellSource} onClose={() => setUpsellSource(null)} />
@@ -342,6 +348,64 @@ export default function MapScreen() {
     </View>
   );
 }
+
+/**
+ * Per-pin Marker wrapper. Holds `tracksViewChanges=true` for the first
+ * render tick so RN-maps registers the marker bitmap and a stable hit
+ * target, then flips to false to stop re-snapshotting on every region
+ * change. Without this, taps on pins were missed about 30% of the time
+ * — especially on Android — because the Marker's underlying view never
+ * re-tracked after the initial mount and its hit-test rect went stale.
+ */
+const PinMarker = memo(function PinMarker({
+  pin,
+  onTeaserPress,
+  onCalloutPress,
+}: {
+  pin: MapPin;
+  onTeaserPress: (source: MapPinSource) => void;
+  onCalloutPress: (pin: MapPin) => void;
+}) {
+  const [tracks, setTracks] = useState(true);
+  useEffect(() => {
+    const id = setTimeout(() => setTracks(false), 600);
+    return () => clearTimeout(id);
+  }, []);
+
+  return (
+    <Marker
+      coordinate={{ latitude: pin.lat, longitude: pin.lng }}
+      tracksViewChanges={tracks}
+      anchor={{ x: 0.5, y: 1 }}
+      // RN-maps quirk: `anchor` is silently ignored on iOS for
+      // children-based (non-image) markers. Without `centerOffset` the
+      // marker's center sits on the coord, putting the pin tip ~25pt
+      // below the actual location. centerOffset is iOS-only — Android
+      // ignores it and uses `anchor` (which works there).
+      centerOffset={{ x: 0, y: -PIN_H / 2 }}
+      // Step 8: teaser pins skip the callout entirely and route taps to
+      // the upsell sheet so the user finds out why coverage is greyed
+      // out. Non-teasers get a no-op press handler — that forces the
+      // marker to claim the touch responder reliably (works around
+      // RN-maps callout flakiness when no onPress is set).
+      onPress={pin.isTeaser ? () => onTeaserPress(pin.source) : () => {}}
+      // Any non-teaser pin with a valid id navigates to /events/{id}.
+      // Post-M2 audit: traffic pins now arrive via /events with UUIDs
+      // (previously dual-sourced from /traffic with TomTom ids — the
+      // duplicate path was dropped at the hook level).
+      onCalloutPress={
+        !pin.isTeaser && pin.id ? () => onCalloutPress(pin) : undefined
+      }
+    >
+      <MapPinMarker pin={pin} />
+      {!pin.isTeaser && (
+        <Callout tooltip>
+          <PinCallout pin={pin} />
+        </Callout>
+      )}
+    </Marker>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {

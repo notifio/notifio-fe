@@ -1,6 +1,16 @@
 import { IconX } from '@tabler/icons-react-native';
-import type { ReactNode } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { useRef, type ReactNode } from 'react';
+import {
+  Animated,
+  Modal,
+  PanResponder,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { theme } from '../../lib/theme';
@@ -23,8 +33,13 @@ interface BottomSheetProps {
   scrollable?: boolean;
   /** Default true. */
   dismissOnBackdropPress?: boolean;
+  /** Default true. When true, drag handle area responds to a downward swipe to dismiss. */
+  swipeToClose?: boolean;
   children: ReactNode;
 }
+
+const SWIPE_DISMISS_DISTANCE = 80;
+const SWIPE_DISMISS_VELOCITY = 0.6;
 
 /**
  * Standard slide-up bottom sheet:
@@ -49,9 +64,43 @@ export function BottomSheet({
   minHeight,
   scrollable = false,
   dismissOnBackdropPress = true,
+  swipeToClose = true,
   children,
 }: BottomSheetProps) {
   const { colors } = useAppTheme();
+  const dragY = useRef(new Animated.Value(0)).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gesture) =>
+        Math.abs(gesture.dy) > 4 && gesture.dy > Math.abs(gesture.dx),
+      onPanResponderMove: (_, gesture) => {
+        if (gesture.dy > 0) dragY.setValue(gesture.dy);
+      },
+      onPanResponderRelease: (_, gesture) => {
+        if (
+          gesture.dy > SWIPE_DISMISS_DISTANCE ||
+          gesture.vy > SWIPE_DISMISS_VELOCITY
+        ) {
+          Animated.timing(dragY, {
+            toValue: 600,
+            duration: 180,
+            useNativeDriver: true,
+          }).start(() => {
+            dragY.setValue(0);
+            onClose();
+          });
+        } else {
+          Animated.spring(dragY, {
+            toValue: 0,
+            useNativeDriver: true,
+            bounciness: 6,
+          }).start();
+        }
+      },
+    }),
+  ).current;
 
   const sheetStyle: ViewStyle = {
     backgroundColor: colors.sheet.bg,
@@ -78,8 +127,13 @@ export function BottomSheet({
           onPress={dismissOnBackdropPress ? onClose : undefined}
         />
 
-        <View style={[styles.sheet, sheetStyle]}>
-          <View style={styles.handleWrap}>
+        <Animated.View
+          style={[styles.sheet, sheetStyle, { transform: [{ translateY: dragY }] }]}
+        >
+          <View
+            style={styles.handleWrap}
+            {...(swipeToClose ? panResponder.panHandlers : {})}
+          >
             <View style={[styles.handle, { backgroundColor: colors.sheet.handle }]} />
           </View>
 
@@ -102,7 +156,7 @@ export function BottomSheet({
           )}
 
           {body}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
