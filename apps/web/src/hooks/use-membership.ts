@@ -1,12 +1,11 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import type { MembershipTier } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
-
-import { useApiQuery } from './use-api-query';
 
 /**
  * Actual shape returned by GET /me/membership.
@@ -29,42 +28,51 @@ export interface MembershipResponse {
   availableUpgrades: MembershipTier[];
 }
 
-function parseMembershipResponse(data: unknown): MembershipResponse {
-  return data as MembershipResponse;
-}
-
 export function useMembership() {
-  const { data: rawData, isLoading, error, refetch } = useApiQuery(
-    async () => {
+  const query = useQuery<MembershipResponse>({
+    queryKey: ['membership'],
+    queryFn: async () => {
       const data = await api.getMembership();
-      return parseMembershipResponse(data);
+      return data as unknown as MembershipResponse;
     },
-    [],
-  );
+  });
 
-  const membership = rawData;
+  const membership = query.data ?? null;
   const tier = membership?.current?.tier ?? null;
 
-  const { isFree, isPlus, isPro } = useMemo(() => ({
-    isFree: tier === 'FREE',
-    isPlus: tier === 'PLUS',
-    isPro: tier === 'PRO',
-  }), [tier]);
+  const { isFree, isPlus, isPro } = useMemo(
+    () => ({
+      isFree: tier === 'FREE',
+      isPlus: tier === 'PLUS',
+      isPro: tier === 'PRO',
+    }),
+    [tier],
+  );
 
-  const upgrade = useCallback(async (targetTier: 'PLUS' | 'PRO') => {
-    await api.upgradeMembership({ targetTier });
-    await refetch();
-  }, [refetch]);
+  const refetch = useCallback(async () => {
+    await query.refetch();
+  }, [query]);
 
-  const downgrade = useCallback(async (targetTier: 'FREE' | 'PLUS') => {
-    await api.downgradeMembership({ targetTier });
-    await refetch();
-  }, [refetch]);
+  const upgrade = useCallback(
+    async (targetTier: 'PLUS' | 'PRO') => {
+      await api.upgradeMembership({ targetTier });
+      await query.refetch();
+    },
+    [query],
+  );
+
+  const downgrade = useCallback(
+    async (targetTier: 'FREE' | 'PLUS') => {
+      await api.downgradeMembership({ targetTier });
+      await query.refetch();
+    },
+    [query],
+  );
 
   return {
     membership,
-    isLoading,
-    error,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load membership') : null,
     tier,
     isFree,
     isPlus,

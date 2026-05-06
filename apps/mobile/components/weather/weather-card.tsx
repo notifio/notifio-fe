@@ -19,8 +19,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // Use subpath imports to avoid barrel export pulling in h3-js (Hermes incompatible)
 import type { PollenResponse } from '@notifio/api-client';
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 import type { AirQualityData, WeatherData } from '@notifio/shared/types';
-import { formatTemp, formatTimeAgo, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared/weather';
+import { formatTemp, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared/weather';
 
 import { AqiIndicator } from './aqi-indicator';
 import { PollenChip, PollenDetailPanel } from './pollen-indicator';
@@ -58,10 +59,21 @@ interface WeatherCardProps {
   pollen?: PollenResponse | null;
 }
 
-export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry, airQuality, aqiLoading = false, pollen }: WeatherCardProps) {
+export function WeatherCard({
+  weather,
+  isLoading,
+  error,
+  locationLabel,
+  onRetry,
+  airQuality,
+  aqiLoading = false,
+  pollen,
+}: WeatherCardProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
+  const { i18n } = useTranslation();
+  const locale = i18n.language as RelativeTimeLocale;
 
   const toggleChip = (chip: ExpandedChip) =>
     setExpandedChip((prev) => (prev === chip ? null : chip));
@@ -75,8 +87,13 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
       <View style={[styles.errorContainer, { backgroundColor: colors.severity.critical.bg }]}>
         <Text style={[styles.errorText, { color: colors.severity.critical.text }]}>{error}</Text>
         {onRetry && (
-          <Pressable onPress={onRetry} style={[styles.retryButton, { backgroundColor: colors.severity.critical.border }]}>
-            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>{t('common.tryAgain')}</Text>
+          <Pressable
+            onPress={onRetry}
+            style={[styles.retryButton, { backgroundColor: colors.severity.critical.border }]}
+          >
+            <Text style={[styles.retryText, { color: colors.severity.critical.text }]}>
+              {t('common.tryAgain')}
+            </Text>
           </Pressable>
         )}
       </View>
@@ -140,7 +157,11 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
         <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
           <View style={styles.chipRow}>
             {(airQuality || aqiLoading) && (
-              <AqiIndicator airQuality={airQuality ?? null} isLoading={aqiLoading} textColor={style.textColor} />
+              <AqiIndicator
+                airQuality={airQuality ?? null}
+                isLoading={aqiLoading}
+                textColor={style.textColor}
+              />
             )}
             {pollen && (
               <PollenChip
@@ -158,7 +179,7 @@ export function WeatherCard({ weather, isLoading, error, locationLabel, onRetry,
       )}
 
       <Text style={[styles.updatedAt, { color: color40 }]}>
-        {formatTimeAgo(weather.updatedAt)}
+        {formatRelativeTime(weather.updatedAt, locale)}
       </Text>
     </LinearGradient>
   );

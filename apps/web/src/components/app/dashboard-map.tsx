@@ -3,12 +3,13 @@
 import { IconLoader2, IconRefresh, IconX } from '@tabler/icons-react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 import type { Root } from 'react-dom/client';
 
 import type { TrafficFlowResponse } from '@notifio/api-client';
+import type { RelativeTimeLocale } from '@notifio/shared/format';
 import type { MapPin, MapPinSource, MapPinTrafficType } from '@notifio/shared/map';
 
 import type { ClusterMarkerEntry, MarkerEntry } from '@/lib/map/sync-markers';
@@ -117,6 +118,7 @@ export function DashboardMap({
   onTeaserTap,
 }: DashboardMapProps) {
   const t = useTranslations('map');
+  const locale = useLocale() as RelativeTimeLocale;
   const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -139,6 +141,8 @@ export function DashboardMap({
   expandedPinIdRef.current = expandedPinId;
   const tRef = useRef(t);
   tRef.current = t;
+  const localeRef = useRef(locale);
+  localeRef.current = locale;
   const onCenterChangeRef = useRef(onCenterChange);
   onCenterChangeRef.current = onCenterChange;
   const onCloseOverlayRef = useRef(onCloseOverlay);
@@ -151,13 +155,14 @@ export function DashboardMap({
   const renderMarker = (
     root: Root,
     pin: MapPin,
-    opts: { isExpanded: boolean; theme: 'light' | 'dark'; labels: { upcoming: string; active: string; viewDetails: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
+    opts: { isExpanded: boolean; theme: 'light' | 'dark'; locale: RelativeTimeLocale; labels: { upcoming: string; active: string; viewDetails: string }; clusterCount?: number; onToggle: () => void; onClose: () => void },
   ) => {
     root.render(
       <MapMarker
         pin={pin}
         isExpanded={opts.isExpanded}
         theme={opts.theme}
+        locale={opts.locale}
         labels={opts.labels}
         clusterCount={opts.clusterCount}
         onToggle={opts.onToggle}
@@ -174,6 +179,7 @@ export function DashboardMap({
       Marker: maplibregl.Marker,
       pins: pinsRef.current,
       theme: (themeRef.current === 'dark' ? 'dark' : 'light') as 'light' | 'dark',
+      locale: localeRef.current,
       expandedPinId: expandedPinIdRef.current,
       labels: { upcoming: translate('upcoming'), active: translate('active'), viewDetails: translate('viewDetails') },
       markers: markersRef.current,
@@ -296,6 +302,7 @@ export function DashboardMap({
           pin={entry.pin}
           isExpanded={expandedPinId === entry.pin.id}
           theme={themeMode}
+          locale={locale}
           labels={labels}
           onToggle={() => {
             if (entry.pin.isTeaser) {
@@ -308,7 +315,7 @@ export function DashboardMap({
         />
       );
     }
-  }, [expandedPinId, resolvedTheme, t]);
+  }, [expandedPinId, resolvedTheme, t, locale]);
 
   // Update GeoJSON source data when pins or filters change
   useEffect(() => {

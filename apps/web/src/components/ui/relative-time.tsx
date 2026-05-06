@@ -1,8 +1,9 @@
 'use client';
 
+import { useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import { formatRelativeTime } from '@notifio/shared/format';
+import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 
 interface RelativeTimeProps {
   iso: string;
@@ -10,10 +11,11 @@ interface RelativeTimeProps {
 
 export function RelativeTime({ iso }: RelativeTimeProps) {
   const [text, setText] = useState('');
+  const locale = useLocale() as RelativeTimeLocale;
 
   useEffect(() => {
-    setText(formatRelativeTime(iso));
-  }, [iso]);
+    setText(formatRelativeTime(iso, locale));
+  }, [iso, locale]);
 
   return <>{text}</>;
 }

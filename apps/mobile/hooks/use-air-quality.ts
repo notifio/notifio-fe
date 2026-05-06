@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import type { AirQualityData } from '@notifio/shared/types';
@@ -6,26 +6,17 @@ import type { AirQualityData } from '@notifio/shared/types';
 import { api } from '../lib/api';
 
 export function useAirQuality() {
-  const [airQuality, setAirQuality] = useState<AirQualityData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<AirQualityData>({
+    queryKey: ['air-quality', DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng],
+    queryFn: () => api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng),
+  });
 
-  const refresh = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getAirQuality(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
-      setAirQuality(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load air quality');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  return { airQuality, isLoading, error, refresh };
+  return {
+    airQuality: query.data ?? null,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load air quality') : null,
+    refresh: () => {
+      void query.refetch();
+    },
+  };
 }

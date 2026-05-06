@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import type { PollenResponse } from '@notifio/api-client';
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
@@ -13,26 +13,17 @@ interface UsePollenResult {
 }
 
 export function usePollen(): UsePollenResult {
-  const [pollen, setPollen] = useState<PollenResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<PollenResponse>({
+    queryKey: ['pollen', DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng],
+    queryFn: () => api.getPollen(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng),
+  });
 
-  const fetch = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getPollen(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng);
-      setPollen(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load pollen data');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
-
-  return { pollen, isLoading, error, refetch: fetch };
+  return {
+    pollen: query.data ?? null,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load pollen data') : null,
+    refetch: () => {
+      void query.refetch();
+    },
+  };
 }

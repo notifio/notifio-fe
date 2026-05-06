@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { SourceSummary, UpsertSourceRatingInput } from '@notifio/api-client';
@@ -15,54 +16,52 @@ interface UseSourcesResult {
   refetch: () => void;
 }
 
+/**
+ * Source ratings list + write-side ops. Mutations refetch the cache on
+ * success and emit i18n-resolved toasts on success/failure (preserved
+ * from the prior `useState/useEffect` version).
+ */
 export function useSources(): UseSourcesResult {
   const { t } = useTranslation();
-  const [sources, setSources] = useState<SourceSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetch = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getSources();
-      setSources(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load sources');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  const query = useQuery<SourceSummary[]>({
+    queryKey: ['sources'],
+    queryFn: () => api.getSources(),
+  });
 
   const rateSource = useCallback(
     async (sourceAdapterId: number, body: UpsertSourceRatingInput) => {
       try {
         await api.rateSource(sourceAdapterId, body);
-        await fetch();
+        await query.refetch();
         showToast.success(t('sources.saved'));
       } catch {
         showToast.error(t('sources.error'));
       }
     },
-    [fetch, t],
+    [query, t],
   );
 
   const deleteRating = useCallback(
     async (sourceAdapterId: number) => {
       try {
         await api.deleteSourceRating(sourceAdapterId);
-        await fetch();
+        await query.refetch();
         showToast.success(t('sources.deleted'));
       } catch {
         showToast.error(t('sources.error'));
       }
     },
-    [fetch, t],
+    [query, t],
   );
 
-  return { sources, isLoading, error, rateSource, deleteRating, refetch: fetch };
+  return {
+    sources: query.data ?? [],
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load sources') : null,
+    rateSource,
+    deleteRating,
+    refetch: () => {
+      void query.refetch();
+    },
+  };
 }

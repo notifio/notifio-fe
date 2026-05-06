@@ -1,4 +1,5 @@
 import type { Session } from '@supabase/supabase-js';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -10,6 +11,8 @@ import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { bootstrapLocale } from '../lib/i18n';
+import { useReactQueryAppStateBridge } from '../lib/query-app-state';
+import { asyncStoragePersister, queryClient } from '../lib/query-client';
 import { AuthProvider } from '../providers/auth-provider';
 import { ConsentProvider } from '../providers/consent-provider';
 import { NotificationProvider } from '../providers/notification-provider';
@@ -110,22 +113,38 @@ function DynamicStatusBar() {
   return <StatusBar style={isDark ? 'light' : 'dark'} />;
 }
 
+function AppStateBridge() {
+  useReactQueryAppStateBridge();
+  return null;
+}
+
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <ConsentProvider>
-            <NotificationProvider>
-              <OnboardingProvider>
-                <DynamicStatusBar />
-                <RootNavigator />
-              </OnboardingProvider>
-            </NotificationProvider>
-          </ConsentProvider>
-        </AuthProvider>
-        <Toast config={toastConfig} />
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: asyncStoragePersister,
+        // Bump this string when shared API contract changes break the
+        // cached response shape — RQ then drops the old cache entirely.
+        buster: 'v1',
+      }}
+    >
+      <AppStateBridge />
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ConsentProvider>
+              <NotificationProvider>
+                <OnboardingProvider>
+                  <DynamicStatusBar />
+                  <RootNavigator />
+                </OnboardingProvider>
+              </NotificationProvider>
+            </ConsentProvider>
+          </AuthProvider>
+          <Toast config={toastConfig} />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </PersistQueryClientProvider>
   );
 }

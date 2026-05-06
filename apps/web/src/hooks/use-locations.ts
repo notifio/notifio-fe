@@ -1,46 +1,58 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import type {
-  UserLocationsResponse,
   CreateLocationBody,
   UpdateLocationBody,
+  UserLocationsResponse,
 } from '@notifio/api-client';
 
 import { api } from '@/lib/api';
 
-import { useApiQuery } from './use-api-query';
-
 export function useLocations() {
-  const { data, isLoading, error, refetch } = useApiQuery<UserLocationsResponse>(
-    () => api.getLocations(),
-    [],
+  const query = useQuery<UserLocationsResponse>({
+    queryKey: ['locations'],
+    queryFn: () => api.getLocations(),
+  });
+
+  const refetch = useCallback(async () => {
+    await query.refetch();
+  }, [query]);
+
+  const create = useCallback(
+    async (body: CreateLocationBody) => {
+      const created = await api.createLocation(body);
+      await query.refetch();
+      return created;
+    },
+    [query],
   );
 
-  const create = useCallback(async (body: CreateLocationBody) => {
-    const created = await api.createLocation(body);
-    await refetch();
-    return created;
-  }, [refetch]);
+  const update = useCallback(
+    async (locationId: string, body: UpdateLocationBody) => {
+      const updated = await api.updateLocation(locationId, body);
+      await query.refetch();
+      return updated;
+    },
+    [query],
+  );
 
-  const update = useCallback(async (locationId: string, body: UpdateLocationBody) => {
-    const updated = await api.updateLocation(locationId, body);
-    await refetch();
-    return updated;
-  }, [refetch]);
-
-  const remove = useCallback(async (locationId: string) => {
-    await api.deleteLocation(locationId);
-    await refetch();
-  }, [refetch]);
+  const remove = useCallback(
+    async (locationId: string) => {
+      await api.deleteLocation(locationId);
+      await query.refetch();
+    },
+    [query],
+  );
 
   return {
-    locations: data?.locations ?? [],
-    limit: data?.limit ?? 1,
-    used: data?.used ?? 0,
-    isLoading,
-    error,
+    locations: query.data?.locations ?? [],
+    limit: query.data?.limit ?? 1,
+    used: query.data?.used ?? 0,
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load locations') : null,
     create,
     update,
     remove,

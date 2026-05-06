@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import type { UpdateUserEventBody, UserEvent } from '@notifio/api-client';
 
@@ -19,44 +20,44 @@ interface UseUserEventsResult {
  * + loading + error + manual refresh + update/delete mutations).
  * Used by the Notifications Events tab for inline resolve/delete
  * actions on each row.
+ *
+ * Mutations call the API directly then `refetch()` to repopulate the
+ * cache — simpler than `useMutation` since consumers don't observe
+ * mutation pending state. Returns `Promise<void>` from `refresh` so
+ * callers that await it (sequencing patterns) keep working.
  */
 export function useUserEvents(): UseUserEventsResult {
-  const [events, setEvents] = useState<UserEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useQuery<UserEvent[]>({
+    queryKey: ['user-events'],
+    queryFn: () => api.getUserEvents(),
+  });
 
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getUserEvents();
-      setEvents(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load events');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const refresh = useCallback(async () => {
+    await query.refetch();
+  }, [query]);
 
   const updateEvent = useCallback(
     async (eventId: string, body: UpdateUserEventBody) => {
       await api.updateEvent(eventId, body);
-      await load();
+      await query.refetch();
     },
-    [load],
+    [query],
   );
 
   const deleteEvent = useCallback(
     async (eventId: string) => {
       await api.deleteEvent(eventId);
-      await load();
+      await query.refetch();
     },
-    [load],
+    [query],
   );
 
-  return { events, isLoading, error, refresh: load, updateEvent, deleteEvent };
+  return {
+    events: query.data ?? [],
+    isLoading: query.isPending,
+    error: query.error ? (query.error.message || 'Failed to load events') : null,
+    refresh,
+    updateEvent,
+    deleteEvent,
+  };
 }
