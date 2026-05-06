@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import type { MembershipResponse } from '@/hooks/use-membership';
+import type { MembershipResponse } from '@notifio/shared/types';
+
 import { api } from '@/lib/api';
 
 const MAX_POLLS = 20;
@@ -27,7 +28,7 @@ export default function CheckoutSuccessPage() {
       if (cancelled) return;
 
       try {
-        const data = await api.getMembership() as unknown as MembershipResponse;
+        const data = await api.getMembership();
         if (cancelled) return;
 
         if (data.current.tier !== 'FREE') {

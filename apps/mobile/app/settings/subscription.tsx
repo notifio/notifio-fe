@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { PublicMembershipTier, MembershipTier } from '@notifio/api-client';
+import { useMembership } from '@notifio/shared/hooks';
 import { tierColors } from '@notifio/ui';
 
-import { useMembership } from '../../hooks/use-membership';
 import { api } from '../../lib/api';
 import { SPACING } from '../../lib/spacing';
 import { theme, withOpacity } from '../../lib/theme';

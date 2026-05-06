@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { MembershipTier } from '@notifio/api-client';
+import { useMembership } from '@notifio/shared/hooks';
 
-import { useMembership } from '../../hooks/use-membership';
 import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -30,7 +30,7 @@ export function ProGate({ requiredTier, children, fallback }: ProGateProps) {
     );
   }
 
-  const userOrder = TIER_ORDER[tier] ?? 0;
+  const userOrder = TIER_ORDER[tier ?? 'FREE'] ?? 0;
   const requiredOrder = TIER_ORDER[requiredTier] ?? 0;
 
   if (userOrder >= requiredOrder) {

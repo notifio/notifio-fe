@@ -122,6 +122,14 @@ npx turbo run build --filter=@notifio/web
 - Response envelope: `{ success: boolean, data?: T, error?: string, meta?: {} }`
 - Auth: Bearer token via Supabase Auth
 
+### Bumping `@notifio/shared`
+
+When `@notifio/shared` publishes a new version, **also bump the pin in `packages/api-client/package.json` in the same PR**. Otherwise type drift accumulates silently at the api-client boundary: api-client emits stale shapes against the new shared contract, forcing apps to use `as unknown as ...` casts at every consumer.
+
+Example: shared `0.27.0` introduced `MembershipResponse` (nested under `current`) replacing the flat `MembershipDetails`. api-client was still pinned to `^0.21.0`, so apps had to cast `api as unknown as NotifioApi` at every `<ApiProvider>` mount until api-client's pin caught up (Batch E1 fix).
+
+Practical rule: any commit that bumps the root `@notifio/shared` dep also touches `packages/api-client/package.json` to match. Run `npm install` after to dedupe the nested copy under api-client to the new hoisted version.
+
 ### API Client Methods (`@notifio/api-client`)
 
 **Public:** `getWeather`, `getWeatherWarnings`, `getTraffic`, `getTrafficFlow`, `getAirQuality`, `getOutages`

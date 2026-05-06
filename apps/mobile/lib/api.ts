@@ -37,6 +37,11 @@ export function setConsentRequiredHandler(handler: (() => void) | null): void {
 // Classification (451/429) is shared (`@notifio/shared/api`); mobile wires
 // the platform-specific sinks here — i18n-resolved toast strings + the
 // deferred consent-required handler that ConsentProvider registers via
+//
+// PLATFORM-SPECIFIC: web uses `unhandledrejection` instead. RN's Hermes
+// runtime doesn't reliably fire that event, so mobile intercepts at
+// every method-call boundary via this Proxy. Same goal, different
+// mechanism — see `apps/web/src/lib/api.ts` for the web side.
 // `setConsentRequiredHandler` on mount.
 export const api = new Proxy(rawApi, {
   get(target, prop, receiver) {

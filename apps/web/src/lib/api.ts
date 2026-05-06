@@ -42,6 +42,12 @@ function dispatchRateLimited(seconds: number) {
 // shared (`@notifio/shared/api`); web wires the platform-specific sinks
 // here. CustomEvent shapes are preserved exactly so existing listeners
 // (ConsentGate, ApiErrorToaster) keep working unchanged.
+//
+// PLATFORM-SPECIFIC: `unhandledrejection` is the idiomatic browser-side
+// hook — it catches every rejected Promise on the task queue, including
+// errors thrown outside direct `api.x()` callsites. Mobile can't rely
+// on this (RN's Hermes runtime doesn't reliably fire it), so mobile
+// wraps `api` in a Proxy instead. Same goal, different mechanism.
 if (typeof window !== 'undefined') {
   window.addEventListener('unhandledrejection', (event) => {
     handleApiError(event.reason, {

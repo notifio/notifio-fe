@@ -19,7 +19,7 @@ import {
 
 import type { SourceSummary } from '@notifio/api-client';
 
-import { useSources } from '../../hooks/use-sources';
+import { useSourcesWithToasts } from '../../hooks/use-sources-with-toasts';
 import { confirmDestructive } from '../../lib/confirm';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -157,7 +157,7 @@ function SourceCard({ source, expanded, onToggle, onRate, onDelete }: SourceCard
 export default function SourcesScreen() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
-  const { sources, isLoading, rateSource, deleteRating } = useSources();
+  const { sources, isLoading, rateSource, deleteRating } = useSourcesWithToasts();
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const toggleExpand = useCallback((id: number) => {

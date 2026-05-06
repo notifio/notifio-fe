@@ -85,7 +85,7 @@ export type {
   UserProfile,
   UserLocation,
   UserLocationsResponse,
-  MembershipDetails,
+  MembershipResponse,
   LocationLabel,
   MembershipTier,
   Platform,
@@ -199,20 +199,8 @@ export type {
   DataExportStatus,
 } from '@notifio/shared';
 
-// Pollen types — hand-written to match API contract
-export interface PollenComponents {
-  birch: number | null;
-  grass: number | null;
-  ragweed: number | null;
-  alder: number | null;
-  mugwort: number | null;
-  olive: number | null;
-}
-
-export interface PollenResponse {
-  level: string;
-  dominant: string | null;
-  components: PollenComponents;
-  unit: string;
-  updatedAt: string;
-}
+// Pollen types
+export type {
+  PollenResponse,
+  PollenComponents,
+} from '@notifio/shared';

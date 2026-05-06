@@ -7,9 +7,12 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
+import { ApiProvider } from '@notifio/shared/hooks';
+
 import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
+import { api } from '../lib/api';
 import { bootstrapLocale } from '../lib/i18n';
 import { useReactQueryAppStateBridge } from '../lib/query-app-state';
 import { asyncStoragePersister, queryClient } from '../lib/query-client';
@@ -130,21 +133,23 @@ export default function RootLayout() {
       }}
     >
       <AppStateBridge />
-      <SafeAreaProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <ConsentProvider>
-              <NotificationProvider>
-                <OnboardingProvider>
-                  <DynamicStatusBar />
-                  <RootNavigator />
-                </OnboardingProvider>
-              </NotificationProvider>
-            </ConsentProvider>
-          </AuthProvider>
-          <Toast config={toastConfig} />
-        </ThemeProvider>
-      </SafeAreaProvider>
+      <ApiProvider api={api}>
+        <SafeAreaProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ConsentProvider>
+                <NotificationProvider>
+                  <OnboardingProvider>
+                    <DynamicStatusBar />
+                    <RootNavigator />
+                  </OnboardingProvider>
+                </NotificationProvider>
+              </ConsentProvider>
+            </AuthProvider>
+            <Toast config={toastConfig} />
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </ApiProvider>
     </PersistQueryClientProvider>
   );
 }

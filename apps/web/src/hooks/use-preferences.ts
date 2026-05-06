@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { UserPreferencesResponse } from '@notifio/api-client';
+import {
+  clonePrefs,
+  diffPreferences,
+  setDisplayField,
+  togglePreferenceCategory,
+  togglePreferenceItem,
+} from '@notifio/shared/preferences';
 
 import { api } from '@/lib/api';
-
-function clonePrefs(p: UserPreferencesResponse): UserPreferencesResponse {
-  return JSON.parse(JSON.stringify(p)) as UserPreferencesResponse;
-}
 
 interface UsePreferencesResult {
   preferences: UserPreferencesResponse | null;
@@ -56,41 +59,15 @@ export function usePreferences(): UsePreferencesResult {
   }, [serverPrefs, localPrefs]);
 
   const toggleItem = useCallback((categoryCode: string, subcategoryCode: string | null, enabled: boolean) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      for (const cat of next.notifications) {
-        for (const item of cat.items) {
-          if (item.categoryCode === categoryCode && item.subcategoryCode === subcategoryCode) {
-            item.enabled = enabled;
-          }
-        }
-      }
-      return next;
-    });
+    setLocalPrefs((prev) => (prev ? togglePreferenceItem(prev, categoryCode, subcategoryCode, enabled) : prev));
   }, []);
 
   const toggleCategory = useCallback((categoryCode: string, enabled: boolean) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      const cat = next.notifications.find((c) => c.categoryCode === categoryCode);
-      if (cat) {
-        for (const item of cat.items) {
-          item.enabled = enabled;
-        }
-      }
-      return next;
-    });
+    setLocalPrefs((prev) => (prev ? togglePreferenceCategory(prev, categoryCode, enabled) : prev));
   }, []);
 
   const setDisplay = useCallback((key: 'theme' | 'units' | 'weatherProvider', value: string) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      next.display = { ...next.display, [key]: value };
-      return next;
-    });
+    setLocalPrefs((prev) => (prev ? setDisplayField(prev, key, value) : prev));
   }, []);
 
   const savePreferences = useCallback(async () => {
@@ -98,39 +75,17 @@ export function usePreferences(): UsePreferencesResult {
     setSaving(true);
     setError(null);
     try {
-      const displayChanged = JSON.stringify(serverPrefs.display) !== JSON.stringify(localPrefs.display);
-      const changedNotifications: Array<{
-        categoryCode: string;
-        subcategoryCode: string | null;
-        enabled: boolean;
-      }> = [];
-
-      for (const localCat of localPrefs.notifications) {
-        const serverCat = serverPrefs.notifications.find((c) => c.categoryCode === localCat.categoryCode);
-        for (const localItem of localCat.items) {
-          const serverItem = serverCat?.items.find(
-            (i) => i.categoryCode === localItem.categoryCode && i.subcategoryCode === localItem.subcategoryCode,
-          );
-          if (!serverItem || serverItem.enabled !== localItem.enabled) {
-            changedNotifications.push({
-              categoryCode: localItem.categoryCode,
-              subcategoryCode: localItem.subcategoryCode,
-              enabled: localItem.enabled,
-            });
-          }
-        }
-      }
-
+      const patch = diffPreferences(localPrefs, serverPrefs);
       const request: Parameters<typeof api.updatePreferences>[0] = {};
-      if (displayChanged) {
+      if (patch.display) {
         request.display = {
-          weatherProvider: localPrefs.display.weatherProvider as 'auto' | 'openweathermap' | 'open-meteo',
-          theme: localPrefs.display.theme as 'system' | 'light' | 'dark',
-          units: localPrefs.display.units as 'metric' | 'imperial',
+          weatherProvider: patch.display.weatherProvider as 'auto' | 'openweathermap' | 'open-meteo',
+          theme: patch.display.theme as 'system' | 'light' | 'dark',
+          units: patch.display.units as 'metric' | 'imperial',
         };
       }
-      if (changedNotifications.length > 0) {
-        request.notifications = changedNotifications;
+      if (patch.notifications) {
+        request.notifications = patch.notifications;
       }
 
       const updated = await api.updatePreferences(request);

@@ -7,8 +7,8 @@ import MapView, { type Region } from 'react-native-maps';
 
 import type { CreateLocationBody, LocationLabel, UpdateLocationBody, UserLocation } from '@notifio/api-client';
 import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
+import { useMembership } from '@notifio/shared/hooks';
 
-import { useMembership } from '../../hooks/use-membership';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';

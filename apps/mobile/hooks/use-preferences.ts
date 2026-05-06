@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { UserPreferencesResponse } from '@notifio/api-client';
+import {
+  clonePrefs,
+  diffPreferences,
+  setDisplayField,
+  setQuietHoursField,
+  togglePreferenceCategory,
+  togglePreferenceItem,
+} from '@notifio/shared/preferences';
 
 import { api } from '../lib/api';
-
-function clonePrefs(p: UserPreferencesResponse): UserPreferencesResponse {
-  return JSON.parse(JSON.stringify(p)) as UserPreferencesResponse;
-}
 
 interface UsePreferencesResult {
   preferences: UserPreferencesResponse | null;
@@ -57,63 +61,26 @@ export function usePreferences(): UsePreferencesResult {
     return JSON.stringify(serverPrefs) !== JSON.stringify(localPrefs);
   }, [serverPrefs, localPrefs]);
 
-  const updateItems = useCallback(
-    (
-      categoryCode: string,
-      subcategoryCode: string | null | 'ANY',
-      mutator: (item: UserPreferencesResponse['notifications'][number]['items'][number]) => void,
-    ) => {
-      setLocalPrefs((prev) => {
-        if (!prev) return prev;
-        const next = clonePrefs(prev);
-        for (const cat of next.notifications) {
-          if (cat.categoryCode !== categoryCode) continue;
-          for (const item of cat.items) {
-            if (subcategoryCode === 'ANY' || item.subcategoryCode === subcategoryCode) {
-              mutator(item);
-            }
-          }
-        }
-        return next;
-      });
+  const toggleItem = useCallback(
+    (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => {
+      setLocalPrefs((prev) => (prev ? togglePreferenceItem(prev, categoryCode, subcategoryCode, enabled) : prev));
     },
     [],
   );
 
-  const toggleItem = useCallback(
-    (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => {
-      updateItems(categoryCode, subcategoryCode, (item) => {
-        item.enabled = enabled;
-      });
-    },
-    [updateItems],
-  );
-
   const toggleCategory = useCallback(
     (categoryCode: string, enabled: boolean) => {
-      updateItems(categoryCode, 'ANY', (item) => {
-        item.enabled = enabled;
-      });
+      setLocalPrefs((prev) => (prev ? togglePreferenceCategory(prev, categoryCode, enabled) : prev));
     },
-    [updateItems],
+    [],
   );
 
   const setQuietHours = useCallback((start: string | null, end: string | null) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      next.quietHours = { start, end };
-      return next;
-    });
+    setLocalPrefs((prev) => (prev ? setQuietHoursField(prev, start, end) : prev));
   }, []);
 
   const setDisplay = useCallback((key: 'theme' | 'units' | 'weatherProvider', value: string) => {
-    setLocalPrefs((prev) => {
-      if (!prev) return prev;
-      const next = clonePrefs(prev);
-      next.display = { ...next.display, [key]: value };
-      return next;
-    });
+    setLocalPrefs((prev) => (prev ? setDisplayField(prev, key, value) : prev));
   }, []);
 
   const savePreferences = useCallback(async () => {
@@ -121,45 +88,20 @@ export function usePreferences(): UsePreferencesResult {
     setSaving(true);
     setError(null);
     try {
-      const displayChanged = JSON.stringify(serverPrefs.display) !== JSON.stringify(localPrefs.display);
-      const quietHoursChanged =
-        JSON.stringify(serverPrefs.quietHours) !== JSON.stringify(localPrefs.quietHours);
-
-      const changedNotifications: Array<{
-        categoryCode: string;
-        subcategoryCode: string | null;
-        enabled: boolean;
-      }> = [];
-
-      for (const localCat of localPrefs.notifications) {
-        const serverCat = serverPrefs.notifications.find((c) => c.categoryCode === localCat.categoryCode);
-        for (const localItem of localCat.items) {
-          const serverItem = serverCat?.items.find(
-            (i) => i.categoryCode === localItem.categoryCode && i.subcategoryCode === localItem.subcategoryCode,
-          );
-          if (!serverItem || serverItem.enabled !== localItem.enabled) {
-            changedNotifications.push({
-              categoryCode: localItem.categoryCode,
-              subcategoryCode: localItem.subcategoryCode,
-              enabled: localItem.enabled,
-            });
-          }
-        }
-      }
-
+      const patch = diffPreferences(localPrefs, serverPrefs);
       const request: Parameters<typeof api.updatePreferences>[0] = {};
-      if (displayChanged) {
+      if (patch.display) {
         request.display = {
-          weatherProvider: localPrefs.display.weatherProvider as 'auto' | 'openweathermap' | 'open-meteo',
-          theme: localPrefs.display.theme as 'system' | 'light' | 'dark',
-          units: localPrefs.display.units as 'metric' | 'imperial',
+          weatherProvider: patch.display.weatherProvider as 'auto' | 'openweathermap' | 'open-meteo',
+          theme: patch.display.theme as 'system' | 'light' | 'dark',
+          units: patch.display.units as 'metric' | 'imperial',
         };
       }
-      if (quietHoursChanged) {
-        request.quietHours = localPrefs.quietHours;
+      if (patch.quietHours) {
+        request.quietHours = patch.quietHours;
       }
-      if (changedNotifications.length > 0) {
-        request.notifications = changedNotifications;
+      if (patch.notifications) {
+        request.notifications = patch.notifications;
       }
 
       const updated = await api.updatePreferences(request);

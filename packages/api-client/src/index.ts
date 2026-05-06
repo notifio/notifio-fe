@@ -15,7 +15,7 @@ import type {
   UserLocationsResponse,
   CreateLocationBody,
   UpdateLocationBody,
-  MembershipDetails,
+  MembershipResponse,
   RegisterDeviceBody,
   DeviceRegistrationResponse,
   PaginatedNotifications,
@@ -68,7 +68,7 @@ export type {
   UserLocationsResponse,
   CreateLocationBody,
   UpdateLocationBody,
-  MembershipDetails,
+  MembershipResponse,
   RegisterDeviceBody,
   DeviceRegistrationResponse,
   NotificationHistoryItem,
@@ -142,7 +142,7 @@ export type {
 /**
  * Public tier descriptor returned by `/api/v1/membership/tiers`. Backed
  * by `c_membership` + `r_membership_feature` on the API. Prices are
- * strings (numeric(6,2)) — the same convention as `MembershipDetails`
+ * strings (numeric(6,2)) — the same convention as `MembershipResponse`
  * in the shared package. Defined locally rather than in @notifio/shared
  * because the FE consumes it as a plain type; if we ever validate at
  * the boundary we can promote the schema upstream.
@@ -396,8 +396,8 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserPreferencesResponse>('/me/preferences', { method: 'PATCH', body: data });
     },
 
-    async getMembership(): Promise<MembershipDetails> {
-      return request<MembershipDetails>('/me/membership');
+    async getMembership(): Promise<MembershipResponse> {
+      return request<MembershipResponse>('/me/membership');
     },
 
     /**
@@ -410,15 +410,15 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<PublicMembershipTier[]>('/membership/tiers');
     },
 
-    async upgradeMembership(data: UpgradeMembershipBody): Promise<MembershipDetails> {
-      return request<MembershipDetails>('/me/membership/upgrade', {
+    async upgradeMembership(data: UpgradeMembershipBody): Promise<MembershipResponse> {
+      return request<MembershipResponse>('/me/membership/upgrade', {
         method: 'POST',
         body: data,
       });
     },
 
-    async downgradeMembership(data: DowngradeMembershipBody): Promise<MembershipDetails> {
-      return request<MembershipDetails>('/me/membership/downgrade', {
+    async downgradeMembership(data: DowngradeMembershipBody): Promise<MembershipResponse> {
+      return request<MembershipResponse>('/me/membership/downgrade', {
         method: 'POST',
         body: data,
       });

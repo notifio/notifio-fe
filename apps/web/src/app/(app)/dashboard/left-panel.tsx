@@ -4,16 +4,13 @@ import { IconClock } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
 
 import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
 import { WeatherWarningsBanner } from '@/components/app/weather-warnings-banner';
-import { useAirQuality } from '@/hooks/use-air-quality';
 import { useDigestMode } from '@/hooks/use-digest-mode';
-import { useNameday } from '@/hooks/use-nameday';
-import { usePollen } from '@/hooks/use-pollen';
-import { useWeather } from '@/hooks/use-weather';
 import { useWeatherWarnings } from '@/hooks/use-weather-warnings';
 
 interface LeftPanelProps {

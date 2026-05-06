@@ -11,9 +11,10 @@ import {
   useState,
 } from 'react';
 
+import { useEventCategories } from '@notifio/shared/hooks';
+
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import { useToast } from '@/components/ui/toast';
-import { useEventCategories } from '@/hooks/use-event-categories';
 import { api } from '@/lib/api';
 
 import { LocationPicker } from './location-picker';
@@ -40,7 +41,7 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const t = useTranslations('events');
   const te = useTranslations('errors');
   const tc = useTranslations('common');
-  const { categories, loading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
+  const { categories, isLoading: catsLoading, error: catsError, retry: retryCategories } = useEventCategories();
   const { success, error: showError } = useToast();
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryOption | null>(null);

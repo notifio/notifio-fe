@@ -7,9 +7,8 @@ import MapView, { type Region } from 'react-native-maps';
 
 import type { UserEventCategory } from '@notifio/api-client';
 import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
+import { useEventCategories, useMembership } from '@notifio/shared/hooks';
 
-import { useEventCategories } from '../../hooks/use-event-categories';
-import { useMembership } from '../../hooks/use-membership';
 import { api } from '../../lib/api';
 import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
