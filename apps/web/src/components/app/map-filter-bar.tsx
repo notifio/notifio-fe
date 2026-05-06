@@ -39,6 +39,13 @@ interface MapFilterBarProps {
   /** Step 8: invoked when a locked filter row is tapped — opens the
    *  upsell modal upstream with the row's source. */
   onLockedRowTap?: (source: MapPinSource) => void;
+  /** F1 β layout: lifecycle visibility section. */
+  showActive: boolean;
+  showUpcoming: boolean;
+  onToggleShowActive: (next: boolean) => void;
+  onToggleShowUpcoming: (next: boolean) => void;
+  /** F1 β layout: clears every category source filter (resets to "all on"). */
+  onClearCategoryFilters: () => void;
 }
 
 // ── Main component ───────────────────────────────────────────────────
@@ -50,6 +57,11 @@ export function MapFilterBar({
   pins,
   tier = 'FREE',
   onLockedRowTap,
+  showActive,
+  showUpcoming,
+  onToggleShowActive,
+  onToggleShowUpcoming,
+  onClearCategoryFilters,
 }: MapFilterBarProps) {
   const t = useTranslations();
   const tf = useTranslations('mapFilters');
@@ -170,7 +182,10 @@ export function MapFilterBar({
             minWidth: '260px',
             color: textColor,
             overflowY: 'auto',
-            maxHeight: '85vh',
+            // B5: bound the panel to the viewport so it doesn't bleed
+            // off-screen on short displays. top:24 + bottom:24 = 48px
+            // total padding from edges.
+            maxHeight: 'calc(100vh - 48px)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
           }}
@@ -213,6 +228,100 @@ export function MapFilterBar({
               }}
             >
               <IconX size={16} />
+            </button>
+          </div>
+
+          {/* F1 §1 — Lifecycle visibility */}
+          <div style={{ padding: '4px 16px 0' }}>
+            <div
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                opacity: 0.6,
+                paddingTop: '4px',
+                paddingBottom: '4px',
+              }}
+            >
+              {tf('showOnMap')}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingTop: '6px',
+                paddingBottom: '6px',
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>{tf('activeEvents')}</span>
+              <MapToggle
+                on={showActive}
+                onToggle={() => onToggleShowActive(!showActive)}
+                isDark={isDark}
+              />
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingTop: '6px',
+                paddingBottom: '6px',
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>{tf('upcomingEvents')}</span>
+              <MapToggle
+                on={showUpcoming}
+                onToggle={() => onToggleShowUpcoming(!showUpcoming)}
+                isDark={isDark}
+              />
+            </div>
+          </div>
+
+          {/* Section divider */}
+          <div
+            style={{
+              height: '1px',
+              backgroundColor: dividerColor,
+              margin: '12px 16px',
+            }}
+          />
+
+          {/* F1 §2 — Filter by category, with clear-all link */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0 16px 4px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                opacity: 0.6,
+              }}
+            >
+              {tf('filterByCategory')}
+            </span>
+            <button
+              onClick={onClearCategoryFilters}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#FF7A2F',
+                fontSize: '12px',
+                fontWeight: 600,
+                padding: 0,
+              }}
+            >
+              {tf('clearAll')}
             </button>
           </div>
 

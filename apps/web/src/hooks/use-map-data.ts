@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { TrafficFlowResponse, UserPreferencesResponse } from '@notifio/api-client';
+import type { MembershipTier, TrafficFlowResponse, UserPreferencesResponse } from '@notifio/api-client';
 import { REFETCH_THRESHOLD_KM, areaKey, distanceKm } from '@notifio/shared/geo';
 import { normalizeMapPins, type MapPin, type MapPinSource } from '@notifio/shared/map';
 
@@ -69,7 +69,16 @@ function buildDisabledSources(prefs: UserPreferencesResponse | null): Set<MapPin
   return disabled;
 }
 
-export function useMapData(center: { lat: number; lng: number } | null) {
+interface UseMapDataOptions {
+  showUpcoming?: boolean;
+  tier?: MembershipTier | null;
+}
+
+export function useMapData(
+  center: { lat: number; lng: number } | null,
+  opts: UseMapDataOptions = {},
+) {
+  const { showUpcoming = false, tier = null } = opts;
   const [pins, setPins] = useState<MapPin[]>([]);
   const [flowSegments, setFlowSegments] = useState<TrafficFlowResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -131,10 +140,16 @@ export function useMapData(center: { lat: number; lng: number } | null) {
         ...(eventsResp?.teasers ?? []),
         ...(traffic?.teasers ?? []),
       ];
+      // Cross-repo audit (M3): TomTom incidents now live in `f_event` with
+      // proper UUIDs and surface through `/events`. Feeding `/traffic`'s
+      // raw TomTom-id incidents into the normalizer too caused duplicate
+      // pins (same incident, two ID namespaces). Pass [] here; keep the
+      // /traffic call only for `teasers` (off-tier upsell).
       const normalized = normalizeMapPins(
-        traffic?.incidents ?? [],
+        [],
         eventsResp?.events ?? [],
         allTeasers,
+        { showUpcoming, tier },
       );
 
       setPins(normalized);
@@ -145,8 +160,21 @@ export function useMapData(center: { lat: number; lng: number } | null) {
       setIsLoading(false);
       setIsAutoRefreshing(false);
     },
-    [],
+    [showUpcoming, tier],
   );
+
+  // Invalidate cache + force re-fetch when filter opts change. Cached
+  // pins were normalized under previous showUpcoming/tier and would
+  // render stale; the threshold-based effect below skips the re-fetch
+  // because the center hasn't moved, so we have to nudge it by clearing
+  // lastFetchCenter as well. Ref-based comparator avoids duplicate fires.
+  const prevOptsKey = useRef<string>(`${showUpcoming}|${tier ?? ''}`);
+  const optsKey = `${showUpcoming}|${tier ?? ''}`;
+  if (prevOptsKey.current !== optsKey) {
+    prevOptsKey.current = optsKey;
+    viewportCache.current.clear();
+    lastFetchCenter.current = null;
+  }
 
   // Fetch when center changes and exceeds distance threshold
   useEffect(() => {

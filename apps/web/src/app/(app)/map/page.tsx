@@ -5,8 +5,15 @@ import { useCallback, useState } from 'react';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import { useMembership } from '@notifio/shared/hooks';
-import { MAP_FILTER_SOURCES, type MapPinSource, type MapPinTrafficType } from '@notifio/shared/map';
+import {
+  MAP_FILTER_SOURCES,
+  TRAFFIC_SUBCATEGORIES,
+  type MapPin,
+  type MapPinSource,
+  type MapPinTrafficType,
+} from '@notifio/shared/map';
 
+import { ClusterPinsSheet } from '@/components/app/cluster-pins-sheet';
 import { DashboardMap } from '@/components/app/dashboard-map';
 import { EventReportModal } from '@/components/app/event-report-modal';
 import { MapAdBanner } from '@/components/app/map-ad-banner';
@@ -15,33 +22,35 @@ import { UpsellModal } from '@/components/app/upsell-modal';
 import { useMapData } from '@/hooks/use-map-data';
 import { useUserLocation } from '@/hooks/use-user-location';
 
-const ALL_TRAFFIC_TYPES: MapPinTrafficType[] = [
-  'accident',
-  'congestion',
-  'construction',
-  'event',
-  'road_closure',
-  'other',
-];
-
 export default function MapPage() {
   const [activeFilters, setActiveFilters] = useState<Set<MapPinSource>>(
     () => new Set(MAP_FILTER_SOURCES),
   );
   const [activeTrafficTypes, setActiveTrafficTypes] = useState<Set<MapPinTrafficType>>(
-    () => new Set(ALL_TRAFFIC_TYPES),
+    () => new Set(TRAFFIC_SUBCATEGORIES),
   );
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   // Step 8: source for the upsell modal — set by teaser pin taps and
   // locked filter row taps; cleared on close.
   const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
+  // β filter sheet "Show on map" lifecycle toggles. Active default ON,
+  // upcoming default OFF — both flow into useMapData so the shared
+  // normalizer can short-circuit upcoming events when the toggle is off.
+  const [showActive, setShowActive] = useState(true);
+  const [showUpcoming, setShowUpcoming] = useState(false);
+  // F2 stacked-pin sheet state. Opens on cluster click with the leaves.
+  const [clusterChildren, setClusterChildren] = useState<MapPin[]>([]);
+  const [clusterSheetOpen, setClusterSheetOpen] = useState(false);
   const { location: userLocation, isGps } = useUserLocation();
   const { tier } = useMembership();
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
 
   const effectiveCenter = mapCenter ?? userLocation ?? DEFAULT_LOCATION;
-  const { pins, flowSegments, isLoading, error, refresh } = useMapData(effectiveCenter);
+  const { pins, flowSegments, isLoading, error, refresh } = useMapData(effectiveCenter, {
+    showUpcoming,
+    tier: effectiveTier,
+  });
 
   const toggleFilter = useCallback((source: MapPinSource) => {
     setActiveFilters((prev) => {
@@ -51,10 +60,21 @@ export default function MapPage() {
         if (source === 'traffic') setActiveTrafficTypes(new Set());
       } else {
         next.add(source);
-        if (source === 'traffic') setActiveTrafficTypes(new Set(ALL_TRAFFIC_TYPES));
+        if (source === 'traffic') setActiveTrafficTypes(new Set(TRAFFIC_SUBCATEGORIES));
       }
       return next;
     });
+  }, []);
+
+  const clearCategoryFilters = useCallback(() => {
+    setActiveFilters(new Set(MAP_FILTER_SOURCES));
+    setActiveTrafficTypes(new Set(TRAFFIC_SUBCATEGORIES));
+  }, []);
+
+  const handleClusterTap = useCallback((children: MapPin[]) => {
+    if (children.length === 0) return;
+    setClusterChildren(children);
+    setClusterSheetOpen(true);
   }, []);
 
   const toggleTrafficType = useCallback((type: MapPinTrafficType) => {
@@ -83,6 +103,11 @@ export default function MapPage() {
         pins={pins}
         tier={effectiveTier}
         onLockedRowTap={setUpsellSource}
+        showActive={showActive}
+        showUpcoming={showUpcoming}
+        onToggleShowActive={setShowActive}
+        onToggleShowUpcoming={setShowUpcoming}
+        onClearCategoryFilters={clearCategoryFilters}
       />
       <DashboardMap
         pins={pins}
@@ -96,8 +121,16 @@ export default function MapPage() {
         isGpsCenter={isGps}
         onCenterChange={setMapCenter}
         onTeaserTap={setUpsellSource}
+        onClusterTap={handleClusterTap}
+        showActive={showActive}
+        showUpcoming={showUpcoming}
       />
       <UpsellModal source={upsellSource} onClose={() => setUpsellSource(null)} />
+      <ClusterPinsSheet
+        open={clusterSheetOpen}
+        pins={clusterChildren}
+        onClose={() => setClusterSheetOpen(false)}
+      />
       <MapAdBanner />
 
       {/* Report event FAB */}
