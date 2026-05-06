@@ -5,7 +5,10 @@ import { NextIntlClientProvider, useLocale } from "next-intl";
 import { ThemeProvider } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { ApiProvider } from "@notifio/shared/hooks";
+
 import { ToastProvider } from "@/components/ui/toast";
+import { api } from "@/lib/api";
 import { makeQueryClient } from "@/lib/query-client";
 
 type Props = {
@@ -47,9 +50,11 @@ export function Providers({ children, locale, messages }: Props) {
       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Bratislava">
         <QueryClientProvider client={queryClient}>
           <LocaleInvalidator />
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <ApiProvider api={api}>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </ApiProvider>
         </QueryClientProvider>
       </NextIntlClientProvider>
     </ThemeProvider>

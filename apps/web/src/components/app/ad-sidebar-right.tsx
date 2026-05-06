@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { useMembership } from '@/hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
 
 import { UpsellCard } from './upsell-card';
 

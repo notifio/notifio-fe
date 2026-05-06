@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { useMembership } from '@/hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
 
 export function MapAdBanner() {
   const t = useTranslations('membership');

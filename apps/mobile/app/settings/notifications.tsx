@@ -2,11 +2,12 @@ import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useMembership } from '@notifio/shared/hooks';
+
 import { NotificationPrefsList } from '../../components/notifications/notification-prefs-list';
 import { QuietHoursSection } from '../../components/notifications/quiet-hours-section';
 import { Card } from '../../components/ui/card';
 import { SectionLabel } from '../../components/ui/section-label';
-import { useMembership } from '../../hooks/use-membership';
 import { usePreferences } from '../../hooks/use-preferences';
 import { theme } from '../../lib/theme';
 import { showToast } from '../../lib/toast';

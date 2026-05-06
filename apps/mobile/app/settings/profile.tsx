@@ -3,13 +3,13 @@ import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useMembership, useUserEvents } from '@notifio/shared/hooks';
+
 import { TierBadge } from '../../components/ui/tier-badge';
 import { useAuth } from '../../hooks/use-auth';
-import { useMembership } from '../../hooks/use-membership';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
 import { useProfile } from '../../hooks/use-profile';
 import { useReminders } from '../../hooks/use-reminders';
-import { useUserEvents } from '../../hooks/use-user-events';
 import { formatDate } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -68,7 +68,7 @@ export default function ProfileScreen() {
 
             {/* Tier */}
             <View style={styles.tierRow}>
-              <TierBadge tier={tier} size="md" />
+              <TierBadge tier={tier ?? 'FREE'} size="md" />
             </View>
 
             {/* Details card */}

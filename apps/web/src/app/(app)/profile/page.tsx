@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { useMembership } from '@/hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
+
 import { useSupabaseUser } from '@/hooks/use-supabase-user';
 import { api } from '@/lib/api';
 

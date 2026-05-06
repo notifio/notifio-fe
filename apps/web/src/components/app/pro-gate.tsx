@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 
-import { useMembership } from '@/hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
 
 const TIER_ORDER: Record<string, number> = { FREE: 0, PLUS: 1, PRO: 2 };
 

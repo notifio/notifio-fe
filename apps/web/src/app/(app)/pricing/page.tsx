@@ -5,9 +5,9 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import type { PaymentPlan, PublicMembershipTier } from '@notifio/api-client';
+import { useMembership } from '@notifio/shared/hooks';
 
 import { useToast } from '@/components/ui/toast';
-import { useMembership } from '@/hooks/use-membership';
 import { useMembershipTiers } from '@/hooks/use-membership-tiers';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
