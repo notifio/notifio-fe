@@ -48,6 +48,20 @@ npx turbo run dev --filter=@notifio/mobile
 npx turbo run build --filter=@notifio/web
 ```
 
+### Per-workspace verification (after batch implementation)
+
+```bash
+# Web
+npx turbo run typecheck --filter=@notifio/web
+npx turbo run lint --filter=@notifio/web
+npx turbo run build --filter=@notifio/web
+
+# Mobile (Hermes bundling catches errors typecheck misses)
+cd apps/mobile && npx expo export --platform ios --output-dir /tmp/expo-export-smoke
+```
+
+`@notifio/shared` lives in a separate repo and is consumed as a published package — verification of shared happens in that repo, not here.
+
 ## Code Standards
 
 ### TypeScript
@@ -91,6 +105,26 @@ npx turbo run build --filter=@notifio/web
 - Shared namespaces: `common`, `auth`, `settings`, `pushSetup`
 - Web-local namespaces: `map`, `weather`, `aqi`, `pollen`, `outages`, `traffic`, `mapFilters`, `notifications`, `notificationType`, `locationBanner`, `alerts`, `categoryGroups`, `nav`, `landing`, `membership`, `consent`, `reminders`, `sources`, `events`, `errors`
 
+## Refactor Workflow
+
+Multi-file refactors follow a five-step pattern:
+
+1. **Audit first.** Write a Stage 1 audit prompt that READS but doesn't EDIT. Output: classification table, decision list, file plan. STOP for review before any implementation prompt.
+2. **Decisions in chat.** Surface every non-trivial decision before implementation, not during. Bake answers into the next prompt.
+3. **Stage-by-stage with STOP.** Multi-stage prompts STOP between each stage for review. No cascading.
+4. **Verify before commit.** `npx turbo run typecheck && lint && build` (mobile: also `expo export --platform ios` smoke for Hermes-only failures). Single commit per batch — no per-stage commits unless explicitly bisect-friendly.
+5. **Skip dirty state.** Pre-existing untracked/modified files unrelated to the batch stay unstaged. Commit only batch-scoped changes.
+
+Common file patterns:
+
+- `PROMPTS-{BATCH}-{NAME}.md` — planner output, run by Claude Code
+- `temp/incoming_code/{web,mobile}/` — drop zone for cross-app code drops feeding shared extractions
+- `EXTRACTION-AUDIT.md` or similar — sprint-level decision log (one per refactor sprint)
+
+End-of-stage reports from Claude Code: ≤10 lines summary + diff stats + verification result. Tables only when explicitly asked.
+
+Commit messages: `<scope>(<workspace>): <subject>` (e.g. `refactor(web): consume @notifio/shared/hooks`). Body describes WHAT and WHY. Footer references the batch from the sprint audit doc when applicable.
+
 ## Architecture Notes
 
 ### Location-first, not city-first
@@ -118,9 +152,11 @@ npx turbo run build --filter=@notifio/web
 
 - Base URL configured via env var (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL`)
 - All requests go through `@notifio/api-client` (wraps `fetch` with auth, locale, error handling)
-- `@notifio/shared@^0.20.0` — types, Zod schemas, i18n (full sk/en/cs/hu/de/uk parity, nameday, payments, GDPR data-export with error + completedAt)
+- `@notifio/shared` — types, Zod schemas, i18n (sk/en/cs/hu/de/uk parity), H3 utils, hooks, preferences helpers, map module. Pin in root `package.json` is the source of truth — do not pin in this doc (goes stale).
 - Response envelope: `{ success: boolean, data?: T, error?: string, meta?: {} }`
 - Auth: Bearer token via Supabase Auth
+
+**Path quirk:** Web's API singleton lives at `apps/web/src/lib/api.ts` (with `src/`). Mobile's lives at `apps/mobile/lib/api.ts` (no `src/`). When referencing in prompts or commits, use the actual paths — these aren't symmetric.
 
 ### Bumping `@notifio/shared`
 
