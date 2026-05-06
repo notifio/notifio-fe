@@ -12,7 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@notifio/shared": "^0.28.0"
+    "@notifio/shared": "^0.29.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
