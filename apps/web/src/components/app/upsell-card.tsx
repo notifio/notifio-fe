@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-import { useMembership } from '@/hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
 
 interface UpsellCardProps {
   variant?: 'inline' | 'sidebar';

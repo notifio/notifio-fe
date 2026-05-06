@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import type { MembershipResponse } from '@/hooks/use-membership';
+import type { MembershipResponse } from '@notifio/shared/types';
+
 import { api } from '@/lib/api';
 
 const MAX_POLLS = 20;
@@ -27,6 +28,11 @@ export default function CheckoutSuccessPage() {
       if (cancelled) return;
 
       try {
+        // api-client's `getMembership()` still returns the flat
+        // `MembershipDetails` shape; shared's `NotifioApi` interface
+        // narrows it to nested `MembershipResponse`. Until api-client
+        // is regenerated, the cast bridges the gap for direct calls
+        // that bypass `useMembership()`.
         const data = await api.getMembership() as unknown as MembershipResponse;
         if (cancelled) return;
 

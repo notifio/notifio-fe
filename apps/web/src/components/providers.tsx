@@ -5,7 +5,10 @@ import { NextIntlClientProvider, useLocale } from "next-intl";
 import { ThemeProvider } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { ApiProvider, type NotifioApi } from "@notifio/shared/hooks";
+
 import { ToastProvider } from "@/components/ui/toast";
+import { api } from "@/lib/api";
 import { makeQueryClient } from "@/lib/query-client";
 
 type Props = {
@@ -47,9 +50,18 @@ export function Providers({ children, locale, messages }: Props) {
       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Bratislava">
         <QueryClientProvider client={queryClient}>
           <LocaleInvalidator />
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          {/*
+            Cast: api-client's `PollenResponse.level` is `string` while
+            shared narrows it to a union (`low | moderate | high | very_high`).
+            Runtime values match; this is type drift between packages
+            that pre-dates this refactor. Track in api-client/shared
+            type alignment work — out of scope for C2.
+          */}
+          <ApiProvider api={api as unknown as NotifioApi}>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </ApiProvider>
         </QueryClientProvider>
       </NextIntlClientProvider>
     </ThemeProvider>

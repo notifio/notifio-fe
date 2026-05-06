@@ -11,10 +11,10 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
 import type { UserLocation } from '@notifio/api-client';
+import { useMembership } from '@notifio/shared/hooks';
 
 import { LocationModal } from '@/components/app/location-modal';
 import { useLocations } from '@/hooks/use-locations';
-import { useMembership } from '@/hooks/use-membership';
 
 export function LocationsSection() {
   const t = useTranslations('profile');

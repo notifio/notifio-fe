@@ -9,8 +9,9 @@ import {
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
+import { useUserEvents } from '@notifio/shared/hooks';
+
 import { useToast } from '@/components/ui/toast';
-import { useUserEvents } from '@/hooks/use-user-events';
 import { api } from '@/lib/api';
 
 export function EventsSection() {
@@ -21,7 +22,7 @@ export function EventsSection() {
     events,
     isLoading: eventsLoading,
     updateEvent,
-    refetch,
+    refresh: refetch,
   } = useUserEvents();
 
   const [resolvingId, setResolvingId] = useState<string | null>(null);

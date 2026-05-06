@@ -4,6 +4,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
+import { useMembership } from '@notifio/shared/hooks';
 import { MAP_FILTER_SOURCES, type MapPinSource, type MapPinTrafficType } from '@notifio/shared/map';
 
 import { DashboardMap } from '@/components/app/dashboard-map';
@@ -12,7 +13,6 @@ import { MapAdBanner } from '@/components/app/map-ad-banner';
 import { MapFilterBar } from '@/components/app/map-filter-bar';
 import { UpsellModal } from '@/components/app/upsell-modal';
 import { useMapData } from '@/hooks/use-map-data';
-import { useMembership } from '@/hooks/use-membership';
 import { useUserLocation } from '@/hooks/use-user-location';
 
 const ALL_TRAFFIC_TYPES: MapPinTrafficType[] = [

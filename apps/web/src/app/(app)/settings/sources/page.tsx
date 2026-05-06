@@ -9,8 +9,9 @@ import {
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 
+import { useSources } from '@notifio/shared/hooks';
+
 import { StarRating } from '@/components/ui/star-rating';
-import { useSources } from '@/hooks/use-sources';
 import { cn } from '@/lib/utils';
 
 export default function SourcesPage() {
