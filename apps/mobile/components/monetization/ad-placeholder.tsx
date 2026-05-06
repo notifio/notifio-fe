@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { useMembership } from '../../hooks/use-membership';
+import { useMembership } from '@notifio/shared/hooks';
+
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 

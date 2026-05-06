@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import type { UserEvent } from '@notifio/api-client';
+import { useUserEvents } from '@notifio/shared/hooks';
 import { sharedColors } from '@notifio/ui';
 
-import { useUserEvents } from '../../hooks/use-user-events';
 import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';

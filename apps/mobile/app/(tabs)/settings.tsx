@@ -19,6 +19,8 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useMembership } from '@notifio/shared/hooks';
+
 import { Card } from '../../components/ui/card';
 import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
@@ -26,7 +28,6 @@ import { SectionLabel } from '../../components/ui/section-label';
 import { SettingsRow } from '../../components/ui/settings-row';
 import { TierBadge } from '../../components/ui/tier-badge';
 import { useAuth } from '../../hooks/use-auth';
-import { useMembership } from '../../hooks/use-membership';
 import { confirmDestructive } from '../../lib/confirm';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -77,7 +78,7 @@ export default function SettingsScreen() {
                 {email}
               </Text>
             </View>
-            <TierBadge tier={tier} />
+            <TierBadge tier={tier ?? 'FREE'} />
             <IconChevronRight size={18} color={colors.textMuted} />
           </View>
         </Card>
@@ -86,7 +87,7 @@ export default function SettingsScreen() {
       {/* Account */}
       <SectionLabel label={t('settings.account')} />
       <Card>
-        <SettingsRow icon={IconCrown} label={t('settings.subscription')} value={tier} onPress={() => router.push('/settings/subscription')} />
+        <SettingsRow icon={IconCrown} label={t('settings.subscription')} value={tier ?? undefined} onPress={() => router.push('/settings/subscription')} />
         <SettingsRow icon={IconMapPin} label={t('settings.locations')} onPress={() => router.push('/settings/locations')} />
       </Card>
 

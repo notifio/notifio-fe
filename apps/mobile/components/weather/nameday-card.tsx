@@ -2,25 +2,33 @@ import { IconCake } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { NamedayResponse } from '@notifio/api-client';
-
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
+interface UpcomingDay {
+  date: string;
+  names: string[];
+}
+
 interface NamedayCardProps {
-  nameday: NamedayResponse | null;
+  /**
+   * Flattened nameday data — matches the shape returned by the shared
+   * `useNameday` hook. The card takes pre-extracted fields rather than
+   * the raw API response so the consumer doesn't have to dig into a
+   * nested `today.names` / `upcoming[0].names` shape.
+   */
+  todayNames: string[];
+  upcomingNames: UpcomingDay[];
   isLoading: boolean;
 }
 
-export function NamedayCard({ nameday, isLoading }: NamedayCardProps) {
+export function NamedayCard({ todayNames, upcomingNames, isLoading }: NamedayCardProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
 
-  if (isLoading || !nameday) return null;
+  if (isLoading) return null;
 
-  const todayNames = nameday.today.names;
-  const upcoming = nameday.upcoming;
-  const firstUpcoming = upcoming?.[0];
+  const firstUpcoming = upcomingNames[0];
   const tomorrowNames = firstUpcoming ? firstUpcoming.names : null;
 
   if (todayNames.length === 0) return null;

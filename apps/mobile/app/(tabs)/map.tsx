@@ -11,6 +11,7 @@ import type { Region } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SLOVAKIA_CENTER } from '@notifio/shared/geo';
+import { useMembership } from '@notifio/shared/hooks';
 import {
   MAP_FILTER_SOURCES,
   TRAFFIC_SUBCATEGORIES,
@@ -29,7 +30,6 @@ import { PinCallout } from '../../components/map/pin-callout';
 import { UpsellSheet } from '../../components/monetization/upsell-sheet';
 import { FAB } from '../../components/ui/fab';
 import { useMapData } from '../../hooks/use-map-data';
-import { useMembership } from '../../hooks/use-membership';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { shadows, theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
