@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
-import { ApiProvider, type NotifioApi } from '@notifio/shared/hooks';
+import { ApiProvider } from '@notifio/shared/hooks';
 
 import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
@@ -133,13 +133,7 @@ export default function RootLayout() {
       }}
     >
       <AppStateBridge />
-      {/*
-        ApiProvider feeds the shared hooks the platform's api singleton.
-        Cast via `unknown` because @notifio/api-client's types are slightly
-        wider than the structural NotifioApi interface (e.g. PollenResponse.level
-        is `string` here vs the narrower union in shared). Runtime values match.
-      */}
-      <ApiProvider api={api as unknown as NotifioApi}>
+      <ApiProvider api={api}>
         <SafeAreaProvider>
           <ThemeProvider>
             <AuthProvider>

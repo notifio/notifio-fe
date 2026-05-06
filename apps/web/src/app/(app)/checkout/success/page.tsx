@@ -28,12 +28,7 @@ export default function CheckoutSuccessPage() {
       if (cancelled) return;
 
       try {
-        // api-client's `getMembership()` still returns the flat
-        // `MembershipDetails` shape; shared's `NotifioApi` interface
-        // narrows it to nested `MembershipResponse`. Until api-client
-        // is regenerated, the cast bridges the gap for direct calls
-        // that bypass `useMembership()`.
-        const data = await api.getMembership() as unknown as MembershipResponse;
+        const data = await api.getMembership();
         if (cancelled) return;
 
         if (data.current.tier !== 'FREE') {
