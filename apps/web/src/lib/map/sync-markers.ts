@@ -46,6 +46,10 @@ export interface SyncMarkersParams {
   onTogglePin: (pinId: string) => void;
   onClosePin: () => void;
   onSyncAgain: () => void;
+  /** F2: cluster tap surfaces resolved leaves to the parent so it can
+   *  open the stacked-pin sheet. Replaces the previous zoom-on-tap UX
+   *  to mirror mobile (single deterministic action). */
+  onClusterTap?: (children: MapPin[]) => void;
 }
 
 export function syncMarkers({
@@ -62,6 +66,7 @@ export function syncMarkers({
   onTogglePin,
   onClosePin,
   onSyncAgain,
+  onClusterTap,
 }: SyncMarkersParams): void {
   const features = map.querySourceFeatures(PIN_SOURCE_ID);
   const clusteredFeatures = features.filter((f) => f.properties?.cluster);
@@ -106,7 +111,27 @@ export function syncMarkers({
         timestamp: new Date().toISOString(),
       };
 
-      const zoomToCluster = () => {
+      const handleClusterClick = () => {
+        // F2: if a parent registered onClusterTap, surface the leaves
+        // and let it open the stacked-pin sheet (mobile parity). If
+        // not, fall back to the legacy zoom-in behaviour.
+        if (onClusterTap) {
+          source
+            .getClusterLeaves(clusterId, count, 0)
+            .then((leaves) => {
+              const matched = leaves
+                .map((leaf) => {
+                  const id = leaf.properties?.id as string | undefined;
+                  return id ? pins.find((p) => p.id === id) : undefined;
+                })
+                .filter((p): p is MapPin => Boolean(p) && !p!.isTeaser);
+              if (matched.length > 0) onClusterTap(matched);
+            })
+            .catch(() => {
+              // Leaf lookup failed — silently no-op.
+            });
+          return;
+        }
         source.getClusterExpansionZoom(clusterId).then((zoom) => {
           map.easeTo({ center: coords, zoom: zoom + 1 });
           map.once('moveend', () => {
@@ -121,7 +146,7 @@ export function syncMarkers({
         locale,
         labels,
         clusterCount: count,
-        onToggle: zoomToCluster,
+        onToggle: handleClusterClick,
         onClose: () => {},
       });
 
@@ -151,7 +176,7 @@ export function syncMarkers({
                 locale,
                 labels,
                 clusterCount: count,
-                onToggle: zoomToCluster,
+                onToggle: handleClusterClick,
                 onClose: () => {},
               });
             }

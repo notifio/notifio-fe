@@ -19,10 +19,11 @@ export function PinCallout({ pin }: PinCalloutProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language as RelativeTimeLocale;
   const style = MAP_PIN_STYLES[pin.source];
-  // Traffic incidents have no /events/{id} page (pin.id is a TomTom
-  // incidentId, not an eventId). Teasers never render this callout —
-  // map.tsx skips <Callout> entirely when pin.isTeaser.
-  const showViewDetails = pin.source !== 'traffic' && !!pin.id;
+  // Post-M2: TomTom incidents now flow through `/events` with proper
+  // UUIDs, so traffic pins navigate to /events/{id} like every other
+  // category. Teasers never render this callout — map.tsx skips
+  // <Callout> entirely when pin.isTeaser.
+  const showViewDetails = !!pin.id;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

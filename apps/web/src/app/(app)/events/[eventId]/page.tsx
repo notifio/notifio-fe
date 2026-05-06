@@ -183,7 +183,21 @@ export default function EventDetailPage() {
 
         {/* Details table */}
         <div className="mt-6 space-y-3">
-          <DetailRow label={t('detail.source')} value={t('detail.communityReport')} />
+          <DetailRow
+            label={t('detail.source')}
+            value={
+              // BE returns source object on /events/{id} but the
+              // api-client `EventDetail` interface is stale (only has
+              // `sourceId`). Cast locally — proper fix is to bump
+              // api-client to mirror shared 0.29's nested `source`
+              // shape (tracked separately).
+              (event as EventDetail & { source?: { name?: string; label?: string } }).source
+                ?.name ??
+              (event as EventDetail & { source?: { name?: string; label?: string } }).source
+                ?.label ??
+              t('detail.communityReport')
+            }
+          />
           <DetailRow
             label={t('detail.reported')}
             value={<RelativeTime iso={event.createdAt} />}

@@ -57,13 +57,20 @@ function flowToGeoJSON(
 function pinsToGeoJSON(
   pins: MapPin[],
   activeFilters: Set<MapPinSource>,
-  activeTrafficTypes: Set<MapPinTrafficType>
+  activeTrafficTypes: Set<MapPinTrafficType>,
+  showActive: boolean,
+  showUpcoming: boolean,
 ): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: 'FeatureCollection',
     features: pins
       .filter((p) => {
         if (p.isTeaser) return true; // teasers always render — they're the upsell hook
+        // Lifecycle gates. `showUpcoming=false` is also enforced upstream
+        // in normalizeMapPins, so this is mostly defense-in-depth for the
+        // active toggle (no upstream equivalent for that one).
+        if (p.status === 'active' && !showActive) return false;
+        if (p.status === 'upcoming' && !showUpcoming) return false;
         if (!activeFilters.has(p.source)) return false;
         if (p.source === 'traffic') {
           return p.incidentType ? activeTrafficTypes.has(p.incidentType) : false;
@@ -98,6 +105,13 @@ interface DashboardMapProps {
   /** Step 8: invoked when a teaser pin is tapped. Parent opens the
    *  upsell modal with this source. */
   onTeaserTap?: (source: MapPinSource) => void;
+  /** F2: invoked when a cluster is tapped. Parent receives the cluster
+   *  leaves (resolved to MapPins) and opens the stacked-pin sheet. */
+  onClusterTap?: (children: MapPin[]) => void;
+  /** β filter: whether active-status pins should render. Default true. */
+  showActive?: boolean;
+  /** β filter: whether upcoming-status pins should render. Default false. */
+  showUpcoming?: boolean;
 }
 
 export function DashboardMap({
@@ -116,6 +130,9 @@ export function DashboardMap({
   infoOverlay,
   onCloseOverlay,
   onTeaserTap,
+  onClusterTap,
+  showActive = true,
+  showUpcoming = false,
 }: DashboardMapProps) {
   const t = useTranslations('map');
   const locale = useLocale() as RelativeTimeLocale;
@@ -149,6 +166,8 @@ export function DashboardMap({
   onCloseOverlayRef.current = onCloseOverlay;
   const onTeaserTapRef = useRef(onTeaserTap);
   onTeaserTapRef.current = onTeaserTap;
+  const onClusterTapRef = useRef(onClusterTap);
+  onClusterTapRef.current = onClusterTap;
   const debouncedCenterChange = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Marker sync ──────────────────────────────────────────────────────
@@ -198,6 +217,7 @@ export function DashboardMap({
       },
       onClosePin: () => setExpandedPinId(null),
       onSyncAgain: () => doSyncMarkers.current(map),
+      onClusterTap: (children) => onClusterTapRef.current?.(children),
     });
   });
 
@@ -237,7 +257,7 @@ export function DashboardMap({
       map.addSource(FLOW_SOURCE_ID, createFlowSource(flowToGeoJSON(flowSegments)));
       map.addLayer(TRAFFIC_FLOW_LAYER);
 
-      map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes)));
+      map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes, showActive, showUpcoming)));
       map.addLayer(PIN_DATA_LAYER);
 
       sourceReady.current = true;
@@ -324,9 +344,9 @@ export function DashboardMap({
 
     const source = map.getSource(PIN_SOURCE_ID) as maplibregl.GeoJSONSource | undefined;
     if (source) {
-      source.setData(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes));
+      source.setData(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes, showActive, showUpcoming));
     }
-  }, [pins, activeFilters, activeTrafficTypes]);
+  }, [pins, activeFilters, activeTrafficTypes, showActive, showUpcoming]);
 
   // Update traffic flow data
   useEffect(() => {
@@ -408,7 +428,7 @@ export function DashboardMap({
         }
         // Re-add pin source — HTML markers are re-created by syncMarkers
         if (!map.getSource(PIN_SOURCE_ID)) {
-          map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes)));
+          map.addSource(PIN_SOURCE_ID, createPinSource(pinsToGeoJSON(pins, activeFilters, activeTrafficTypes, showActive, showUpcoming)));
           map.addLayer(PIN_DATA_LAYER);
           sourceReady.current = true;
         }

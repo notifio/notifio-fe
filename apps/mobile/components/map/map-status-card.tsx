@@ -25,7 +25,11 @@ export function MapStatusCard({ alertCount }: MapStatusCardProps) {
           ) : (
             <Icon icon={IconBell} size={18} color={colors.textMuted} />
           )}
-          <Text style={[styles.text, { color: hasAlerts ? colors.text : colors.textMuted }]}>
+          <Text
+            style={[styles.text, { color: hasAlerts ? colors.text : colors.textMuted }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {hasAlerts
               ? t('map.activeIncidents', { count: alertCount })
               : t('map.noActiveIncidents')}
@@ -57,7 +61,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.full,
   },
   text: {
-    fontSize: theme.fontSize.md,
+    flex: 1,
+    fontSize: theme.fontSize.sm,
     ...theme.font.medium,
   },
 });
