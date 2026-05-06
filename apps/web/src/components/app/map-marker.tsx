@@ -1,3 +1,4 @@
+import { IconCalendar, IconChevronRight, IconX } from '@tabler/icons-react';
 import Link from 'next/link';
 
 import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
@@ -24,9 +25,26 @@ interface MapMarkerProps {
 // anchor: 'bottom' always resolves to the same pixel regardless of state.
 const PIN_W = 38;
 const PIN_H = 50;
-const TRIANGLE_H = 6;
 
-function TeardropSvg({ style, iconColor }: { style: PinStyle; iconColor: string }) {
+// D1 callout palette (mobile-canonical dark navy card).
+const CALLOUT_BG = '#162D4F';
+const CALLOUT_TEXT = '#FFFFFF';
+const CALLOUT_SUBTLE = '#8B9BB5';
+const CALLOUT_DIVIDER = 'rgba(255,255,255,0.08)';
+const CALLOUT_X_BG = 'rgba(255,255,255,0.08)';
+const ACCENT = '#FF7A2F';
+const PILL_GREY_BG = 'rgba(255,255,255,0.10)';
+const PILL_GREY_TEXT = '#B6C4DA';
+
+function TeardropSvg({
+  style,
+  iconColor,
+  showUpcomingBadge,
+}: {
+  style: PinStyle;
+  iconColor: string;
+  showUpcomingBadge: boolean;
+}) {
   const Icon = style.icon;
   return (
     <div style={{ position: 'relative', width: `${PIN_W}px`, height: `${PIN_H}px` }}>
@@ -60,6 +78,26 @@ function TeardropSvg({ style, iconColor }: { style: PinStyle; iconColor: string 
       >
         <Icon size={18} color={iconColor} strokeWidth={2.5} />
       </div>
+      {/* D2 calendar badge for upcoming pins (variant B) */}
+      {showUpcomingBadge && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '-3px',
+            right: '-3px',
+            width: '16px',
+            height: '16px',
+            borderRadius: '50%',
+            backgroundColor: '#162D4F',
+            border: '1.5px solid #FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <IconCalendar size={10} color="#FFFFFF" stroke={2.4} />
+        </div>
+      )}
     </div>
   );
 }
@@ -87,6 +125,10 @@ export function MapMarker({
   // Fixed-size wrapper: MapLibre anchor: 'bottom' places bottom-center at the
   // map coordinate.  Because this wrapper never changes size the anchor pixel
   // stays rock-steady whether the pin is collapsed, expanded, or a cluster.
+  // B6: when expanded, raise z-index so the callout overlays neighbouring
+  // pins instead of being clipped by them.
+  const isUpcoming = !pin.isTeaser && pin.status === 'upcoming';
+
   return (
     <div
       style={{
@@ -94,191 +136,234 @@ export function MapMarker({
         width: `${PIN_W}px`,
         height: `${PIN_H}px`,
         overflow: 'visible',
+        zIndex: showExpanded ? 1000 : undefined,
         ...teaserStyle,
       }}
     >
-      {showExpanded ? (
-        <>
-          {/* Expanded info pill — grows upward & to the right */}
+      {/* Always render the pin so the callout has a visual anchor */}
+      <button
+        type="button"
+        aria-label={pin.title}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
+        style={{
+          cursor: 'pointer',
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          position: 'absolute',
+          inset: 0,
+        }}
+      >
+        <TeardropSvg
+          style={style}
+          iconColor={iconColor}
+          showUpcomingBadge={isUpcoming}
+        />
+
+        {/* Cluster red badge */}
+        {clusterCount != null && clusterCount > 1 && (
           <div
-            onClick={(e) => e.stopPropagation()}
             style={{
               position: 'absolute',
-              bottom: `${TRIANGLE_H}px`,
-              left: '0',
+              top: '-4px',
+              right: '-4px',
+              background: '#FF3B30',
+              color: 'white',
+              fontSize: '11px',
+              fontWeight: 600,
+              minWidth: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px solid white',
+              padding: '0 3px',
+              lineHeight: 1,
+            }}
+          >
+            {clusterCount}
+          </div>
+        )}
+      </button>
+
+      {/* D1 — Mobile-canonical callout: dark navy card, dot+title+subtitle,
+          time + status pill, X close, border-top + orange details CTA. */}
+      {showExpanded && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            position: 'absolute',
+            bottom: `${PIN_H + 8}px`,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'max-content',
+            maxWidth: '320px',
+            minWidth: '220px',
+            backgroundColor: CALLOUT_BG,
+            color: CALLOUT_TEXT,
+            borderRadius: '16px',
+            padding: '14px 16px',
+            boxShadow: '0 12px 32px rgba(0,0,0,0.35)',
+            animation: 'pin-expand 200ms ease-out',
+            transformOrigin: 'bottom center',
+          }}
+        >
+          {/* Close X */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            aria-label="close"
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              backgroundColor: CALLOUT_X_BG,
+              border: 'none',
+              cursor: 'pointer',
+              color: CALLOUT_TEXT,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+            }}
+          >
+            <IconX size={14} />
+          </button>
+
+          {/* Title row: colored dot + title */}
+          <div
+            style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: style.color,
-              borderRadius: '12px',
-              padding: '8px 12px',
-              width: 'max-content',
-              maxWidth: '280px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-              cursor: 'default',
-              animation: 'pin-expand 250ms ease-out',
-              transformOrigin: 'bottom left',
+              paddingRight: '28px',
             }}
           >
-            {/* Content */}
-            <div style={{ flex: 1, minWidth: 0, color: '#FFFFFF' }}>
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {pin.title}
-              </div>
-              {pin.description && (
-                <div
-                  style={{
-                    fontSize: '10px',
-                    opacity: 0.8,
-                    marginTop: '1px',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {pin.description}
-                </div>
-              )}
-              <div
-                style={{
-                  fontSize: '10px',
-                  opacity: 0.85,
-                  marginTop: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                {pin.locality && <span>{pin.locality}</span>}
-                <span
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    borderRadius: '4px',
-                    padding: '1px 4px',
-                    fontSize: '9px',
-                    fontWeight: 600,
-                  }}
-                >
-                  {pin.status === 'upcoming' ? labels.upcoming : labels.active}
-                </span>
-              </div>
-              <div style={{ fontSize: '10px', opacity: 0.65, marginTop: '2px' }}>
-                {formatRelativeTime(pin.timestamp, locale)}
-              </div>
-
-              {/* Traffic incidents have no /events/{id} page (pin.id is a
-                  TomTom incidentId, not an eventId). Teasers already
-                  short-circuit before showExpanded above. */}
-              {pin.source !== 'traffic' && pin.id && (
-                <Link
-                  href={`/events/${pin.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    display: 'block',
-                    marginTop: '8px',
-                    padding: '6px 10px',
-                    backgroundColor: 'rgba(255,255,255,0.18)',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: '#FFFFFF',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                  }}
-                >
-                  {labels.viewDetails}
-                </Link>
-              )}
-            </div>
-
-            {/* Close button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
+            <span
               style={{
-                background: 'rgba(255,255,255,0.2)',
-                border: 'none',
+                width: '8px',
+                height: '8px',
                 borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: '#FFFFFF',
-                fontSize: '12px',
-                lineHeight: 1,
+                backgroundColor: style.color,
                 flexShrink: 0,
               }}
-            >
-              &times;
-            </button>
-          </div>
-
-          {/* Triangle — pinned to bottom-center of wrapper */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '0',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 0,
-              height: 0,
-              borderLeft: `${TRIANGLE_H}px solid transparent`,
-              borderRight: `${TRIANGLE_H}px solid transparent`,
-              borderTop: `${TRIANGLE_H}px solid ${style.color}`,
-            }}
-          />
-        </>
-      ) : (
-        // Collapsed: teardrop with icon
-        <button
-          type="button"
-          aria-label={pin.title}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
-          style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
-        >
-          <TeardropSvg style={style} iconColor={iconColor} />
-
-          {/* Cluster red badge */}
-          {clusterCount != null && clusterCount > 1 && (
-            <div
+            />
+            <span
               style={{
-                position: 'absolute',
-                top: '-4px',
-                right: '-4px',
-                background: '#FF3B30',
-                color: 'white',
-                fontSize: '11px',
+                fontSize: '14px',
                 fontWeight: 600,
-                minWidth: '18px',
-                height: '18px',
-                borderRadius: '9px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid white',
-                padding: '0 3px',
-                lineHeight: 1,
+                lineHeight: 1.3,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}
             >
-              {clusterCount}
+              {pin.title}
+            </span>
+          </div>
+
+          {/* Subtitle */}
+          {pin.description && (
+            <div
+              style={{
+                marginTop: '4px',
+                fontSize: '13px',
+                color: CALLOUT_SUBTLE,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {pin.description}
             </div>
           )}
-        </button>
+
+          {/* Time + status pill row */}
+          <div
+            style={{
+              marginTop: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '10px',
+            }}
+          >
+            <span style={{ fontSize: '12px', color: CALLOUT_SUBTLE }}>
+              {formatRelativeTime(pin.timestamp, locale)}
+            </span>
+            {pin.status === 'upcoming' ? (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  padding: '3px 8px',
+                  borderRadius: '999px',
+                  backgroundColor: PILL_GREY_BG,
+                  color: PILL_GREY_TEXT,
+                }}
+              >
+                <IconCalendar size={11} />
+                {labels.upcoming}
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  padding: '3px 8px',
+                  borderRadius: '999px',
+                  backgroundColor: 'rgba(255,122,47,0.15)',
+                  color: ACCENT,
+                }}
+              >
+                {labels.active}
+              </span>
+            )}
+          </div>
+
+          {/* Details CTA — post-M3: shows for any pin with an id (traffic
+              now flows through /events with proper UUIDs). */}
+          {pin.id && (
+            <>
+              <div
+                style={{
+                  height: '1px',
+                  backgroundColor: CALLOUT_DIVIDER,
+                  margin: '12px -16px 10px',
+                }}
+              />
+              <Link
+                href={`/events/${pin.id}`}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: ACCENT,
+                  textDecoration: 'none',
+                }}
+              >
+                {labels.viewDetails}
+                <IconChevronRight size={14} />
+              </Link>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

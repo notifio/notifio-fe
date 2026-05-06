@@ -81,12 +81,24 @@ export function MapPanel({
   // Step 8: source for the upsell modal — set by teaser pin taps and
   // locked filter row taps; cleared on close.
   const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
+  // β filter sheet "Show on map" lifecycle toggles. Mirror the standalone
+  // /map page; dashboard panel keeps the same defaults.
+  const [showActive, setShowActive] = useState(true);
+  const [showUpcoming, setShowUpcoming] = useState(false);
   const { tier } = useMembership();
   // Anonymous sessions return tier `null`; treat as FREE for gating.
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';
 
   const effectiveCenter = mapCenter ?? userLocation ?? DEFAULT_LOCATION;
-  const { pins, flowSegments, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData(effectiveCenter);
+  const { pins, flowSegments, isLoading: mapLoading, error: mapError, refresh: mapRefresh } = useMapData(
+    effectiveCenter,
+    { showUpcoming, tier: effectiveTier },
+  );
+
+  const clearCategoryFilters = useCallback(() => {
+    setActiveFilters(new Set(MAP_FILTER_SOURCES));
+    setActiveTrafficTypes(new Set(ALL_TRAFFIC_TYPES));
+  }, []);
 
   // Fetch event detail when a notification is selected
   useEffect(() => {
@@ -209,6 +221,11 @@ export function MapPanel({
         pins={pins}
         tier={effectiveTier}
         onLockedRowTap={setUpsellSource}
+        showActive={showActive}
+        showUpcoming={showUpcoming}
+        onToggleShowActive={setShowActive}
+        onToggleShowUpcoming={setShowUpcoming}
+        onClearCategoryFilters={clearCategoryFilters}
       />
       <DashboardMap
         pins={pins}

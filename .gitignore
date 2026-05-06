@@ -27,3 +27,13 @@ yarn-error.log*
 # Mobile icon generator artifacts (regenerated from sources)
 apps/mobile/scripts/osm-cache/
 apps/mobile/scripts/design-proposals/
+temp/
+
+# Local EAS build artifacts
+*.ipa
+*.apk
+*.aab
+build/
+
+# Claude Code local state (settings, worktrees)
+.claude/

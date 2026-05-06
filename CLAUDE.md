@@ -213,6 +213,12 @@ Practical rule: any commit that bumps the root `@notifio/shared` dep also touche
 - Toast system: `<ToastProvider>` in providers, `useToast()` hook with `success`/`error`/`warning`/`info` methods
 - Global `unhandledrejection` listener in `api.ts` intercepts known error codes
 
+## Git Conventions
+
+- Never push to `main` directly. All work goes on feature branches → PR → merge after CI.
+- Branch naming: `chore/<topic>`, `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `refactor/<topic>`.
+- Single commit per batch is OK; squash on merge if PR has multiple.
+
 ## Environment Variables
 
 ### Web (`apps/web/.env.local`)
