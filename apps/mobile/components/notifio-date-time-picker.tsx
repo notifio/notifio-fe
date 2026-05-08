@@ -1,7 +1,15 @@
 import { IconCalendar } from '@tabler/icons-react-native';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { theme } from '../lib/theme';
 import { useAppTheme } from '../providers/theme-provider';
@@ -14,6 +22,11 @@ interface NotifioDateTimePickerProps {
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
+const HOUR_VALUES = Array.from({ length: 24 }, (_, i) => i);
+const MINUTE_VALUES = Array.from({ length: 60 }, (_, i) => i);
+const WHEEL_ROW_HEIGHT = 36;
+const WHEEL_VISIBLE_ROWS = 5;
 
 function startOfDay(d: Date): Date {
   const c = new Date(d);
@@ -55,8 +68,6 @@ export function NotifioDateTimePicker({ value, onChange }: NotifioDateTimePicker
 
   const currentHour = value?.getHours() ?? 9;
   const currentMinute = value?.getMinutes() ?? 0;
-  const [hourInput, setHourInput] = useState(pad(currentHour));
-  const [minuteInput, setMinuteInput] = useState(pad(currentMinute));
 
   const selectedDay =
     value && value.getFullYear() === calYear && value.getMonth() === calMonth
@@ -82,8 +93,6 @@ export function NotifioDateTimePicker({ value, onChange }: NotifioDateTimePicker
   const setTime = (h: number, m: number) => {
     const clampedH = Math.max(0, Math.min(23, h));
     const clampedM = Math.max(0, Math.min(59, m));
-    setHourInput(pad(clampedH));
-    setMinuteInput(pad(clampedM));
     writeValue(value ?? today, clampedH, clampedM);
   };
 
@@ -139,29 +148,17 @@ export function NotifioDateTimePicker({ value, onChange }: NotifioDateTimePicker
 
           <View style={styles.timeRow}>
             <Text style={[styles.timeLabel, { color: '#5A6A85' }]}>{t('picker.time')}</Text>
-            <View style={styles.timeBoxGroup}>
-              <TimeBox
-                value={hourInput}
-                onChangeText={(next) => {
-                  setHourInput(next);
-                  if (next.length === 0) return;
-                  const n = Number(next);
-                  if (Number.isFinite(n)) setTime(Math.max(0, Math.min(23, n)), currentMinute);
-                }}
-                onBlur={() => setHourInput(pad(currentHour))}
-                max={23}
+            <View style={styles.wheelGroup}>
+              <Wheel
+                values={HOUR_VALUES}
+                value={currentHour}
+                onChange={(h) => setTime(h, currentMinute)}
               />
               <Text style={styles.timeColon}>:</Text>
-              <TimeBox
-                value={minuteInput}
-                onChangeText={(next) => {
-                  setMinuteInput(next);
-                  if (next.length === 0) return;
-                  const n = Number(next);
-                  if (Number.isFinite(n)) setTime(currentHour, Math.max(0, Math.min(59, n)));
-                }}
-                onBlur={() => setMinuteInput(pad(currentMinute))}
-                max={59}
+              <Wheel
+                values={MINUTE_VALUES}
+                value={currentMinute}
+                onChange={(m) => setTime(currentHour, m)}
               />
             </View>
           </View>
@@ -217,30 +214,77 @@ export function NotifioDateTimePicker({ value, onChange }: NotifioDateTimePicker
   );
 }
 
-interface TimeBoxProps {
-  value: string;
-  onChangeText: (next: string) => void;
-  onBlur: () => void;
-  max: number;
+// ── Scroll wheel ───────────────────────────────────────────────────
+
+interface WheelProps {
+  values: number[];
+  value: number;
+  onChange: (next: number) => void;
 }
 
-function TimeBox({ value, onChangeText, onBlur, max }: TimeBoxProps) {
+/**
+ * iOS-style scroll wheel column. Padding rows above/below push the
+ * central row into the viewport; `snapToInterval` locks the scroll
+ * position to row boundaries; the central row gets larger font + full
+ * opacity, neighbours render smaller and dimmer. `onMomentumScrollEnd`
+ * commits the new value to the parent.
+ */
+function Wheel({ values, value, onChange }: WheelProps) {
+  const scrollRef = useRef<ScrollView>(null);
+  const isFirstScroll = useRef(true);
+
+  // Drive scroll position from the external value so quick-chip taps
+  // animate the wheel to the new time.
+  useEffect(() => {
+    const idx = values.indexOf(value);
+    if (idx < 0) return;
+    scrollRef.current?.scrollTo({
+      y: idx * WHEEL_ROW_HEIGHT,
+      animated: !isFirstScroll.current,
+    });
+    isFirstScroll.current = false;
+  }, [value, values]);
+
+  const handleMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const idx = Math.round(e.nativeEvent.contentOffset.y / WHEEL_ROW_HEIGHT);
+    const clamped = Math.max(0, Math.min(values.length - 1, idx));
+    const next = values[clamped]!;
+    if (next !== value) onChange(next);
+  };
+
+  const padRows = Math.floor(WHEEL_VISIBLE_ROWS / 2);
+
   return (
-    <TextInput
-      value={value}
-      onChangeText={(raw) => {
-        const cleaned = raw.replace(/\D/g, '').slice(0, 2);
-        const n = Number(cleaned);
-        if (cleaned === '' || (Number.isFinite(n) && n <= max)) {
-          onChangeText(cleaned);
-        }
-      }}
-      onBlur={onBlur}
-      keyboardType="number-pad"
-      maxLength={2}
-      selectTextOnFocus
-      style={styles.timeBox}
-    />
+    <View style={styles.wheel}>
+      <View pointerEvents="none" style={styles.wheelCenter} />
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={WHEEL_ROW_HEIGHT}
+        decelerationRate="fast"
+        onMomentumScrollEnd={handleMomentumEnd}
+        contentContainerStyle={{ paddingVertical: padRows * WHEEL_ROW_HEIGHT }}
+      >
+        {values.map((v) => {
+          const focused = v === value;
+          return (
+            <View key={v} style={styles.wheelRow}>
+              <Text
+                style={[
+                  styles.wheelLabel,
+                  {
+                    fontSize: focused ? 22 : 16,
+                    opacity: focused ? 1 : 0.5,
+                  },
+                ]}
+              >
+                {pad(v)}
+              </Text>
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -276,22 +320,34 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.xs,
     ...theme.font.medium,
   },
-  timeBoxGroup: {
+  wheelGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: theme.radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.1)',
-    backgroundColor: '#0B1B32',
+    gap: theme.spacing.sm,
   },
-  timeBox: {
-    width: 40,
-    height: 36,
-    textAlign: 'center',
-    fontSize: 20,
+  wheel: {
+    width: 64,
+    height: WHEEL_ROW_HEIGHT * WHEEL_VISIBLE_ROWS,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  wheelCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: WHEEL_ROW_HEIGHT * Math.floor(WHEEL_VISIBLE_ROWS / 2),
+    height: WHEEL_ROW_HEIGHT,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.15)',
+    zIndex: 1,
+  },
+  wheelRow: {
+    height: WHEEL_ROW_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wheelLabel: {
     color: '#FFFFFF',
     ...theme.font.semibold,
   },
