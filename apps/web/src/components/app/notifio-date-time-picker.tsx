@@ -276,9 +276,7 @@ export function NotifioDateTimePicker({
       </button>
 
       {open && isDesktop && (
-        <div className="mt-2 max-h-[420px] overflow-y-auto rounded-xl bg-[#0E223F] p-4 text-white">
-          {body}
-        </div>
+        <div className="mt-2 rounded-xl bg-[#0E223F] p-4 text-white">{body}</div>
       )}
 
       {open && !isDesktop && <Drawer onClose={() => setOpen(false)}>{body}</Drawer>}
