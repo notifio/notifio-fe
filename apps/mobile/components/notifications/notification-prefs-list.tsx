@@ -111,17 +111,13 @@ export function NotificationPrefsList({
 
             {hasChildren && isExpanded && (
               <View>
-                {category.items.map((item) => {
-                  // BE returns `subcategoryName` (translated) but the shared
-                  // schema doesn't model it yet — read defensively.
-                  const subName = (item as { subcategoryName?: string | null }).subcategoryName;
-                  return (
+                {category.items.map((item) => (
                   <View
                     key={item.preferenceId}
                     style={[styles.subRow, { borderTopColor: colors.border }]}
                   >
                     <Text style={[styles.subTitle, { color: colors.textSecondary }]} numberOfLines={1}>
-                      {subName ?? item.subcategoryCode ?? category.categoryName}
+                      {item.subcategoryName ?? item.subcategoryCode ?? category.categoryName}
                     </Text>
                     <Switch
                       value={item.enabled}
@@ -131,8 +127,7 @@ export function NotificationPrefsList({
                       thumbColor={colors.background}
                     />
                   </View>
-                  );
-                })}
+                ))}
               </View>
             )}
           </View>
