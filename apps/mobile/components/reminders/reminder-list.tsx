@@ -150,14 +150,17 @@ export function ReminderList() {
 
       {/* Edit-only modal — create flow is owned by RemindersTabContent
           parent so its FAB is visible on both List and Calendar views.
-          This instance only opens via row tap (handleItemPress). */}
-      <ReminderFormModal
-        visible={showForm}
-        onClose={handleCloseForm}
-        onSave={createReminder}
-        onUpdate={updateReminder}
-        editReminder={editingReminder}
-      />
+          This instance only opens via row tap (handleItemPress).
+          Conditionally mounted so initial useState picks up the latest
+          `editingReminder` each open (matches web's pattern). */}
+      {showForm && (
+        <ReminderFormModal
+          onClose={handleCloseForm}
+          onSave={createReminder}
+          onUpdate={updateReminder}
+          editReminder={editingReminder}
+        />
+      )}
     </View>
   );
 }

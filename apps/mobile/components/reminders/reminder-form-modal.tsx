@@ -1,9 +1,7 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -13,14 +11,13 @@ import {
 
 import type { CreatePersonalReminderInput, PersonalReminder, ReminderRecurrence, UpdatePersonalReminderInput } from '@notifio/api-client';
 
-import { formatDate, formatTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
+import { NotifioDateTimePicker } from '../notifio-date-time-picker';
 import { FullScreenModal } from '../ui/fullscreen-modal';
 import { TogglePill } from '../ui/toggle-pill';
 
 interface ReminderFormModalProps {
-  visible: boolean;
   onClose: () => void;
   onSave: (body: CreatePersonalReminderInput) => Promise<void>;
   onUpdate?: (id: string, body: UpdatePersonalReminderInput) => Promise<void>;
@@ -33,10 +30,38 @@ interface ReminderFormModalProps {
   defaultDate?: Date;
 }
 
-const RECURRENCE_OPTIONS: ReminderRecurrence[] = ['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY'];
+const RECURRENCE_OPTIONS: ReminderRecurrence[] = [
+  'ONCE',
+  'DAILY',
+  'WEEKLY',
+  'BIWEEKLY',
+  'MONTHLY',
+  'YEARLY',
+];
+
+// Sunday-first values to match BE's `recurrenceDays` CSV (where
+// 0=Sunday). Labels are derived per-render from Intl in the locale
+// the user is on, so we don't need to ship a `weekDayShort.*` key
+// table in shared.
+const WEEK_DAY_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;
+
+function buildWeekDayShort(locale: string): Record<number, string> {
+  const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  // 1970-01-04 (UTC) was a Sunday; walk seven days forward.
+  const sunday = Date.UTC(1970, 0, 4);
+  const map: Record<number, string> = {};
+  for (const i of WEEK_DAY_VALUES) {
+    map[i] = fmt.format(new Date(sunday + i * 86400000));
+  }
+  return map;
+}
+
+function parseDays(csv: string | null | undefined): Set<number> {
+  if (!csv) return new Set();
+  return new Set(csv.split(',').map(Number).filter((n) => Number.isFinite(n)));
+}
 
 export function ReminderFormModal({
-  visible,
   onClose,
   onSave,
   onUpdate,
@@ -63,43 +88,44 @@ export function ReminderFormModal({
   const [recurrence, setRecurrence] = useState<ReminderRecurrence>(
     editReminder?.recurrence ?? 'ONCE',
   );
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedDays, setSelectedDays] = useState<Set<number>>(
+    () => parseDays(editReminder?.recurrenceDays ?? null),
+  );
   const [saving, setSaving] = useState(false);
 
   const isEditing = !!editReminder;
-  const canSave = title.trim().length > 0;
+  const canSave =
+    title.trim().length > 0 && (recurrence !== 'WEEKLY' || selectedDays.size > 0);
 
-  const handleDateChange = (_event: unknown, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      setDate(selectedDate);
-      if (Platform.OS === 'android') {
-        setShowTimePicker(true);
-      }
-    }
-  };
+  const weekDayShort = useMemo(
+    () => buildWeekDayShort(i18n.language),
+    [i18n.language],
+  );
 
-  const handleTimeChange = (_event: unknown, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowTimePicker(false);
-    }
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+  const toggleDay = (day: number) => {
+    setSelectedDays((prev) => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
   };
 
   const handleSave = async () => {
     if (!canSave || saving) return;
     setSaving(true);
     try {
+      const recurrenceDays =
+        recurrence === 'WEEKLY' && selectedDays.size > 0
+          ? [...selectedDays].sort((a, b) => a - b).join(',')
+          : undefined;
+
       const body: CreatePersonalReminderInput = {
         title: title.trim(),
         description: description.trim() || undefined,
         triggerAt: date.toISOString(),
         recurrence,
+        ...(recurrenceDays !== undefined ? { recurrenceDays } : {}),
       };
 
       if (isEditing && onUpdate) {
@@ -114,9 +140,6 @@ export function ReminderFormModal({
       setSaving(false);
     }
   };
-
-  const formattedDate = formatDate(date.toISOString(), i18n.language);
-  const formattedTime = formatTime(date.toISOString(), i18n.language);
 
   const footer = (
     <Pressable
@@ -139,7 +162,7 @@ export function ReminderFormModal({
 
   return (
     <FullScreenModal
-      visible={visible}
+      visible
       onClose={onClose}
       title={isEditing ? t('reminders.edit') : t('reminders.create')}
       footer={footer}
@@ -191,68 +214,13 @@ export function ReminderFormModal({
           />
         </View>
 
-        {/* Date & Time */}
+        {/* Date & Time — inline section picker; trigger + collapsible
+            section live inside NotifioDateTimePicker. */}
         <View style={styles.field}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
             {t('reminders.dateLabel')}
           </Text>
-          <Pressable
-            onPress={() => setShowDatePicker(true)}
-            style={[
-              styles.dateButton,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <Text style={[styles.dateText, { color: colors.text }]}>
-              {formattedDate} {formattedTime}
-            </Text>
-          </Pressable>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'inline' : 'default'}
-              onChange={handleDateChange}
-            />
-          )}
-
-          {Platform.OS === 'ios' && showDatePicker && (
-            <Pressable
-              onPress={() => {
-                setShowDatePicker(false);
-                setShowTimePicker(true);
-              }}
-              style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
-            >
-              <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
-                {t('common.ok')}
-              </Text>
-            </Pressable>
-          )}
-
-          {showTimePicker && (
-            <DateTimePicker
-              value={date}
-              mode="time"
-              display={Platform.OS === 'ios' ? 'inline' : 'default'}
-              onChange={handleTimeChange}
-            />
-          )}
-
-          {Platform.OS === 'ios' && showTimePicker && (
-            <Pressable
-              onPress={() => setShowTimePicker(false)}
-              style={[styles.confirmPickerButton, { backgroundColor: colors.primary }]}
-            >
-              <Text style={[styles.confirmPickerText, { color: colors.textInverse }]}>
-                {t('common.ok')}
-              </Text>
-            </Pressable>
-          )}
+          <NotifioDateTimePicker value={date} onChange={setDate} />
         </View>
 
         {/* Recurrence */}
@@ -260,17 +228,59 @@ export function ReminderFormModal({
           <Text style={[styles.label, { color: colors.textSecondary }]}>
             {t('reminders.recurrence')}
           </Text>
-          <View style={styles.pillRow}>
-            {RECURRENCE_OPTIONS.map((option) => (
-              <TogglePill
-                key={option}
-                active={recurrence === option}
-                label={t(`reminders.recurrenceOptions.${option}`)}
-                onPress={() => setRecurrence(option)}
-              />
+          <View style={styles.pillGrid}>
+            {[0, 1].map((rowIdx) => (
+              <View key={rowIdx} style={styles.pillRow}>
+                {RECURRENCE_OPTIONS.slice(rowIdx * 3, rowIdx * 3 + 3).map((option) => (
+                  <TogglePill
+                    key={option}
+                    active={recurrence === option}
+                    label={t(`reminders.recurrenceOptions.${option}`)}
+                    onPress={() => setRecurrence(option)}
+                    style={styles.pillCell}
+                  />
+                ))}
+              </View>
             ))}
           </View>
         </View>
+
+        {/* WEEKLY day picker — Sunday-first to match BE recurrenceDays
+            CSV (0=Sunday). Day labels come from i18n with locale-aware
+            short names already shipped in shared 0.31. */}
+        {recurrence === 'WEEKLY' && (
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>
+              {t('reminders.form.weekDays')}
+            </Text>
+            <View style={styles.weekDayRow}>
+              {WEEK_DAY_VALUES.map((value) => {
+                const active = selectedDays.has(value);
+                return (
+                  <Pressable
+                    key={value}
+                    onPress={() => toggleDay(value)}
+                    style={[
+                      styles.weekDayChip,
+                      active
+                        ? { backgroundColor: colors.primary, borderColor: colors.primary }
+                        : { backgroundColor: 'transparent', borderColor: colors.border },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.weekDayLabel,
+                        { color: active ? colors.textInverse : colors.textMuted },
+                      ]}
+                    >
+                      {weekDayShort[value]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        )}
       </View>
     </FullScreenModal>
   );
@@ -298,28 +308,31 @@ const styles = StyleSheet.create({
   multilineInput: {
     minHeight: 80,
   },
-  dateButton: {
-    borderWidth: 1,
-    borderRadius: theme.radius.lg,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-  },
-  dateText: {
-    fontSize: theme.fontSize.md,
-  },
-  confirmPickerButton: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.md,
-  },
-  confirmPickerText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
+  pillGrid: {
+    gap: theme.spacing.sm,
   },
   pillRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
+  },
+  pillCell: {
+    flex: 1,
+  },
+  weekDayRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.xs,
+  },
+  weekDayChip: {
+    flex: 1,
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.radius.full,
+    borderWidth: 1,
+  },
+  weekDayLabel: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.medium,
   },
   saveButton: {
     borderRadius: theme.radius.lg,

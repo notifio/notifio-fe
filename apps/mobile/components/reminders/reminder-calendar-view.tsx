@@ -1,8 +1,7 @@
 import { IconClock } from '@tabler/icons-react-native';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Calendar, type DateData } from 'react-native-calendars';
 
 import type { PersonalReminder } from '@notifio/api-client';
 
@@ -12,6 +11,7 @@ import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
+import { MonthGrid } from '../ui/month-grid';
 
 interface ReminderCalendarViewProps {
   selectedDate: string;
@@ -25,27 +25,41 @@ export function ReminderCalendarView({
   onReminderPress,
 }: ReminderCalendarViewProps) {
   const { t, i18n } = useTranslation();
-  const { colors, isDark } = useAppTheme();
+  const { colors } = useAppTheme();
   const { reminders } = useReminders();
 
-  const markedDates = useMemo(() => {
-    const map: Record<string, { marked?: boolean; dotColor?: string; selected?: boolean; selectedColor?: string }> = {};
+  // Derive viewed (year, month) from `selectedDate` so external state
+  // changes (e.g. tab content lifting the date) move the grid; user
+  // navigation between months is held locally so paging doesn't reset
+  // the selection.
+  const initialDate = useMemo(() => {
+    const parsed = new Date(`${selectedDate}T00:00:00`);
+    return Number.isFinite(parsed.getTime()) ? parsed : new Date();
+  }, [selectedDate]);
+  const [viewYear, setViewYear] = useState(initialDate.getFullYear());
+  const [viewMonth, setViewMonth] = useState(initialDate.getMonth());
+
+  const dotsByDay = useMemo(() => {
+    const set = new Set<string>();
     for (const r of reminders) {
-      const key = formatDateKey(new Date(r.triggerAt));
-      map[key] = { ...(map[key] ?? {}), marked: true, dotColor: colors.primary };
+      set.add(formatDateKey(new Date(r.triggerAt)));
     }
-    map[selectedDate] = { ...(map[selectedDate] ?? {}), selected: true, selectedColor: colors.primary };
-    return map;
-  }, [reminders, selectedDate, colors.primary]);
+    return set;
+  }, [reminders]);
+
+  const today = useMemo(() => new Date(), []);
 
   const remindersOnSelectedDate = useMemo(
     () => reminders.filter((r) => formatDateKey(new Date(r.triggerAt)) === selectedDate),
     [reminders, selectedDate],
   );
 
-  const calendarKey = isDark ? 'dark' : 'light';
-
   const headerLabel = formatDayHeader(selectedDate, i18n.language, t('common.today'));
+
+  const selectedDay =
+    initialDate.getFullYear() === viewYear && initialDate.getMonth() === viewMonth
+      ? initialDate.getDate()
+      : null;
 
   return (
     <ScrollView
@@ -53,41 +67,27 @@ export function ReminderCalendarView({
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Calendar
-        key={calendarKey}
-        onDayPress={(day: DateData) => onSelectedDateChange(day.dateString)}
-        markedDates={markedDates}
-        theme={{
-          backgroundColor: colors.background,
-          calendarBackground: colors.background,
-          textSectionTitleColor: colors.textMuted,
-          dayTextColor: colors.text,
-          monthTextColor: colors.text,
-          arrowColor: colors.primary,
-          todayTextColor: colors.primary,
-          selectedDayBackgroundColor: colors.primary,
-          selectedDayTextColor: '#FFFFFF',
-          textDisabledColor: colors.textMuted,
-          dotColor: colors.primary,
-          selectedDotColor: '#FFFFFF',
-          textDayFontSize: 13,
-          textMonthFontSize: 15,
-          textDayHeaderFontSize: 11,
-          // Tighten the week-row spacing — these stylesheet overrides
-          // are runtime-supported by react-native-calendars but not
-          // present in its Theme types, hence the cast.
-          ...({
-            'stylesheet.calendar.main': {
-              week: {
-                marginVertical: 2,
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-              },
-            },
-          } as object),
-        }}
-        style={[styles.calendar, { borderColor: colors.border }]}
-      />
+      <View style={[styles.calendar, { borderColor: colors.border }]}>
+        <MonthGrid
+          year={viewYear}
+          month={viewMonth}
+          selectedDay={selectedDay}
+          today={today}
+          hasDot={(day) => {
+            const key = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            return dotsByDay.has(key);
+          }}
+          locale={i18n.language}
+          onSelectDay={(day) => {
+            const next = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            onSelectedDateChange(next);
+          }}
+          onMonthChange={(y, m) => {
+            setViewYear(y);
+            setViewMonth(m);
+          }}
+        />
+      </View>
 
       <Text style={[styles.sectionHeader, { color: colors.textMuted }]} numberOfLines={1}>
         {headerLabel}
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   calendar: {
     borderRadius: theme.radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
+    padding: theme.spacing.md,
     marginBottom: SPACING.calendarToDayHeader,
   },
   sectionHeader: {

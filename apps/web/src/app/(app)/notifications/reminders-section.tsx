@@ -29,11 +29,13 @@ export function RemindersSection() {
   const [remView, setRemView] = useState<'list' | 'calendar'>('list');
   const [formOpen, setFormOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<PersonalReminder | undefined>();
+  const [createDefaultDate, setCreateDefaultDate] = useState<Date | undefined>();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
-  const openCreate = useCallback(() => {
+  const openCreate = useCallback((date?: Date) => {
     setEditTarget(undefined);
+    setCreateDefaultDate(date);
     setFormOpen(true);
   }, []);
 
@@ -143,10 +145,12 @@ export function RemindersSection() {
       {formOpen && (
         <ReminderFormModal
           reminder={editTarget}
+          defaultDate={createDefaultDate}
           onSave={handleSave}
           onClose={() => {
             setFormOpen(false);
             setEditTarget(undefined);
+            setCreateDefaultDate(undefined);
           }}
         />
       )}

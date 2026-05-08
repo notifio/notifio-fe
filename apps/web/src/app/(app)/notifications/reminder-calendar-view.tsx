@@ -1,29 +1,12 @@
 'use client';
 
-import {
-  IconAlarm,
-  IconChevronLeft,
-  IconChevronRight,
-  IconPlus,
-} from '@tabler/icons-react';
-import { useTranslations } from 'next-intl';
+import { IconAlarm, IconPlus } from '@tabler/icons-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import type { PersonalReminder } from '@notifio/api-client';
 
-import { cn } from '@/lib/utils';
-
-// ── Calendar helpers ─────────────────────────────────────────────────
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfWeek(year: number, month: number): number {
-  const day = new Date(year, month, 1).getDay();
-  return day === 0 ? 6 : day - 1; // Monday=0
-}
-
-const WEEKDAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+import { MonthGrid } from '@/components/app/month-grid';
 
 function reminderFallsOnDate(r: PersonalReminder, date: Date): boolean {
   const trigger = new Date(r.triggerAt);
@@ -40,31 +23,31 @@ function reminderFallsOnDate(r: PersonalReminder, date: Date): boolean {
 interface ReminderCalendarViewProps {
   reminders: PersonalReminder[];
   onEdit: (r: PersonalReminder) => void;
-  onCreate: () => void;
+  /** When the user clicks "+ new reminder" with a day selected, the
+   *  selected date is passed so the form can prefill it. */
+  onCreate: (date?: Date) => void;
 }
 
 export function ReminderCalendarView({ reminders, onEdit, onCreate }: ReminderCalendarViewProps) {
   const t = useTranslations('notificationsPage');
+  const locale = useLocale();
 
-  // Calendar state
   const now = new Date();
   const [calYear, setCalYear] = useState(now.getFullYear());
   const [calMonth, setCalMonth] = useState(now.getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
-  const daysInMonth = getDaysInMonth(calYear, calMonth);
-  const firstDayOffset = getFirstDayOfWeek(calYear, calMonth);
-
   const reminderDots = useMemo(() => {
     const dots = new Set<number>();
-    for (let day = 1; day <= daysInMonth; day++) {
+    const last = new Date(calYear, calMonth + 1, 0).getDate();
+    for (let day = 1; day <= last; day++) {
       const date = new Date(calYear, calMonth, day);
       if (reminders.some((r) => r.enabled && reminderFallsOnDate(r, date))) {
         dots.add(day);
       }
     }
     return dots;
-  }, [reminders, calYear, calMonth, daysInMonth]);
+  }, [reminders, calYear, calMonth]);
 
   const selectedDayReminders = useMemo(() => {
     if (selectedDay === null) return [];
@@ -72,90 +55,24 @@ export function ReminderCalendarView({ reminders, onEdit, onCreate }: ReminderCa
     return reminders.filter((r) => reminderFallsOnDate(r, date));
   }, [reminders, calYear, calMonth, selectedDay]);
 
-  const prevMonth = () => {
-    if (calMonth === 0) { setCalYear((y) => y - 1); setCalMonth(11); }
-    else setCalMonth((m) => m - 1);
+  const handleMonthChange = (y: number, m: number) => {
+    setCalYear(y);
+    setCalMonth(m);
     setSelectedDay(null);
   };
-  const nextMonth = () => {
-    if (calMonth === 11) { setCalYear((y) => y + 1); setCalMonth(0); }
-    else setCalMonth((m) => m + 1);
-    setSelectedDay(null);
-  };
-
-  const isToday = (day: number) => {
-    const n = new Date();
-    return n.getFullYear() === calYear && n.getMonth() === calMonth && n.getDate() === day;
-  };
-
-  const monthLabel = new Date(calYear, calMonth).toLocaleString(undefined, { month: 'long', year: 'numeric' });
 
   return (
     <div className="mt-5">
-      {/* Month nav */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={prevMonth}
-          className="rounded-lg p-1.5 text-muted transition-colors hover:bg-card hover:text-text-primary"
-        >
-          <IconChevronLeft size={18} />
-        </button>
-        <span className="text-sm font-semibold capitalize text-text-primary">
-          {monthLabel}
-        </span>
-        <button
-          onClick={nextMonth}
-          className="rounded-lg p-1.5 text-muted transition-colors hover:bg-card hover:text-text-primary"
-        >
-          <IconChevronRight size={18} />
-        </button>
-      </div>
-
-      {/* Weekday headers */}
-      <div className="mt-3 grid grid-cols-7 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
-        {WEEKDAY_LABELS.map((d) => (
-          <div key={d} className="py-1">{d}</div>
-        ))}
-      </div>
-
-      {/* Day grid */}
-      <div className="mt-1 grid grid-cols-7">
-        {/* Empty cells for offset */}
-        {Array.from({ length: firstDayOffset }).map((_, i) => (
-          <div key={`empty-${i}`} className="py-2" />
-        ))}
-        {Array.from({ length: daysInMonth }).map((_, i) => {
-          const day = i + 1;
-          const hasDot = reminderDots.has(day);
-          const isSel = selectedDay === day;
-          const todayHighlight = isToday(day);
-          return (
-            <button
-              key={day}
-              type="button"
-              onClick={() => setSelectedDay(isSel ? null : day)}
-              className={cn(
-                'relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-full text-sm transition-colors',
-                isSel
-                  ? 'bg-accent text-white'
-                  : todayHighlight
-                    ? 'bg-accent/10 font-semibold text-accent'
-                    : 'text-text-secondary hover:bg-card',
-              )}
-            >
-              {day}
-              {hasDot && (
-                <div
-                  className={cn(
-                    'absolute bottom-1 h-1 w-1 rounded-full',
-                    isSel ? 'bg-white' : 'bg-accent',
-                  )}
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <MonthGrid
+        year={calYear}
+        month={calMonth}
+        selectedDay={selectedDay}
+        today={now}
+        hasDot={(d) => reminderDots.has(d)}
+        locale={locale}
+        onSelectDay={(d) => setSelectedDay(selectedDay === d ? null : d)}
+        onMonthChange={handleMonthChange}
+      />
 
       {/* Selected day reminders */}
       {selectedDay !== null && (
@@ -164,7 +81,7 @@ export function ReminderCalendarView({ reminders, onEdit, onCreate }: ReminderCa
             <div className="text-center">
               <p className="text-xs text-muted">{t('reminders.empty')}</p>
               <button
-                onClick={() => onCreate()}
+                onClick={() => onCreate(new Date(calYear, calMonth, selectedDay ?? 1))}
                 className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-accent transition-colors hover:text-accent/80"
               >
                 <IconPlus size={12} />
@@ -184,7 +101,7 @@ export function ReminderCalendarView({ reminders, onEdit, onCreate }: ReminderCa
                   <div className="min-w-0 flex-1">
                     <span className="text-sm font-medium text-text-primary">{r.title}</span>
                     <span className="ml-2 text-xs text-muted">
-                      {new Date(r.triggerAt).toLocaleTimeString(undefined, {
+                      {new Date(r.triggerAt).toLocaleTimeString(locale, {
                         hour: '2-digit', minute: '2-digit',
                       })}
                     </span>
