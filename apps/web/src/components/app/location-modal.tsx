@@ -21,16 +21,11 @@ interface LocationModalProps {
   onClose: () => void;
 }
 
-const LABELS: { value: LocationLabel; label: string }[] = [
-  { value: 'home', label: 'Home' },
-  { value: 'work', label: 'Work' },
-  { value: 'school', label: 'School' },
-  { value: 'gym', label: 'Gym' },
-  { value: 'other', label: 'Other' },
-];
+const LABEL_VALUES: LocationLabel[] = ['home', 'work', 'school', 'gym', 'parents', 'cottage', 'other'];
 
 export function LocationModal({ location, onSave, onClose }: LocationModalProps) {
   const t = useTranslations('profile.locations');
+  const tl = useTranslations('locations.labels');
   const isEdit = !!location;
 
   const [customLabel, setCustomLabel] = useState(location?.customLabel ?? '');
@@ -112,19 +107,19 @@ export function LocationModal({ location, onSave, onClose }: LocationModalProps)
               {t('label')}
             </label>
             <div className="flex flex-wrap gap-1.5">
-              {LABELS.map((opt) => (
+              {LABEL_VALUES.map((value) => (
                 <button
-                  key={opt.value}
+                  key={value}
                   type="button"
-                  onClick={() => setLabel(opt.value)}
+                  onClick={() => setLabel(value)}
                   className={cn(
                     'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
-                    label === opt.value
+                    label === value
                       ? 'bg-accent text-white'
                       : 'bg-card text-text-secondary hover:text-text-primary',
                   )}
                 >
-                  {opt.label}
+                  {tl(value)}
                 </button>
               ))}
             </div>

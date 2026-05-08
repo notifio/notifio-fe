@@ -73,6 +73,12 @@
     }
   },
   "notificationsPage": {
+    "lifecycle": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "upcoming": "Geplant",
+      "resolved": "Beendet"
+    },
     "title": "Benachrichtigungen",
     "tabs": {
       "history": "Verlauf",
@@ -173,6 +179,7 @@
   },
   "events": {
     "reportButton": "Melden",
+    "selectProvider": "Anbieter auswählen",
     "selectCategory": "Was ist passiert?",
     "pinLocation": "Standort",
     "pickLocation": "Standort (auf Karte klicken oder Pin ziehen)",
@@ -209,6 +216,7 @@
       "active": "Aktiv",
       "resolved": "Behoben",
       "notFound": "Ereignis nicht gefunden",
+      "archived": "Dieses Ereignis wurde archiviert und ist nicht mehr verfügbar.",
       "backToDashboard": "Zurück zum Dashboard"
     },
     "resolveFailed": "Ereignis konnte nicht behoben werden"

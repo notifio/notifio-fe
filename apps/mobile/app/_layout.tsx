@@ -13,6 +13,7 @@ import { toastConfig } from '../components/ui/toast-config';
 import { useAuth } from '../hooks/use-auth';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { api } from '../lib/api';
+import { installGlobalErrorHandlers } from '../lib/error-reporter';
 import { bootstrapLocale } from '../lib/i18n';
 import { useReactQueryAppStateBridge } from '../lib/query-app-state';
 import { asyncStoragePersister, queryClient } from '../lib/query-client';
@@ -23,6 +24,10 @@ import { OnboardingProvider } from '../providers/onboarding-provider';
 import { ThemeProvider, useIsDark } from '../providers/theme-provider';
 
 SplashScreen.preventAutoHideAsync();
+
+// Wire global JS-error + unhandled-rejection reporters before any other
+// boot work so a crash in i18n / auth bootstrap is still captured.
+installGlobalErrorHandlers();
 
 // Apply the user's previously-chosen locale (if any) before the first
 // React render writes it back. Fire-and-forget — i18next already has a

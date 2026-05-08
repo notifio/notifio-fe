@@ -54,6 +54,21 @@ html {
   display: none;
 }
 
+/* Map filter expanded panel max-height. Subtracts app chrome from
+   the viewport so the panel never extends past the visible map area.
+   - 56px top nav (top-bar h-14)
+   - 64px bottom tab bar (md:hidden, mobile-only)
+   - 48px panel padding (top:24 + bottom:24)
+   At md+ the bottom tab disappears so we only subtract top nav + padding. */
+.map-filter-max-h {
+  max-height: calc(100vh - 168px);
+}
+@media (min-width: 768px) {
+  .map-filter-max-h {
+    max-height: calc(100vh - 104px);
+  }
+}
+
 /* --- Hex animation keyframes (landing hero) --- */
 @keyframes hex-rotate {
   from {

@@ -16,6 +16,8 @@ interface UseEventDetailResult {
   isOwner: boolean;
   isLoading: boolean;
   error: string | null;
+  /** True when BE returned 404 — event was hard-deleted by retention sweep. */
+  archived: boolean;
   voting: boolean;
   vote: (isValid: boolean) => Promise<void>;
   resolveEvent: () => Promise<boolean>;
@@ -29,6 +31,7 @@ export function useEventDetail(eventId: string): UseEventDetailResult {
   const [isOwner, setIsOwner] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [archived, setArchived] = useState(false);
   const [voting, setVoting] = useState(false);
   const mountedRef = useRef(true);
 
@@ -64,8 +67,16 @@ export function useEventDetail(eventId: string): UseEventDetailResult {
             // Not authenticated or failed
           }
         }
-      } catch {
-        if (!cancelled) setError('Failed to load event');
+      } catch (err) {
+        if (cancelled) return;
+        // 404 = retention sweep hard-deleted the event (BE keeps 90d
+        // post-resolution). Distinguish from generic load failures so
+        // the screen can show an "archived" empty state.
+        if (err instanceof ApiError && err.status === 404) {
+          setArchived(true);
+        } else {
+          setError('Failed to load event');
+        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -119,5 +130,5 @@ export function useEventDetail(eventId: string): UseEventDetailResult {
     }
   }, [eventId, t]);
 
-  return { event, userVote, isOwner, isLoading, error, voting, vote, resolveEvent, removeEvent };
+  return { event, userVote, isOwner, isLoading, error, archived, voting, vote, resolveEvent, removeEvent };
 }

@@ -73,6 +73,12 @@
     }
   },
   "notificationsPage": {
+    "lifecycle": {
+      "all": "Mind",
+      "active": "Aktív",
+      "upcoming": "Tervezett",
+      "resolved": "Lezárt"
+    },
     "title": "Értesítések",
     "tabs": {
       "history": "Előzmények",
@@ -173,6 +179,7 @@
   },
   "events": {
     "reportButton": "Bejelentés",
+    "selectProvider": "Válassz szolgáltatót",
     "selectCategory": "Mi történt?",
     "pinLocation": "Hely",
     "pickLocation": "Hely (kattints a térképre vagy húzd a tűt)",
@@ -209,6 +216,7 @@
       "active": "Aktív",
       "resolved": "Megoldva",
       "notFound": "Esemény nem található",
+      "archived": "Ez az esemény archiválva lett és már nem érhető el.",
       "backToDashboard": "Vissza az irányítópultra"
     },
     "resolveFailed": "Az esemény megoldása sikertelen"

@@ -34,6 +34,7 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [userVote, setUserVote] = useState<UserVote | null>(null);
   const [loading, setLoading] = useState(true);
+  const [archived, setArchived] = useState(false);
   const [voting, setVoting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -59,8 +60,13 @@ export default function EventDetailPage() {
         } catch {
           // Not logged in or failed — not owner
         }
-      } catch {
-        // event not found
+      } catch (err) {
+        // 404 = retention sweep hard-deleted the event (BE keeps 90d post
+        // resolution); show an archived-state fallback rather than a
+        // generic "not found" page.
+        if (err instanceof ApiError && err.status === 404) {
+          if (!cancelled) setArchived(true);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -119,7 +125,9 @@ export default function EventDetailPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <IconMapPin size={48} className="mx-auto text-muted" />
-        <p className="mt-4 text-sm text-muted">{t('detail.notFound')}</p>
+        <p className="mt-4 text-sm text-muted">
+          {archived ? t('detail.archived') : t('detail.notFound')}
+        </p>
         <Link href="/dashboard" className="mt-4 inline-block text-sm text-accent hover:text-accent/80">
           {t('detail.backToDashboard')}
         </Link>

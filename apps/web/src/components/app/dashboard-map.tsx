@@ -110,7 +110,7 @@ interface DashboardMapProps {
   onClusterTap?: (children: MapPin[]) => void;
   /** β filter: whether active-status pins should render. Default true. */
   showActive?: boolean;
-  /** β filter: whether upcoming-status pins should render. Default false. */
+  /** β filter: whether upcoming-status pins should render. Default true. */
   showUpcoming?: boolean;
 }
 
@@ -132,7 +132,7 @@ export function DashboardMap({
   onTeaserTap,
   onClusterTap,
   showActive = true,
-  showUpcoming = false,
+  showUpcoming = true,
 }: DashboardMapProps) {
   const t = useTranslations('map');
   const locale = useLocale() as RelativeTimeLocale;

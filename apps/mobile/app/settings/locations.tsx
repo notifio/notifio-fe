@@ -22,7 +22,7 @@ function formatCoord(lat: number, lng: number): string {
   return `${Math.abs(lat).toFixed(3)}°${ns}, ${Math.abs(lng).toFixed(3)}°${ew}`;
 }
 
-const KNOWN_LABEL_CODES = ['home', 'work', 'school', 'gym', 'other'] as const;
+const KNOWN_LABEL_CODES = ['home', 'work', 'school', 'gym', 'parents', 'cottage', 'other'] as const;
 type KnownLabelCode = (typeof KNOWN_LABEL_CODES)[number];
 function isKnownLabelCode(code: unknown): code is KnownLabelCode {
   return typeof code === 'string' && (KNOWN_LABEL_CODES as readonly string[]).includes(code);

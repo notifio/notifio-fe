@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconBellRinging } from '@tabler/icons-react-native';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
@@ -75,6 +75,29 @@ export default function NotificationsScreen() {
   const handleSkip = () => {
     completeOnboarding();
   };
+
+  // PERMS-1: if push permission was already granted (e.g. user re-installed
+  // and OS-level grant survived), persist their default category selection
+  // and finish onboarding without re-prompting. Guard with a ref so we
+  // only auto-complete once even if the provider re-renders.
+  const autoCompletedRef = useRef(false);
+  useEffect(() => {
+    if (autoCompletedRef.current) return;
+    if (notificationCtx?.hasPermission) {
+      autoCompletedRef.current = true;
+      const selectedTypes: AlertType[] = [];
+      for (const [groupKey, enabled] of Object.entries(groupValues)) {
+        if (enabled) {
+          const types = GROUP_TO_ALERT_TYPES[groupKey];
+          if (types) selectedTypes.push(...types);
+        }
+      }
+      void AsyncStorage.setItem(
+        ONBOARDING_ALERT_TYPES_KEY,
+        JSON.stringify(selectedTypes),
+      ).finally(() => completeOnboarding());
+    }
+  }, [notificationCtx?.hasPermission, groupValues, completeOnboarding]);
 
   return (
     <OnboardingScreen

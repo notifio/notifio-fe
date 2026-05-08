@@ -73,6 +73,12 @@
     }
   },
   "notificationsPage": {
+    "lifecycle": {
+      "all": "Усі",
+      "active": "Активні",
+      "upcoming": "Заплановані",
+      "resolved": "Завершені"
+    },
     "title": "Сповіщення",
     "tabs": {
       "history": "Історія",
@@ -173,6 +179,7 @@
   },
   "events": {
     "reportButton": "Повідомити",
+    "selectProvider": "Оберіть постачальника",
     "selectCategory": "Що сталося?",
     "pinLocation": "Місце",
     "pickLocation": "Місце (клікни на карту або перетягни шпильку)",
@@ -209,6 +216,7 @@
       "active": "Активне",
       "resolved": "Вирішено",
       "notFound": "Подію не знайдено",
+      "archived": "Цю подію було архівовано і вона більше недоступна.",
       "backToDashboard": "Назад на панель"
     },
     "resolveFailed": "Не вдалося вирішити подію"
