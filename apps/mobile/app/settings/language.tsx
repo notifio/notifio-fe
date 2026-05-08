@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { Card } from '../../components/ui/card';
 import { SectionLabel } from '../../components/ui/section-label';
 import { SelectableRow } from '../../components/ui/selectable-row';
+import { api } from '../../lib/api';
 import { getStoredLocale, setLocale } from '../../lib/i18n';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -39,6 +40,14 @@ export default function LanguageScreen() {
     if (locale === explicit) return;
     await setLocale(locale);
     setExplicit(locale);
+    // Best-effort: persist the choice on the server so push notifications
+    // arrive in the chosen locale on every device. Local apply already
+    // happened above; a network failure here is not user-blocking.
+    try {
+      await api.updateProfile({ locale });
+    } catch {
+      // Swallow — UI already reflects the choice.
+    }
   };
 
   return (

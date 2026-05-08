@@ -79,6 +79,12 @@
       "reminders": "Připomínky",
       "events": "Události"
     },
+    "lifecycle": {
+      "all": "Vše",
+      "active": "Aktivní",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    },
     "filters": {
       "all": "Vše",
       "weather": "Počasí",
@@ -173,6 +179,7 @@
   },
   "events": {
     "reportButton": "Nahlásit",
+    "selectProvider": "Vyberte poskytovatele",
     "selectCategory": "Co se stalo?",
     "pinLocation": "Místo",
     "pickLocation": "Místo (klikni do mapy nebo přetáhni špendlík)",
@@ -209,6 +216,7 @@
       "active": "Aktivní",
       "resolved": "Vyřešeno",
       "notFound": "Událost nenalezena",
+      "archived": "Tato událost byla archivována a již není dostupná.",
       "backToDashboard": "Zpět na přehled"
     },
     "resolveFailed": "Událost se nepodařilo vyřešit"

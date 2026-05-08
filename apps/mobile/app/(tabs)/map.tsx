@@ -70,12 +70,11 @@ export default function MapScreen() {
   const mapRef = useRef<MapView | null>(null);
 
   const [showReportModal, setShowReportModal] = useState(false);
-  // Lifecycle visibility (β filter sheet "Show on map" section). Active
-  // defaults ON, upcoming defaults OFF. Both flow into useMapData so the
-  // shared normalizer drops upcoming pins server-shape-side when toggle
-  // is off — and to map's filteredPins for the active toggle.
+  // Lifecycle visibility (β filter sheet "Show on map" section). Both
+  // default ON so planned outages (e.g. ZSD 08:00–15:00 browsed at 06:00)
+  // render alongside active events; users can still toggle upcoming off.
   const [showActive, setShowActive] = useState(true);
-  const [showUpcoming, setShowUpcoming] = useState(false);
+  const [showUpcoming, setShowUpcoming] = useState(true);
 
   // Step 8: source for the upsell sheet — set by teaser pin taps and
   // locked filter row taps; cleared on close.

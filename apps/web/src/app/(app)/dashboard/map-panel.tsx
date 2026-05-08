@@ -84,7 +84,7 @@ export function MapPanel({
   // β filter sheet "Show on map" lifecycle toggles. Mirror the standalone
   // /map page; dashboard panel keeps the same defaults.
   const [showActive, setShowActive] = useState(true);
-  const [showUpcoming, setShowUpcoming] = useState(false);
+  const [showUpcoming, setShowUpcoming] = useState(true);
   const { tier } = useMembership();
   // Anonymous sessions return tier `null`; treat as FREE for gating.
   const effectiveTier = (tier ?? 'FREE') as 'FREE' | 'PLUS' | 'PRO';

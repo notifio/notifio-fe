@@ -25,16 +25,16 @@ interface EventReportModalProps {
   onClose: () => void;
 }
 
-const RADIUS_STEPS = [100, 250, 500, 1000, 2000, 5000, 10000, 20000];
-
-function formatRadius(m: number): string {
-  return m >= 1000 ? `${m / 1000} km` : `${m} m`;
-}
+type ProviderOption = { code: string; name: string };
 
 interface CategoryOption {
   code: string;
   name: string;
   categoryCode: string;
+  // BE emits these for outage_* subcategories (REQUEST-3); shared 0.31
+  // hasn't bumped UserEventCategorySchema yet so they ride along untyped.
+  providerRequired?: boolean;
+  providers?: ProviderOption[];
 }
 
 export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
@@ -45,12 +45,22 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
   const { success, error: showError } = useToast();
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryOption | null>(null);
-  const [radiusIdx, setRadiusIdx] = useState(3);
+  const [selectedProvider, setSelectedProvider] = useState<ProviderOption | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [pickerCoords, setPickerCoords] = useState({ lat, lng });
 
   const flatOptions: CategoryOption[] = useMemo(
-    () => categories.map((c) => ({ code: c.code, name: c.name, categoryCode: c.categoryCode })),
+    () =>
+      categories.map((c) => {
+        const cw = c as CategoryOption;
+        return {
+          code: c.code,
+          name: c.name,
+          categoryCode: c.categoryCode,
+          providerRequired: cw.providerRequired,
+          providers: cw.providers,
+        };
+      }),
     [categories],
   );
 
@@ -68,11 +78,12 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
     }));
   }, [flatOptions]);
 
-  const isValid = selectedCategory !== null;
+  const providerRequired = selectedCategory?.providerRequired ?? false;
+  const isValid = selectedCategory !== null && (!providerRequired || selectedProvider !== null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!isValid || submitting) return;
+    if (!isValid || !selectedCategory || submitting) return;
 
     setSubmitting(true);
     try {
@@ -80,7 +91,7 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
         subcategoryCode: selectedCategory.code,
         lat: pickerCoords.lat,
         lng: pickerCoords.lng,
-        radiusM: RADIUS_STEPS[radiusIdx],
+        ...(selectedProvider ? { providerCode: selectedProvider.code } : {}),
       } as Parameters<typeof api.createEvent>[0]);
       success(t('success'));
       onClose();
@@ -133,7 +144,10 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
               ) : (
                 <SearchableSelect<CategoryOption>
                   value={selectedCategory}
-                  onChange={setSelectedCategory}
+                  onChange={(c) => {
+                    setSelectedCategory(c);
+                    setSelectedProvider(null);
+                  }}
                   options={flatOptions}
                   getLabel={(o) => o.name}
                   getKey={(o) => o.code}
@@ -142,6 +156,35 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
                 />
               )}
             </div>
+
+            {/* Provider picker — only when subcategory requires it */}
+            {providerRequired && selectedCategory?.providers && selectedCategory.providers.length > 0 && (
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted">
+                  {t('selectProvider')}
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedCategory.providers.map((p) => {
+                    const isSelected = selectedProvider?.code === p.code;
+                    return (
+                      <button
+                        key={p.code}
+                        type="button"
+                        onClick={() => setSelectedProvider(p)}
+                        className={
+                          'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ' +
+                          (isSelected
+                            ? 'bg-accent text-white'
+                            : 'border border-border text-text-secondary hover:text-text-primary')
+                        }
+                      >
+                        {p.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Location picker */}
             <div>
@@ -158,29 +201,6 @@ export function EventReportModal({ lat, lng, onClose }: EventReportModalProps) {
               </p>
             </div>
 
-            {/* Radius */}
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  {t('radius')}
-                </label>
-                <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">
-                  {formatRadius(RADIUS_STEPS[radiusIdx]!)}
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={RADIUS_STEPS.length - 1}
-                value={radiusIdx}
-                onChange={(e) => setRadiusIdx(Number(e.target.value))}
-                className="w-full accent-accent"
-              />
-              <div className="mt-1 flex justify-between text-[10px] text-muted">
-                <span>100 m</span>
-                <span>20 km</span>
-              </div>
-            </div>
           </div>
 
           {/* Actions */}

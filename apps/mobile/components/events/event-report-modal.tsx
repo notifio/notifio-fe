@@ -14,15 +14,18 @@ import { theme, withOpacity } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
 import { FullScreenModal } from '../ui/fullscreen-modal';
-import { TogglePill } from '../ui/toggle-pill';
 
 const GPS_DELTA = 0.01;
 
-const RADIUS_STEPS = [100, 250, 500, 1000, 2000, 5000, 10000, 20000];
-
-function formatRadius(m: number): string {
-  return m >= 1000 ? `${m / 1000} km` : `${m} m`;
-}
+// BE returns `providerRequired` + `providers` for outage_* subcategories
+// (REQUEST-3, BACKLOG 7.5.2026) but @notifio/shared 0.31 hasn't bumped
+// `UserEventCategorySchema` to include them yet. Local extension until
+// the shared bump lands; remove once the schema catches up.
+type ProviderOption = { code: string; name: string };
+type CategoryWithProvider = UserEventCategory & {
+  providerRequired?: boolean;
+  providers?: ProviderOption[];
+};
 
 interface EventReportModalProps {
   visible: boolean;
@@ -40,8 +43,8 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
   const { tier } = useMembership();
   const canSubmit = tier === 'PLUS' || tier === 'PRO';
 
-  const [selectedCategory, setSelectedCategory] = useState<UserEventCategory | null>(null);
-  const [radiusIdx, setRadiusIdx] = useState(3); // default 1000m
+  const [selectedCategory, setSelectedCategory] = useState<CategoryWithProvider | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<ProviderOption | null>(null);
   const [region, setRegion] = useState<Region>({
     latitude: initialCenter?.lat ?? SLOVAKIA_CENTER.lat,
     longitude: initialCenter?.lng ?? SLOVAKIA_CENTER.lng,
@@ -51,10 +54,11 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
   const [submitting, setSubmitting] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
 
-  // Group categories by categoryCode
+  // Group categories by categoryCode. Cast to widen for the
+  // `providerRequired`/`providers` fields BE emits (see CategoryWithProvider).
   const groups = useMemo(() => {
-    const map = new Map<string, UserEventCategory[]>();
-    for (const cat of categories) {
+    const map = new Map<string, CategoryWithProvider[]>();
+    for (const cat of categories as CategoryWithProvider[]) {
       const group = map.get(cat.categoryCode) ?? [];
       group.push(cat);
       map.set(cat.categoryCode, group);
@@ -81,8 +85,13 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
     }
   }, []);
 
+  const providerRequired = selectedCategory?.providerRequired ?? false;
+  const canSubmitForm =
+    !!selectedCategory && (!providerRequired || !!selectedProvider);
+
   const handleSubmit = async () => {
     if (!selectedCategory || submitting) return;
+    if (providerRequired && !selectedProvider) return;
     setSubmitting(true);
     try {
       await api.createEvent({
@@ -90,14 +99,13 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
         title: selectedCategory.name,
         lat: region.latitude,
         lng: region.longitude,
-        radiusM: RADIUS_STEPS[radiusIdx],
-      });
+        ...(selectedProvider ? { providerCode: selectedProvider.code } : {}),
+      } as Parameters<typeof api.createEvent>[0]);
       showToast.success(t('eventReport.success'));
       onCreated();
       onClose();
-      // Reset state for next use
       setSelectedCategory(null);
-      setRadiusIdx(3);
+      setSelectedProvider(null);
     } catch {
       showToast.error(t('eventReport.error'));
     } finally {
@@ -108,8 +116,8 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
   const footer = canSubmit ? (
     <Pressable
       onPress={handleSubmit}
-      disabled={!selectedCategory || submitting}
-      style={[styles.submitButton, { backgroundColor: colors.primary }, (!selectedCategory || submitting) && styles.disabled]}
+      disabled={!canSubmitForm || submitting}
+      style={[styles.submitButton, { backgroundColor: colors.primary }, (!canSubmitForm || submitting) && styles.disabled]}
     >
       {submitting && <ActivityIndicator size="small" color={colors.textInverse} style={styles.spinner} />}
       <Text style={[styles.submitText, { color: colors.textInverse }]}>
@@ -166,7 +174,10 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
                   return (
                     <Pressable
                       key={cat.code}
-                      onPress={() => setSelectedCategory(cat)}
+                      onPress={() => {
+                        setSelectedCategory(cat);
+                        setSelectedProvider(null);
+                      }}
                       style={[
                         styles.categoryRow,
                         { borderColor: isSelected ? colors.primary : colors.border },
@@ -182,6 +193,35 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
               </View>
             ))}
           </View>
+        )}
+
+        {/* Provider picker — only when subcategory requires it (e.g. internet/water/electric/heat/gas outages) */}
+        {providerRequired && selectedCategory?.providers && selectedCategory.providers.length > 0 && (
+          <>
+            <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>
+              {t('eventReport.selectProvider')}
+            </Text>
+            <View style={styles.categoryList}>
+              {selectedCategory.providers.map((p) => {
+                const isSelected = selectedProvider?.code === p.code;
+                return (
+                  <Pressable
+                    key={p.code}
+                    onPress={() => setSelectedProvider(p)}
+                    style={[
+                      styles.categoryRow,
+                      { borderColor: isSelected ? colors.primary : colors.border },
+                      isSelected && { backgroundColor: withOpacity(colors.primary, 0.063) },
+                    ]}
+                  >
+                    <Text style={[styles.categoryName, { color: isSelected ? colors.primary : colors.text }]}>
+                      {p.name}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </>
         )}
 
         {/* Map */}
@@ -214,21 +254,6 @@ export function EventReportModal({ visible, onClose, onCreated, initialCenter }:
         <Text style={[styles.coordText, { color: colors.textMuted }]}>
           {region.latitude.toFixed(5)}, {region.longitude.toFixed(5)}
         </Text>
-
-        {/* Radius */}
-        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>
-          {t('eventReport.radius')}
-        </Text>
-        <View style={styles.radiusRow}>
-          {RADIUS_STEPS.map((step, idx) => (
-            <TogglePill
-              key={step}
-              active={idx === radiusIdx}
-              label={formatRadius(step)}
-              onPress={() => setRadiusIdx(idx)}
-            />
-          ))}
-        </View>
       </View>
     </FullScreenModal>
   );
@@ -320,11 +345,6 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.xs,
     fontSize: theme.fontSize.xs,
     textAlign: 'center',
-  },
-  radiusRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
   },
   submitButton: {
     flexDirection: 'row',

@@ -24,7 +24,7 @@ const SLOVAKIA_REGION: Region = {
 
 const GPS_DELTA = 0.01;
 
-const LABEL_VALUES: LocationLabel[] = ['home', 'work', 'school', 'gym', 'other'];
+const LABEL_VALUES: LocationLabel[] = ['home', 'work', 'school', 'gym', 'parents', 'cottage', 'other'];
 
 interface LocationPickerModalProps {
   visible: boolean;
