@@ -88,13 +88,17 @@ export function RemindersTabContent() {
           Tapping it opens the create-only ReminderFormModal below. */}
       <FAB icon={IconPlus} onPress={() => setShowCreateForm(true)} />
 
-      <ReminderFormModal
-        visible={showCreateForm}
-        onClose={handleCloseCreate}
-        onSave={createReminder}
-        editReminder={undefined}
-        defaultDate={createDefaultDate}
-      />
+      {/* Conditionally mounted so `defaultDate` is read fresh on each
+          open (FAB tap from List view = today; Calendar view = the
+          currently-selected day). */}
+      {showCreateForm && (
+        <ReminderFormModal
+          onClose={handleCloseCreate}
+          onSave={createReminder}
+          editReminder={undefined}
+          defaultDate={createDefaultDate}
+        />
+      )}
     </View>
   );
 }

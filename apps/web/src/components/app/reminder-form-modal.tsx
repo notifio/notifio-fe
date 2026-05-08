@@ -1,8 +1,8 @@
 'use client';
 
 import { IconLoader2, IconX } from '@tabler/icons-react';
-import { useTranslations } from 'next-intl';
-import { type FormEvent, useCallback, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { type FormEvent, useCallback, useMemo, useState } from 'react';
 
 import type {
   PersonalReminder,
@@ -11,25 +11,41 @@ import type {
   ReminderRecurrence,
 } from '@notifio/api-client';
 
+import { NotifioDateTimePicker } from '@/components/app/notifio-date-time-picker';
 import { cn } from '@/lib/utils';
 
 interface ReminderFormModalProps {
   reminder?: PersonalReminder;
+  /** Prefill the date portion when opening for create from the calendar
+   *  view. Time defaults to 09:00. Ignored when `reminder` is set. */
+  defaultDate?: Date;
   onSave: (body: CreatePersonalReminderInput | UpdatePersonalReminderInput) => Promise<void>;
   onClose: () => void;
 }
 
-const RECURRENCE_OPTIONS: ReminderRecurrence[] = ['ONCE', 'DAILY', 'WEEKLY', 'MONTHLY'];
-
-const WEEK_DAYS = [
-  { value: 0, label: 'Su' },
-  { value: 1, label: 'Mo' },
-  { value: 2, label: 'Tu' },
-  { value: 3, label: 'We' },
-  { value: 4, label: 'Th' },
-  { value: 5, label: 'Fr' },
-  { value: 6, label: 'Sa' },
+const RECURRENCE_OPTIONS: ReminderRecurrence[] = [
+  'ONCE',
+  'DAILY',
+  'WEEKLY',
+  'BIWEEKLY',
+  'MONTHLY',
+  'YEARLY',
 ];
+
+// Sunday-first values to match BE's `recurrenceDays` CSV (where
+// 0=Sunday). Short labels are derived per-render from Intl in the
+// app locale so they don't drift from the calendar grid.
+const WEEK_DAY_VALUES = [0, 1, 2, 3, 4, 5, 6] as const;
+
+function buildWeekDayShort(locale: string): Record<number, string> {
+  const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  const sunday = Date.UTC(1970, 0, 4);
+  const map: Record<number, string> = {};
+  for (const i of WEEK_DAY_VALUES) {
+    map[i] = fmt.format(new Date(sunday + i * 86400000));
+  }
+  return map;
+}
 
 function toLocalDatetime(iso: string): string {
   const d = new Date(iso);
@@ -42,21 +58,33 @@ function parseDays(csv: string | null): Set<number> {
   return new Set(csv.split(',').map(Number));
 }
 
-export function ReminderFormModal({ reminder, onSave, onClose }: ReminderFormModalProps) {
+export function ReminderFormModal({ reminder, defaultDate, onSave, onClose }: ReminderFormModalProps) {
   const t = useTranslations('reminders.form');
+  const tPicker = useTranslations('picker');
+  const tCommon = useTranslations('common');
+  const locale = useLocale();
   const isEdit = !!reminder;
 
   const [title, setTitle] = useState(reminder?.title ?? '');
   const [description, setDescription] = useState(reminder?.description ?? '');
-  const [triggerAt, setTriggerAt] = useState(
-    reminder ? toLocalDatetime(reminder.triggerAt) : '',
-  );
+  const [triggerAt, setTriggerAt] = useState(() => {
+    if (reminder) return toLocalDatetime(reminder.triggerAt);
+    if (defaultDate) {
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const d = defaultDate;
+      // Default to 09:00 on the prefilled day; user can adjust in the popover.
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T09:00`;
+    }
+    return '';
+  });
   const [recurrence, setRecurrence] = useState<ReminderRecurrence>(
     reminder?.recurrence ?? 'ONCE',
   );
   const [selectedDays, setSelectedDays] = useState<Set<number>>(
     () => parseDays(reminder?.recurrenceDays ?? null),
   );
+
+  const weekDayShort = useMemo(() => buildWeekDayShort(locale), [locale]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,16 +178,25 @@ export function ReminderFormModal({ reminder, onSave, onClose }: ReminderFormMod
             />
           </div>
 
-          {/* DateTime */}
+          {/* DateTime — styled popover replacing native datetime-local
+              widget, so the picker matches the dark theme and renders
+              weekday/month names in the app locale (R3 + R2). */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-text-secondary">
               {t('dateTime')}
             </label>
-            <input
-              type="datetime-local"
+            <NotifioDateTimePicker
               value={triggerAt}
-              onChange={(e) => setTriggerAt(e.target.value)}
-              className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              onChange={setTriggerAt}
+              locale={locale}
+              labels={{
+                placeholder: tPicker('placeholder'),
+                time: tPicker('time'),
+                quickOptions: tPicker('quickOptions'),
+                plusOneHour: tPicker('plusOneHour'),
+                confirm: tPicker('confirm'),
+                close: tCommon('close'),
+              }}
             />
           </div>
 
@@ -168,20 +205,28 @@ export function ReminderFormModal({ reminder, onSave, onClose }: ReminderFormMod
             <label className="mb-1.5 block text-sm font-medium text-text-secondary">
               {t('recurrence')}
             </label>
-            <div className="flex gap-1.5">
+            <div className="grid grid-cols-3 gap-1.5">
               {RECURRENCE_OPTIONS.map((opt) => (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => setRecurrence(opt)}
                   className={cn(
-                    'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    'rounded-lg px-3 py-1.5 text-center text-xs font-medium transition-colors',
                     recurrence === opt
                       ? 'bg-accent text-white'
                       : 'bg-card text-text-secondary hover:text-text-primary',
                   )}
                 >
-                  {t(opt.toLowerCase() as 'once' | 'daily' | 'weekly' | 'monthly')}
+                  {t(
+                    opt.toLowerCase() as
+                      | 'once'
+                      | 'daily'
+                      | 'weekly'
+                      | 'biweekly'
+                      | 'monthly'
+                      | 'yearly',
+                  )}
                 </button>
               ))}
             </div>
@@ -194,19 +239,19 @@ export function ReminderFormModal({ reminder, onSave, onClose }: ReminderFormMod
                 {t('weekDays')}
               </label>
               <div className="flex gap-1.5">
-                {WEEK_DAYS.map((day) => (
+                {WEEK_DAY_VALUES.map((value) => (
                   <button
-                    key={day.value}
+                    key={value}
                     type="button"
-                    onClick={() => toggleDay(day.value)}
+                    onClick={() => toggleDay(value)}
                     className={cn(
                       'flex h-9 w-9 items-center justify-center rounded-lg text-xs font-medium transition-colors',
-                      selectedDays.has(day.value)
+                      selectedDays.has(value)
                         ? 'bg-accent text-white'
                         : 'bg-card text-text-secondary hover:text-text-primary',
                     )}
                   >
-                    {day.label}
+                    {weekDayShort[value]}
                   </button>
                 ))}
               </div>

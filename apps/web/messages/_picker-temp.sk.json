@@ -1,0 +1,10 @@
+{
+  "_comment": "TEMP — move to @notifio/shared next time we bump. Picker labels not yet in shared bundle.",
+  "picker": {
+    "placeholder": "Vyber dátum a čas",
+    "time": "Čas",
+    "quickOptions": "Rýchle voľby",
+    "plusOneHour": "+1 hod",
+    "confirm": "Potvrdiť"
+  }
+}
