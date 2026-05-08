@@ -8,14 +8,13 @@ import type { NotificationHistoryItem } from '@notifio/api-client';
 import { AlertCard } from './alert-card';
 import { FilterSheet } from './filter-sheet';
 import { useNotificationHistory } from '../../hooks/use-notification-history';
-import { isResolved } from '../../lib/alert-card-utils';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
 import { TogglePill } from '../ui/toggle-pill';
 
-type TabFilter = 'active' | 'ended' | 'all';
+type TabFilter = 'active' | 'upcoming' | 'ended' | 'all';
 
 // Category chip filters — mirrors web's CATEGORY_FILTERS in
 // apps/web/src/app/(app)/notifications/history-section.tsx. Same
@@ -57,20 +56,18 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   // Default status is `active` — count any non-default for the badge.
   const activeFilterCount = tab === 'active' ? 0 : 1;
 
-  // Server fetches active-only when on the Active tab (cheaper round
-  // trip); Ended + All fetch the full set so we can client-filter the
-  // resolved subset via isResolved().
-  const fetchActiveOnly = tab === 'active';
+  // Server-side lifecycle filter so pagination + total stay correct. Map
+  // FE tab labels to BE's status enum: ended → resolved.
+  const status: 'upcoming' | 'active' | 'resolved' | 'all' =
+    tab === 'ended' ? 'resolved' : tab;
   const { items, isLoading, hasMore, loadMore, refresh } = useNotificationHistory({
-    activeOnly: fetchActiveOnly,
+    status,
   });
 
   const filtered = useMemo(() => {
-    let base = items;
-    if (tab === 'ended') base = base.filter((n) => isResolved(n));
-    if (categoryFilter !== 'all') base = base.filter((n) => matchesCategory(n.category, categoryFilter));
-    return base;
-  }, [tab, categoryFilter, items]);
+    if (categoryFilter === 'all') return items;
+    return items.filter((n) => matchesCategory(n.category, categoryFilter));
+  }, [categoryFilter, items]);
 
   const renderItem = useCallback(
     ({ item }: { item: NotificationHistoryItem }) => (

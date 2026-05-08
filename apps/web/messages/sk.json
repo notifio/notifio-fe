@@ -79,6 +79,12 @@
       "reminders": "Pripomienky",
       "events": "Udalosti"
     },
+    "lifecycle": {
+      "all": "Všetky",
+      "active": "Aktívne",
+      "upcoming": "Plánované",
+      "resolved": "Ukončené"
+    },
     "filters": {
       "all": "Všetky",
       "weather": "Počasie",
@@ -179,6 +185,7 @@
   },
   "events": {
     "reportButton": "Nahlásiť",
+    "selectProvider": "Vyberte poskytovateľa",
     "selectCategory": "Čo sa stalo?",
     "pinLocation": "Poloha",
     "pickLocation": "Poloha (kliknite na mapu alebo presuňte špendlík)",
@@ -215,6 +222,7 @@
       "active": "Aktívne",
       "resolved": "Vyriešené",
       "notFound": "Udalosť sa nenašla",
+      "archived": "Táto udalosť bola archivovaná a už nie je dostupná.",
       "backToDashboard": "Späť na dashboard"
     },
     "resolveFailed": "Nepodarilo sa vyriešiť udalosť"

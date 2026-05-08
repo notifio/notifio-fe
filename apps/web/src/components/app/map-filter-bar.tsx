@@ -126,7 +126,7 @@ export function MapFilterBar({
   return (
     <div
       ref={panelRef}
-      style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10 }}
+      style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 30 }}
     >
       {/* ── Collapsed button ──────────────────────────────────────── */}
       <button
@@ -165,27 +165,36 @@ export function MapFilterBar({
 
       {/* ── Expanded panel ────────────────────────────────────────── */}
       <div
+        // .map-filter-max-h handles the responsive height cap (subtracts
+        // top nav + bottom tab on mobile, top nav only on md+). Inline
+        // `maxHeight: 0` for the closed state overrides the class so the
+        // open/close max-height transition still animates.
+        className={isOpen ? 'map-filter-max-h' : undefined}
         style={{
           opacity: isOpen ? 1 : 0,
-          maxHeight: isOpen ? '800px' : '0px',
+          maxHeight: isOpen ? undefined : '0px',
           overflow: 'hidden',
+          // Match the inner panel's radius so the open/close clip mask
+          // doesn't slice the inner's bottom rounded corner with a flat
+          // edge.
+          borderRadius: '16px',
           transition: 'opacity 200ms ease, max-height 200ms ease',
           pointerEvents: isOpen ? 'auto' : 'none',
         }}
       >
         <div
+          // Same responsive height cap as the outer wrapper so the
+          // inner scroll area matches the visible panel. See
+          // .map-filter-max-h in globals.css for the breakpoint logic.
+          className="scrollbar-hidden map-filter-max-h"
           style={{
             backgroundColor: glassBg,
             border: `0.5px solid ${glassBorder}`,
             borderRadius: '16px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            minWidth: '260px',
+            minWidth: '315px',
             color: textColor,
             overflowY: 'auto',
-            // B5: bound the panel to the viewport so it doesn't bleed
-            // off-screen on short displays. top:24 + bottom:24 = 48px
-            // total padding from edges.
-            maxHeight: 'calc(100vh - 48px)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
           }}
@@ -295,6 +304,7 @@ export function MapFilterBar({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              gap: '12px',
               padding: '0 16px 4px',
             }}
           >

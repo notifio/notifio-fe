@@ -11,6 +11,7 @@ const REFRESH_INTERVAL_MS = 60_000;
 interface UseNotificationHistoryOptions {
   limit?: number;
   activeOnly?: boolean;
+  status?: 'upcoming' | 'active' | 'resolved' | 'all';
 }
 
 interface UseNotificationHistoryResult {
@@ -29,6 +30,7 @@ export function useNotificationHistory(
 ): UseNotificationHistoryResult {
   const limit = options?.limit ?? 20;
   const activeOnly = options?.activeOnly ?? false;
+  const status = options?.status;
 
   const [data, setData] = useState<PaginatedNotifications | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +43,7 @@ export function useNotificationHistory(
       setIsLoading(true);
       setError(null);
       try {
-        const result = await api.getNotificationHistory({ page: p, limit });
+        const result = await api.getNotificationHistory({ page: p, limit, status });
         setData((prev) => {
           if (!append || !prev) return result;
           return {
@@ -56,7 +58,7 @@ export function useNotificationHistory(
         setIsLoading(false);
       }
     },
-    [limit],
+    [limit, status],
   );
 
   useEffect(() => {

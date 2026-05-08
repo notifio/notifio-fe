@@ -93,13 +93,20 @@ export function HistorySection() {
   const t = useTranslations('notificationsPage');
   const { fullyConfigured } = usePermissionStatus();
 
-  const { items, isLoading, hasMore, loadMore } = useNotificationHistory({ limit: 30 });
+  type Lifecycle = 'active' | 'upcoming' | 'resolved' | 'all';
+  const [lifecycle, setLifecycle] = useState<Lifecycle>('active');
+  const { items, isLoading, hasMore, loadMore } = useNotificationHistory({
+    limit: 30,
+    status: lifecycle,
+  });
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filteredItems = useMemo(
     () => items.filter((n) => matchesFilter(n.category, activeFilter)),
     [items, activeFilter],
   );
+
+  const LIFECYCLE_OPTIONS: Lifecycle[] = ['active', 'upcoming', 'resolved', 'all'];
 
   const dayGroups = useMemo(
     () =>
@@ -113,7 +120,25 @@ export function HistorySection() {
 
   return (
     <div className="mt-6">
-      {/* Filter pills */}
+      {/* Lifecycle chips (active / upcoming / resolved / all) */}
+      <div className="mb-2 flex flex-wrap gap-1.5">
+        {LIFECYCLE_OPTIONS.map((key) => (
+          <button
+            key={key}
+            onClick={() => setLifecycle(key)}
+            className={cn(
+              'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
+              lifecycle === key
+                ? 'bg-accent text-white'
+                : 'border border-border text-text-secondary hover:text-text-primary',
+            )}
+          >
+            {t(`lifecycle.${key}`)}
+          </button>
+        ))}
+      </div>
+
+      {/* Category pills */}
       <div className="flex flex-wrap gap-1.5">
         {['all', ...CATEGORY_FILTERS.map((f) => f.key)].map((key) => (
           <button

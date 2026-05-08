@@ -7,6 +7,7 @@ import { DigestSection } from "@/components/settings/digest-section";
 import { NotificationPreferencesSection } from "@/components/settings/notification-preferences-section";
 import { PrivacySection } from "@/components/settings/privacy-section";
 import { PushNotificationsSection } from "@/components/settings/push-notifications-section";
+import { QuietHoursSection } from "@/components/settings/quiet-hours-section";
 import { SubscriptionSection } from "@/components/settings/subscription-section";
 
 export default function SettingsPage() {
@@ -21,6 +22,7 @@ export default function SettingsPage() {
         <PushNotificationsSection />
         <DigestSection />
         <NotificationPreferencesSection />
+        <QuietHoursSection />
         <PrivacySection />
         <DataSourcesSection />
       </div>

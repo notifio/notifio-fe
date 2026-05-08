@@ -5,10 +5,11 @@ import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { BottomSheet } from '../ui/bottom-sheet';
 
-type StatusFilter = 'active' | 'ended' | 'all';
+type StatusFilter = 'active' | 'upcoming' | 'ended' | 'all';
 
 const STATUS_OPTIONS: ReadonlyArray<{ id: StatusFilter; labelKey: string }> = [
   { id: 'active', labelKey: 'alerts.active' },
+  { id: 'upcoming', labelKey: 'alerts.upcoming' },
   { id: 'ended', labelKey: 'alerts.ended' },
   { id: 'all', labelKey: 'alerts.all' },
 ];

@@ -34,11 +34,11 @@ export default function MapPage() {
   // Step 8: source for the upsell modal — set by teaser pin taps and
   // locked filter row taps; cleared on close.
   const [upsellSource, setUpsellSource] = useState<MapPinSource | null>(null);
-  // β filter sheet "Show on map" lifecycle toggles. Active default ON,
-  // upcoming default OFF — both flow into useMapData so the shared
-  // normalizer can short-circuit upcoming events when the toggle is off.
+  // β filter sheet "Show on map" lifecycle toggles. Both default ON so the
+  // map shows planned (e.g. ZSD 08:00 outages browsed at 06:00) alongside
+  // currently-active events; users can still toggle upcoming off.
   const [showActive, setShowActive] = useState(true);
-  const [showUpcoming, setShowUpcoming] = useState(false);
+  const [showUpcoming, setShowUpcoming] = useState(true);
   // F2 stacked-pin sheet state. Opens on cluster click with the leaves.
   const [clusterChildren, setClusterChildren] = useState<MapPin[]>([]);
   const [clusterSheetOpen, setClusterSheetOpen] = useState(false);

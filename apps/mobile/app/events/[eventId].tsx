@@ -24,7 +24,7 @@ export default function EventDetailScreen() {
   const { eventId } = useLocalSearchParams<{ eventId: string }>();
 
   const {
-    event, userVote, isOwner, isLoading, error, voting,
+    event, userVote, isOwner, isLoading, error, archived, voting,
     vote, resolveEvent, removeEvent,
   } = useEventDetail(eventId!);
 
@@ -65,14 +65,16 @@ export default function EventDetailScreen() {
     );
   }
 
-  if (error || !event) {
+  if (error || archived || !event) {
     return (
       <>
         <Stack.Screen options={{ title: t('eventDetail.title') }} />
         <View style={[styles.centered, { backgroundColor: colors.background }]}>
           <Icon icon={IconMapPin} size={48} color={colors.textMuted} />
           <Text style={[styles.errorText, { color: colors.textMuted }]}>
-            {error ?? t('eventDetail.notFound')}
+            {archived
+              ? t('eventDetail.archived')
+              : (error ?? t('eventDetail.notFound'))}
           </Text>
         </View>
       </>

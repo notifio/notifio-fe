@@ -364,7 +364,7 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserProfile>('/me');
     },
 
-    async updateProfile(data: { countryCode?: string; digestMode?: DigestMode }): Promise<UserProfile> {
+    async updateProfile(data: { countryCode?: string; digestMode?: DigestMode; locale?: string | null }): Promise<UserProfile> {
       return request<UserProfile>('/me', { method: 'PATCH', body: data });
     },
 
@@ -427,11 +427,13 @@ export function createNotifioClient(config: NotifioClientConfig) {
     async getNotificationHistory(params?: {
       page?: number;
       limit?: number;
+      status?: 'upcoming' | 'active' | 'resolved' | 'all';
     }): Promise<PaginatedNotifications> {
       return request<PaginatedNotifications>('/me/notifications', {
         params: {
           page: params?.page !== undefined ? String(params.page) : undefined,
           limit: params?.limit !== undefined ? String(params.limit) : undefined,
+          status: params?.status,
         },
       });
     },

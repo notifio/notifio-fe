@@ -7,6 +7,7 @@ import {
   clonePrefs,
   diffPreferences,
   setDisplayField,
+  setQuietHoursField,
   togglePreferenceCategory,
   togglePreferenceItem,
 } from '@notifio/shared/preferences';
@@ -21,6 +22,8 @@ interface UsePreferencesResult {
   hasChanges: boolean;
   toggleItem: (categoryCode: string, subcategoryCode: string | null, enabled: boolean) => void;
   toggleCategory: (categoryCode: string, enabled: boolean) => void;
+  /** Global quiet hours (PRO-gated). Pass `null` start+end to clear. */
+  setQuietHours: (start: string | null, end: string | null) => void;
   setDisplay: (key: 'theme' | 'units' | 'weatherProvider', value: string) => void;
   savePreferences: () => Promise<void>;
   cancelChanges: () => void;
@@ -66,6 +69,10 @@ export function usePreferences(): UsePreferencesResult {
     setLocalPrefs((prev) => (prev ? togglePreferenceCategory(prev, categoryCode, enabled) : prev));
   }, []);
 
+  const setQuietHours = useCallback((start: string | null, end: string | null) => {
+    setLocalPrefs((prev) => (prev ? setQuietHoursField(prev, start, end) : prev));
+  }, []);
+
   const setDisplay = useCallback((key: 'theme' | 'units' | 'weatherProvider', value: string) => {
     setLocalPrefs((prev) => (prev ? setDisplayField(prev, key, value) : prev));
   }, []);
@@ -83,6 +90,9 @@ export function usePreferences(): UsePreferencesResult {
           theme: patch.display.theme as 'system' | 'light' | 'dark',
           units: patch.display.units as 'metric' | 'imperial',
         };
+      }
+      if (patch.quietHours) {
+        request.quietHours = patch.quietHours;
       }
       if (patch.notifications) {
         request.notifications = patch.notifications;
@@ -114,6 +124,7 @@ export function usePreferences(): UsePreferencesResult {
     hasChanges,
     toggleItem,
     toggleCategory,
+    setQuietHours,
     setDisplay,
     savePreferences,
     cancelChanges,

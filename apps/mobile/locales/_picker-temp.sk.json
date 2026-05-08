@@ -6,5 +6,14 @@
     "quickOptions": "Rýchle voľby",
     "plusOneHour": "+1 hod",
     "close": "Zatvoriť"
+  },
+  "alerts": {
+    "upcoming": "Plánované"
+  },
+  "eventReport": {
+    "selectProvider": "Vyberte poskytovateľa"
+  },
+  "eventDetail": {
+    "archived": "Táto udalosť bola archivovaná a už nie je dostupná."
   }
 }

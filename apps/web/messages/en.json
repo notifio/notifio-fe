@@ -79,6 +79,12 @@
       "reminders": "Reminders",
       "events": "Events"
     },
+    "lifecycle": {
+      "all": "All",
+      "active": "Active",
+      "upcoming": "Upcoming",
+      "resolved": "Resolved"
+    },
     "filters": {
       "all": "All",
       "weather": "Weather",
@@ -179,6 +185,7 @@
   },
   "events": {
     "reportButton": "Report",
+    "selectProvider": "Select provider",
     "selectCategory": "What happened?",
     "pinLocation": "Location",
     "pickLocation": "Location (click map or drag pin)",
@@ -215,6 +222,7 @@
       "active": "Active",
       "resolved": "Resolved",
       "notFound": "Event not found",
+      "archived": "This event has been archived and is no longer available.",
       "backToDashboard": "Back to dashboard"
     },
     "resolveFailed": "Failed to resolve event"
