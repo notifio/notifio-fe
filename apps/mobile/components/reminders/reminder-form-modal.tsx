@@ -11,7 +11,6 @@ import {
 
 import type { CreatePersonalReminderInput, PersonalReminder, ReminderRecurrence, UpdatePersonalReminderInput } from '@notifio/api-client';
 
-import { formatDate, formatTime } from '../../lib/format';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { NotifioDateTimePicker } from '../notifio-date-time-picker';
@@ -92,7 +91,6 @@ export function ReminderFormModal({
   const [selectedDays, setSelectedDays] = useState<Set<number>>(
     () => parseDays(editReminder?.recurrenceDays ?? null),
   );
-  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const isEditing = !!editReminder;
@@ -142,9 +140,6 @@ export function ReminderFormModal({
       setSaving(false);
     }
   };
-
-  const formattedDate = formatDate(date.toISOString(), i18n.language);
-  const formattedTime = formatTime(date.toISOString(), i18n.language);
 
   const footer = (
     <Pressable
@@ -219,35 +214,13 @@ export function ReminderFormModal({
           />
         </View>
 
-        {/* Date & Time */}
+        {/* Date & Time — inline section picker; trigger + collapsible
+            section live inside NotifioDateTimePicker. */}
         <View style={styles.field}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
             {t('reminders.dateLabel')}
           </Text>
-          <Pressable
-            onPress={() => setShowDateTimePicker(true)}
-            style={[
-              styles.dateButton,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-              },
-            ]}
-          >
-            <Text style={[styles.dateText, { color: colors.text }]}>
-              {formattedDate} {formattedTime}
-            </Text>
-          </Pressable>
-
-          <NotifioDateTimePicker
-            visible={showDateTimePicker}
-            initial={date}
-            onConfirm={(next) => {
-              setDate(next);
-              setShowDateTimePicker(false);
-            }}
-            onClose={() => setShowDateTimePicker(false)}
-          />
+          <NotifioDateTimePicker value={date} onChange={setDate} />
         </View>
 
         {/* Recurrence */}
@@ -334,25 +307,6 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     minHeight: 80,
-  },
-  dateButton: {
-    borderWidth: 1,
-    borderRadius: theme.radius.lg,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-  },
-  dateText: {
-    fontSize: theme.fontSize.md,
-  },
-  confirmPickerButton: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.md,
-  },
-  confirmPickerText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
   },
   pillGrid: {
     gap: theme.spacing.sm,

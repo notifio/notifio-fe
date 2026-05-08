@@ -11,7 +11,6 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@floating-ui/react-dom": "^2.1.5",
     "@notifio/api-client": "*",
     "@notifio/ui": "*",
     "@supabase/ssr": "^0.10.0",

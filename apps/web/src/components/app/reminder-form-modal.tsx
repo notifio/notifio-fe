@@ -61,7 +61,6 @@ function parseDays(csv: string | null): Set<number> {
 export function ReminderFormModal({ reminder, defaultDate, onSave, onClose }: ReminderFormModalProps) {
   const t = useTranslations('reminders.form');
   const tPicker = useTranslations('picker');
-  const tCommon = useTranslations('common');
   const locale = useLocale();
   const isEdit = !!reminder;
 
@@ -194,8 +193,7 @@ export function ReminderFormModal({ reminder, defaultDate, onSave, onClose }: Re
                 time: tPicker('time'),
                 quickOptions: tPicker('quickOptions'),
                 plusOneHour: tPicker('plusOneHour'),
-                confirm: tPicker('confirm'),
-                close: tCommon('close'),
+                close: tPicker('close'),
               }}
             />
           </div>

@@ -1,28 +1,16 @@
-import { IconX } from '@tabler/icons-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { IconCalendar } from '@tabler/icons-react-native';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { theme } from '../lib/theme';
 import { useAppTheme } from '../providers/theme-provider';
 import { MonthGrid } from './ui/month-grid';
 
 interface NotifioDateTimePickerProps {
-  visible: boolean;
-  /** Initial value to seed the picker with on open. */
-  initial: Date;
-  onConfirm: (next: Date) => void;
-  onClose: () => void;
+  /** Current value. Empty/invalid => placeholder shown. */
+  value: Date | null;
+  onChange: (next: Date) => void;
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -33,58 +21,46 @@ function startOfDay(d: Date): Date {
   return c;
 }
 
-const HOUR_VALUES = Array.from({ length: 24 }, (_, i) => i);
-const MINUTE_VALUES = Array.from({ length: 60 }, (_, i) => i);
-const WHEEL_ROW_HEIGHT = 40;
-const WHEEL_VISIBLE_ROWS = 5; // 2 above + selected + 2 below
+/** 11:00 → 12:00, 11:02 → 13:00, 22:30 → 23:00, 23:30 → 23:00. */
+function nextRoundHourFromNow(): { hour: number; minute: number } {
+  const inOneHour = new Date(Date.now() + 60 * 60 * 1000);
+  let hour = inOneHour.getHours();
+  if (inOneHour.getMinutes() > 0) hour += 1;
+  return { hour: Math.min(23, hour), minute: 0 };
+}
 
 interface QuickChip {
   label: string;
   hour: number;
   minute: number;
+  dynamic?: boolean;
 }
 
 /**
- * Notifio-styled datetime picker presented over the reminder form.
- * Custom calendar grid + iOS-style scroll wheels for hours/minutes.
- * Replaces native `@react-native-community/datetimepicker` so the
- * surface matches the dark theme on both platforms and renders
- * weekday/month names in the app locale.
+ * Inline-section datetime picker. Mirrors the web component shape:
+ * trigger button + collapsible section in normal flow, no Modal,
+ * no scroll wheels. Edits write to the parent immediately; the
+ * "Zatvoriť" button just collapses the section.
  */
-export function NotifioDateTimePicker({
-  visible,
-  initial,
-  onConfirm,
-  onClose,
-}: NotifioDateTimePickerProps) {
+export function NotifioDateTimePicker({ value, onChange }: NotifioDateTimePickerProps) {
   const { colors } = useAppTheme();
   const { t, i18n } = useTranslation();
-  const insets = useSafeAreaInsets();
+  const [open, setOpen] = useState(false);
 
-  // Recompute on every render; the only cost is one Date allocation,
-  // and refreshing it lets "today" tick over correctly if the picker
-  // sits open across midnight.
   const today = startOfDay(new Date());
+  const seedDate = value ?? today;
 
-  const [draftDate, setDraftDate] = useState(() => startOfDay(initial));
-  const [draftHour, setDraftHour] = useState(initial.getHours());
-  const [draftMinute, setDraftMinute] = useState(initial.getMinutes());
-  const [calYear, setCalYear] = useState(initial.getFullYear());
-  const [calMonth, setCalMonth] = useState(initial.getMonth());
+  const [calYear, setCalYear] = useState(seedDate.getFullYear());
+  const [calMonth, setCalMonth] = useState(seedDate.getMonth());
 
-  // Re-seed every time the modal opens with the latest external value.
-  useEffect(() => {
-    if (!visible) return;
-    setDraftDate(startOfDay(initial));
-    setDraftHour(initial.getHours());
-    setDraftMinute(initial.getMinutes());
-    setCalYear(initial.getFullYear());
-    setCalMonth(initial.getMonth());
-  }, [visible, initial]);
+  const currentHour = value?.getHours() ?? 9;
+  const currentMinute = value?.getMinutes() ?? 0;
+  const [hourInput, setHourInput] = useState(pad(currentHour));
+  const [minuteInput, setMinuteInput] = useState(pad(currentMinute));
 
   const selectedDay =
-    draftDate.getFullYear() === calYear && draftDate.getMonth() === calMonth
-      ? draftDate.getDate()
+    value && value.getFullYear() === calYear && value.getMonth() === calMonth
+      ? value.getDate()
       : null;
 
   const isPastDay = (day: number) => {
@@ -92,62 +68,59 @@ export function NotifioDateTimePicker({
     return startOfDay(candidate) < today;
   };
 
+  const writeValue = (date: Date, hour: number, minute: number) => {
+    const next = new Date(date);
+    next.setHours(hour, minute, 0, 0);
+    onChange(next);
+  };
+
   const handleSelectDay = (day: number) => {
     if (isPastDay(day)) return;
-    setDraftDate(new Date(calYear, calMonth, day));
+    writeValue(new Date(calYear, calMonth, day), currentHour, currentMinute);
   };
 
   const setTime = (h: number, m: number) => {
-    setDraftHour(h);
-    setDraftMinute(m);
+    const clampedH = Math.max(0, Math.min(23, h));
+    const clampedM = Math.max(0, Math.min(59, m));
+    setHourInput(pad(clampedH));
+    setMinuteInput(pad(clampedM));
+    writeValue(value ?? today, clampedH, clampedM);
   };
 
-  // Spec: "+1h-from-now" recomputes on render. Keep the array inline
-  // so that's literally what happens.
-  const inOneHour = new Date(Date.now() + 60 * 60 * 1000);
+  const plusOneHour = nextRoundHourFromNow();
   const quickChips: QuickChip[] = [
     { label: '08:00', hour: 8, minute: 0 },
     { label: '12:00', hour: 12, minute: 0 },
     { label: '18:00', hour: 18, minute: 0 },
     {
-      label: `${pad(inOneHour.getHours())}:${pad(inOneHour.getMinutes())}`,
-      hour: inOneHour.getHours(),
-      minute: inOneHour.getMinutes(),
+      label: t('picker.plusOneHour'),
+      hour: plusOneHour.hour,
+      minute: plusOneHour.minute,
+      dynamic: true,
     },
   ];
 
-  const commit = () => {
-    const merged = new Date(draftDate);
-    merged.setHours(draftHour, draftMinute, 0, 0);
-    onConfirm(merged);
-  };
+  const triggerLabel = value
+    ? `${value.toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' })}, ${pad(currentHour)}:${pad(currentMinute)}`
+    : null;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={onClose}
-    >
-      <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top }]}>
-        {/* Header */}
-        <View style={[styles.header, { borderBottomColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            {t('reminders.form.dateTime')}
-          </Text>
-          <Pressable
-            onPress={onClose}
-            hitSlop={8}
-            style={[styles.closeBtn, { backgroundColor: colors.surface }]}
-          >
-            <IconX size={16} color={colors.text} />
-          </Pressable>
-        </View>
+    <View>
+      <Pressable
+        onPress={() => setOpen((v) => !v)}
+        style={[
+          styles.trigger,
+          { backgroundColor: colors.surface, borderColor: colors.border },
+        ]}
+      >
+        <Text style={[styles.triggerText, { color: triggerLabel ? colors.text : colors.textMuted }]}>
+          {triggerLabel ?? t('picker.placeholder')}
+        </Text>
+        <IconCalendar size={16} color={colors.textMuted} />
+      </Pressable>
 
-        <ScrollView
-          contentContainerStyle={styles.body}
-          showsVerticalScrollIndicator={false}
-        >
+      {open && (
+        <View style={styles.section}>
           <MonthGrid
             year={calYear}
             month={calMonth}
@@ -162,252 +135,198 @@ export function NotifioDateTimePicker({
             }}
           />
 
-          {/* Quick chips */}
-          <View style={styles.chipRow}>
-            {quickChips.map((chip) => {
-              const active = chip.hour === draftHour && chip.minute === draftMinute;
-              return (
-                <Pressable
-                  key={chip.label}
-                  onPress={() => setTime(chip.hour, chip.minute)}
-                  style={[
-                    styles.chip,
-                    {
-                      backgroundColor: active
-                        ? `${colors.primary}26`
-                        : colors.surface,
-                    },
-                  ]}
-                >
-                  <Text
+          <View style={[styles.divider, { backgroundColor: 'rgba(255,255,255,0.08)' }]} />
+
+          <View style={styles.timeRow}>
+            <Text style={[styles.timeLabel, { color: '#5A6A85' }]}>{t('picker.time')}</Text>
+            <View style={styles.timeBoxGroup}>
+              <TimeBox
+                value={hourInput}
+                onChangeText={(next) => {
+                  setHourInput(next);
+                  if (next.length === 0) return;
+                  const n = Number(next);
+                  if (Number.isFinite(n)) setTime(Math.max(0, Math.min(23, n)), currentMinute);
+                }}
+                onBlur={() => setHourInput(pad(currentHour))}
+                max={23}
+              />
+              <Text style={styles.timeColon}>:</Text>
+              <TimeBox
+                value={minuteInput}
+                onChangeText={(next) => {
+                  setMinuteInput(next);
+                  if (next.length === 0) return;
+                  const n = Number(next);
+                  if (Number.isFinite(n)) setTime(currentHour, Math.max(0, Math.min(59, n)));
+                }}
+                onBlur={() => setMinuteInput(pad(currentMinute))}
+                max={59}
+              />
+            </View>
+          </View>
+
+          <View style={styles.quickWrap}>
+            <Text style={[styles.timeLabel, { color: '#5A6A85' }]}>{t('picker.quickOptions')}</Text>
+            <View style={styles.chipRow}>
+              {quickChips.map((chip) => {
+                const active = !chip.dynamic && chip.hour === currentHour && chip.minute === currentMinute;
+                return (
+                  <Pressable
+                    key={chip.label}
+                    onPress={() => {
+                      if (chip.dynamic) {
+                        const fresh = nextRoundHourFromNow();
+                        setTime(fresh.hour, fresh.minute);
+                      } else {
+                        setTime(chip.hour, chip.minute);
+                      }
+                    }}
                     style={[
-                      styles.chipLabel,
-                      { color: active ? colors.primary : colors.textMuted },
+                      styles.chip,
+                      {
+                        backgroundColor: active ? '#FF7A2F' : 'rgba(255,255,255,0.06)',
+                      },
                     ]}
                   >
-                    {chip.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    <Text
+                      style={[
+                        styles.chipLabel,
+                        { color: active ? '#FFFFFF' : 'rgba(255,255,255,0.75)' },
+                      ]}
+                    >
+                      {chip.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
 
-          {/* Wheels */}
-          <View style={styles.wheelsRow}>
-            <Wheel
-              values={HOUR_VALUES}
-              value={draftHour}
-              onChange={setDraftHour}
-            />
-            <Text style={[styles.wheelSeparator, { color: colors.text }]}>:</Text>
-            <Wheel
-              values={MINUTE_VALUES}
-              value={draftMinute}
-              onChange={setDraftMinute}
-            />
-          </View>
-        </ScrollView>
-
-        {/* Footer */}
-        <View style={[styles.footer, { paddingBottom: insets.bottom + theme.spacing.lg }]}>
           <Pressable
-            onPress={commit}
-            style={[styles.confirmBtn, { backgroundColor: colors.primary }]}
+            onPress={() => setOpen(false)}
+            style={[styles.closeBtn, { borderColor: 'rgba(255,255,255,0.1)' }]}
           >
-            <Text style={[styles.confirmLabel, { color: colors.textInverse }]}>
-              {t('picker.confirm')}
-            </Text>
-          </Pressable>
-          <Pressable onPress={onClose} style={styles.cancelBtn}>
-            <Text style={[styles.cancelLabel, { color: colors.textMuted }]}>
-              {t('common.cancel')}
+            <Text style={[styles.closeLabel, { color: 'rgba(255,255,255,0.8)' }]}>
+              {t('picker.close')}
             </Text>
           </Pressable>
         </View>
-      </View>
-    </Modal>
-  );
-}
-
-// ── Wheel column ────────────────────────────────────────────────────
-
-interface WheelProps {
-  values: number[];
-  value: number;
-  onChange: (next: number) => void;
-}
-
-/**
- * iOS-style scroll wheel. Two padding rows above and below the content
- * push the central row into the viewport; `snapToInterval` locks the
- * scroll position to row boundaries; the central row gets larger font
- * + accent color via index distance from the focused value.
- */
-function Wheel({ values, value, onChange }: WheelProps) {
-  const { colors } = useAppTheme();
-  const scrollRef = useRef<ScrollView>(null);
-
-  // Programmatic scroll-to-value when external value changes (e.g. quick
-  // chip tap). Skip the animation on the initial layout to avoid jumping
-  // visibly on first paint.
-  const isFirstScroll = useRef(true);
-  useEffect(() => {
-    const idx = values.indexOf(value);
-    if (idx < 0) return;
-    scrollRef.current?.scrollTo({
-      y: idx * WHEEL_ROW_HEIGHT,
-      animated: !isFirstScroll.current,
-    });
-    isFirstScroll.current = false;
-  }, [value, values]);
-
-  const handleMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const idx = Math.round(e.nativeEvent.contentOffset.y / WHEEL_ROW_HEIGHT);
-    const clamped = Math.max(0, Math.min(values.length - 1, idx));
-    const next = values[clamped]!;
-    if (next !== value) onChange(next);
-  };
-
-  const padRows = Math.floor(WHEEL_VISIBLE_ROWS / 2);
-
-  return (
-    <View style={[styles.wheel, { borderColor: colors.border }]}>
-      {/* Center selection indicator */}
-      <View
-        pointerEvents="none"
-        style={[
-          styles.wheelCenter,
-          { borderTopColor: colors.border, borderBottomColor: colors.border },
-        ]}
-      />
-      <ScrollView
-        ref={scrollRef}
-        showsVerticalScrollIndicator={false}
-        snapToInterval={WHEEL_ROW_HEIGHT}
-        decelerationRate="fast"
-        onMomentumScrollEnd={handleMomentumEnd}
-        contentContainerStyle={{ paddingVertical: padRows * WHEEL_ROW_HEIGHT }}
-      >
-        {values.map((v) => {
-          const focused = v === value;
-          return (
-            <View key={v} style={styles.wheelRow}>
-              <Text
-                style={[
-                  styles.wheelLabel,
-                  {
-                    color: focused ? colors.text : colors.textMuted,
-                    fontSize: focused ? 22 : 16,
-                    opacity: focused ? 1 : 0.55,
-                  },
-                ]}
-              >
-                {pad(v)}
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
+      )}
     </View>
   );
 }
 
+interface TimeBoxProps {
+  value: string;
+  onChangeText: (next: string) => void;
+  onBlur: () => void;
+  max: number;
+}
+
+function TimeBox({ value, onChangeText, onBlur, max }: TimeBoxProps) {
+  return (
+    <TextInput
+      value={value}
+      onChangeText={(raw) => {
+        const cleaned = raw.replace(/\D/g, '').slice(0, 2);
+        const n = Number(cleaned);
+        if (cleaned === '' || (Number.isFinite(n) && n <= max)) {
+          onChangeText(cleaned);
+        }
+      }}
+      onBlur={onBlur}
+      keyboardType="number-pad"
+      maxLength={2}
+      selectTextOnFocus
+      style={styles.timeBox}
+    />
+  );
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
+  trigger: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    height: 44,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
   },
-  title: {
-    fontSize: theme.fontSize.lg,
+  triggerText: {
+    fontSize: theme.fontSize.sm,
+  },
+  section: {
+    marginTop: theme.spacing.sm,
+    backgroundColor: '#0E223F',
+    borderRadius: theme.radius.lg,
+    padding: theme.spacing.md,
+  },
+  divider: {
+    height: 1,
+    marginVertical: theme.spacing.md,
+  },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  timeLabel: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.medium,
+  },
+  timeBoxGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: theme.radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: '#0B1B32',
+  },
+  timeBox: {
+    width: 40,
+    height: 36,
+    textAlign: 'center',
+    fontSize: 20,
+    color: '#FFFFFF',
     ...theme.font.semibold,
   },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  timeColon: {
+    fontSize: 18,
+    color: '#5A6A85',
+    ...theme.font.medium,
   },
-  body: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing.lg,
-    paddingBottom: theme.spacing['3xl'],
-    gap: theme.spacing.xl,
+  quickWrap: {
+    marginTop: theme.spacing.md,
+    gap: theme.spacing.xs,
   },
   chipRow: {
     flexDirection: 'row',
-    gap: theme.spacing.sm,
+    flexWrap: 'wrap',
+    gap: 6,
   },
   chip: {
-    flex: 1,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.lg,
-    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: theme.radius.md,
   },
   chipLabel: {
-    fontSize: theme.fontSize.sm,
+    fontSize: theme.fontSize.xs,
     ...theme.font.medium,
   },
-  wheelsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-  },
-  wheelSeparator: {
-    fontSize: 22,
-    ...theme.font.semibold,
-  },
-  wheel: {
-    width: 80,
-    height: WHEEL_ROW_HEIGHT * WHEEL_VISIBLE_ROWS,
-    borderRadius: theme.radius.lg,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  wheelCenter: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: WHEEL_ROW_HEIGHT * Math.floor(WHEEL_VISIBLE_ROWS / 2),
-    height: WHEEL_ROW_HEIGHT,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    zIndex: 1,
-  },
-  wheelRow: {
-    height: WHEEL_ROW_HEIGHT,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  wheelLabel: {
-    ...theme.font.semibold,
-  },
-  footer: {
-    paddingHorizontal: theme.spacing.xl,
-    gap: theme.spacing.sm,
-  },
-  confirmBtn: {
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.radius.lg,
-    alignItems: 'center',
-  },
-  confirmLabel: {
-    fontSize: theme.fontSize.md,
-    ...theme.font.semibold,
-  },
-  cancelBtn: {
+  closeBtn: {
+    marginTop: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    backgroundColor: 'rgba(255,255,255,0.04)',
     alignItems: 'center',
   },
-  cancelLabel: {
+  closeLabel: {
     fontSize: theme.fontSize.sm,
     ...theme.font.medium,
   },

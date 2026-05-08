@@ -1,15 +1,7 @@
 'use client';
 
-import {
-  autoUpdate,
-  flip,
-  offset,
-  shift,
-  size,
-  useFloating,
-} from '@floating-ui/react-dom';
-import { IconCalendar, IconX } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { IconCalendar } from '@tabler/icons-react';
+import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -20,11 +12,8 @@ interface NotifioDateTimePickerProps {
   value: string;
   onChange: (next: string) => void;
   locale: string;
-  /** Optional aria label for the trigger; defaults to formatted value. */
   ariaLabel?: string;
-  /** All user-facing strings — required so callers thread translations
-   *  through next-intl/i18next. Keeps this component pure (no t() call
-   *  inside, so it works in any i18n setup). */
+  /** All user-facing strings — caller threads from i18n. */
   labels: PickerLabels;
 }
 
@@ -33,7 +22,6 @@ interface PickerLabels {
   time: string;
   quickOptions: string;
   plusOneHour: string;
-  confirm: string;
   close: string;
 }
 
@@ -67,10 +55,7 @@ function startOfDay(d: Date): Date {
   return c;
 }
 
-/**
- * Compute the next-round-hour after now, capped at 23:00. 11:00 → 12:00,
- * 11:02 → 13:00, 22:30 → 23:00, 23:30 → 23:00.
- */
+/** 11:00 → 12:00, 11:02 → 13:00, 22:30 → 23:00, 23:30 → 23:00. */
 function nextRoundHourFromNow(): { hour: number; minute: number } {
   const inOneHour = new Date(Date.now() + 60 * 60 * 1000);
   let hour = inOneHour.getHours();
@@ -82,10 +67,17 @@ interface QuickChip {
   label: string;
   hour: number;
   minute: number;
-  /** "+1 hod" chip resolves at click-time for a fresh target. */
   dynamic?: boolean;
 }
 
+/**
+ * Inline-section datetime picker. The trigger is a regular field
+ * button; clicking it expands the picker section directly below in
+ * normal document flow (not a popover, not a modal). All edits write
+ * to the parent via `onChange` immediately — no draft state, no
+ * Confirm button. The "Zatvoriť" button at the bottom collapses the
+ * section back. Single layout works at every viewport width.
+ */
 export function NotifioDateTimePicker({
   value,
   onChange,
@@ -95,84 +87,22 @@ export function NotifioDateTimePicker({
 }: NotifioDateTimePickerProps) {
   const [open, setOpen] = useState(false);
 
-  // Floating UI — anchor + flip/shift inside the viewport. The `size`
-  // middleware caps the popover at the available width (max 540px on
-  // wide viewports, parent-bound minus a 16px gutter on narrow ones)
-  // so the picker never bleeds past the modal it lives in.
-  const { refs, floatingStyles } = useFloating({
-    open,
-    placement: 'bottom-start',
-    middleware: [
-      offset(8),
-      flip(),
-      shift({ padding: 8 }),
-      size({
-        padding: 8,
-        apply({ availableWidth, availableHeight, elements }) {
-          Object.assign(elements.floating.style, {
-            maxWidth: `${Math.max(280, Math.min(540, availableWidth - 16))}px`,
-            // Compact mobile layout target: ~360px. Cap at available
-            // height so the popover never extends past viewport, with a
-            // soft floor so we don't crush below useful.
-            maxHeight: `${Math.max(360, Math.min(560, availableHeight - 16))}px`,
-          });
-        },
-      }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
   const parsed = parseValue(value);
   const today = startOfDay(new Date());
   const seedDate = parsed.date ?? today;
 
+  // Calendar month nav is local — re-seeded only on first render. The
+  // user moves between months without affecting the form value until
+  // they click a day.
   const [calYear, setCalYear] = useState(seedDate.getFullYear());
   const [calMonth, setCalMonth] = useState(seedDate.getMonth());
 
-  const [draftDate, setDraftDate] = useState<Date | null>(parsed.date);
-  const [draftHour, setDraftHour] = useState(parsed.hour);
-  const [draftMinute, setDraftMinute] = useState(parsed.minute);
   const [hourInput, setHourInput] = useState(pad(parsed.hour));
   const [minuteInput, setMinuteInput] = useState(pad(parsed.minute));
 
-  useEffect(() => {
-    if (!open) return;
-    setDraftDate(parsed.date);
-    setDraftHour(parsed.hour);
-    setDraftMinute(parsed.minute);
-    setHourInput(pad(parsed.hour));
-    setMinuteInput(pad(parsed.minute));
-    if (parsed.date) {
-      setCalYear(parsed.date.getFullYear());
-      setCalMonth(parsed.date.getMonth());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const triggerEl = refs.reference.current as HTMLElement | null;
-  const floatingRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!open) return;
-    const onClickOutside = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (triggerEl?.contains(t)) return;
-      if (floatingRef.current?.contains(t)) return;
-      setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', onClickOutside);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onClickOutside);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open, triggerEl]);
-
   const selectedDay =
-    draftDate && draftDate.getFullYear() === calYear && draftDate.getMonth() === calMonth
-      ? draftDate.getDate()
+    parsed.date && parsed.date.getFullYear() === calYear && parsed.date.getMonth() === calMonth
+      ? parsed.date.getDate()
       : null;
 
   const isPastDay = (day: number) => {
@@ -180,24 +110,22 @@ export function NotifioDateTimePicker({
     return startOfDay(candidate) < today;
   };
 
+  const writeValue = (date: Date, hour: number, minute: number) => {
+    onChange(formatIsoLike(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute));
+  };
+
   const handleSelectDay = (day: number) => {
     if (isPastDay(day)) return;
-    setDraftDate(new Date(calYear, calMonth, day));
+    const next = new Date(calYear, calMonth, day);
+    writeValue(next, parsed.hour, parsed.minute);
   };
 
   const setTime = (h: number, m: number) => {
     const clampedH = Math.max(0, Math.min(23, h));
     const clampedM = Math.max(0, Math.min(59, m));
-    setDraftHour(clampedH);
-    setDraftMinute(clampedM);
     setHourInput(pad(clampedH));
     setMinuteInput(pad(clampedM));
-  };
-
-  const commit = () => {
-    const date = draftDate ?? today;
-    onChange(formatIsoLike(date.getFullYear(), date.getMonth(), date.getDate(), draftHour, draftMinute));
-    setOpen(false);
+    writeValue(parsed.date ?? today, clampedH, clampedM);
   };
 
   const plusOneHour = nextRoundHourFromNow();
@@ -218,12 +146,12 @@ export function NotifioDateTimePicker({
     : null;
 
   return (
-    <>
+    <div>
       <button
-        ref={refs.setReference}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={ariaLabel ?? triggerLabel ?? labels.placeholder}
+        aria-expanded={open}
         className={cn(
           'flex h-11 w-full items-center justify-between rounded-xl border border-border bg-background px-4 text-sm transition-colors',
           'hover:border-accent/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent',
@@ -236,119 +164,96 @@ export function NotifioDateTimePicker({
       </button>
 
       {open && (
-        <div
-          ref={(el) => {
-            floatingRef.current = el;
-            refs.setFloating(el);
-          }}
-          role="dialog"
-          style={floatingStyles}
-          className="z-30 flex flex-col gap-3 overflow-auto rounded-2xl border border-white/5 bg-[#162D4F] p-3 text-white shadow-2xl sm:gap-4 sm:p-4"
-        >
-          {/* Close X */}
+        <div className="mt-2 rounded-xl bg-[#0E223F] p-4 text-white">
+          <MonthGrid
+            year={calYear}
+            month={calMonth}
+            selectedDay={selectedDay}
+            today={today}
+            isDisabled={isPastDay}
+            locale={locale}
+            onSelectDay={handleSelectDay}
+            onMonthChange={(y, m) => {
+              setCalYear(y);
+              setCalMonth(m);
+            }}
+            compact
+            cellShape="rounded"
+            onDarkSurface
+          />
+
+          <div className="mt-4 h-px bg-white/[0.08]" />
+
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-xs font-medium text-[#5A6A85]">{labels.time}</span>
+            <div className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#0B1B32] px-2 py-1.5">
+              <TimeBox
+                value={hourInput}
+                onChange={(next) => {
+                  setHourInput(next);
+                  if (next.length === 0) return;
+                  const n = Number(next);
+                  if (Number.isFinite(n)) setTime(Math.max(0, Math.min(23, n)), parsed.minute);
+                }}
+                onBlur={() => setHourInput(pad(parsed.hour))}
+                max={23}
+              />
+              <span className="text-lg font-medium text-[#5A6A85]">:</span>
+              <TimeBox
+                value={minuteInput}
+                onChange={(next) => {
+                  setMinuteInput(next);
+                  if (next.length === 0) return;
+                  const n = Number(next);
+                  if (Number.isFinite(n)) setTime(parsed.hour, Math.max(0, Math.min(59, n)));
+                }}
+                onBlur={() => setMinuteInput(pad(parsed.minute))}
+                max={59}
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <span className="text-xs font-medium text-[#5A6A85]">{labels.quickOptions}</span>
+            <div className="mt-1.5 flex flex-row flex-wrap gap-1.5">
+              {quickChips.map((chip) => {
+                const active = !chip.dynamic && chip.hour === parsed.hour && chip.minute === parsed.minute;
+                return (
+                  <button
+                    key={chip.label}
+                    type="button"
+                    onClick={() => {
+                      if (chip.dynamic) {
+                        const fresh = nextRoundHourFromNow();
+                        setTime(fresh.hour, fresh.minute);
+                      } else {
+                        setTime(chip.hour, chip.minute);
+                      }
+                    }}
+                    className={cn(
+                      'rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
+                      active
+                        ? 'bg-[#FF7A2F] text-white'
+                        : 'bg-white/[0.06] text-white/75 hover:bg-white/[0.1] hover:text-white',
+                    )}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label={labels.close}
-            className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.08] text-white/70 transition-colors hover:bg-white/[0.14] hover:text-white"
+            className="mt-4 w-full rounded-lg border border-white/10 bg-white/[0.04] py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
           >
-            <IconX size={14} />
+            {labels.close}
           </button>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            {/* Calendar */}
-            <div className="min-w-0 flex-1">
-              <MonthGrid
-                year={calYear}
-                month={calMonth}
-                selectedDay={selectedDay}
-                today={today}
-                isDisabled={isPastDay}
-                locale={locale}
-                onSelectDay={handleSelectDay}
-                onMonthChange={(y, m) => {
-                  setCalYear(y);
-                  setCalMonth(m);
-                }}
-                compact
-                cellShape="rounded"
-                onDarkSurface
-              />
-            </div>
-
-            {/* Time pad — single bottom row on mobile (label + inputs +
-                chips wrap inline), fixed-width sidebar on desktop. */}
-            <div className="flex w-full shrink-0 flex-col gap-3 sm:w-[160px]">
-              <div className="flex flex-col gap-1.5 sm:gap-2">
-                <span className="text-xs font-medium text-[#5A6A85]">{labels.time}</span>
-                <div className="inline-flex items-center gap-1.5 self-start rounded-lg border border-white/10 bg-[#0B1B32] px-2 py-1.5">
-                  <TimeBox
-                    value={hourInput}
-                    onChange={(next) => {
-                      setHourInput(next);
-                      const n = Number(next);
-                      if (Number.isFinite(n) && next.length > 0) setDraftHour(Math.max(0, Math.min(23, n)));
-                    }}
-                    onBlur={() => setHourInput(pad(draftHour))}
-                    max={23}
-                  />
-                  <span className="text-lg font-medium text-[#5A6A85]">:</span>
-                  <TimeBox
-                    value={minuteInput}
-                    onChange={(next) => {
-                      setMinuteInput(next);
-                      const n = Number(next);
-                      if (Number.isFinite(n) && next.length > 0) setDraftMinute(Math.max(0, Math.min(59, n)));
-                    }}
-                    onBlur={() => setMinuteInput(pad(draftMinute))}
-                    max={59}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <span className="text-xs font-medium text-[#5A6A85]">{labels.quickOptions}</span>
-                <div className="mt-1 flex flex-row flex-wrap gap-1.5 sm:flex-col">
-                  {quickChips.map((chip) => {
-                    const active = !chip.dynamic && chip.hour === draftHour && chip.minute === draftMinute;
-                    return (
-                      <button
-                        key={chip.label}
-                        type="button"
-                        onClick={() => {
-                          if (chip.dynamic) {
-                            const fresh = nextRoundHourFromNow();
-                            setTime(fresh.hour, fresh.minute);
-                          } else {
-                            setTime(chip.hour, chip.minute);
-                          }
-                        }}
-                        className={cn(
-                          'rounded-md px-2.5 py-1.5 text-center text-xs font-medium transition-colors sm:text-left',
-                          active
-                            ? 'bg-[#FF7A2F] text-white'
-                            : 'bg-white/[0.06] text-white/75 hover:bg-white/[0.1] hover:text-white',
-                        )}
-                      >
-                        {chip.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={commit}
-                className="rounded-lg bg-[#FF7A2F] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#FF7A2F]/90 sm:mt-auto"
-              >
-                {labels.confirm}
-              </button>
-            </div>
-          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
