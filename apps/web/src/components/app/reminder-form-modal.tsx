@@ -2,7 +2,15 @@
 
 import { IconLoader2, IconX } from '@tabler/icons-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { type FormEvent, useCallback, useMemo, useState } from 'react';
+import {
+  type FormEvent,
+  type TouchEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import type {
   PersonalReminder,
@@ -133,8 +141,10 @@ export function ReminderFormModal({ reminder, defaultDate, onSave, onClose }: Re
   };
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 p-4">
-      <div className="scrollbar-hidden max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-2xl">
+    <FormShell onClose={onClose}>
+      {/* Original form body — same children for both centered modal and
+          mobile-web bottom drawer presentations. */}
+      <div className="p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-text-primary">
             {isEdit ? t('edit') : t('create')}
@@ -282,6 +292,133 @@ export function ReminderFormModal({ reminder, defaultDate, onSave, onClose }: Re
           </div>
         </form>
       </div>
+    </FormShell>
+  );
+}
+
+// ── FormShell — viewport-aware modal/drawer wrapper ────────────────
+
+const SM_BREAKPOINT = '(min-width: 640px)';
+const DRAWER_DISMISS_DISTANCE = 80;
+
+function useMediaQuery(query: string): boolean {
+  // Default to `false` for SSR safety — mobile drawer chrome is the
+  // safer fallback for first paint (the form modal isn't visible
+  // until the user clicks "Nová pripomienka", so the SSR path never
+  // actually renders this).
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    setMatches(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
+}
+
+interface FormShellProps {
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+/**
+ * Shared modal-or-drawer wrapper. ≥640px renders a centered card with
+ * `max-h-[85vh]` internal scroll (current desktop UX). <640px slides
+ * up from viewport bottom with backdrop, drag-down + backdrop
+ * dismiss, and `max-h-[90vh]` internal scroll. The form children stay
+ * identical in both — only the chrome differs.
+ */
+function FormShell({ onClose, children }: FormShellProps) {
+  const isDesktop = useMediaQuery(SM_BREAKPOINT);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const dragStartY = useRef<number | null>(null);
+  const dragDy = useRef(0);
+
+  // Lock body scroll while open + ESC dismiss.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    dragStartY.current = e.touches[0]!.clientY;
+    dragDy.current = 0;
+  };
+  const onTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (dragStartY.current == null) return;
+    const dy = e.touches[0]!.clientY - dragStartY.current;
+    if (dy > 0 && sheetRef.current) {
+      dragDy.current = dy;
+      sheetRef.current.style.transform = `translateY(${dy}px)`;
+      sheetRef.current.style.transition = 'none';
+    }
+  };
+  const onTouchEnd = () => {
+    if (sheetRef.current) {
+      sheetRef.current.style.transition = '';
+      sheetRef.current.style.transform = '';
+    }
+    if (dragDy.current > DRAWER_DISMISS_DISTANCE) onClose();
+    dragStartY.current = null;
+    dragDy.current = 0;
+  };
+
+  if (isDesktop) {
+    return (
+      <div
+        className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 p-4"
+        onClick={onClose}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="scrollbar-hidden max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl"
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex flex-col justify-end bg-black/60"
+      onClick={onClose}
+    >
+      <div
+        ref={sheetRef}
+        onClick={(e) => e.stopPropagation()}
+        className="scrollbar-hidden max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-background shadow-2xl"
+        style={{ animation: 'rfm-slide-up 220ms ease-out' }}
+      >
+        <div
+          className="flex justify-center pb-1 pt-2"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <span className="block h-1 w-10 rounded-full bg-muted/40" />
+        </div>
+        {children}
+      </div>
+      <style jsx>{`
+        @keyframes rfm-slide-up {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
