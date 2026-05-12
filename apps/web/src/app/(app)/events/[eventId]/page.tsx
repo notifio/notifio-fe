@@ -6,6 +6,7 @@ import {
   IconLoader2,
   IconMapPin,
   IconTrash,
+  IconUsers,
   IconX,
 } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -144,6 +145,13 @@ export default function EventDetailPage() {
     : 0;
   const icon = getNotificationIcon(event.category.code);
 
+  // api-client `EventDetail` is stale (sourceId only); BE returns the
+  // nested `source` object since shared 0.29. Widen the cast once and
+  // reuse for header pill + attribution row.
+  const sourceCode = (event as EventDetail & { source?: { code?: string } }).source?.code;
+  const source = resolveSourceDisplay(sourceCode, tAlerts);
+  const isCommunity = sourceCode === 'user_report';
+
   return (
     <div className="mx-auto max-w-2xl">
       {/* Back button */}
@@ -180,29 +188,30 @@ export default function EventDetailPage() {
               {event.subcategory && ` · ${event.subcategory.name}`}
             </p>
           </div>
-          <span
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-              isResolved
-                ? 'bg-green-500/10 text-green-600'
-                : 'bg-red-500/10 text-red-500'
-            }`}
-          >
-            {isResolved ? t('detail.resolved') : t('detail.active')}
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
+                isResolved
+                  ? 'bg-green-500/10 text-green-600'
+                  : 'bg-red-500/10 text-red-500'
+              }`}
+            >
+              {isResolved ? t('detail.resolved') : t('detail.active')}
+            </span>
+            {isCommunity && (
+              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-[5px] border border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.15)] px-2 py-[3px] text-[10px] text-[#8B5CF6]">
+                <IconUsers size={11} />
+                {tAlerts('sourceCommunity')}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Details table */}
         <div className="mt-6 space-y-3">
-          {(() => {
-            // api-client `EventDetail` is stale (sourceId only); BE returns
-            // the nested `source` object since shared 0.29. Widen the cast
-            // locally; the proper fix is an api-client follow-up.
-            const sourceCode = (event as EventDetail & { source?: { code?: string } }).source?.code;
-            const source = resolveSourceDisplay(sourceCode, tAlerts);
-            return source ? (
-              <DetailRow label={tAlerts('sourceShortLabel')} value={source.full} />
-            ) : null;
-          })()}
+          {source && (
+            <DetailRow label={tAlerts('sourceShortLabel')} value={source.full} />
+          )}
           <DetailRow
             label={t('detail.reported')}
             value={<RelativeTime iso={event.createdAt} />}
