@@ -388,6 +388,42 @@ export function createNotifioClient(config: NotifioClientConfig) {
       await request<void>(`/me/locations/${locationId}`, { method: 'DELETE' });
     },
 
+    // ─── Analytics ─────────────────────────────────────────────────
+    // Session tracking endpoints. All three swallow failures locally so
+    // a 403 (consent denied) cannot reach the FE's global
+    // unhandledrejection handler and re-trigger the consent modal.
+
+    async startSession(deviceId: string, appVersion?: string): Promise<{ sessionId: string } | null> {
+      try {
+        const result = await request<{ sessionId: string }>('/analytics/session/start', {
+          method: 'POST',
+          body: { deviceId, ...(appVersion ? { appVersion } : {}) },
+        });
+        return result;
+      } catch {
+        return null;
+      }
+    },
+
+    async sessionHeartbeat(sessionId: string): Promise<void> {
+      try {
+        await request<void>(`/analytics/session/${sessionId}/heartbeat`, { method: 'POST' });
+      } catch {
+        // heartbeat misses are tolerable
+      }
+    },
+
+    async endSession(sessionId: string, endReason?: string): Promise<void> {
+      try {
+        await request<void>(`/analytics/session/${sessionId}/end`, {
+          method: 'POST',
+          body: endReason ? { endReason } : undefined,
+        });
+      } catch {
+        // end-call failures are tolerable; BE has a stale-session sweeper
+      }
+    },
+
     async getPreferences(): Promise<UserPreferencesResponse> {
       return request<UserPreferencesResponse>('/me/preferences');
     },
