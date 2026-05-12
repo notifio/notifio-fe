@@ -1,6 +1,8 @@
 'use client';
 
 import {
+  IconBell,
+  IconBellOff,
   IconLoader2,
   IconMapPin,
   IconPencil,
@@ -14,10 +16,13 @@ import type { UserLocation } from '@notifio/api-client';
 import { useMembership } from '@notifio/shared/hooks';
 
 import { LocationModal } from '@/components/app/location-modal';
+import { useToast } from '@/components/ui/toast';
 import { useLocations } from '@/hooks/use-locations';
+import { cn } from '@/lib/utils';
 
 export function LocationsSection() {
   const t = useTranslations('profile');
+  const toast = useToast();
   const { membership } = useMembership();
   const {
     locations,
@@ -26,11 +31,13 @@ export function LocationsSection() {
     create: createLocation,
     update: updateLocation,
     remove: removeLocation,
+    toggleMute,
   } = useLocations();
 
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [editLocation, setEditLocation] = useState<UserLocation | undefined>();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingMuteId, setPendingMuteId] = useState<string | null>(null);
 
   const maxLocations = membership?.current?.maxLocations ?? limit;
   const canAddLocation = locations.length < maxLocations;
@@ -56,6 +63,24 @@ export function LocationsSection() {
       setEditLocation(undefined);
     },
     [editLocation, createLocation, updateLocation],
+  );
+
+  const handleToggleMute = useCallback(
+    async (locationId: string) => {
+      const target = locations.find((l) => l.locationId === locationId);
+      if (!target) return;
+      const wasMuted = target.muted;
+      setPendingMuteId(locationId);
+      try {
+        await toggleMute(locationId);
+        toast.success(wasMuted ? t('locations.unmuteSuccess') : t('locations.muteSuccess'));
+      } catch {
+        toast.error(t('locations.muteError'));
+      } finally {
+        setPendingMuteId(null);
+      }
+    },
+    [locations, toggleMute, toast, t],
   );
 
   const handleDeleteLocation = useCallback(
@@ -122,7 +147,10 @@ export function LocationsSection() {
             <div className="space-y-2">
               {locations.map((loc) => (
                 <div key={loc.locationId} className="flex items-center gap-3 rounded-xl bg-card px-4 py-3">
-                  <IconMapPin size={18} className="shrink-0 text-accent" />
+                  <IconMapPin
+                    size={18}
+                    className={cn('shrink-0 text-accent', loc.muted && 'opacity-70')}
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-text-primary">
@@ -131,12 +159,35 @@ export function LocationsSection() {
                       <span className="rounded bg-card px-1.5 py-0.5 text-[10px] font-medium text-muted">
                         {loc.label.name}
                       </span>
+                      {loc.muted && (
+                        <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-muted">
+                          {t('locations.mutedBadge')}
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-muted">
                       {loc.lat.toFixed(4)}, {loc.lng.toFixed(4)}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void handleToggleMute(loc.locationId);
+                      }}
+                      disabled={pendingMuteId === loc.locationId}
+                      aria-label={loc.muted ? t('locations.unmute') : t('locations.mute')}
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-lg border transition',
+                        loc.muted
+                          ? 'border-[rgba(255,122,47,0.35)] bg-[rgba(255,122,47,0.15)] text-[#FF7A2F]'
+                          : 'border-white/[0.08] bg-transparent text-muted hover:bg-white/5',
+                        pendingMuteId === loc.locationId && 'cursor-not-allowed opacity-50',
+                      )}
+                    >
+                      {loc.muted ? <IconBellOff size={18} /> : <IconBell size={18} />}
+                    </button>
                     <button
                       onClick={() => openEditLocation(loc)}
                       className="rounded-lg p-1.5 text-muted transition-colors hover:bg-background hover:text-text-primary"

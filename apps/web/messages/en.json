@@ -150,7 +150,13 @@
       "maxReached": "Location limit reached ({max} for your plan)",
       "empty": "No saved locations. Add one to start receiving local alerts.",
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "mutedBadge": "Muted",
+      "muteSuccess": "Location muted",
+      "unmuteSuccess": "Location unmuted",
+      "muteError": "Failed to update mute"
     },
     "myEvents": {
       "title": "My Reports",

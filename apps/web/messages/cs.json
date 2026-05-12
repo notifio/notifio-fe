@@ -144,7 +144,13 @@
       "maxReached": "Dosažen limit lokací ({max} pro tvůj plán)",
       "empty": "Žádné uložené lokace. Přidej si jednu a začni dostávat lokální upozornění.",
       "save": "Uložit",
-      "cancel": "Zrušit"
+      "cancel": "Zrušit",
+      "mute": "Ztlumit",
+      "unmute": "Zrušit ztlumení",
+      "mutedBadge": "Ztlumeno",
+      "muteSuccess": "Lokalita ztlumena",
+      "unmuteSuccess": "Ztlumení zrušeno",
+      "muteError": "Změna ztlumení selhala"
     },
     "myEvents": {
       "title": "Moje hlášení",
