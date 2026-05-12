@@ -144,7 +144,13 @@
       "maxReached": "Helykorlát elérve ({max} a csomagodban)",
       "empty": "Nincsenek mentett helyek. Adj hozzá egyet, hogy helyi figyelmeztetéseket kapj.",
       "save": "Mentés",
-      "cancel": "Mégse"
+      "cancel": "Mégse",
+      "mute": "Némítás",
+      "unmute": "Némítás feloldása",
+      "mutedBadge": "Némítva",
+      "muteSuccess": "Hely némítva",
+      "unmuteSuccess": "Némítás feloldva",
+      "muteError": "Frissítés sikertelen"
     },
     "myEvents": {
       "title": "Saját bejelentések",

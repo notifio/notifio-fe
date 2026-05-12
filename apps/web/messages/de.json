@@ -144,7 +144,13 @@
       "maxReached": "Ortslimit erreicht ({max} für deinen Plan)",
       "empty": "Keine gespeicherten Orte. Füge einen hinzu, um lokale Warnungen zu erhalten.",
       "save": "Speichern",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "mute": "Stummschalten",
+      "unmute": "Stummschaltung aufheben",
+      "mutedBadge": "Stumm",
+      "muteSuccess": "Standort stummgeschaltet",
+      "unmuteSuccess": "Stummschaltung aufgehoben",
+      "muteError": "Aktualisierung fehlgeschlagen"
     },
     "myEvents": {
       "title": "Meine Meldungen",
