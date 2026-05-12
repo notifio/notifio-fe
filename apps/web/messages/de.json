@@ -212,13 +212,11 @@
     "deleted": "Ereignis gelöscht",
     "detail": {
       "title": "Ereignisdetail",
-      "source": "Quelle",
       "reported": "Gemeldet",
       "radius": "Radius",
       "activeSince": "Aktiv seit",
       "ends": "Endet",
       "ongoing": "Andauernd",
-      "communityReport": "Community-Meldung",
       "active": "Aktiv",
       "resolved": "Behoben",
       "notFound": "Ereignis nicht gefunden",

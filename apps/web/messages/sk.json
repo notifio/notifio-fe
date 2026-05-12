@@ -218,13 +218,11 @@
     "deleted": "Udalosť odstránená",
     "detail": {
       "title": "Detail udalosti",
-      "source": "Zdroj",
       "reported": "Nahlásené",
       "radius": "Okruh",
       "activeSince": "Aktívne od",
       "ends": "Končí",
       "ongoing": "Prebieha",
-      "communityReport": "Komunitné hlásenie",
       "active": "Aktívne",
       "resolved": "Vyriešené",
       "notFound": "Udalosť sa nenašla",

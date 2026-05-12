@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { EventDetail, UserVote } from '@notifio/api-client';
 import { ApiError } from '@notifio/api-client';
 
+import { resolveSourceDisplay } from '@/components/app/alert-card-utils';
 import { EventMapHeader } from '@/components/events/event-map-header';
 import { RelativeTime } from '@/components/ui/relative-time';
 import { useToast } from '@/components/ui/toast';
@@ -29,6 +30,7 @@ export default function EventDetailPage() {
   const router = useRouter();
   const t = useTranslations('events');
   const tc = useTranslations('common');
+  const tAlerts = useTranslations('alerts');
   const toast = useToast();
 
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -191,21 +193,16 @@ export default function EventDetailPage() {
 
         {/* Details table */}
         <div className="mt-6 space-y-3">
-          <DetailRow
-            label={t('detail.source')}
-            value={
-              // BE returns source object on /events/{id} but the
-              // api-client `EventDetail` interface is stale (only has
-              // `sourceId`). Cast locally — proper fix is to bump
-              // api-client to mirror shared 0.29's nested `source`
-              // shape (tracked separately).
-              (event as EventDetail & { source?: { name?: string; label?: string } }).source
-                ?.name ??
-              (event as EventDetail & { source?: { name?: string; label?: string } }).source
-                ?.label ??
-              t('detail.communityReport')
-            }
-          />
+          {(() => {
+            // api-client `EventDetail` is stale (sourceId only); BE returns
+            // the nested `source` object since shared 0.29. Widen the cast
+            // locally; the proper fix is an api-client follow-up.
+            const sourceCode = (event as EventDetail & { source?: { code?: string } }).source?.code;
+            const source = resolveSourceDisplay(sourceCode, tAlerts);
+            return source ? (
+              <DetailRow label={tAlerts('sourceShortLabel')} value={source.full} />
+            ) : null;
+          })()}
           <DetailRow
             label={t('detail.reported')}
             value={<RelativeTime iso={event.createdAt} />}

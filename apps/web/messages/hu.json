@@ -212,13 +212,11 @@
     "deleted": "Esemény törölve",
     "detail": {
       "title": "Esemény részletei",
-      "source": "Forrás",
       "reported": "Bejelentve",
       "radius": "Sugár",
       "activeSince": "Aktív ettől:",
       "ends": "Vége",
       "ongoing": "Folyamatban",
-      "communityReport": "Közösségi bejelentés",
       "active": "Aktív",
       "resolved": "Megoldva",
       "notFound": "Esemény nem található",
