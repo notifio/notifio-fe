@@ -1,5 +1,6 @@
 import type { Icon } from '@tabler/icons-react';
 import {
+  IconActivity,
   IconBolt,
   IconCalendarEvent,
   IconCar,
@@ -40,7 +41,7 @@ const CATEGORY_ICON_MAP: Record<string, { icon: Icon; color: string }> = {
   'name-day': { icon: IconCalendarEvent, color: '#D4537E' },
   'name_day': { icon: IconCalendarEvent, color: '#D4537E' },
   'pollen': { icon: IconCloud, color: '#639922' },
-  'earthquake': { icon: IconCarCrash, color: '#FF3B30' },
+  'earthquake': { icon: IconActivity, color: '#FF3B30' },
 };
 
 export function getNotificationIcon(category: string): { icon: Icon; color: string } {
