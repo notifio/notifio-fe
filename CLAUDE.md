@@ -152,13 +152,32 @@ Commit messages: `<scope>(<workspace>): <subject>` (e.g. `refactor(web): consume
 
 - Base URL configured via env var (`NEXT_PUBLIC_API_URL` / `EXPO_PUBLIC_API_URL`)
 - All requests go through `@notifio/api-client` (wraps `fetch` with auth, locale, error handling)
-- `@notifio/shared` — types, Zod schemas, i18n (sk/en/cs/hu/de/uk parity), H3 utils, hooks, preferences helpers, map module. Pin in root `package.json` is the source of truth — do not pin in this doc (goes stale).
+- `@notifio/shared` — types, Zod schemas, i18n (sk/en/cs/hu/de/uk parity), H3 utils, hooks, preferences helpers, map module. The current pin is tracked under "Bumping `@notifio/shared`" below so feature branches can verify they aren't stale; `package.json` remains the runtime source of truth.
 - Response envelope: `{ success: boolean, data?: T, error?: string, meta?: {} }`
 - Auth: Bearer token via Supabase Auth
 
 **Path quirk:** Web's API singleton lives at `apps/web/src/lib/api.ts` (with `src/`). Mobile's lives at `apps/mobile/lib/api.ts` (no `src/`). When referencing in prompts or commits, use the actual paths — these aren't symmetric.
 
 ### Bumping `@notifio/shared`
+
+#### Current `@notifio/shared` pin
+
+**Pinned version:** `^0.36.0` (as of 2026-05-12)
+
+When you start a new FE feature branch, verify your branch carries this pin or newer:
+
+```bash
+cat packages/api-client/package.json | grep '"@notifio/shared"'
+cat package.json | grep '"@notifio/shared"'
+```
+
+If your branch was created before this pin landed, rebase onto main before opening a PR. Stale pins break typecheck the moment your code touches a shared field added after the pin.
+
+When a new shared version publishes, the FIRST FE PR that consumes the new feature bumps the pin in the same PR. Subsequent in-flight FE branches must rebase onto post-bump main.
+
+Update this section every time the pin moves.
+
+#### Bump procedure
 
 When `@notifio/shared` publishes a new version, **also bump the pin in `packages/api-client/package.json` in the same PR**. Otherwise type drift accumulates silently at the api-client boundary: api-client emits stale shapes against the new shared contract, forcing apps to use `as unknown as ...` casts at every consumer.
 
