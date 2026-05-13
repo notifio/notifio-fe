@@ -262,9 +262,18 @@ export function MapMarker({
                 fontSize: '14px',
                 fontWeight: 600,
                 lineHeight: 1.3,
-                whiteSpace: 'nowrap',
+                // BUG-37 (13.5.2026): switched from `whiteSpace: 'nowrap'` +
+                // `textOverflow: 'ellipsis'` (1-line hard cut) to a 2-line
+                // box clamp. Matches mobile parity (`pin-callout.tsx`
+                // uses `numberOfLines={2}`). User-reported regression on
+                // 11.5: "Treba aby ten text ak by sa nezmestil aby bol vo
+                // viacerych riadkoch" — title now wraps + ellipsises only
+                // after line 2 instead of after the first overflow char.
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                overflowWrap: 'anywhere',
               }}
             >
               {pin.title}
@@ -278,9 +287,16 @@ export function MapMarker({
                 marginTop: '4px',
                 fontSize: '13px',
                 color: CALLOUT_SUBTLE,
-                whiteSpace: 'nowrap',
+                // BUG-37 (13.5.2026): same 2-line clamp as the title above
+                // — subtitle was also hardcoded to nowrap+ellipsis and
+                // would lose detail on locality-prefixed descriptions
+                // ("D1 Bratislava — odbočka Rožňavská, …"). Mobile
+                // counterpart uses `numberOfLines={2}` likewise.
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                overflowWrap: 'anywhere',
               }}
             >
               {pin.description}
