@@ -64,23 +64,12 @@ export default getRequestConfig(async () => {
     }
   }
 
-  // TEMP — picker namespace lives in `_picker-temp.{sk,en}.json` until
-  // the next @notifio/shared bump folds it in. Loaded via the same
-  // fallback chain so cs/hu/de/uk pick up the en file.
-  let pickerTemp: Record<string, unknown> = {};
-  for (const candidate of webFallbackChain) {
-    try {
-      pickerTemp = (await import(`../../messages/_picker-temp.${candidate}.json`)).default;
-      break;
-    } catch {
-      // try next candidate
-    }
-  }
-
-  // Shared wins on overlapping namespaces — it's the source of truth
-  // post-i18n-sync. Web-local only contributes namespaces shared doesn't
-  // have; any stale local copy of a shared namespace is overridden.
-  const messages = deepMerge(deepMerge(web, pickerTemp), shared);
+  // Shared wins on overlapping namespaces — it's the source of truth.
+  // As of shared 0.39.0 the full web-local catalog (including the former
+  // picker-temp namespace) was migrated upstream, so the web-local
+  // import above resolves to an empty `{}` for every locale today and
+  // exists only as an extension point for future app-specific keys.
+  const messages = deepMerge(web, shared);
 
   if (process.env.NODE_ENV === "development") {
     const required = ["common", "auth", "settings", "pushSetup", "locationBanner", "map", "alerts", "nav", "landing"];
