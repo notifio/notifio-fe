@@ -219,7 +219,7 @@
     "detail": {
       "title": "Esemény részletei",
       "address": "Cím",
-      "locality": "Település",
+      "locality": "Helyszín",
       "reported": "Bejelentve",
       "radius": "Sugár",
       "activeSince": "Aktív ettől:",

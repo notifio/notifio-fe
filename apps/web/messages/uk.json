@@ -219,7 +219,7 @@
     "detail": {
       "title": "Деталі події",
       "address": "Адреса",
-      "locality": "Місто",
+      "locality": "Локація",
       "reported": "Зареєстровано",
       "radius": "Радіус",
       "activeSince": "Активне з",

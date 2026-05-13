@@ -219,7 +219,7 @@
     "detail": {
       "title": "Ereignisdetail",
       "address": "Adresse",
-      "locality": "Ort",
+      "locality": "Lokalität",
       "reported": "Gemeldet",
       "radius": "Radius",
       "activeSince": "Aktiv seit",

@@ -225,7 +225,7 @@
     "detail": {
       "title": "Detail udalosti",
       "address": "Adresa",
-      "locality": "Mesto",
+      "locality": "Lokalita",
       "reported": "Nahlásené",
       "radius": "Okruh",
       "activeSince": "Aktívne od",

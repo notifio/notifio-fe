@@ -219,7 +219,7 @@
     "detail": {
       "title": "Detail události",
       "address": "Adresa",
-      "locality": "Město",
+      "locality": "Lokalita",
       "reported": "Nahlášeno",
       "radius": "Rádius",
       "activeSince": "Aktivní od",
