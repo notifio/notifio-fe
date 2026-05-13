@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Laden fehlgeschlagen",
+      "body": "Verbindung prüfen und erneut versuchen."
+    }
+  },
   "categoryBadge": {
     "traffic": "Verkehr",
     "weather": "Wetter",

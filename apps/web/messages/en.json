@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Failed to load",
+      "body": "Check your connection and try again."
+    }
+  },
   "categoryBadge": {
     "traffic": "Traffic",
     "weather": "Weather",

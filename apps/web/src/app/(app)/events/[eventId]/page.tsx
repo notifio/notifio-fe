@@ -20,6 +20,7 @@ import { ApiError } from '@notifio/api-client';
 import { resolveSourceDisplay } from '@/components/app/alert-card-utils';
 import { EventMapHeader } from '@/components/events/event-map-header';
 import { RelativeTime } from '@/components/ui/relative-time';
+import { StatusPill } from '@/components/ui/status-pill';
 import { useToast } from '@/components/ui/toast';
 import { api } from '@/lib/api';
 import { getNotificationIcon } from '@/lib/notification-icons';
@@ -189,20 +190,13 @@ export default function EventDetailPage() {
             </p>
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1.5">
-            <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                isResolved
-                  ? 'bg-green-500/10 text-green-600'
-                  : 'bg-red-500/10 text-red-500'
-              }`}
-            >
+            <StatusPill variant={isResolved ? 'resolved' : 'active'}>
               {isResolved ? t('detail.resolved') : t('detail.active')}
-            </span>
+            </StatusPill>
             {isCommunity && (
-              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-[5px] border border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.15)] px-2 py-[3px] text-[10px] text-[#8B5CF6]">
-                <IconUsers size={11} />
+              <StatusPill variant="community" icon={<IconUsers size={12} />}>
                 {tAlerts('sourceCommunity')}
-              </span>
+              </StatusPill>
             )}
           </div>
         </div>

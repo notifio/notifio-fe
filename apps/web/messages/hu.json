@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Betöltés sikertelen",
+      "body": "Ellenőrizze a kapcsolatot és próbálja újra."
+    }
+  },
   "categoryBadge": {
     "traffic": "Közlekedés",
     "weather": "Időjárás",

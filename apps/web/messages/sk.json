@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Nepodarilo sa načítať",
+      "body": "Skontrolujte pripojenie a skúste to znova."
+    }
+  },
   "categoryBadge": {
     "traffic": "Doprava",
     "weather": "Počasie",

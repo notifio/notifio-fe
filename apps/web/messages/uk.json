@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Не вдалося завантажити",
+      "body": "Перевірте з'єднання та повторіть."
+    }
+  },
   "categoryBadge": {
     "traffic": "Рух",
     "weather": "Погода",
