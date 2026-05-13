@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { AboutSection } from "@/components/settings/about-section";
 import { DataSourcesSection } from "@/components/settings/data-sources-section";
 import { DigestSection } from "@/components/settings/digest-section";
 import { NotificationPreferencesSection } from "@/components/settings/notification-preferences-section";
@@ -20,11 +21,12 @@ export default function SettingsPage() {
       <div className="mt-8 space-y-8 md:mt-10">
         <SubscriptionSection />
         <PermissionsSection />
-        <DigestSection />
         <NotificationPreferencesSection />
+        <DigestSection />
         <QuietHoursSection />
-        <PrivacySection />
         <DataSourcesSection />
+        <PrivacySection />
+        <AboutSection />
       </div>
     </div>
   );
