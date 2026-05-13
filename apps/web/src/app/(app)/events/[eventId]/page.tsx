@@ -6,6 +6,7 @@ import {
   IconLoader2,
   IconMapPin,
   IconTrash,
+  IconUsers,
   IconX,
 } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -16,8 +17,10 @@ import { useCallback, useEffect, useState } from 'react';
 import type { EventDetail, UserVote } from '@notifio/api-client';
 import { ApiError } from '@notifio/api-client';
 
+import { resolveSourceDisplay } from '@/components/app/alert-card-utils';
 import { EventMapHeader } from '@/components/events/event-map-header';
 import { RelativeTime } from '@/components/ui/relative-time';
+import { StatusPill } from '@/components/ui/status-pill';
 import { useToast } from '@/components/ui/toast';
 import { api } from '@/lib/api';
 import { getNotificationIcon } from '@/lib/notification-icons';
@@ -29,6 +32,7 @@ export default function EventDetailPage() {
   const router = useRouter();
   const t = useTranslations('events');
   const tc = useTranslations('common');
+  const tAlerts = useTranslations('alerts');
   const toast = useToast();
 
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -142,6 +146,13 @@ export default function EventDetailPage() {
     : 0;
   const icon = getNotificationIcon(event.category.code);
 
+  // api-client `EventDetail` is stale (sourceId only); BE returns the
+  // nested `source` object since shared 0.29. Widen the cast once and
+  // reuse for header pill + attribution row.
+  const sourceCode = (event as EventDetail & { source?: { code?: string } }).source?.code;
+  const source = resolveSourceDisplay(sourceCode, tAlerts);
+  const isCommunity = sourceCode === 'user_report';
+
   return (
     <div className="mx-auto max-w-2xl">
       {/* Back button */}
@@ -178,34 +189,23 @@ export default function EventDetailPage() {
               {event.subcategory && ` · ${event.subcategory.name}`}
             </p>
           </div>
-          <span
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-              isResolved
-                ? 'bg-green-500/10 text-green-600'
-                : 'bg-red-500/10 text-red-500'
-            }`}
-          >
-            {isResolved ? t('detail.resolved') : t('detail.active')}
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <StatusPill variant={isResolved ? 'resolved' : 'active'}>
+              {isResolved ? t('detail.resolved') : t('detail.active')}
+            </StatusPill>
+            {isCommunity && (
+              <StatusPill variant="community" icon={<IconUsers size={12} />}>
+                {tAlerts('sourceCommunity')}
+              </StatusPill>
+            )}
+          </div>
         </div>
 
         {/* Details table */}
         <div className="mt-6 space-y-3">
-          <DetailRow
-            label={t('detail.source')}
-            value={
-              // BE returns source object on /events/{id} but the
-              // api-client `EventDetail` interface is stale (only has
-              // `sourceId`). Cast locally — proper fix is to bump
-              // api-client to mirror shared 0.29's nested `source`
-              // shape (tracked separately).
-              (event as EventDetail & { source?: { name?: string; label?: string } }).source
-                ?.name ??
-              (event as EventDetail & { source?: { name?: string; label?: string } }).source
-                ?.label ??
-              t('detail.communityReport')
-            }
-          />
+          {source && (
+            <DetailRow label={tAlerts('sourceShortLabel')} value={source.full} />
+          )}
           <DetailRow
             label={t('detail.reported')}
             value={<RelativeTime iso={event.createdAt} />}

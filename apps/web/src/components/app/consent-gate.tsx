@@ -1,6 +1,7 @@
 'use client';
 
-import { IconLoader2 } from '@tabler/icons-react';
+import { IconAlertTriangle, IconLoader2 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { ConsentModal } from '@/components/app/consent-modal';
@@ -13,7 +14,7 @@ interface ConsentGateProps {
 }
 
 export function ConsentGate({ children }: ConsentGateProps) {
-  const { consents, isLoading: loading, refetch } = useConsents();
+  const { consents, isLoading: loading, isError, refetch } = useConsents();
   const [forceShow, setForceShow] = useState(false);
 
   // Listen for CONSENT_REQUIRED events from the API layer
@@ -42,6 +43,10 @@ export function ConsentGate({ children }: ConsentGateProps) {
     );
   }
 
+  if (isError) {
+    return <ConsentGateError onRetry={refetch} />;
+  }
+
   const needsConsent = consents.length === 0 || forceShow;
 
   if (needsConsent) {
@@ -55,4 +60,32 @@ export function ConsentGate({ children }: ConsentGateProps) {
   }
 
   return <>{children}</>;
+}
+
+interface ConsentGateErrorProps {
+  onRetry: () => void;
+}
+
+function ConsentGateError({ onRetry }: ConsentGateErrorProps) {
+  const tc = useTranslations('common');
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
+      <IconAlertTriangle size={36} className="text-amber-500" />
+      <div className="space-y-1">
+        <h2 className="text-base font-semibold text-text-primary">
+          {tc('loadError.title')}
+        </h2>
+        <p className="max-w-sm text-sm text-muted">
+          {tc('loadError.body')}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+      >
+        {tc('retry')}
+      </button>
+    </div>
+  );
 }

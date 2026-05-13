@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Не вдалося завантажити",
+      "body": "Перевірте з'єднання та повторіть."
+    }
+  },
   "categoryBadge": {
     "traffic": "Рух",
     "weather": "Погода",
@@ -212,13 +218,11 @@
     "deleted": "Подію видалено",
     "detail": {
       "title": "Деталі події",
-      "source": "Джерело",
       "reported": "Зареєстровано",
       "radius": "Радіус",
       "activeSince": "Активне з",
       "ends": "Завершується",
       "ongoing": "Триває",
-      "communityReport": "Повідомлення спільноти",
       "active": "Активне",
       "resolved": "Вирішено",
       "notFound": "Подію не знайдено",

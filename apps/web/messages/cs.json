@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Načítání selhalo",
+      "body": "Zkontrolujte připojení a zkuste to znovu."
+    }
+  },
   "categoryBadge": {
     "traffic": "Doprava",
     "weather": "Počasí",
@@ -212,13 +218,11 @@
     "deleted": "Událost smazána",
     "detail": {
       "title": "Detail události",
-      "source": "Zdroj",
       "reported": "Nahlášeno",
       "radius": "Rádius",
       "activeSince": "Aktivní od",
       "ends": "Končí",
       "ongoing": "Probíhá",
-      "communityReport": "Komunitní hlášení",
       "active": "Aktivní",
       "resolved": "Vyřešeno",
       "notFound": "Událost nenalezena",

@@ -1,4 +1,10 @@
 {
+  "common": {
+    "loadError": {
+      "title": "Failed to load",
+      "body": "Check your connection and try again."
+    }
+  },
   "categoryBadge": {
     "traffic": "Traffic",
     "weather": "Weather",
@@ -218,13 +224,11 @@
     "deleted": "Event deleted",
     "detail": {
       "title": "Event detail",
-      "source": "Source",
       "reported": "Reported",
       "radius": "Radius",
       "activeSince": "Active since",
       "ends": "Ends",
       "ongoing": "Ongoing",
-      "communityReport": "Community report",
       "active": "Active",
       "resolved": "Resolved",
       "notFound": "Event not found",

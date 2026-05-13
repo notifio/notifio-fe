@@ -31,6 +31,7 @@ export function useConsents() {
   return {
     consents: query.data ?? [],
     isLoading: query.isPending,
+    isError: query.isError,
     error: query.error ? (query.error.message || 'Failed to load consents') : null,
     updateConsent,
     refetch,
