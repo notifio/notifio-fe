@@ -12,7 +12,7 @@ const DEFAULT_START = '22:00';
 const DEFAULT_END = '07:00';
 
 export function QuietHoursSection() {
-  const t = useTranslations('settings');
+  const t = useTranslations('notificationPreferences');
   const { preferences, setQuietHours, isLoading } = usePreferences();
   const { membership } = useMembership();
 

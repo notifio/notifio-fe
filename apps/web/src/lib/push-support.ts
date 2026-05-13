@@ -18,7 +18,8 @@
 export type PushUnsupportedReason =
   | 'no-notification-api'
   | 'no-service-worker'
-  | 'ios-safari-not-pwa';
+  | 'ios-safari-not-pwa'
+  | 'opera-not-supported';
 
 export interface PushSupportInfo {
   supported: boolean;
@@ -31,6 +32,16 @@ function isIos(): boolean {
   const ua = navigator.userAgent;
   if (/iPad|iPhone|iPod/.test(ua)) return true;
   return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+}
+
+function isOpera(): boolean {
+  // Opera has the Notification + serviceWorker APIs and Notification.permission
+  // resolves to 'granted' on user opt-in, but FCM's web-push delivery is
+  // unreliable in Opera in practice — getToken() either fails silently or
+  // returns a token FCM cannot deliver to. Detect upfront and steer users
+  // to a browser known to work.
+  if (typeof navigator === 'undefined') return false;
+  return /OPR\/|Opera\//.test(navigator.userAgent);
 }
 
 function isStandalonePwa(): boolean {
@@ -54,6 +65,9 @@ export function detectPushSupport(): PushSupportInfo {
   }
   if (!('serviceWorker' in navigator)) {
     return { supported: false, reason: 'no-service-worker' };
+  }
+  if (isOpera()) {
+    return { supported: false, reason: 'opera-not-supported' };
   }
   if (isIos() && !isStandalonePwa()) {
     return { supported: false, reason: 'ios-safari-not-pwa' };

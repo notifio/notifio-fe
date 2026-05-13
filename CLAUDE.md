@@ -185,6 +185,16 @@ Example: shared `0.27.0` introduced `MembershipResponse` (nested under `current`
 
 Practical rule: any commit that bumps the root `@notifio/shared` dep also touches `packages/api-client/package.json` to match. Run `npm install` after to dedupe the nested copy under api-client to the new hoisted version.
 
+### BE follow-ups (queued, not yet shipped)
+
+Running list of BE-side gaps the FE has worked around with local widening casts or heuristics. When BE lands these, the corresponding FE cast / fallback can be removed.
+
+- **`isUserReported` projection on `EventDetail` + `EventFeedItem` + `NotificationHistoryItem`.** BE writes `f_event.key_created_by_user` for community reports but doesn't project it. FE currently uses `source.code === 'user_report'` which misses provider-attributed user reports (e.g. user reporting "BVS water outage" gets `cod_source_adapter='bvs_outage'`, not `'user_report'`). Full audit in `AUDIT-COMMUNITY-EVENT-FLAG.md`. Once BE projects `isUserReported: boolean`, replace the source-code heuristic everywhere (alert card, event detail Komunitné pill, source attribution helper).
+- **api-client `EventDetail` type drift.** `packages/api-client/src/shared-types.ts` `interface EventDetail` only exposes `sourceId` and a flat `location`. BE has projected `source: { code, name, label, url }`, `description`, `address`, `locality`, `providerName` since shared 0.29. FE currently widens the cast inline at consumer sites. Proper fix: delete the local interface and re-export from `@notifio/shared` (which has the canonical shape).
+- **`providerName` projection meaningfulness.** BE's `event.service.ts` falls back `providerName` to `c_source_adapter.txt_name` when the polygon doesn't set it explicitly — making the field always non-null but only sometimes meaningful (otherwise it duplicates `source.name`). FE can't surface a "Poskytovateľ" row cleanly without that distinction. Ask: project `providerName: string | null` where null = FK fallback, non-null = explicit polygon-set, so FE can render the row only when it adds info.
+- **api-client `UserProfile` drift.** `packages/api-client/src/shared-types.ts` `UserProfile` interface doesn't expose `digestMode`. Forces `(profile as unknown as { digestMode?: string })` cast in `apps/web/src/hooks/use-digest-mode.ts:24`. Same root cause as the `EventDetail` drift above — fix in the same sweep by migrating api-client types to re-export from `@notifio/shared`.
+- **shared digest i18n cleanup.** Dead keys `digest.realtime` + `digest.realtimeDesc` (lowercase `t`) exist across all 6 shared locales but aren't consumed; `DigestSection` uses `digest.realTime` + `digest.realTimeDesc` (capital `T`). Casing migration artifact. Single shared patch bump removes them.
+
 ### API Client Methods (`@notifio/api-client`)
 
 **Public:** `getWeather`, `getWeatherWarnings`, `getTraffic`, `getTrafficFlow`, `getAirQuality`, `getOutages`
