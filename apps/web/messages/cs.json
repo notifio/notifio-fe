@@ -218,6 +218,8 @@
     "deleted": "Událost smazána",
     "detail": {
       "title": "Detail události",
+      "address": "Adresa",
+      "locality": "Lokalita",
       "reported": "Nahlášeno",
       "radius": "Rádius",
       "activeSince": "Aktivní od",

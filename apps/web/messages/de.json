@@ -218,6 +218,8 @@
     "deleted": "Ereignis gelöscht",
     "detail": {
       "title": "Ereignisdetail",
+      "address": "Adresse",
+      "locality": "Lokalität",
       "reported": "Gemeldet",
       "radius": "Radius",
       "activeSince": "Aktiv seit",

@@ -224,6 +224,8 @@
     "deleted": "Udalosť odstránená",
     "detail": {
       "title": "Detail udalosti",
+      "address": "Adresa",
+      "locality": "Lokalita",
       "reported": "Nahlásené",
       "radius": "Okruh",
       "activeSince": "Aktívne od",
