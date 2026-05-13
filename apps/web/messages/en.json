@@ -5,6 +5,10 @@
       "body": "Check your connection and try again."
     }
   },
+  "settings": {
+    "permissionsTitle": "Permissions",
+    "permissionsDescription": "Manage push notification and location permissions."
+  },
   "categoryBadge": {
     "traffic": "Traffic",
     "weather": "Weather",

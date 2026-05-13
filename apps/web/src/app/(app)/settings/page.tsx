@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { DataSourcesSection } from "@/components/settings/data-sources-section";
 import { DigestSection } from "@/components/settings/digest-section";
 import { NotificationPreferencesSection } from "@/components/settings/notification-preferences-section";
+import { PermissionsSection } from "@/components/settings/permissions-section";
 import { PrivacySection } from "@/components/settings/privacy-section";
-import { PushNotificationsSection } from "@/components/settings/push-notifications-section";
 import { QuietHoursSection } from "@/components/settings/quiet-hours-section";
 import { SubscriptionSection } from "@/components/settings/subscription-section";
 
@@ -19,7 +19,7 @@ export default function SettingsPage() {
 
       <div className="mt-8 space-y-8 md:mt-10">
         <SubscriptionSection />
-        <PushNotificationsSection />
+        <PermissionsSection />
         <DigestSection />
         <NotificationPreferencesSection />
         <QuietHoursSection />

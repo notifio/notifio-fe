@@ -5,6 +5,10 @@
       "body": "Перевірте з'єднання та повторіть."
     }
   },
+  "settings": {
+    "permissionsTitle": "Дозволи",
+    "permissionsDescription": "Керуйте дозволами на push-сповіщення та доступ до місцеположення."
+  },
   "categoryBadge": {
     "traffic": "Рух",
     "weather": "Погода",
