@@ -21,12 +21,12 @@ export default function SettingsPage() {
       <div className="mt-8 space-y-8 md:mt-10">
         <SubscriptionSection />
         <PermissionsSection />
-        <DigestSection />
         <NotificationPreferencesSection />
+        <DigestSection />
         <QuietHoursSection />
+        <DataSourcesSection />
         <PrivacySection />
         <AboutSection />
-        <DataSourcesSection />
       </div>
     </div>
   );
