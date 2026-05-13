@@ -5,6 +5,10 @@
       "body": "Verbindung prüfen und erneut versuchen."
     }
   },
+  "settings": {
+    "permissionsTitle": "Berechtigungen",
+    "permissionsDescription": "Verwalten Sie Push-Benachrichtigungs- und Standortberechtigungen."
+  },
   "categoryBadge": {
     "traffic": "Verkehr",
     "weather": "Wetter",

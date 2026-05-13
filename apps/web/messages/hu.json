@@ -5,6 +5,10 @@
       "body": "Ellenőrizze a kapcsolatot és próbálja újra."
     }
   },
+  "settings": {
+    "permissionsTitle": "Engedélyek",
+    "permissionsDescription": "Push értesítések és helyhozzáférés engedélyeinek kezelése."
+  },
   "categoryBadge": {
     "traffic": "Közlekedés",
     "weather": "Időjárás",

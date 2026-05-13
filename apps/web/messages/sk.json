@@ -5,6 +5,10 @@
       "body": "Skontrolujte pripojenie a skúste to znova."
     }
   },
+  "settings": {
+    "permissionsTitle": "Povolenia",
+    "permissionsDescription": "Spravujte oprávnenia pre push notifikácie a polohu."
+  },
   "categoryBadge": {
     "traffic": "Doprava",
     "weather": "Počasie",
