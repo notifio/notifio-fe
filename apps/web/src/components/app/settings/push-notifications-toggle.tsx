@@ -20,6 +20,17 @@ export function PushNotificationsToggle() {
     setPushSupport(detectPushSupport());
   }, []);
 
+  // Opera has the Notification + serviceWorker APIs but FCM delivery is
+  // unreliable in practice. Steer users to a working browser before they
+  // tap "enable" and get a stuck token.
+  if (!pushSupport.supported && pushSupport.reason === 'opera-not-supported') {
+    return (
+      <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        {t('operaUnsupported')}
+      </div>
+    );
+  }
+
   // iOS Safari outside a PWA install: the Notification + serviceWorker APIs
   // exist, so `useWebPush` reports `permission='default'` and renders the
   // generic "enable" CTA — but `requestPermission()` resolves to `denied`

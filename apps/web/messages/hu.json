@@ -249,6 +249,7 @@
     "upcoming": "Upcoming"
   },
   "pushSetup": {
-    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\"."
+    "iosAddToHomeScreen": "On iPhone, Safari only delivers push notifications once Notifio is installed on the home screen. Tap the share icon and choose \"Add to Home Screen\".",
+    "operaUnsupported": "Az Opera nem kézbesíti megbízhatóan a push értesítéseket. Használja a Chrome, Edge vagy Firefox böngészőt."
   }
 }

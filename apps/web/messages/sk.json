@@ -139,7 +139,8 @@
     "upcoming": "Plánované"
   },
   "pushSetup": {
-    "iosAddToHomeScreen": "Na iPhone posiela Safari push notifikácie iba keď je Notifio nainštalované na domovskej obrazovke. Ťukni na ikonu zdieľania a vyber „Pridať na plochu“."
+    "iosAddToHomeScreen": "Na iPhone posiela Safari push notifikácie iba keď je Notifio nainštalované na domovskej obrazovke. Ťukni na ikonu zdieľania a vyber „Pridať na plochu“.",
+    "operaUnsupported": "Opera nedoručuje push notifikácie spoľahlivo. Použite Chrome, Edge alebo Firefox."
   },
   "profile": {
     "title": "Profil",
