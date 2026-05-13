@@ -224,6 +224,8 @@
     "deleted": "Event deleted",
     "detail": {
       "title": "Event detail",
+      "address": "Address",
+      "locality": "Locality",
       "reported": "Reported",
       "radius": "Radius",
       "activeSince": "Active since",

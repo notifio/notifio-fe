@@ -218,6 +218,8 @@
     "deleted": "Esemény törölve",
     "detail": {
       "title": "Esemény részletei",
+      "address": "Cím",
+      "locality": "Település",
       "reported": "Bejelentve",
       "radius": "Sugár",
       "activeSince": "Aktív ettől:",

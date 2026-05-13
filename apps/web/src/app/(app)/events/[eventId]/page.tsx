@@ -146,12 +146,23 @@ export default function EventDetailPage() {
     : 0;
   const icon = getNotificationIcon(event.category.code);
 
-  // api-client `EventDetail` is stale (sourceId only); BE returns the
-  // nested `source` object since shared 0.29. Widen the cast once and
-  // reuse for header pill + attribution row.
-  const sourceCode = (event as EventDetail & { source?: { code?: string } }).source?.code;
+  // api-client `EventDetail` is stale; BE projects `source`, `address`,
+  // `locality`, etc. since shared 0.29. Widen the cast once and reuse
+  // across header pill, attribution row, and the new address / locality
+  // rows. Follow-up to mirror the canonical shape lives in CLAUDE.md.
+  const eventExt = event as EventDetail & {
+    source?: { code?: string };
+    address?: string | null;
+    locality?: string | null;
+  };
+  const sourceCode = eventExt.source?.code;
   const source = resolveSourceDisplay(sourceCode, tAlerts);
   const isCommunity = sourceCode === 'user_report';
+  const address = eventExt.address ?? null;
+  const locality = eventExt.locality ?? null;
+  const showLocality =
+    !!locality &&
+    (!address || !address.toLowerCase().includes(locality.toLowerCase()));
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -203,6 +214,12 @@ export default function EventDetailPage() {
 
         {/* Details table */}
         <div className="mt-6 space-y-3">
+          {address && (
+            <DetailRow label={t('detail.address')} value={address} />
+          )}
+          {showLocality && locality && (
+            <DetailRow label={t('detail.locality')} value={locality} />
+          )}
           {source && (
             <DetailRow label={tAlerts('sourceShortLabel')} value={source.full} />
           )}
