@@ -12,12 +12,19 @@ import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { SOURCE_ADAPTERS } from '@notifio/shared/constants';
+
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL ?? 'https://notifio.app';
 const SUPPORT_EMAIL = 'support@notifio.app';
+
+const SOURCE_NAMES = Object.values(SOURCE_ADAPTERS)
+  .map((s) => s.name)
+  .sort((a, b) => a.localeCompare(b))
+  .join(' · ');
 
 function getVersionInfo() {
   const cfg = Constants.expoConfig;
@@ -120,7 +127,7 @@ export default function AboutScreen() {
             {t('about.dataSources.intro')}
           </Text>
           <Text style={[styles.dsProviders, { color: colors.text }]}>
-            {t('about.dataSources.providers')}
+            {SOURCE_NAMES}
           </Text>
         </View>
 
