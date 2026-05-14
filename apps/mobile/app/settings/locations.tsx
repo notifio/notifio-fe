@@ -1,4 +1,4 @@
-import { IconCurrentLocation, IconHome, IconMapPin, IconPencil, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react-native';
+import { IconBell, IconBellOff, IconCurrentLocation, IconHome, IconMapPin, IconPencil, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react-native';
 import { Stack } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ function isKnownLabelCode(code: unknown): code is KnownLabelCode {
 export default function LocationsScreen() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
-  const { locations, limit, used, isLoading, canAddMore, addLocation, updateLocation, removeLocation } = useLocations();
+  const { locations, limit, used, isLoading, canAddMore, addLocation, updateLocation, removeLocation, toggleMute } = useLocations();
   // LOC-2: current GPS sits above the saved-locations list so users can
   // see where the system thinks they are right now even without saving
   // a permanent location.
@@ -90,11 +90,35 @@ export default function LocationsScreen() {
                     <IconHome size={12} color={colors.primary} />
                   </View>
                 )}
+                {item.muted && (
+                  <View
+                    style={[
+                      styles.mutedBadge,
+                      { backgroundColor: withOpacity(colors.textMuted, 0.1) },
+                    ]}
+                  >
+                    <Text style={[styles.mutedBadgeText, { color: colors.textMuted }]}>
+                      {t('profile.locations.mutedBadge')}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text style={[styles.cardCoord, { color: colors.textMuted }]}>
                 {formatCoord(item.lat, item.lng)}
               </Text>
             </View>
+            <Pressable
+              onPress={() => { void toggleMute(item.locationId); }}
+              hitSlop={8}
+              style={styles.actionButton}
+              accessibilityLabel={t(item.muted ? 'profile.locations.unmute' : 'profile.locations.mute')}
+            >
+              {item.muted ? (
+                <IconBellOff size={16} color={colors.primary} />
+              ) : (
+                <IconBell size={16} color={colors.textMuted} />
+              )}
+            </Pressable>
             <Pressable onPress={() => handleEdit(item)} hitSlop={8} style={styles.actionButton}>
               <IconPencil size={16} color={colors.textMuted} />
             </Pressable>
@@ -105,7 +129,7 @@ export default function LocationsScreen() {
         </View>
       );
     },
-    [colors, handleEdit, handleDelete, t],
+    [colors, handleEdit, handleDelete, toggleMute, t],
   );
 
   // ── LOC-2: current-position block, rendered above the saved list ──
@@ -328,6 +352,15 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.full,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  mutedBadge: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 2,
+    borderRadius: theme.radius.full,
+  },
+  mutedBadgeText: {
+    fontSize: 10,
+    ...theme.font.medium,
   },
   cardCoord: {
     fontSize: theme.fontSize.xs,
