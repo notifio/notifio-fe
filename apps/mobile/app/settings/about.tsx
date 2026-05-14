@@ -121,10 +121,10 @@ export default function AboutScreen() {
             - SPP (gas)
             - Veolia (heat)
             - Nominatim (geocoding) */}
-        <SectionHeading label={t('about.providers.section')} />
+        <SectionHeading label={t('about.dataSources.section')} />
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, padding: theme.spacing.lg, gap: theme.spacing.sm }]}>
           <Text style={[styles.dsIntro, { color: colors.textMuted }]}>
-            {t('about.providers.description')}
+            {t('about.dataSources.intro')}
           </Text>
           <Text style={[styles.dsProviders, { color: colors.text }]}>
             {SOURCE_NAMES}
