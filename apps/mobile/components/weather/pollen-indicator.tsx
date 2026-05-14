@@ -25,6 +25,12 @@ interface PollenChipProps {
 }
 
 export function PollenChip({ pollen, isExpanded, dimmed, onToggle }: PollenChipProps) {
+  const { t } = useTranslation();
+  const dominantKey = pollen.dominant ?? pollen.level;
+  // Translate dominant species (birch/grass/...) or level (high/moderate/low) via
+  // shared `pollen.*`; fall back to the raw key if shared lacks it. Unit always
+  // resolves now that pollen.unit ships in shared 1.5.0.
+  const dominantLabel = t(`pollen.${dominantKey}`, { defaultValue: dominantKey });
   return (
     <Pressable
       onPress={onToggle}
@@ -36,7 +42,7 @@ export function PollenChip({ pollen, isExpanded, dimmed, onToggle }: PollenChipP
     >
       <IconPlant2 size={14} color="#FFFFFF" />
       <Text style={styles.chipText}>
-        {pollen.dominant ?? pollen.level} {pollen.unit}
+        {dominantLabel} {t('pollen.unit')}
       </Text>
     </Pressable>
   );

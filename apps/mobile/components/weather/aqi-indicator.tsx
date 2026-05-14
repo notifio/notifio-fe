@@ -1,10 +1,20 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AQ_COMPONENT_INFO, getAqiStyle } from '@notifio/shared/air-quality';
 import type { AirQualityData } from '@notifio/shared/types';
 
 import { theme, withOpacity } from '../../lib/theme';
+
+// BE emits `very_poor` (snake_case); shared i18n key is `veryPoor` (camelCase).
+const AQI_LEVEL_I18N_KEY: Record<string, string> = {
+  good: 'good',
+  fair: 'fair',
+  moderate: 'moderate',
+  poor: 'poor',
+  very_poor: 'veryPoor',
+};
 
 interface AqiIndicatorProps {
   airQuality: AirQualityData | null;
@@ -14,6 +24,7 @@ interface AqiIndicatorProps {
 
 export function AqiIndicator({ airQuality, isLoading, textColor }: AqiIndicatorProps) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <View style={[styles.skeleton, { backgroundColor: withOpacity(textColor, 0.1) }]} />;
@@ -35,7 +46,11 @@ export function AqiIndicator({ airQuality, isLoading, textColor }: AqiIndicatorP
       <Pressable onPress={toggle} style={[styles.row, { backgroundColor: withOpacity(textColor, 0.1) }]}>
         <View style={[styles.dot, { backgroundColor: aqiStyle.color }]} />
         <Text style={[styles.aqiLabel, { color: textColor }]}>AQI {airQuality.aqi}</Text>
-        <Text style={[styles.levelLabel, { color: muted70 }]}>{aqiStyle.label}</Text>
+        <Text style={[styles.levelLabel, { color: muted70 }]}>
+          {t(`airQuality.${AQI_LEVEL_I18N_KEY[airQuality.level] ?? airQuality.level}`, {
+            defaultValue: aqiStyle.label,
+          })}
+        </Text>
       </Pressable>
 
       {expanded && (
