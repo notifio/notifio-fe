@@ -173,10 +173,10 @@ export type {
   SetSourcePreferenceBody,
 } from '@notifio/shared';
 
-// Digest mode — legacy alias. Shared 1.4.0 replaced the enum with
-// DigestPreferences (multi-channel). Kept here as a local string alias
-// until consumers migrate to the new shape (tracked in CLAUDE.md BE
-// follow-ups).
+// Digest mode — legacy alias. Shared 1.0.0 replaced DigestModeSchema
+// with DigestPreferencesSchema (multi-channel: realTime/morning/evening).
+// Kept here as a local string alias until consumers migrate to the new
+// shape (tracked in CLAUDE.md BE follow-ups).
 export type DigestMode = 'REAL_TIME' | 'MORNING' | 'EVENING' | 'BOTH';
 
 // Payment types
