@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
+import { notificationToCard, type NotificationHistoryItemInput } from '@notifio/shared/alert-card';
 
 import { AlertCard } from './alert-card';
 import { FilterSheet } from './filter-sheet';
@@ -71,7 +72,10 @@ export function AlertList({ onAlertPress }: AlertListProps) {
 
   const renderItem = useCallback(
     ({ item }: { item: NotificationHistoryItem }) => (
-      <AlertCard notification={item} onPress={onAlertPress ? () => onAlertPress(item) : undefined} />
+      <AlertCard
+        item={notificationToCard(item as unknown as NotificationHistoryItemInput)}
+        onPress={onAlertPress ? () => onAlertPress(item) : undefined}
+      />
     ),
     [onAlertPress],
   );

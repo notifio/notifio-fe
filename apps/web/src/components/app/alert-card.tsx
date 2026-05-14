@@ -8,14 +8,17 @@ import { useEffect, useState } from 'react';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 import { ApiError } from '@notifio/api-client';
+import {
+  ACCENT_COLORS,
+  COMMUNITY_CATEGORIES,
+  SEVERITY_COLORS,
+  hexToRgba,
+  isResolved,
+} from '@notifio/shared';
 
 import { RelativeTime } from '@/components/ui/relative-time';
 import { api } from '@/lib/api';
 import { getNotificationIcon } from '@/lib/notification-icons';
-
-import { ACCENT_COLORS, SEVERITY_COLORS, hexToRgba, isResolved } from './alert-card-utils';
-
-const COMMUNITY_CATEGORIES = new Set(['planned_events', 'planned-events', 'earthquake']);
 
 interface AlertCardProps {
   notification: NotificationHistoryItem;
@@ -37,6 +40,7 @@ export function AlertCard({
   const tn = useTranslations('notificationType');
   const tcb = useTranslations('categoryBadge');
   const te = useTranslations('events');
+  const tsev = useTranslations('notificationSeverity');
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === 'dark';
@@ -142,7 +146,7 @@ export function AlertCard({
                     SEVERITY_COLORS[notification.severity]?.text ?? '#3A86FF',
                 }}
               >
-                {notification.severity}
+                {tsev(notification.severity)}
               </span>
             )}
 

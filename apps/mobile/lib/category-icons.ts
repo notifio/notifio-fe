@@ -10,9 +10,9 @@ import {
   IconFlameOff,
   IconInfoCircle,
   type Icon,
-} from '@tabler/icons-react';
+} from '@tabler/icons-react-native';
 
-import { getCategoryVisual } from '@notifio/shared';
+import { getCategoryVisual } from '@notifio/shared/alert-card';
 
 const SLUG_TO_ICON: Record<string, Icon> = {
   'activity': IconActivity,
@@ -27,7 +27,7 @@ const SLUG_TO_ICON: Record<string, Icon> = {
   'info-circle': IconInfoCircle,
 };
 
-export function getNotificationIcon(category: string): { icon: Icon; color: string } {
+export function getNotificationIcon(category: string): { Icon: Icon; color: string } {
   const { iconSlug, color } = getCategoryVisual(category);
-  return { icon: SLUG_TO_ICON[iconSlug] ?? IconInfoCircle, color };
+  return { Icon: SLUG_TO_ICON[iconSlug] ?? IconInfoCircle, color };
 }
