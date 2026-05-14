@@ -262,9 +262,11 @@ export function MapMarker({
                 fontSize: '14px',
                 fontWeight: 600,
                 lineHeight: 1.3,
-                whiteSpace: 'nowrap',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                overflowWrap: 'anywhere',
               }}
             >
               {pin.title}
@@ -278,9 +280,11 @@ export function MapMarker({
                 marginTop: '4px',
                 fontSize: '13px',
                 color: CALLOUT_SUBTLE,
-                whiteSpace: 'nowrap',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                overflowWrap: 'anywhere',
               }}
             >
               {pin.description}

@@ -18,6 +18,7 @@ interface UseLocationsResult {
   addLocation: (data: CreateLocationBody) => Promise<boolean>;
   updateLocation: (id: string, data: UpdateLocationBody) => Promise<boolean>;
   removeLocation: (id: string) => Promise<boolean>;
+  toggleMute: (id: string) => Promise<boolean>;
 }
 
 export function useLocations(): UseLocationsResult {
@@ -92,6 +93,43 @@ export function useLocations(): UseLocationsResult {
     [fetch, t],
   );
 
+  // Optimistic-update toggle so 1-tap doesn't wait for a network round-trip.
+  // Flips muted in local state immediately, calls PATCH /me/locations/:id,
+  // and rolls back on error (full refetch to be safe — keeps the rest of the
+  // state synced if anything else changed between the optimistic write and
+  // the failure).
+  const toggleMute = useCallback(
+    async (id: string): Promise<boolean> => {
+      const current = data?.locations.find((l) => l.locationId === id);
+      if (!current) return false;
+      const next = !current.muted;
+
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              locations: prev.locations.map((l) =>
+                l.locationId === id ? { ...l, muted: next } : l,
+              ),
+            }
+          : prev,
+      );
+
+      try {
+        await api.updateLocation(id, { muted: next });
+        showToast.success(
+          t(next ? 'profile.locations.muteSuccess' : 'profile.locations.unmuteSuccess'),
+        );
+        return true;
+      } catch (err) {
+        await fetch();
+        showToast.error(extractApiErrorMessage(err, t('profile.locations.muteError')));
+        return false;
+      }
+    },
+    [data, fetch, t],
+  );
+
   const locations = data?.locations ?? [];
   const limit = data?.limit ?? 1;
   const used = data?.used ?? locations.length;
@@ -107,5 +145,6 @@ export function useLocations(): UseLocationsResult {
     addLocation,
     updateLocation,
     removeLocation,
+    toggleMute,
   };
 }

@@ -1,6 +1,8 @@
 import {
   IconBell,
+  IconChevronDown,
   IconChevronRight,
+  IconChevronUp,
   IconExternalLink,
   IconFileDescription,
   IconHeart,
@@ -9,15 +11,34 @@ import {
 } from '@tabler/icons-react-native';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { SOURCE_ADAPTERS } from '@notifio/shared/constants';
 
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL ?? 'https://notifio.app';
-const SUPPORT_EMAIL = 'support@notifio.app';
+const SUPPORT_EMAIL = 'support@notifio.sk';
+
+const FAQ_KEYS = [
+  'noNotifications',
+  'planDifference',
+  'addLocation',
+  'digestModes',
+  'muteLocation',
+  'communityReliability',
+  'cancelSubscription',
+  'deleteAccount',
+] as const;
+
+const SOURCE_NAMES = Object.values(SOURCE_ADAPTERS)
+  .map((s) => s.name)
+  .sort((a, b) => a.localeCompare(b))
+  .join(' · ');
 
 function getVersionInfo() {
   const cfg = Constants.expoConfig;
@@ -33,6 +54,7 @@ export default function AboutScreen() {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
   const { version, buildNumber } = getVersionInfo();
+  const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
 
   // TODO: confirm web /privacy and /terms routes exist before public launch
   const openPrivacy = () => void Linking.openURL(`${WEB_URL}/privacy`);
@@ -70,6 +92,41 @@ export default function AboutScreen() {
           <Text style={[styles.versionValue, { color: colors.primary }]}>{version}</Text>
         </View>
 
+        {/* FAQ */}
+        <SectionHeading label={t('about.faq.section')} />
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          {FAQ_KEYS.map((key, index) => {
+            const isExpanded = expandedFaq === key;
+            return (
+              <View key={key}>
+                {index > 0 && <Divider />}
+                <Pressable
+                  onPress={() => setExpandedFaq(isExpanded ? null : key)}
+                  style={({ pressed }) => [styles.faqRow, pressed && styles.rowPressed]}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: isExpanded }}
+                >
+                  <View style={styles.faqHeader}>
+                    <Text style={[styles.faqQuestion, { color: colors.text }]}>
+                      {t(`about.faq.items.${key}.q`)}
+                    </Text>
+                    {isExpanded ? (
+                      <IconChevronUp size={16} color={colors.primary} />
+                    ) : (
+                      <IconChevronDown size={16} color={colors.textMuted} />
+                    )}
+                  </View>
+                  {isExpanded && (
+                    <Text style={[styles.faqAnswer, { color: colors.textMuted }]}>
+                      {t(`about.faq.items.${key}.a`)}
+                    </Text>
+                  )}
+                </Pressable>
+              </View>
+            );
+          })}
+        </View>
+
         {/* Legal */}
         <SectionHeading label={t('about.legal.section')} />
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -96,6 +153,9 @@ export default function AboutScreen() {
             label={t('about.support.contact')}
             onPress={openSupport}
           />
+          <Text style={[styles.supportResponseTime, { color: colors.textMuted }]}>
+            {t('about.support.responseTime')}
+          </Text>
         </View>
 
         {/* Data sources */}
@@ -120,7 +180,7 @@ export default function AboutScreen() {
             {t('about.dataSources.intro')}
           </Text>
           <Text style={[styles.dsProviders, { color: colors.text }]}>
-            {t('about.dataSources.providers')}
+            {SOURCE_NAMES}
           </Text>
         </View>
 
@@ -262,6 +322,30 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: theme.fontSize.sm,
     ...theme.font.medium,
+  },
+  faqRow: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+  },
+  faqHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  faqQuestion: {
+    flex: 1,
+    fontSize: theme.fontSize.sm,
+    ...theme.font.medium,
+  },
+  faqAnswer: {
+    marginTop: theme.spacing.sm,
+    fontSize: theme.fontSize.xs,
+    lineHeight: 18,
+  },
+  supportResponseTime: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    fontSize: theme.fontSize.xs,
   },
   divider: {
     height: StyleSheet.hairlineWidth,

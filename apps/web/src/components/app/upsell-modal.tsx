@@ -4,9 +4,9 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
+import { hexToRgba } from '@notifio/shared';
 import { SOURCE_REQUIRED_TIER, type MapPinSource } from '@notifio/shared/map';
 
-import { hexToRgba } from '@/lib/color';
 import { MAP_PIN_STYLES } from '@/lib/map-pin-config';
 
 interface UpsellModalProps {

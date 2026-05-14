@@ -5,13 +5,13 @@ import { useTranslations } from 'next-intl';
 import { Fragment, useMemo, useState } from 'react';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
+import { isResolved } from '@notifio/shared';
 
 import { useNotificationHistory } from '@/hooks/use-notification-history';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 
 import { AdPlaceholder } from './ad-placeholder';
 import { AlertCard } from './alert-card';
-import { isResolved } from './alert-card-utils';
 import { SetupPromptCard } from './setup-prompt-card';
 import { UpsellCard } from './upsell-card';
 

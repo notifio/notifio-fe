@@ -1,6 +1,6 @@
 import type { Icon } from '@tabler/icons-react';
 
-import { hexToRgba } from '@/lib/color';
+import { hexToRgba } from '@notifio/shared';
 
 // Darker shades for light-mode icons
 const LIGHT_ICON_COLORS: Record<string, string> = {

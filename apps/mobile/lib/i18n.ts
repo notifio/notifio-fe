@@ -21,45 +21,13 @@ import {
 
 type SupportedLocale = (typeof supportedLocales)[number];
 
-// TEMP — picker namespace lives in `locales/_picker-temp.{sk,en}.json`
-// until the next @notifio/shared bump folds it in. Loaded statically so
-// it ships in the Hermes bundle (no async import in i18next init).
-import pickerTempEn from '../locales/_picker-temp.en.json';
-import pickerTempSk from '../locales/_picker-temp.sk.json';
-const PICKER_TEMP: Record<string, Record<string, unknown>> = {
-  sk: pickerTempSk as Record<string, unknown>,
-  en: pickerTempEn as Record<string, unknown>,
-};
-
-function deepMerge(
-  target: Record<string, unknown>,
-  source: Record<string, unknown>,
-): Record<string, unknown> {
-  const result = { ...target };
-  for (const key of Object.keys(source)) {
-    const tv = target[key];
-    const sv = source[key];
-    if (
-      tv && sv &&
-      typeof tv === 'object' && !Array.isArray(tv) &&
-      typeof sv === 'object' && !Array.isArray(sv)
-    ) {
-      result[key] = deepMerge(tv as Record<string, unknown>, sv as Record<string, unknown>);
-    } else {
-      result[key] = sv;
-    }
-  }
-  return result;
-}
-
-// Build i18next resources from shared, then merge the temp picker
-// namespace on top. cs/hu/de/uk fall back to the en temp file because
-// only sk + en are translated locally for now.
+// Build i18next resources directly from shared. The former picker-temp
+// merge step (mobile-local fallback for the picker namespace) was
+// removed once shared 0.39.0 folded the picker namespace upstream with
+// full 6-locale translations — see PR #131 / web's #125.
 const resources = supportedLocales.reduce<Record<string, { translation: Record<string, unknown> }>>(
   (acc, loc) => {
-    const shared = getSharedMessages(loc) as Record<string, unknown>;
-    const temp = PICKER_TEMP[loc] ?? PICKER_TEMP['en'] ?? {};
-    acc[loc] = { translation: deepMerge(shared, temp) };
+    acc[loc] = { translation: getSharedMessages(loc) as Record<string, unknown> };
     return acc;
   },
   {},
