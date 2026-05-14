@@ -42,7 +42,7 @@ export function useResolvedLocation(): UseResolvedLocationResult {
         lat: position.lat,
         lng: position.lng,
         source: 'gps',
-        label: null,
+        label: position.label,
       },
       isResolving: false,
     };

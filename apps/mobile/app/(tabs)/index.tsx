@@ -44,7 +44,7 @@ export default function OverviewScreen() {
 
   const digestMode = (profile as unknown as { digestMode?: DigestMode } | null)?.digestMode;
 
-  const baseLabel = location.label ?? t('overview.currentLocation', { defaultValue: 'Current location' });
+  const baseLabel = location.label ?? t('overview.currentLocation');
   const locationLabel =
     location.source === 'gps' ? `${baseLabel} (GPS)` : baseLabel;
   const savedCount = locations.length;
@@ -60,7 +60,7 @@ export default function OverviewScreen() {
           <Text style={[styles.subtitle, { color: colors.textMuted }]} numberOfLines={1}>
             {locationLabel}
             {savedCount > 0
-              ? ` · ${savedCount} ${t('overview.savedShort', { defaultValue: 'saved' })}`
+              ? ` · ${savedCount} ${t('overview.savedShort')}`
               : ''}
           </Text>
         </View>

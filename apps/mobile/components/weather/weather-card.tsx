@@ -126,7 +126,9 @@ export function WeatherCard({
       <View style={commonStyles.rowBetween}>
         <View>
           <Text style={[styles.location, { color: color80 }]}>{locationLabel}</Text>
-          <Text style={[styles.conditionLabel, { color: color60 }]}>{style.label}</Text>
+          <Text style={[styles.conditionLabel, { color: color60 }]}>
+            {t(`weatherConditions.${weather.condition}`, { defaultValue: style.label })}
+          </Text>
         </View>
         <WeatherIcon size={36} color={color70} />
       </View>
@@ -184,6 +186,20 @@ export function WeatherCard({
         </View>
       )}
 
+      <Pressable
+        onPress={() => setExpanded((v) => !v)}
+        style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
+      >
+        <Text style={[styles.showMoreText, { color: color70 }]}>
+          {expanded ? t('weatherCard.showLess') : t('weatherCard.showMore')}
+        </Text>
+        {expanded ? (
+          <IconChevronUp size={14} color={color70} />
+        ) : (
+          <IconChevronDown size={14} color={color70} />
+        )}
+      </Pressable>
+
       {expanded && (
         <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
           <View style={styles.expandedRow}>
@@ -216,22 +232,6 @@ export function WeatherCard({
           )}
         </View>
       )}
-
-      <Pressable
-        onPress={() => setExpanded((v) => !v)}
-        style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
-      >
-        <Text style={[styles.showMoreText, { color: color70 }]}>
-          {expanded
-            ? t('weatherCard.showLess', { defaultValue: 'Show less' })
-            : t('weatherCard.showMore', { defaultValue: 'Show more' })}
-        </Text>
-        {expanded ? (
-          <IconChevronUp size={14} color={color70} />
-        ) : (
-          <IconChevronDown size={14} color={color70} />
-        )}
-      </Pressable>
 
       <Text style={[styles.updatedAt, { color: color40 }]}>
         {formatRelativeTime(weather.updatedAt, locale)}
