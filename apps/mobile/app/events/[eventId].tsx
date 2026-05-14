@@ -1,9 +1,10 @@
-import { IconCheck, IconMapPin, IconTrash, IconX } from '@tabler/icons-react-native';
+import { IconCheck, IconMapPin, IconTrash, IconUsers, IconX } from '@tabler/icons-react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
+import type { EventDetail } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
 import { CredibilityBar } from '../../components/events/credibility-bar';
@@ -12,6 +13,7 @@ import { Icon } from '../../components/ui/icon';
 import { SectionLabel } from '../../components/ui/section-label';
 import { useEventDetail } from '../../hooks/use-event-detail';
 import { confirmDestructive } from '../../lib/confirm';
+import { resolveSourceDisplay } from '../../lib/event-display';
 import { formatDateTime } from '../../lib/format';
 import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { theme, withOpacity } from '../../lib/theme';
@@ -83,6 +85,37 @@ export default function EventDetailScreen() {
 
   const isResolved = event.eventTo !== null && new Date(event.eventTo) <= new Date();
 
+  // api-client `EventDetail` is stale (sourceId only); BE projects
+  // `source`, `address`, `locality` since shared 0.29. Widen the cast
+  // once and reuse across the header pill, attribution row, and the
+  // new address / locality rows. Follow-up to mirror the canonical
+  // shape lives in CLAUDE.md.
+  const eventExt = event as EventDetail & {
+    source?: { code?: string | null; name?: string | null; label?: string | null; url?: string | null } | null;
+    address?: string | null;
+    locality?: string | null;
+  };
+  const sourceCode = eventExt.source?.code ?? null;
+  const source = resolveSourceDisplay(sourceCode, t);
+  const address = eventExt.address ?? null;
+  const locality = eventExt.locality ?? null;
+  const showLocality =
+    !!locality &&
+    (!address || !address.toLowerCase().includes(locality.toLowerCase()));
+
+  // Community detection — fragile short-term heuristic that matches
+  // web's behaviour plus the `cod_source_id` prefix fallback from
+  // AUDIT-COMMUNITY-EVENT-FLAG.md. Catches both Path 2 (user reports
+  // without a provider, BE writes `cod_source_adapter='user_report'`)
+  // AND Path 1 (user attributes a real provider like BVS, but
+  // `cod_source_id` still carries the `user_report:` prefix per
+  // user-event.service.ts:320). Replace with `event.isUserReported`
+  // once BE projects it (see CLAUDE.md BE follow-ups). Mobile is
+  // intentionally ahead of web here — web ports back when canonical.
+  const isCommunity =
+    sourceCode === 'user_report' ||
+    event.sourceId?.startsWith('user_report:') === true;
+
   return (
     <>
       <Stack.Screen options={{ title: t('eventDetail.title') }} />
@@ -127,6 +160,12 @@ export default function EventDetailScreen() {
               {isResolved ? t('eventDetail.status.resolved') : t('eventDetail.status.active')}
             </Text>
           </View>
+          {isCommunity && (
+            <View style={styles.communityPill}>
+              <IconUsers size={12} color="#8B5CF6" />
+              <Text style={styles.communityPillText}>{t('alerts.sourceCommunity')}</Text>
+            </View>
+          )}
         </View>
 
         {/* Title + description */}
@@ -136,12 +175,24 @@ export default function EventDetailScreen() {
         <SectionLabel label={t('eventDetail.details.location')} />
         <Card>
           <View style={styles.detailRows}>
-            <View style={styles.detailRow}>
-              <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('eventDetail.details.location')}</Text>
-              <Text style={[styles.detailValue, { color: colors.text }]}>
-                {event.location.lat.toFixed(4)}°, {event.location.lng.toFixed(4)}°
-              </Text>
-            </View>
+            {address && (
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('events.detail.address')}</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>{address}</Text>
+              </View>
+            )}
+            {showLocality && locality && (
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('events.detail.locality')}</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>{locality}</Text>
+              </View>
+            )}
+            {source && (
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('alerts.sourceShortLabel')}</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>{source.full}</Text>
+              </View>
+            )}
             {event.materiality && (
               <View style={styles.detailRow}>
                 <Text style={[styles.detailLabel, { color: colors.textMuted }]}>{t('eventDetail.details.radius')}</Text>
@@ -258,8 +309,23 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: theme.spacing.sm,
     marginTop: theme.spacing.lg,
+  },
+  communityPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radius.full,
+    backgroundColor: 'rgba(139,92,246,0.15)',
+  },
+  communityPillText: {
+    fontSize: theme.fontSize.xs,
+    ...theme.font.semibold,
+    color: '#8B5CF6',
   },
   categoryBadge: {
     paddingHorizontal: theme.spacing.md,
