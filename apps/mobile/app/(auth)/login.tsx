@@ -57,6 +57,7 @@ export default function LoginScreen() {
   return (
     <OnboardingScreen
       showBrand
+      brandMarkOnly
       icon={IconKey}
       title={t('auth.login.title')}
       description={t('auth.login.description')}

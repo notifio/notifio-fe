@@ -28,10 +28,10 @@ export default function SignInPage() {
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 text-xl font-bold text-accent"
+            aria-label="Notifio"
+            className="inline-flex items-center justify-center"
           >
-            <Logo size={36} flat title="" />
-            <span>Notifio</span>
+            <Logo size={56} flat title="Notifio" />
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-text-primary">{t('signInTo')}</h1>
           <p className="mt-2 text-sm text-muted">{t('getAlerts')}</p>

@@ -28,6 +28,13 @@ interface OnboardingScreenProps {
    * login screens turn this on; in-flow onboarding steps don't.
    */
   showBrand?: boolean;
+  /**
+   * Render only the brand mark (square N icon), not the wordmark.
+   * Used by the login screen to avoid the "N Notifio" double-branding
+   * effect — the user is already inside the app, the mark is enough.
+   * Size bumps to 64 when `markOnly` so it doesn't shrink visually.
+   */
+  brandMarkOnly?: boolean;
 }
 
 export function OnboardingScreen({
@@ -38,6 +45,7 @@ export function OnboardingScreen({
   secondaryAction,
   children,
   showBrand = false,
+  brandMarkOnly = false,
 }: OnboardingScreenProps) {
   const { colors } = useAppTheme();
 
@@ -45,7 +53,7 @@ export function OnboardingScreen({
     <ScreenLayout>
       {showBrand && (
         <View style={styles.brand}>
-          <BrandLogo size={48} />
+          <BrandLogo size={brandMarkOnly ? 64 : 48} markOnly={brandMarkOnly} />
         </View>
       )}
       <View style={styles.content}>
