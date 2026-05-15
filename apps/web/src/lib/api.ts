@@ -63,11 +63,29 @@ export const api = createNotifioClient({
   locale: getLocale,
   getToken: async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token ?? null;
+    if (!session) return null;
+    // Proactively refresh if the access token expires in <60s. Mirrors
+    // mobile's race-prevention: requests fired right after a tab wake /
+    // SSR-to-CSR handoff otherwise race the token expiry and surface
+    // as 401 with a still-valid refresh token in hand.
+    const expiresAtMs = (session.expires_at ?? 0) * 1000;
+    if (expiresAtMs - Date.now() < 60_000) {
+      const { data, error } = await supabase.auth.refreshSession();
+      if (error) return null;
+      return data.session?.access_token ?? null;
+    }
+    return session.access_token;
   },
-  onUnauthorized: () => {
-    supabase.auth.signOut().then(() => {
+  onUnauthorized: async () => {
+    // Try to refresh first; only sign out + redirect on genuine
+    // refresh failure. Previous implementation signed out
+    // unconditionally, destroying recoverable sessions.
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session) {
+      await supabase.auth.signOut();
       window.location.href = '/sign-in';
-    });
+      return false;
+    }
+    return true;
   },
 });
