@@ -161,28 +161,63 @@ export function WeatherCard({
         </View>
       </View>
 
-      {(airQuality || aqiLoading || pollen) && (
-        <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.chipRow}>
-            {(airQuality || aqiLoading) && (
-              <AqiIndicator
-                airQuality={airQuality ?? null}
-                isLoading={aqiLoading}
-                textColor={style.textColor}
-              />
+      {expanded && (
+        <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
+          {(airQuality || aqiLoading || pollen) && (
+            <View style={styles.chipBlock}>
+              <View style={styles.chipRow}>
+                {(airQuality || aqiLoading) && (
+                  <AqiIndicator
+                    airQuality={airQuality ?? null}
+                    isLoading={aqiLoading}
+                    textColor={style.textColor}
+                  />
+                )}
+                {pollen && (
+                  <PollenChip
+                    pollen={pollen}
+                    isExpanded={expandedChip === 'pollen'}
+                    dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                    onToggle={() => toggleChip('pollen')}
+                  />
+                )}
+              </View>
+              {expandedChip === 'pollen' && pollen && (
+                <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+              )}
+            </View>
+          )}
+
+          <View style={styles.expandedStats}>
+            <View style={styles.expandedRow}>
+              <IconGauge size={14} color={color60} />
+              <Text style={[styles.detailText, { color: color60 }]}>
+                {weather.pressure} hPa
+              </Text>
+            </View>
+            {weather.sunrise && (
+              <View style={styles.expandedRow}>
+                <IconSunrise size={14} color={color60} />
+                <Text style={[styles.detailText, { color: color60 }]}>
+                  {new Date(weather.sunrise).toLocaleTimeString(locale, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Text>
+              </View>
             )}
-            {pollen && (
-              <PollenChip
-                pollen={pollen}
-                isExpanded={expandedChip === 'pollen'}
-                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
-                onToggle={() => toggleChip('pollen')}
-              />
+            {weather.sunset && (
+              <View style={styles.expandedRow}>
+                <IconMoon size={14} color={color60} />
+                <Text style={[styles.detailText, { color: color60 }]}>
+                  {new Date(weather.sunset).toLocaleTimeString(locale, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Text>
+              </View>
             )}
           </View>
-          {expandedChip === 'pollen' && pollen && (
-            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
-          )}
         </View>
       )}
 
@@ -199,39 +234,6 @@ export function WeatherCard({
           <IconChevronDown size={14} color={color70} />
         )}
       </Pressable>
-
-      {expanded && (
-        <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.expandedRow}>
-            <IconGauge size={14} color={color60} />
-            <Text style={[styles.detailText, { color: color60 }]}>
-              {weather.pressure} hPa
-            </Text>
-          </View>
-          {weather.sunrise && (
-            <View style={styles.expandedRow}>
-              <IconSunrise size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunrise).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-          {weather.sunset && (
-            <View style={styles.expandedRow}>
-              <IconMoon size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunset).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
 
       <Text style={[styles.updatedAt, { color: color40 }]}>
         {formatRelativeTime(weather.updatedAt, locale)}
@@ -317,6 +319,12 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
     paddingTop: theme.spacing.md,
     borderTopWidth: 1,
+    gap: theme.spacing.md,
+  },
+  chipBlock: {
+    gap: theme.spacing.sm,
+  },
+  expandedStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: theme.spacing.lg,

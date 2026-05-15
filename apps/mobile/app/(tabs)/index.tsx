@@ -10,10 +10,13 @@ import { DigestBanner } from '../../components/dashboard/digest-banner';
 import { AdPlaceholder } from '../../components/monetization/ad-placeholder';
 import { UpsellCard } from '../../components/monetization/upsell-card';
 import { ScreenLayout } from '../../components/ui/screen-layout';
+import { DailyForecast } from '../../components/weather/daily-forecast';
+import { HourlyForecast } from '../../components/weather/hourly-forecast';
 import { NamedayCard } from '../../components/weather/nameday-card';
 import { WeatherCard } from '../../components/weather/weather-card';
 import { WeatherWarningsBanner } from '../../components/weather/weather-warnings-banner';
 import { useEventsFeed } from '../../hooks/use-events-feed';
+import { useForecast } from '../../hooks/use-forecast';
 import { useLocations } from '../../hooks/use-locations';
 import { useProfile } from '../../hooks/use-profile';
 import { useResolvedLocation } from '../../hooks/use-resolved-location';
@@ -41,6 +44,7 @@ export default function OverviewScreen() {
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(location);
   const { warnings } = useWeatherWarnings(location);
   const { events } = useEventsFeed(location);
+  const { forecast } = useForecast(location);
 
   const digestMode = (profile as unknown as { digestMode?: DigestMode } | null)?.digestMode;
 
@@ -79,6 +83,9 @@ export default function OverviewScreen() {
           aqiLoading={aqiLoading}
           pollen={pollen}
         />
+
+        {forecast && <HourlyForecast hourly={forecast.hourly} />}
+        {forecast && <DailyForecast daily={forecast.daily} />}
 
         {digestMode && <DigestBanner digestMode={digestMode} />}
 

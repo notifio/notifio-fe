@@ -9,6 +9,9 @@ export type {
   OutageRecord,
   UtilityType,
   ApiResponse,
+  ForecastData,
+  ForecastHourly,
+  ForecastDaily,
 } from '@notifio/shared';
 
 // Traffic flow types — hand-written to match API contract

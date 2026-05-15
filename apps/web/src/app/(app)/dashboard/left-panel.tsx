@@ -7,10 +7,13 @@ import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
 
 import { AlertList } from '@/components/app/alert-list';
+import { DailyForecast } from '@/components/app/daily-forecast';
+import { HourlyForecast } from '@/components/app/hourly-forecast';
 import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
 import { WeatherWarningsBanner } from '@/components/app/weather-warnings-banner';
 import { useDigestMode } from '@/hooks/use-digest-mode';
+import { useForecast } from '@/hooks/use-forecast';
 import { useWeatherWarnings } from '@/hooks/use-weather-warnings';
 
 interface LeftPanelProps {
@@ -37,6 +40,7 @@ export function LeftPanel({
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
+  const { forecast } = useForecast(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
 
   return (
@@ -61,6 +65,16 @@ export function LeftPanel({
         <div className="mt-3">
           <WeatherWarningsBanner warnings={warnings} />
         </div>
+        {forecast && (
+          <div className="mt-3">
+            <HourlyForecast hourly={forecast.hourly} />
+          </div>
+        )}
+        {forecast && (
+          <div className="mt-3">
+            <DailyForecast daily={forecast.daily} />
+          </div>
+        )}
         <div className="mt-3">
           <NamedayCard todayNames={todayNames} upcomingNames={upcomingNames} loading={namedayLoading} />
         </div>
@@ -88,6 +102,7 @@ export function LeftPanel({
       )}
 
       <AlertList
+        center={userLocation ?? DEFAULT_LOCATION}
         selectedId={selectedAlertId}
         onSelect={onAlertSelect}
         isLoadingEvent={isLoadingEvent}

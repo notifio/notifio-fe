@@ -2,15 +2,19 @@
 
 import {
   type Icon,
+  IconChevronDown,
+  IconChevronUp,
   IconCloud,
   IconCloudRain,
   IconCloudFog,
   IconCloudStorm,
   IconDroplet,
   IconEye,
+  IconGauge,
   IconMoon,
   IconSnowflake,
   IconSun,
+  IconSunrise,
   IconTemperature,
   IconWind,
 } from '@tabler/icons-react';
@@ -95,8 +99,11 @@ export function WeatherCard({
   pollen,
 }: WeatherCardProps) {
   const t = useTranslations('weather');
+  const tcond = useTranslations('weatherConditions');
+  const tcard = useTranslations('weatherCard');
   const locale = useLocale() as RelativeTimeLocale;
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const toggleChip = (chip: ExpandedChip) =>
     setExpandedChip((prev) => (prev === chip ? null : chip));
@@ -134,7 +141,12 @@ export function WeatherCard({
   const muted60 = `${textColor}99`;
   const muted40 = `${textColor}66`;
 
-  let weatherLabel = style.label;
+  // Localized condition label via shared 1.5.0+ weatherConditions.* keys.
+  // Falls back to the hardcoded English style.label if the key is missing
+  // (defensive; shared 1.5.0 ships all 12 conditions × 6 locales).
+  let weatherLabel = tcond.has(weather.condition)
+    ? tcond(weather.condition)
+    : style.label;
   if (night) {
     const cond = weather.condition.toLowerCase();
     if (cond.includes('clear') || cond === 'sunny') {
@@ -188,36 +200,80 @@ export function WeatherCard({
         </span>
       </div>
 
-      {/* AQI + Pollen chips */}
-      {hasChips && (
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center gap-2">
-            {(airQuality || aqiLoading) && (
-              <AqiChip
-                airQuality={airQuality ?? null}
-                isLoading={aqiLoading}
-                isExpanded={expandedChip === 'aqi'}
-                dimmed={expandedChip !== null && expandedChip !== 'aqi'}
-                onToggle={() => toggleChip('aqi')}
-              />
+      {expanded && (
+        <div
+          className="mt-4 space-y-3 border-t pt-4"
+          style={{ borderColor: `${textColor}1A` }}
+        >
+          {hasChips && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                {(airQuality || aqiLoading) && (
+                  <AqiChip
+                    airQuality={airQuality ?? null}
+                    isLoading={aqiLoading}
+                    isExpanded={expandedChip === 'aqi'}
+                    dimmed={expandedChip !== null && expandedChip !== 'aqi'}
+                    onToggle={() => toggleChip('aqi')}
+                  />
+                )}
+                {pollen && (
+                  <PollenChip
+                    pollen={pollen}
+                    isExpanded={expandedChip === 'pollen'}
+                    dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                    onToggle={() => toggleChip('pollen')}
+                  />
+                )}
+              </div>
+              {expandedChip === 'aqi' && airQuality && (
+                <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
+              )}
+              {expandedChip === 'pollen' && pollen && (
+                <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+              )}
+            </div>
+          )}
+
+          <div
+            className="flex flex-wrap items-center gap-4 text-sm"
+            style={{ color: muted80 }}
+          >
+            <span className="inline-flex items-center gap-1">
+              <IconGauge size={14} />
+              {weather.pressure} hPa
+            </span>
+            {weather.sunrise && (
+              <span className="inline-flex items-center gap-1">
+                <IconSunrise size={14} />
+                {new Date(weather.sunrise).toLocaleTimeString(locale, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
             )}
-            {pollen && (
-              <PollenChip
-                pollen={pollen}
-                isExpanded={expandedChip === 'pollen'}
-                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
-                onToggle={() => toggleChip('pollen')}
-              />
+            {weather.sunset && (
+              <span className="inline-flex items-center gap-1">
+                <IconMoon size={14} />
+                {new Date(weather.sunset).toLocaleTimeString(locale, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
             )}
           </div>
-          {expandedChip === 'aqi' && airQuality && (
-            <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
-          )}
-          {expandedChip === 'pollen' && pollen && (
-            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
-          )}
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="mt-4 flex w-full items-center justify-center gap-1 border-t pt-3 text-sm font-medium transition-opacity hover:opacity-80"
+        style={{ borderColor: `${textColor}1A`, color: muted80 }}
+      >
+        {expanded ? tcard('showLess') : tcard('showMore')}
+        {expanded ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
+      </button>
 
       <div className="mt-3 text-right">
         <span className="text-xs" style={{ color: muted40 }}>

@@ -48,6 +48,7 @@ import type {
   DataExportJob,
   DataExportResult,
   NamedayResponse,
+  ForecastData,
 } from './shared-types.js';
 
 export type {
@@ -137,6 +138,9 @@ export type {
   NamedayResponse,
   NamedayDay,
   NamedayQuery,
+  ForecastData,
+  ForecastHourly,
+  ForecastDaily,
 } from './shared-types.js';
 
 /**
@@ -292,6 +296,23 @@ export function createNotifioClient(config: NotifioClientConfig) {
         params: { lat: String(lat), lng: String(lng) },
       });
       return warnings;
+    },
+
+    async getForecast(
+      lat: number,
+      lng: number,
+      hours = 24,
+      days = 7,
+    ): Promise<ForecastData> {
+      const { forecast } = await request<{ forecast: ForecastData }>('/weather/forecast', {
+        params: {
+          lat: String(lat),
+          lng: String(lng),
+          hours: String(hours),
+          days: String(days),
+        },
+      });
+      return forecast;
     },
 
     async getTraffic(lat: number, lng: number): Promise<TrafficResponse> {
