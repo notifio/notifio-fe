@@ -1,1 +1,5 @@
-{}
+{
+  "auth": {
+    "signInWith": "Prihlásiť sa cez {provider}"
+  }
+}

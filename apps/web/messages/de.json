@@ -1,1 +1,5 @@
-{}
+{
+  "auth": {
+    "signInWith": "Mit {provider} anmelden"
+  }
+}

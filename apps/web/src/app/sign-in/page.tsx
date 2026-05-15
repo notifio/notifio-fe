@@ -1,25 +1,40 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { SocialAuthButtons } from '@/components/auth/social-auth-buttons';
-import { Logo } from '@/components/ui/logo';
+import { SocialAuthButtons, type SocialProvider } from '@/components/auth/social-auth-buttons';
+import { useToast } from '@/components/ui/toast';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
   const t = useTranslations('auth');
-  const handleGoogleSignIn = async () => {
+  const toast = useToast();
+  const handleSignIn = async (provider: SocialProvider) => {
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
+
     if (error) {
-      console.error('Sign-in error:', error.message);
+      console.error('Sign-in error:', error);
+      toast.error(error.message);
+      return;
     }
+
+    // @supabase/ssr's browser client doesn't reliably auto-navigate.
+    // Apply data.url explicitly so the OAuth flow actually starts.
+    if (data?.url) {
+      window.location.href = data.url;
+      return;
+    }
+
+    // Should never happen — neither error nor URL returned.
+    toast.error('Sign in failed');
   };
 
   return (
@@ -28,17 +43,24 @@ export default function SignInPage() {
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 text-xl font-bold text-accent"
+            aria-label="Notifio"
+            className="inline-flex items-center justify-center"
           >
-            <Logo size={36} flat title="" />
-            <span>Notifio</span>
+            <Image
+              src="/logo.png"
+              alt="Notifio"
+              width={64}
+              height={64}
+              priority
+              className="rounded-2xl"
+            />
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-text-primary">{t('signInTo')}</h1>
           <p className="mt-2 text-sm text-muted">{t('getAlerts')}</p>
         </div>
 
         <div className="mt-8">
-          <SocialAuthButtons onAuth={handleGoogleSignIn} />
+          <SocialAuthButtons onAuth={handleSignIn} />
         </div>
 
         <p className="mt-6 text-center text-xs text-muted">
