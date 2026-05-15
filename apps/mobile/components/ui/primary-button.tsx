@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -8,6 +8,7 @@ interface PrimaryButtonProps {
   onPress: () => void;
   variant?: 'primary' | 'ghost';
   disabled?: boolean;
+  loading?: boolean;
 }
 
 export function PrimaryButton({
@@ -15,24 +16,30 @@ export function PrimaryButton({
   onPress,
   variant = 'primary',
   disabled = false,
+  loading = false,
 }: PrimaryButtonProps) {
   const { colors } = useAppTheme();
   const isPrimary = variant === 'primary';
+  const isInactive = disabled || loading;
+  const fg = isPrimary ? colors.textInverse : colors.textMuted;
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={isInactive}
       style={({ pressed }) => [
         styles.base,
         isPrimary ? { backgroundColor: colors.primary } : styles.ghost,
-        disabled && styles.disabled,
-        pressed && !disabled && styles.pressed,
+        isInactive && styles.disabled,
+        pressed && !isInactive && styles.pressed,
       ]}
     >
-      <Text style={[styles.text, { color: isPrimary ? colors.textInverse : colors.textMuted }]}>
-        {title}
-      </Text>
+      <View style={styles.row}>
+        {loading && (
+          <ActivityIndicator size="small" color={fg} style={styles.spinner} />
+        )}
+        <Text style={[styles.text, { color: fg }]}>{title}</Text>
+      </View>
     </Pressable>
   );
 }
@@ -56,5 +63,12 @@ const styles = StyleSheet.create({
   text: {
     fontSize: theme.fontSize.md,
     ...theme.font.semibold,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  spinner: {
+    marginRight: theme.spacing.sm,
   },
 });

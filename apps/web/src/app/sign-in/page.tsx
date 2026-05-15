@@ -3,16 +3,16 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { SocialAuthButtons } from '@/components/auth/social-auth-buttons';
+import { SocialAuthButtons, type SocialProvider } from '@/components/auth/social-auth-buttons';
 import { Logo } from '@/components/ui/logo';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
   const t = useTranslations('auth');
-  const handleGoogleSignIn = async () => {
+  const handleSignIn = async (provider: SocialProvider) => {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
@@ -38,7 +38,7 @@ export default function SignInPage() {
         </div>
 
         <div className="mt-8">
-          <SocialAuthButtons onAuth={handleGoogleSignIn} />
+          <SocialAuthButtons onAuth={handleSignIn} />
         </div>
 
         <p className="mt-6 text-center text-xs text-muted">
