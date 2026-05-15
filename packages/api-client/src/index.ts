@@ -162,7 +162,13 @@ export interface NotifioClientConfig {
   getToken: () => Promise<string | null>;
   apiKey?: string;
   locale?: string | (() => string);
-  onUnauthorized?: () => void;
+  /**
+   * Called when a request returns 401. Return (or resolve) `true` to
+   * signal the token was refreshed and the request should be retried
+   * once with the new token. Return `false`/`void` to give up — the
+   * original 401 is then surfaced to the caller as ApiError.
+   */
+  onUnauthorized?: () => Promise<boolean | void> | boolean | void;
 }
 
 export class ApiError extends Error {
@@ -225,16 +231,29 @@ export function createNotifioClient(config: NotifioClientConfig) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 
     if (response.status === 401) {
-      config.onUnauthorized?.();
-      const text = await response.text();
-      throw new ApiError(response.status, text);
+      const refreshed = await config.onUnauthorized?.();
+      if (refreshed) {
+        const newToken = await config.getToken();
+        if (newToken) {
+          headers['Authorization'] = `Bearer ${newToken}`;
+          response = await fetch(url, {
+            method,
+            headers,
+            body: body !== undefined ? JSON.stringify(body) : undefined,
+          });
+        }
+      }
+      if (response.status === 401) {
+        const text = await response.text();
+        throw new ApiError(response.status, text);
+      }
     }
 
     if (!response.ok) {
