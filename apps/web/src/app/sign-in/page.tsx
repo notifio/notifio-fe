@@ -1,10 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { SocialAuthButtons, type SocialProvider } from '@/components/auth/social-auth-buttons';
-import { Logo } from '@/components/ui/logo';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SignInPage() {
@@ -31,7 +31,14 @@ export default function SignInPage() {
             aria-label="Notifio"
             className="inline-flex items-center justify-center"
           >
-            <Logo size={56} flat title="Notifio" />
+            <Image
+              src="/logo.png"
+              alt="Notifio"
+              width={64}
+              height={64}
+              priority
+              className="rounded-2xl"
+            />
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-text-primary">{t('signInTo')}</h1>
           <p className="mt-2 text-sm text-muted">{t('getAlerts')}</p>
