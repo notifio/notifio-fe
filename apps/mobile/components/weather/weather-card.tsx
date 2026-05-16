@@ -53,6 +53,7 @@ function getWeatherIcon(iconName: string): Icon {
 }
 
 type ExpandedChip = 'aqi' | 'pollen' | null;
+type WeatherCardVariant = 'full' | 'simplified';
 
 interface WeatherCardProps {
   weather: WeatherData | null;
@@ -63,6 +64,7 @@ interface WeatherCardProps {
   airQuality?: AirQualityData | null;
   aqiLoading?: boolean;
   pollen?: PollenResponse | null;
+  variant?: WeatherCardVariant;
 }
 
 export function WeatherCard({
@@ -74,6 +76,7 @@ export function WeatherCard({
   airQuality,
   aqiLoading = false,
   pollen,
+  variant = 'full',
 }: WeatherCardProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
@@ -118,8 +121,9 @@ export function WeatherCard({
   const color60 = withOpacity(style.textColor, 0.6);
   const color40 = withOpacity(style.textColor, 0.4);
 
-  return (
-    <Pressable onPress={() => router.push('/weather')}>
+  const isFull = variant === 'full';
+
+  const gradientInner = (
     <LinearGradient
       colors={style.gradient}
       start={{ x: 0, y: 0 }}
@@ -145,103 +149,111 @@ export function WeatherCard({
         </Text>
       </View>
 
-      <View style={styles.detailsRow}>
-        <View style={commonStyles.row}>
-          <IconWind size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>
-            {formatWind(weather.windSpeed, weather.windDirection)}
-          </Text>
-        </View>
-        <View style={commonStyles.row}>
-          <IconDroplet size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
-        </View>
-        <View style={commonStyles.row}>
-          <IconEye size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>
-            {formatVisibility(weather.visibility)}
-          </Text>
-        </View>
-      </View>
-
-      {(airQuality || aqiLoading || pollen) && (
-        <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.chipRow}>
-            {(airQuality || aqiLoading) && (
-              <AqiIndicator
-                airQuality={airQuality ?? null}
-                isLoading={aqiLoading}
-                textColor={style.textColor}
-              />
-            )}
-            {pollen && (
-              <PollenChip
-                pollen={pollen}
-                isExpanded={expandedChip === 'pollen'}
-                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
-                onToggle={() => toggleChip('pollen')}
-              />
-            )}
+      {isFull && (
+        <>
+          <View style={styles.detailsRow}>
+            <View style={commonStyles.row}>
+              <IconWind size={14} color={color60} />
+              <Text style={[styles.detailText, { color: color60 }]}>
+                {formatWind(weather.windSpeed, weather.windDirection)}
+              </Text>
+            </View>
+            <View style={commonStyles.row}>
+              <IconDroplet size={14} color={color60} />
+              <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
+            </View>
+            <View style={commonStyles.row}>
+              <IconEye size={14} color={color60} />
+              <Text style={[styles.detailText, { color: color60 }]}>
+                {formatVisibility(weather.visibility)}
+              </Text>
+            </View>
           </View>
-          {expandedChip === 'pollen' && pollen && (
-            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+
+          {(airQuality || aqiLoading || pollen) && (
+            <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
+              <View style={styles.chipRow}>
+                {(airQuality || aqiLoading) && (
+                  <AqiIndicator
+                    airQuality={airQuality ?? null}
+                    isLoading={aqiLoading}
+                    textColor={style.textColor}
+                  />
+                )}
+                {pollen && (
+                  <PollenChip
+                    pollen={pollen}
+                    isExpanded={expandedChip === 'pollen'}
+                    dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                    onToggle={() => toggleChip('pollen')}
+                  />
+                )}
+              </View>
+              {expandedChip === 'pollen' && pollen && (
+                <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+              )}
+            </View>
           )}
-        </View>
-      )}
 
-      <Pressable
-        onPress={() => setExpanded((v) => !v)}
-        style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
-      >
-        <Text style={[styles.showMoreText, { color: color70 }]}>
-          {expanded ? t('weatherCard.showLess') : t('weatherCard.showMore')}
-        </Text>
-        {expanded ? (
-          <IconChevronUp size={14} color={color70} />
-        ) : (
-          <IconChevronDown size={14} color={color70} />
-        )}
-      </Pressable>
-
-      {expanded && (
-        <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.expandedRow}>
-            <IconGauge size={14} color={color60} />
-            <Text style={[styles.detailText, { color: color60 }]}>
-              {weather.pressure} hPa
+          <Pressable
+            onPress={() => setExpanded((v) => !v)}
+            style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
+          >
+            <Text style={[styles.showMoreText, { color: color70 }]}>
+              {expanded ? t('weatherCard.showLess') : t('weatherCard.showMore')}
             </Text>
-          </View>
-          {weather.sunrise && (
-            <View style={styles.expandedRow}>
-              <IconSunrise size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunrise).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-          {weather.sunset && (
-            <View style={styles.expandedRow}>
-              <IconMoon size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunset).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
+            {expanded ? (
+              <IconChevronUp size={14} color={color70} />
+            ) : (
+              <IconChevronDown size={14} color={color70} />
+            )}
+          </Pressable>
 
-      <Text style={[styles.updatedAt, { color: color40 }]}>
-        {formatRelativeTime(weather.updatedAt, locale)}
-      </Text>
+          {expanded && (
+            <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
+              <View style={styles.expandedRow}>
+                <IconGauge size={14} color={color60} />
+                <Text style={[styles.detailText, { color: color60 }]}>
+                  {weather.pressure} hPa
+                </Text>
+              </View>
+              {weather.sunrise && (
+                <View style={styles.expandedRow}>
+                  <IconSunrise size={14} color={color60} />
+                  <Text style={[styles.detailText, { color: color60 }]}>
+                    {new Date(weather.sunrise).toLocaleTimeString(locale, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
+              )}
+              {weather.sunset && (
+                <View style={styles.expandedRow}>
+                  <IconMoon size={14} color={color60} />
+                  <Text style={[styles.detailText, { color: color60 }]}>
+                    {new Date(weather.sunset).toLocaleTimeString(locale, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          <Text style={[styles.updatedAt, { color: color40 }]}>
+            {formatRelativeTime(weather.updatedAt, locale)}
+          </Text>
+        </>
+      )}
     </LinearGradient>
-    </Pressable>
   );
+
+  if (isFull) {
+    return <Pressable onPress={() => router.push('/weather')}>{gradientInner}</Pressable>;
+  }
+  return gradientInner;
 }
 
 const styles = StyleSheet.create({

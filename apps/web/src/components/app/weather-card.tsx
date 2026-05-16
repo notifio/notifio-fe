@@ -73,6 +73,7 @@ export interface PollenData {
 // ── Component ────────────────────────────────────────────────────────
 
 type ExpandedChip = 'aqi' | 'pollen' | null;
+type WeatherCardVariant = 'full' | 'simplified';
 
 interface WeatherCardProps {
   weather: WeatherData | null;
@@ -83,6 +84,7 @@ interface WeatherCardProps {
   airQuality?: AirQualityData | null;
   aqiLoading?: boolean;
   pollen?: PollenData | null;
+  variant?: WeatherCardVariant;
 }
 
 export function WeatherCard({
@@ -94,8 +96,10 @@ export function WeatherCard({
   airQuality,
   aqiLoading = false,
   pollen,
+  variant = 'full',
 }: WeatherCardProps) {
   const t = useTranslations('weather');
+  const tConditions = useTranslations('weatherConditions');
   const locale = useLocale() as RelativeTimeLocale;
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
 
@@ -135,27 +139,22 @@ export function WeatherCard({
   const muted60 = `${textColor}99`;
   const muted40 = `${textColor}66`;
 
-  let weatherLabel = style.label;
-  if (night) {
-    const cond = weather.condition.toLowerCase();
-    if (cond.includes('clear') || cond === 'sunny') {
-      weatherLabel = t('clearNight');
-    } else if (cond.includes('cloud') || cond.includes('overcast')) {
-      weatherLabel = t('cloudyNight');
+  let weatherLabel: string;
+  if (night && (weather.condition === 'clear' || weather.condition === 'clouds')) {
+    weatherLabel = weather.condition === 'clear' ? t('clearNight') : t('cloudyNight');
+  } else {
+    try {
+      weatherLabel = tConditions(weather.condition);
+    } catch {
+      weatherLabel = style.label;
     }
   }
 
-  const hasChips = airQuality || aqiLoading || pollen;
+  const isFull = variant === 'full';
+  const hasChips = isFull && (airQuality || aqiLoading || pollen);
 
-  return (
-    <Link
-      href="/weather"
-      className="block overflow-hidden rounded-2xl p-6 transition-opacity hover:opacity-95"
-      style={{
-        background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
-        color: textColor,
-      }}
-    >
+  const cardInner = (
+    <>
       <div className="flex items-start justify-between">
         <div>
           <p className="font-medium" style={{ color: muted80 }}>
@@ -175,57 +174,83 @@ export function WeatherCard({
         </p>
       </div>
 
-      <div className="flex items-center gap-4 text-sm" style={{ color: muted80 }}>
-        <span className="inline-flex items-center gap-1">
-          <IconWind size={14} />
-          {formatWind(weather.windSpeed, weather.windDirection)}
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <IconDroplet size={14} />
-          {weather.humidity}%
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <IconEye size={14} />
-          {formatVisibility(weather.visibility)}
-        </span>
-      </div>
-
-      {/* AQI + Pollen chips */}
-      {hasChips && (
-        <div className="mt-3 space-y-2">
-          <div className="flex items-center gap-2">
-            {(airQuality || aqiLoading) && (
-              <AqiChip
-                airQuality={airQuality ?? null}
-                isLoading={aqiLoading}
-                isExpanded={expandedChip === 'aqi'}
-                dimmed={expandedChip !== null && expandedChip !== 'aqi'}
-                onToggle={() => toggleChip('aqi')}
-              />
-            )}
-            {pollen && (
-              <PollenChip
-                pollen={pollen}
-                isExpanded={expandedChip === 'pollen'}
-                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
-                onToggle={() => toggleChip('pollen')}
-              />
-            )}
+      {isFull && (
+        <>
+          <div className="flex items-center gap-4 text-sm" style={{ color: muted80 }}>
+            <span className="inline-flex items-center gap-1">
+              <IconWind size={14} />
+              {formatWind(weather.windSpeed, weather.windDirection)}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <IconDroplet size={14} />
+              {weather.humidity}%
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <IconEye size={14} />
+              {formatVisibility(weather.visibility)}
+            </span>
           </div>
-          {expandedChip === 'aqi' && airQuality && (
-            <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
-          )}
-          {expandedChip === 'pollen' && pollen && (
-            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
-          )}
-        </div>
-      )}
 
-      <div className="mt-3 text-right">
-        <span className="text-xs" style={{ color: muted40 }}>
-          {formatRelativeTime(weather.updatedAt, locale)}
-        </span>
-      </div>
-    </Link>
+          {hasChips && (
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center gap-2">
+                {(airQuality || aqiLoading) && (
+                  <AqiChip
+                    airQuality={airQuality ?? null}
+                    isLoading={aqiLoading}
+                    isExpanded={expandedChip === 'aqi'}
+                    dimmed={expandedChip !== null && expandedChip !== 'aqi'}
+                    onToggle={() => toggleChip('aqi')}
+                  />
+                )}
+                {pollen && (
+                  <PollenChip
+                    pollen={pollen}
+                    isExpanded={expandedChip === 'pollen'}
+                    dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                    onToggle={() => toggleChip('pollen')}
+                  />
+                )}
+              </div>
+              {expandedChip === 'aqi' && airQuality && (
+                <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
+              )}
+              {expandedChip === 'pollen' && pollen && (
+                <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
+              )}
+            </div>
+          )}
+
+          <div className="mt-3 text-right">
+            <span className="text-xs" style={{ color: muted40 }}>
+              {formatRelativeTime(weather.updatedAt, locale)}
+            </span>
+          </div>
+        </>
+      )}
+    </>
+  );
+
+  const containerStyle = {
+    background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
+    color: textColor,
+  } as const;
+
+  if (isFull) {
+    return (
+      <Link
+        href="/weather"
+        className="block overflow-hidden rounded-2xl p-6 transition-opacity hover:opacity-95"
+        style={containerStyle}
+      >
+        {cardInner}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-2xl p-6" style={containerStyle}>
+      {cardInner}
+    </div>
   );
 }

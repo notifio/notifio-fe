@@ -26,7 +26,7 @@ export default function WeatherScreen() {
   // DEFAULT_LOCATION. Tracked follow-up. Pollen + forecast honor
   // resolved location.
   const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
-  const { airQuality, isLoading: aqiLoading } = useAirQuality();
+  const { airQuality } = useAirQuality();
   const { pollen } = usePollen(location);
   const { forecast } = useForecast(location);
   const { config: radarConfig } = useRadarConfig();
@@ -51,18 +51,16 @@ export default function WeatherScreen() {
       contentContainerStyle={styles.content}
     >
       <View style={styles.hero}>
-        {/* Same WeatherCard as the dashboard — one component, one source
-            of truth. The Pressable inside routes to /weather; tapping
-            while on /weather is a no-op (acceptable). */}
+        {/* Same WeatherCard as the dashboard but simplified — only
+            location + condition + temp + feels-like + icon. AQI and
+            pollen render as separate cards below. */}
         <WeatherCard
           weather={weather}
           isLoading={weatherLoading}
           error={error}
           locationLabel={locationLabel}
           onRetry={refresh}
-          airQuality={airQuality}
-          aqiLoading={aqiLoading}
-          pollen={pollen}
+          variant="simplified"
         />
       </View>
 

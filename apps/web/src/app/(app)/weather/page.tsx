@@ -59,7 +59,7 @@ export default function WeatherPage() {
   const { locations } = useLocations();
 
   const { weather, isLoading: weatherLoading, error: weatherError, refresh } = useWeather();
-  const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
+  const { airQuality } = useAirQuality();
   const { pollen: pollenData } = usePollen(center);
   const { forecast } = useForecast(center);
   const { config: radarConfig } = useRadarConfig();
@@ -70,21 +70,6 @@ export default function WeatherPage() {
     locations,
     tmap('defaultLocation'),
   );
-
-  // Mirror the WeatherCard pollen prop shape used by left-panel — the
-  // shared `PollenResponse` doesn't match the chip's expected shape.
-  const pollenForCard = pollenData
-    ? {
-        level: pollenData.level,
-        dominant: pollenData.dominant ?? '',
-        value:
-          pollenData.components[
-            pollenData.dominant as keyof typeof pollenData.components
-          ] ?? 0,
-        unit: pollenData.unit,
-        components: { ...pollenData.components },
-      }
-    : null;
 
   if (weatherError && !weather) {
     return (
@@ -102,19 +87,16 @@ export default function WeatherPage() {
       <BackLink label={tcommon('back')} />
 
       <div className="mt-4">
-        {/* Same WeatherCard as the dashboard — one component, one source
-            of truth. The Link inside it points to /weather; clicking it
-            while on /weather is a no-op (single source of truth wins
-            over the rare cost of a self-link). */}
+        {/* Same WeatherCard as the dashboard but simplified — only
+            location + condition + temp + feels-like + icon. AQI and
+            pollen render as separate cards below. */}
         <WeatherCard
           weather={weather}
           isLoading={weatherLoading}
           error={weatherError}
           locationLabel={locationLabel}
           onRetry={refresh}
-          airQuality={airQuality}
-          aqiLoading={aqiIsLoading}
-          pollen={pollenForCard}
+          variant="simplified"
         />
       </div>
 
