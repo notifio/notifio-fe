@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { PollenResponse } from '@notifio/api-client';
 
@@ -8,19 +7,9 @@ import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
 type Level = 'low' | 'moderate' | 'high' | 'veryHigh';
-type Species = 'tree' | 'grass' | 'weed';
-
-function aggregate(pollen: PollenResponse) {
-  const c = pollen.components;
-  return {
-    tree: (c.birch ?? 0) + (c.alder ?? 0) + (c.olive ?? 0),
-    grass: c.grass ?? 0,
-    weed: (c.ragweed ?? 0) + (c.mugwort ?? 0),
-  };
-}
 
 function levelFromValue(value: number): Level {
-  if (value >= 100) return 'veryHigh';
+  if (value >= 200) return 'veryHigh';
   if (value >= 50) return 'high';
   if (value >= 10) return 'moderate';
   return 'low';
@@ -33,12 +22,7 @@ const LEVEL_COLOR: Record<Level, string> = {
   veryHigh: '#FF3B30',
 };
 
-const RECOMMENDATION_FALLBACK: Record<Level, string> = {
-  low: 'Low pollen levels — generally safe.',
-  moderate: 'Moderate pollen — sensitive people may experience symptoms.',
-  high: 'High pollen — limit outdoor exposure if sensitive.',
-  veryHigh: 'Very high pollen — minimise outdoor time.',
-};
+const FULL_SCALE = 200;
 
 interface Props {
   pollen: PollenResponse | null;
@@ -47,50 +31,42 @@ interface Props {
 export function PollenCard({ pollen }: Props) {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
-  const [expanded, setExpanded] = useState<Species | null>(null);
 
   if (!pollen) {
     return <View style={[styles.skeleton, { backgroundColor: colors.surface }]} />;
   }
 
-  const buckets = aggregate(pollen);
-  const items: Array<{ key: Species; value: number }> = [
-    { key: 'tree', value: buckets.tree },
-    { key: 'grass', value: buckets.grass },
-    { key: 'weed', value: buckets.weed },
-  ];
+  // Dynamic — every numeric field BE returns. Null fields skipped.
+  const entries = Object.entries(pollen.components ?? {}).filter(
+    ([, value]) => typeof value === 'number',
+  ) as Array<[string, number]>;
+
+  if (entries.length === 0) return null;
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Text style={[styles.title, { color: colors.text }]}>
-        {t('pollen.species.tree')} · {t('pollen.species.grass')} · {t('pollen.species.weed')}
+        {t('pollen.title', { defaultValue: 'Pollen' })}
       </Text>
       <View style={styles.rows}>
-        {items.map(({ key, value }) => {
+        {entries.map(([species, value]) => {
           const level = levelFromValue(value);
-          const recommendation = t(`pollen.recommendation.${level}`, {
-            defaultValue: RECOMMENDATION_FALLBACK[level],
-          });
+          const percent = Math.min(100, (value / FULL_SCALE) * 100);
+          const label = t(`pollen.${species}`, { defaultValue: species });
           return (
-            <View key={key}>
-              <Pressable
-                onLongPress={() => setExpanded(expanded === key ? null : key)}
-                style={styles.row}
-              >
-                <Text style={[styles.species, { color: colors.text }]}>
-                  {t(`pollen.species.${key}`)}
-                </Text>
-                <Text style={[styles.value, { color: colors.text }]}>{Math.round(value)}</Text>
-                <Text style={[styles.unit, { color: colors.textMuted }]}>
-                  {t('pollen.unit', { defaultValue: 'grains/m³' })}
-                </Text>
-                <View style={[styles.chip, { backgroundColor: LEVEL_COLOR[level] }]} />
-              </Pressable>
-              {expanded === key && (
-                <Text style={[styles.expanded, { color: colors.textSecondary }]}>
-                  {recommendation}
-                </Text>
-              )}
+            <View key={species} style={styles.row}>
+              <Text style={[styles.species, { color: colors.text }]}>{label}</Text>
+              <View style={[styles.barTrack, { backgroundColor: colors.border }]}>
+                <View
+                  style={[
+                    styles.barFill,
+                    { width: `${percent}%`, backgroundColor: LEVEL_COLOR[level] },
+                  ]}
+                />
+              </View>
+              <Text style={[styles.value, { color: colors.textMuted }]}>
+                {Math.round(value)} {pollen.unit}
+              </Text>
             </View>
           );
         })}
@@ -114,18 +90,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: theme.spacing.sm,
   },
-  species: { width: 72, fontSize: theme.fontSize.sm },
-  value: { fontSize: theme.fontSize.sm, ...theme.font.semibold },
-  unit: { fontSize: theme.fontSize.xs },
-  chip: {
-    marginLeft: 'auto',
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+  species: { width: 64, fontSize: theme.fontSize.sm },
+  barTrack: {
+    flex: 1,
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
   },
-  expanded: {
-    fontSize: theme.fontSize.xs,
-    lineHeight: 16,
-    marginTop: 4,
-  },
+  barFill: { height: 6, borderRadius: 3 },
+  value: { width: 80, textAlign: 'right', fontSize: theme.fontSize.xs },
 });

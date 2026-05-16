@@ -63,8 +63,8 @@ export function RadarMini({ config, center }: Props) {
           initialRegion={{
             latitude: center.lat,
             longitude: center.lng,
-            latitudeDelta: 2,
-            longitudeDelta: 2,
+            latitudeDelta: 0.5,
+            longitudeDelta: 0.5,
           }}
           scrollEnabled={false}
           zoomEnabled={false}

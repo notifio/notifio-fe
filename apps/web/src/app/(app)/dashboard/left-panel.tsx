@@ -33,10 +33,10 @@ export function LeftPanel({
   const t = useTranslations('map');
   const td = useTranslations('digest');
   const { weather, isLoading, error, refresh } = useWeather();
-  const { airQuality } = useAirQuality();
-  const { pollen } = usePollen(userLocation ?? DEFAULT_LOCATION);
+  const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
+  const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
 
   return (
@@ -49,7 +49,14 @@ export function LeftPanel({
           locationLabel={isGps ? t('yourLocation') : t('defaultLocation')}
           onRetry={refresh}
           airQuality={airQuality}
-          pollen={pollen}
+          aqiLoading={aqiIsLoading}
+          pollen={pollenData ? {
+            level: pollenData.level,
+            dominant: pollenData.dominant ?? '',
+            value: pollenData.components[pollenData.dominant as keyof typeof pollenData.components] ?? 0,
+            unit: pollenData.unit,
+            components: { ...pollenData.components },
+          } : null}
         />
         <div className="mt-3">
           <WeatherWarningsBanner warnings={warnings} />

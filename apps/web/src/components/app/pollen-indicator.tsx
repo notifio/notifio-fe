@@ -30,7 +30,13 @@ interface PollenChipProps {
 export function PollenChip({ pollen, isExpanded, dimmed, onToggle }: PollenChipProps) {
   return (
     <button
-      onClick={onToggle}
+      onClick={(e) => {
+        // Stop bubble — parent <Link href="/weather"> on the dashboard
+        // weather card would otherwise navigate when chip is clicked.
+        e.stopPropagation();
+        e.preventDefault();
+        onToggle();
+      }}
       style={{
         background: isExpanded ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
         border: `1px solid ${isExpanded ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.12)'}`,
@@ -80,7 +86,11 @@ export function PollenDetailPanel({ pollen, onClose }: PollenDetailPanelProps) {
       <div className="flex items-start justify-between">
         <p className="text-[11px] opacity-65">{t(healthKey)}</p>
         <button
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onClose();
+          }}
           className="shrink-0 cursor-pointer opacity-50 transition-opacity hover:opacity-80"
           style={{ background: 'none', border: 'none', color: 'inherit', padding: 0 }}
         >

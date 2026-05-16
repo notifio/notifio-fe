@@ -10,7 +10,7 @@ import { OtherStatsGrid } from '../../components/weather/other-stats-grid';
 import { PollenCard } from '../../components/weather/pollen-card';
 import { RadarMini } from '../../components/weather/radar-mini';
 import { SunMoonCard } from '../../components/weather/sun-moon-card';
-import { WeatherHero } from '../../components/weather/weather-hero';
+import { WeatherCard } from '../../components/weather/weather-card';
 import { useForecast } from '../../hooks/use-forecast';
 import { useRadarConfig } from '../../hooks/use-radar-config';
 import { useResolvedLocation } from '../../hooks/use-resolved-location';
@@ -25,8 +25,8 @@ export default function WeatherScreen() {
   // useWeather + useAirQuality from shared currently lock to
   // DEFAULT_LOCATION. Tracked follow-up. Pollen + forecast honor
   // resolved location.
-  const { weather, isLoading: weatherLoading, error } = useWeather();
-  const { airQuality } = useAirQuality();
+  const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
+  const { airQuality, isLoading: aqiLoading } = useAirQuality();
   const { pollen } = usePollen(location);
   const { forecast } = useForecast(location);
   const { config: radarConfig } = useRadarConfig();
@@ -51,10 +51,18 @@ export default function WeatherScreen() {
       contentContainerStyle={styles.content}
     >
       <View style={styles.hero}>
-        <WeatherHero
+        {/* Same WeatherCard as the dashboard — one component, one source
+            of truth. The Pressable inside routes to /weather; tapping
+            while on /weather is a no-op (acceptable). */}
+        <WeatherCard
           weather={weather}
-          locationLabel={locationLabel}
           isLoading={weatherLoading}
+          error={error}
+          locationLabel={locationLabel}
+          onRetry={refresh}
+          airQuality={airQuality}
+          aqiLoading={aqiLoading}
+          pollen={pollen}
         />
       </View>
 

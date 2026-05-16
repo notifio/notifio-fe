@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
 import { useAirQuality, usePollen, useWeather } from '@notifio/shared/hooks';
 
+import { WeatherCard } from '@/components/app/weather-card';
 import { AqiCard } from '@/components/weather/aqi-card';
 import { DailyForecast } from '@/components/weather/daily-forecast';
 import { HourlyForecast } from '@/components/weather/hourly-forecast';
@@ -14,14 +15,13 @@ import { OtherStatsGrid } from '@/components/weather/other-stats-grid';
 import { PollenCard } from '@/components/weather/pollen-card';
 import { RadarMini } from '@/components/weather/radar-mini';
 import { SunMoonCard } from '@/components/weather/sun-moon-card';
-import { WeatherHero } from '@/components/weather/weather-hero';
 import { useForecast } from '@/hooks/use-forecast';
 import { useLocations } from '@/hooks/use-locations';
 import { useRadarConfig } from '@/hooks/use-radar-config';
 import { useUserLocation } from '@/hooks/use-user-location';
 
 /**
- * Pick a human-readable label for the hero. Order:
+ * Resolve a human-readable label for the location strip:
  *   1. User saved location matching center (within ~1.5km)
  *   2. GPS — "GPS · {lat.toFixed(2)}, {lng.toFixed(2)}" so it's informative
  *      vs the generic "Tvoja poloha"
@@ -58,13 +58,9 @@ export default function WeatherPage() {
   const center = userLocation ?? DEFAULT_LOCATION;
   const { locations } = useLocations();
 
-  // useWeather + useAirQuality from shared are currently locked to
-  // DEFAULT_LOCATION (Bratislava). Follow-up to accept coords; for now
-  // the hero will display DEFAULT_LOCATION's weather + AQI even if user
-  // is elsewhere. usePollen + useForecast honor the resolved center.
-  const { weather, isLoading: weatherLoading, error: weatherError } = useWeather();
-  const { airQuality } = useAirQuality();
-  const { pollen } = usePollen(center);
+  const { weather, isLoading: weatherLoading, error: weatherError, refresh } = useWeather();
+  const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
+  const { pollen: pollenData } = usePollen(center);
   const { forecast } = useForecast(center);
   const { config: radarConfig } = useRadarConfig();
 
@@ -74,6 +70,21 @@ export default function WeatherPage() {
     locations,
     tmap('defaultLocation'),
   );
+
+  // Mirror the WeatherCard pollen prop shape used by left-panel — the
+  // shared `PollenResponse` doesn't match the chip's expected shape.
+  const pollenForCard = pollenData
+    ? {
+        level: pollenData.level,
+        dominant: pollenData.dominant ?? '',
+        value:
+          pollenData.components[
+            pollenData.dominant as keyof typeof pollenData.components
+          ] ?? 0,
+        unit: pollenData.unit,
+        components: { ...pollenData.components },
+      }
+    : null;
 
   if (weatherError && !weather) {
     return (
@@ -91,10 +102,19 @@ export default function WeatherPage() {
       <BackLink label={tcommon('back')} />
 
       <div className="mt-4">
-        <WeatherHero
+        {/* Same WeatherCard as the dashboard — one component, one source
+            of truth. The Link inside it points to /weather; clicking it
+            while on /weather is a no-op (single source of truth wins
+            over the rare cost of a self-link). */}
+        <WeatherCard
           weather={weather}
-          locationLabel={locationLabel}
           isLoading={weatherLoading}
+          error={weatherError}
+          locationLabel={locationLabel}
+          onRetry={refresh}
+          airQuality={airQuality}
+          aqiLoading={aqiIsLoading}
+          pollen={pollenForCard}
         />
       </div>
 
@@ -105,7 +125,7 @@ export default function WeatherPage() {
         </div>
         <div className="flex flex-col gap-4">
           <AqiCard aqi={airQuality} />
-          <PollenCard pollen={pollen} />
+          <PollenCard pollen={pollenData} />
           <SunMoonCard sunrise={weather?.sunrise} sunset={weather?.sunset} />
           {weather && <OtherStatsGrid weather={weather} />}
           {radarConfig && <RadarMini config={radarConfig} center={center} />}

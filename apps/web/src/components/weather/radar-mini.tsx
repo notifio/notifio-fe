@@ -42,7 +42,12 @@ export function RadarMini({ config, center }: Props) {
       container: containerRef.current,
       style,
       center: [center.lng, center.lat],
-      zoom: 7,
+      // Zoom 9 instead of 7: OWM precipitation_new has ~10km granularity;
+      // at zoom 7 (~30km/tile) a metro-area rain cell often falls below
+      // the sample threshold and renders empty. Filip reported "rain
+      // outside, radar empty" — bumping zoom is the cheapest mitigation
+      // before requesting an alternative data source.
+      zoom: 9,
       minZoom: config.bounds.minZoom,
       maxZoom: config.bounds.maxZoom,
       interactive: false,

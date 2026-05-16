@@ -22,6 +22,17 @@ const AQI_COLOR: Record<string, string> = {
   veryPoor: '#EF4444',
 };
 
+const COMPONENT_LABEL: Record<string, string> = {
+  pm2_5: 'PM2.5',
+  pm10: 'PM10',
+  o3: 'O3',
+  no2: 'NO2',
+  no: 'NO',
+  so2: 'SO2',
+  co: 'CO',
+  nh3: 'NH3',
+};
+
 interface Props {
   aqi: AirQualityData | null;
 }
@@ -37,6 +48,10 @@ export function AqiCard({ aqi }: Props) {
   const levelKey = AQI_LEVEL_KEY[aqi.level];
   const color = AQI_COLOR[levelKey] ?? AQI_COLOR.moderate;
 
+  const componentEntries = Object.entries(aqi.components ?? {}).filter(
+    ([, value]) => typeof value === 'number',
+  );
+
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.header}>
@@ -47,16 +62,31 @@ export function AqiCard({ aqi }: Props) {
         {[1, 2, 3, 4, 5].map((seg) => (
           <View
             key={seg}
-            style={[
-              styles.segment,
-              { backgroundColor: seg <= aqi.aqi ? color : colors.border },
-            ]}
+            style={[styles.segment, { backgroundColor: seg <= aqi.aqi ? color : colors.border }]}
           />
         ))}
       </View>
       <Text style={[styles.recommendation, { color: colors.textSecondary }]}>
         {t(`airQuality.recommendation.${levelKey}`)}
       </Text>
+
+      {componentEntries.length > 0 && (
+        <View style={[styles.componentsBlock, { borderTopColor: colors.border }]}>
+          <View style={styles.grid}>
+            {componentEntries.map(([key, value]) => (
+              <View key={key} style={styles.cell}>
+                <Text style={[styles.cellLabel, { color: colors.textMuted }]}>
+                  {COMPONENT_LABEL[key] ?? key.toUpperCase()}
+                </Text>
+                <Text style={[styles.cellValue, { color: colors.text }]}>
+                  {(value as number).toFixed(1)}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <Text style={[styles.unit, { color: colors.textMuted }]}>μg/m³</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -69,25 +99,26 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
   },
   skeleton: { height: 120, borderRadius: theme.radius.xl },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   title: { fontSize: theme.fontSize.md, ...theme.font.semibold },
   level: { fontSize: theme.fontSize.sm, ...theme.font.semibold },
-  bar: {
+  bar: { flexDirection: 'row', gap: 4, paddingVertical: theme.spacing.xs },
+  segment: { flex: 1, height: 6, borderRadius: 3 },
+  recommendation: { fontSize: theme.fontSize.xs, lineHeight: 18 },
+  componentsBlock: {
+    marginTop: theme.spacing.sm,
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: 1,
+  },
+  grid: { flexDirection: 'row', flexWrap: 'wrap' },
+  cell: {
+    width: '33.33%',
     flexDirection: 'row',
-    gap: 4,
-    paddingVertical: theme.spacing.xs,
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+    paddingRight: theme.spacing.sm,
   },
-  segment: {
-    flex: 1,
-    height: 6,
-    borderRadius: 3,
-  },
-  recommendation: {
-    fontSize: theme.fontSize.xs,
-    lineHeight: 18,
-  },
+  cellLabel: { fontSize: theme.fontSize.xs },
+  cellValue: { fontSize: theme.fontSize.xs, ...theme.font.semibold },
+  unit: { fontSize: 10, textAlign: 'right', marginTop: 4 },
 });

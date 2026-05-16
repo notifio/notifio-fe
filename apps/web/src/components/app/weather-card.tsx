@@ -2,7 +2,6 @@
 
 import {
   type Icon,
-  IconChevronRight,
   IconCloud,
   IconCloudRain,
   IconCloudFog,
@@ -10,7 +9,6 @@ import {
   IconDroplet,
   IconEye,
   IconMoon,
-  IconPlant2,
   IconSnowflake,
   IconSun,
   IconTemperature,
@@ -18,25 +16,14 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import { formatTemp, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared';
-import type { AirQualityData, PollenResponse, WeatherData } from '@notifio/shared';
+import type { AirQualityData, WeatherData } from '@notifio/shared';
 import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
 
-const AQI_COLOR: Record<AirQualityData['level'], string> = {
-  good: '#22C55E',
-  fair: '#84CC16',
-  moderate: '#EAB308',
-  poor: '#F97316',
-  very_poor: '#EF4444',
-};
-const AQI_LEVEL_KEY: Record<AirQualityData['level'], string> = {
-  good: 'good',
-  fair: 'fair',
-  moderate: 'moderate',
-  poor: 'poor',
-  very_poor: 'veryPoor',
-};
+import { AqiChip, AqiDetailPanel } from './aqi-indicator';
+import { PollenChip, PollenDetailPanel } from './pollen-indicator';
 
 // ── Icon mapping ─────────────────────────────────────────────────────
 
@@ -73,7 +60,19 @@ function isNightTime(weather: WeatherData): boolean {
 
 const NIGHT_GRADIENT: [string, string] = ['#1E293B', '#334155'];
 
+// ── Pollen types ─────────────────────────────────────────────────────
+
+export interface PollenData {
+  level: string;
+  dominant: string;
+  value: number;
+  unit: string;
+  components?: { [key: string]: number | null };
+}
+
 // ── Component ────────────────────────────────────────────────────────
+
+type ExpandedChip = 'aqi' | 'pollen' | null;
 
 interface WeatherCardProps {
   weather: WeatherData | null;
@@ -82,7 +81,8 @@ interface WeatherCardProps {
   locationLabel: string;
   onRetry?: () => void;
   airQuality?: AirQualityData | null;
-  pollen?: PollenResponse | null;
+  aqiLoading?: boolean;
+  pollen?: PollenData | null;
 }
 
 export function WeatherCard({
@@ -92,13 +92,15 @@ export function WeatherCard({
   locationLabel,
   onRetry,
   airQuality,
+  aqiLoading = false,
   pollen,
 }: WeatherCardProps) {
   const t = useTranslations('weather');
-  const tcond = useTranslations('weatherConditions');
-  const taqi = useTranslations('airQuality');
-  const tpollen = useTranslations('pollen');
   const locale = useLocale() as RelativeTimeLocale;
+  const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
+
+  const toggleChip = (chip: ExpandedChip) =>
+    setExpandedChip((prev) => (prev === chip ? null : chip));
 
   if (isLoading) {
     return <div className="h-48 animate-pulse rounded-2xl bg-card" />;
@@ -133,10 +135,7 @@ export function WeatherCard({
   const muted60 = `${textColor}99`;
   const muted40 = `${textColor}66`;
 
-  // Localized condition label via shared 1.5.0+ weatherConditions.* keys.
-  let weatherLabel = tcond.has(weather.condition)
-    ? tcond(weather.condition)
-    : style.label;
+  let weatherLabel = style.label;
   if (night) {
     const cond = weather.condition.toLowerCase();
     if (cond.includes('clear') || cond === 'sunny') {
@@ -146,10 +145,12 @@ export function WeatherCard({
     }
   }
 
+  const hasChips = airQuality || aqiLoading || pollen;
+
   return (
     <Link
       href="/weather"
-      className="group block overflow-hidden rounded-2xl p-6 transition-opacity hover:opacity-90"
+      className="block overflow-hidden rounded-2xl p-6 transition-opacity hover:opacity-95"
       style={{
         background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
         color: textColor,
@@ -164,14 +165,7 @@ export function WeatherCard({
             {weatherLabel}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <WeatherIcon size={40} style={{ color: muted80 }} />
-          <IconChevronRight
-            size={18}
-            className="opacity-0 transition-opacity group-hover:opacity-100"
-            style={{ color: muted60 }}
-          />
-        </div>
+        <WeatherIcon size={40} style={{ color: muted80 }} />
       </div>
 
       <div className="my-4">
@@ -196,30 +190,33 @@ export function WeatherCard({
         </span>
       </div>
 
-      {(airQuality || pollen) && (
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-          {airQuality && (
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1"
-              style={{ backgroundColor: `${textColor}1A`, color: muted80 }}
-            >
-              <span
-                className="inline-block size-2 rounded-full"
-                style={{ backgroundColor: AQI_COLOR[airQuality.level] }}
+      {/* AQI + Pollen chips */}
+      {hasChips && (
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center gap-2">
+            {(airQuality || aqiLoading) && (
+              <AqiChip
+                airQuality={airQuality ?? null}
+                isLoading={aqiLoading}
+                isExpanded={expandedChip === 'aqi'}
+                dimmed={expandedChip !== null && expandedChip !== 'aqi'}
+                onToggle={() => toggleChip('aqi')}
               />
-              AQI {airQuality.aqi} · {taqi(AQI_LEVEL_KEY[airQuality.level])}
-            </span>
+            )}
+            {pollen && (
+              <PollenChip
+                pollen={pollen}
+                isExpanded={expandedChip === 'pollen'}
+                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
+                onToggle={() => toggleChip('pollen')}
+              />
+            )}
+          </div>
+          {expandedChip === 'aqi' && airQuality && (
+            <AqiDetailPanel airQuality={airQuality} onClose={() => setExpandedChip(null)} />
           )}
-          {pollen?.dominant && (
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1"
-              style={{ backgroundColor: `${textColor}1A`, color: muted80 }}
-            >
-              <IconPlant2 size={12} />
-              {tpollen.has(pollen.dominant) ? tpollen(pollen.dominant) : pollen.dominant}
-              {' · '}
-              {tpollen(pollen.level)}
-            </span>
+          {expandedChip === 'pollen' && pollen && (
+            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
           )}
         </div>
       )}

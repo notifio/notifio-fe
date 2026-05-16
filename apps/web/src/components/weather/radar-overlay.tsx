@@ -39,7 +39,7 @@ export function RadarOverlay({ config, center, initialForecast, onClose }: Props
       container: containerRef.current,
       style,
       center: [center.lng, center.lat],
-      zoom: 7,
+      zoom: 9,
       minZoom: config.bounds.minZoom,
       maxZoom: config.bounds.maxZoom,
       interactive: true,
