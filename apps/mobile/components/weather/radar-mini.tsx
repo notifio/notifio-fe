@@ -5,7 +5,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { UrlTile } from 'react-native-maps';
 
 import type { RadarConfig } from '@notifio/api-client';
-import { RADAR_PRECIPITATION_LEGEND } from '@notifio/shared';
+import { RADAR_PRECIPITATION_LEGEND } from '@notifio/shared/weather';
 
 import { buildRadarTileUrl } from '../../lib/radar-url';
 import { theme } from '../../lib/theme';
