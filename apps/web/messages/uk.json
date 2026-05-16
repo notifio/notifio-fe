@@ -1,5 +1,8 @@
 {
   "auth": {
     "signInWith": "Увійти через {provider}"
+  },
+  "nav": {
+    "weather": "Погода"
   }
 }

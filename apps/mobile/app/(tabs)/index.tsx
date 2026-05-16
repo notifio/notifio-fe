@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { DigestMode } from '@notifio/api-client';
-import { useNameday, useWeather } from '@notifio/shared/hooks';
+import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
 
 import { AlertsPreview } from '../../components/dashboard/alerts-preview';
 import { DigestBanner } from '../../components/dashboard/digest-banner';
@@ -31,11 +31,11 @@ export default function OverviewScreen() {
   const { locations } = useLocations();
   const { profile } = useProfile();
 
-  // useWeather from shared currently ignores location args (locked to
-  // DEFAULT_LOCATION). Tracked as a follow-up; warnings/events/nameday
-  // honor the resolved location. AQI + pollen moved to /weather page
-  // — not consumed on dashboard.
+  // useWeather + useAirQuality from shared currently lock to DEFAULT_LOCATION.
+  // Tracked follow-up. warnings/events/nameday/pollen honor resolved location.
   const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
+  const { airQuality } = useAirQuality();
+  const { pollen } = usePollen(location);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(location);
   const { warnings } = useWeatherWarnings(location);
   const { events } = useEventsFeed(location);
@@ -73,6 +73,8 @@ export default function OverviewScreen() {
           error={error}
           locationLabel={locationLabel}
           onRetry={refresh}
+          airQuality={airQuality}
+          pollen={pollen}
         />
 
         {digestMode && <DigestBanner digestMode={digestMode} />}

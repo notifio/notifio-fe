@@ -1,4 +1,4 @@
-import { IconBell, IconLayoutDashboard, IconMap, IconSettings } from '@tabler/icons-react-native';
+import { IconBell, IconCloud, IconLayoutDashboard, IconMap, IconSettings } from '@tabler/icons-react-native';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -15,8 +15,11 @@ import { useAppTheme } from '../../providers/theme-provider';
 // bar follows the active locale. nav.map + nav.settings come from
 // shared (Step 11 avatar menu); nav.overview + nav.alerts are
 // mobile-only (web uses nav.dashboard / nav.notifications instead).
-const TAB_SCREENS: { name: string; titleKey: string; icon: TablerIcon }[] = [
+// `nav.weather` not in shared 1.11.0 yet — defaultValue 'Počasie' covers
+// until next shared bump. Other tabs use existing shared keys.
+const TAB_SCREENS: { name: string; titleKey: string; defaultLabel?: string; icon: TablerIcon }[] = [
   { name: 'index', titleKey: 'nav.overview', icon: IconLayoutDashboard },
+  { name: 'weather', titleKey: 'nav.weather', defaultLabel: 'Počasie', icon: IconCloud },
   { name: 'alerts', titleKey: 'nav.alerts', icon: IconBell },
   { name: 'map', titleKey: 'nav.map', icon: IconMap },
   { name: 'settings', titleKey: 'nav.settings', icon: IconSettings },
@@ -56,7 +59,7 @@ export default function TabLayout() {
             key={tab.name}
             name={tab.name}
             options={{
-              title: t(tab.titleKey),
+              title: tab.defaultLabel ? t(tab.titleKey, { defaultValue: tab.defaultLabel }) : t(tab.titleKey),
               tabBarIcon: ({ color }) => <Icon icon={tab.icon} size={22} color={color} />,
             }}
           />

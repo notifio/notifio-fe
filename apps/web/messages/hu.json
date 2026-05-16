@@ -1,5 +1,8 @@
 {
   "auth": {
     "signInWith": "Bejelentkezés a következővel: {provider}"
+  },
+  "nav": {
+    "weather": "Időjárás"
   }
 }

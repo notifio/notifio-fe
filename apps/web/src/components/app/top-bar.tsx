@@ -59,6 +59,7 @@ export function TopBar() {
 
   const navItems = [
     { label: t("nav.dashboard"), href: "/dashboard" },
+    { label: t("nav.weather"), href: "/weather" },
     { label: t("nav.map"), href: "/map" },
     { label: t("nav.notifications"), href: "/notifications" },
   ];

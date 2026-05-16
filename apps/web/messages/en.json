@@ -1,5 +1,8 @@
 {
   "auth": {
     "signInWith": "Sign in with {provider}"
+  },
+  "nav": {
+    "weather": "Weather"
   }
 }

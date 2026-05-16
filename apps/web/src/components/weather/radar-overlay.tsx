@@ -9,21 +9,17 @@ import { useEffect, useRef, useState } from 'react';
 import type { RadarConfig } from '@notifio/api-client';
 
 import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
+import { buildRadarTileUrl } from '@/lib/radar-url';
 
 const RADAR_SOURCE_ID = 'radar-overlay';
 const RADAR_LAYER_ID = 'radar-overlay-layer';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 interface Props {
   config: RadarConfig;
   center: { lat: number; lng: number };
   initialForecast: boolean;
   onClose: () => void;
-}
-
-function buildTileUrl(config: RadarConfig, layer: string, tm: number): string {
-  return config.tileUrlTemplate
-    .replace('{layer}', layer)
-    .replace('{tm}', String(tm));
 }
 
 export function RadarOverlay({ config, center, initialForecast, onClose }: Props) {
@@ -34,7 +30,7 @@ export function RadarOverlay({ config, center, initialForecast, onClose }: Props
   const [showForecast, setShowForecast] = useState(initialForecast);
 
   const tm = showForecast ? config.timestamps.forecastPlusOne : config.timestamps.now;
-  const tileUrl = buildTileUrl(config, config.defaultLayer, tm);
+  const tileUrl = buildRadarTileUrl(config, config.defaultLayer, tm, API_KEY);
 
   useEffect(() => {
     if (!containerRef.current) return;

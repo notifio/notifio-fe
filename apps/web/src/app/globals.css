@@ -112,3 +112,111 @@ html {
 .animate-hex-float {
   animation: hex-float 6s ease-in-out infinite;
 }
+
+/* ── Weather hero condition animations ──────────────────────────── */
+/* Pure-CSS particle effects keyed off data-condition attribute. */
+
+.weather-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.weather-hero[data-condition='rain']::before,
+.weather-hero[data-condition='drizzle']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(180deg, transparent 50%, rgba(255, 255, 255, 0.3) 50%);
+  background-size: 2px 16px;
+  animation: hero-rain 0.8s linear infinite;
+  pointer-events: none;
+  opacity: 0.4;
+}
+@keyframes hero-rain {
+  from { background-position: 0 -16px; }
+  to { background-position: 0 0; }
+}
+
+.weather-hero[data-condition='clear']::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  margin: -240px 0 0 -240px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.15),
+    transparent 30%,
+    rgba(255, 255, 255, 0.15) 60%,
+    transparent 90%
+  );
+  animation: hero-sun-spin 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes hero-sun-spin {
+  to { transform: rotate(360deg); }
+}
+
+.weather-hero[data-condition='snow']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, white 1px, transparent 1.5px),
+    radial-gradient(circle, white 1.5px, transparent 2px);
+  background-size: 50px 50px, 80px 80px;
+  background-position: 0 0, 25px 25px;
+  animation: hero-snow 8s linear infinite;
+  pointer-events: none;
+  opacity: 0.5;
+}
+@keyframes hero-snow {
+  from { background-position: 0 -50px, 25px -55px; }
+  to { background-position: 0 100vh, 25px 100vh; }
+}
+
+.weather-hero[data-condition='thunderstorm']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  animation: hero-lightning 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes hero-lightning {
+  0%, 92%, 94%, 100% { background: rgba(255, 255, 255, 0); }
+  93% { background: rgba(255, 255, 255, 0.4); }
+}
+
+.weather-hero[data-condition='clouds']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 220px 60px at 30% 40%, rgba(255, 255, 255, 0.12), transparent),
+    radial-gradient(ellipse 180px 50px at 70% 65%, rgba(255, 255, 255, 0.08), transparent);
+  animation: hero-cloud-drift 30s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes hero-cloud-drift {
+  from { transform: translateX(-40px); }
+  to { transform: translateX(40px); }
+}
+
+.weather-hero[data-condition='mist']::before,
+.weather-hero[data-condition='fog']::before,
+.weather-hero[data-condition='haze']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  background-size: 200% 100%;
+  animation: hero-mist 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes hero-mist {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -100% 0; }
+}

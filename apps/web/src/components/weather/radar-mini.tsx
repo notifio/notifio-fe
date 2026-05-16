@@ -10,21 +10,17 @@ import type { RadarConfig } from '@notifio/api-client';
 import { RADAR_PRECIPITATION_LEGEND } from '@notifio/shared';
 
 import { TILE_DARK, TILE_LIGHT } from '@/lib/map-config';
+import { buildRadarTileUrl } from '@/lib/radar-url';
 
 import { RadarOverlay } from './radar-overlay';
 
 const RADAR_SOURCE_ID = 'radar';
 const RADAR_LAYER_ID = 'radar-layer';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 interface Props {
   config: RadarConfig;
   center: { lat: number; lng: number };
-}
-
-function buildTileUrl(config: RadarConfig, layer: string, tm: number): string {
-  return config.tileUrlTemplate
-    .replace('{layer}', layer)
-    .replace('{tm}', String(tm));
 }
 
 export function RadarMini({ config, center }: Props) {
@@ -36,7 +32,7 @@ export function RadarMini({ config, center }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const tm = showForecast ? config.timestamps.forecastPlusOne : config.timestamps.now;
-  const tileUrl = buildTileUrl(config, config.defaultLayer, tm);
+  const tileUrl = buildRadarTileUrl(config, config.defaultLayer, tm, API_KEY);
 
   // Init MapLibre once on mount + when center moves
   useEffect(() => {

@@ -1,5 +1,8 @@
 {
   "auth": {
     "signInWith": "Přihlásit se přes {provider}"
+  },
+  "nav": {
+    "weather": "Počasí"
   }
 }

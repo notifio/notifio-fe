@@ -7,14 +7,11 @@ import MapView, { UrlTile } from 'react-native-maps';
 import type { RadarConfig } from '@notifio/api-client';
 import { RADAR_PRECIPITATION_LEGEND } from '@notifio/shared';
 
+import { buildRadarTileUrl } from '../../lib/radar-url';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 
-function buildTileUrl(config: RadarConfig, layer: string, tm: number): string {
-  return config.tileUrlTemplate
-    .replace('{layer}', layer)
-    .replace('{tm}', String(tm));
-}
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 interface Props {
   config: RadarConfig;
@@ -28,7 +25,7 @@ export function RadarMini({ config, center }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const tm = showForecast ? config.timestamps.forecastPlusOne : config.timestamps.now;
-  const tileUrl = buildTileUrl(config, config.defaultLayer, tm);
+  const tileUrl = buildRadarTileUrl(config, config.defaultLayer, tm, API_KEY);
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>

@@ -9,6 +9,7 @@ import {
   IconEye,
   IconMist,
   IconMoon,
+  IconPlant2,
   IconSnowflake,
   IconSun,
   IconTemperature,
@@ -20,8 +21,23 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
-import type { WeatherData } from '@notifio/shared/types';
+import type { AirQualityData, PollenResponse, WeatherData } from '@notifio/shared/types';
 import { formatTemp, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared/weather';
+
+const AQI_COLOR: Record<AirQualityData['level'], string> = {
+  good: '#22C55E',
+  fair: '#84CC16',
+  moderate: '#EAB308',
+  poor: '#F97316',
+  very_poor: '#EF4444',
+};
+const AQI_LEVEL_KEY: Record<AirQualityData['level'], string> = {
+  good: 'good',
+  fair: 'fair',
+  moderate: 'moderate',
+  poor: 'poor',
+  very_poor: 'veryPoor',
+};
 
 import { commonStyles } from '../../lib/common-styles';
 import { theme, withOpacity } from '../../lib/theme';
@@ -51,12 +67,14 @@ interface WeatherCardProps {
   error: string | null;
   locationLabel: string;
   onRetry?: () => void;
+  airQuality?: AirQualityData | null;
+  pollen?: PollenResponse | null;
 }
 
 /**
  * Compact dashboard weather card. Tap to open the dedicated weather
- * page (`/weather`). AQI, pollen, forecast, pressure, sunrise/sunset,
- * radar — all moved to the weather page, not rendered here.
+ * page (`/weather`). Inline AQI + pollen pills below stats row.
+ * Forecast, pressure, sunrise/sunset, radar — those live on /weather.
  */
 export function WeatherCard({
   weather,
@@ -64,6 +82,8 @@ export function WeatherCard({
   error,
   locationLabel,
   onRetry,
+  airQuality,
+  pollen,
 }: WeatherCardProps) {
   const { colors } = useAppTheme();
   const { t, i18n } = useTranslation();
@@ -154,6 +174,27 @@ export function WeatherCard({
           </View>
         </View>
 
+        {(airQuality || pollen) && (
+          <View style={styles.pillsRow}>
+            {airQuality && (
+              <View style={[styles.pill, { backgroundColor: withOpacity(style.textColor, 0.1) }]}>
+                <View style={[styles.pillDot, { backgroundColor: AQI_COLOR[airQuality.level] }]} />
+                <Text style={[styles.pillText, { color: color80 }]}>
+                  AQI {airQuality.aqi} · {t(`airQuality.${AQI_LEVEL_KEY[airQuality.level]}`)}
+                </Text>
+              </View>
+            )}
+            {pollen?.dominant && (
+              <View style={[styles.pill, { backgroundColor: withOpacity(style.textColor, 0.1) }]}>
+                <IconPlant2 size={12} color={color80} />
+                <Text style={[styles.pillText, { color: color80 }]}>
+                  {t(`pollen.${pollen.dominant}`, { defaultValue: pollen.dominant })} · {t(`pollen.${pollen.level}`)}
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+
         <Text style={[styles.updatedAt, { color: color40 }]}>
           {formatRelativeTime(weather.updatedAt, locale)}
         </Text>
@@ -223,6 +264,29 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: theme.fontSize.sm,
     marginLeft: theme.spacing.xs,
+  },
+  pillsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
+    marginTop: theme.spacing.md,
+  },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  pillDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  pillText: {
+    fontSize: 11,
+    ...theme.font.medium,
   },
   updatedAt: {
     fontSize: theme.fontSize.xs,

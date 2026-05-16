@@ -58,7 +58,7 @@ export function HourlyForecast({ hourly }: Props) {
         <h3 className="text-sm font-semibold text-text-primary">{t('hourly.section')}</h3>
         <span className="text-xs text-muted">{fromNow.length} h</span>
       </header>
-      <div className="-mx-2 flex gap-3 overflow-x-auto px-2 pb-1">
+      <div className="scrollbar-hidden -mx-2 flex gap-3 overflow-x-auto px-2 pb-1">
         {fromNow.map((h, i) => {
           const HourIcon = iconFor(h.condition);
           const label =

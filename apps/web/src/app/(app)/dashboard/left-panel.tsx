@@ -4,7 +4,7 @@ import { IconClock } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
-import { useNameday, useWeather } from '@notifio/shared/hooks';
+import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
 
 import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
@@ -33,6 +33,8 @@ export function LeftPanel({
   const t = useTranslations('map');
   const td = useTranslations('digest');
   const { weather, isLoading, error, refresh } = useWeather();
+  const { airQuality } = useAirQuality();
+  const { pollen } = usePollen(userLocation ?? DEFAULT_LOCATION);
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
@@ -46,6 +48,8 @@ export function LeftPanel({
           error={error}
           locationLabel={isGps ? t('yourLocation') : t('defaultLocation')}
           onRetry={refresh}
+          airQuality={airQuality}
+          pollen={pollen}
         />
         <div className="mt-3">
           <WeatherWarningsBanner warnings={warnings} />

@@ -16,8 +16,39 @@ import { RadarMini } from '@/components/weather/radar-mini';
 import { SunMoonCard } from '@/components/weather/sun-moon-card';
 import { WeatherHero } from '@/components/weather/weather-hero';
 import { useForecast } from '@/hooks/use-forecast';
+import { useLocations } from '@/hooks/use-locations';
 import { useRadarConfig } from '@/hooks/use-radar-config';
 import { useUserLocation } from '@/hooks/use-user-location';
+
+/**
+ * Pick a human-readable label for the hero. Order:
+ *   1. User saved location matching center (within ~1.5km)
+ *   2. GPS — "GPS · {lat.toFixed(2)}, {lng.toFixed(2)}" so it's informative
+ *      vs the generic "Tvoja poloha"
+ *   3. Non-GPS default — the translated default-location string
+ *
+ * Web doesn't have reverse-geocoding (mobile uses expo-location's native
+ * API; no equivalent here). Closest-saved-match is a cheap stand-in;
+ * proper reverse-geocode via Nominatim/BE is a follow-up.
+ */
+function resolveLocationLabel(
+  center: { lat: number; lng: number },
+  isGps: boolean,
+  savedLocations: Array<{ lat: number; lng: number; customLabel: string | null; label: { name: string } }>,
+  fallback: string,
+): string {
+  const nearby = savedLocations.find(
+    (l) => Math.abs(l.lat - center.lat) < 0.015 && Math.abs(l.lng - center.lng) < 0.025,
+  );
+  if (nearby) {
+    const base = nearby.customLabel ?? nearby.label.name;
+    return isGps ? `${base} (GPS)` : base;
+  }
+  if (isGps) {
+    return `GPS · ${center.lat.toFixed(2)}, ${center.lng.toFixed(2)}`;
+  }
+  return fallback;
+}
 
 export default function WeatherPage() {
   const tcommon = useTranslations('common');
@@ -25,6 +56,7 @@ export default function WeatherPage() {
   const tmap = useTranslations('map');
   const { location: userLocation, isGps } = useUserLocation();
   const center = userLocation ?? DEFAULT_LOCATION;
+  const { locations } = useLocations();
 
   // useWeather + useAirQuality from shared are currently locked to
   // DEFAULT_LOCATION (Bratislava). Follow-up to accept coords; for now
@@ -36,7 +68,12 @@ export default function WeatherPage() {
   const { forecast } = useForecast(center);
   const { config: radarConfig } = useRadarConfig();
 
-  const locationLabel = isGps ? tmap('yourLocation') : tmap('defaultLocation');
+  const locationLabel = resolveLocationLabel(
+    center,
+    isGps,
+    locations,
+    tmap('defaultLocation'),
+  );
 
   if (weatherError && !weather) {
     return (
