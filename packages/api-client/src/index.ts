@@ -48,6 +48,8 @@ import type {
   DataExportJob,
   DataExportResult,
   NamedayResponse,
+  ForecastData,
+  RadarConfig,
 } from './shared-types.js';
 
 export type {
@@ -137,6 +139,13 @@ export type {
   NamedayResponse,
   NamedayDay,
   NamedayQuery,
+  ForecastData,
+  ForecastHourly,
+  ForecastDaily,
+  RadarConfig,
+  RadarLayer,
+  RadarTimestamps,
+  RadarBounds,
 } from './shared-types.js';
 
 /**
@@ -280,10 +289,14 @@ export function createNotifioClient(config: NotifioClientConfig) {
   return {
     // ─── Public endpoints ──────────────────────────────────────────
 
-    async getWeather(lat: number, lng: number): Promise<WeatherResponse> {
-      const { weather } = await request<{ weather: WeatherResponse }>('/weather', {
-        params: { lat: String(lat), lng: String(lng) },
-      });
+    async getWeather(
+      lat: number,
+      lng: number,
+      preferredProvider?: 'open-meteo' | 'openweathermap',
+    ): Promise<WeatherResponse> {
+      const params: Record<string, string> = { lat: String(lat), lng: String(lng) };
+      if (preferredProvider) params.provider = preferredProvider;
+      const { weather } = await request<{ weather: WeatherResponse }>('/weather', { params });
       return weather;
     },
 
@@ -292,6 +305,29 @@ export function createNotifioClient(config: NotifioClientConfig) {
         params: { lat: String(lat), lng: String(lng) },
       });
       return warnings;
+    },
+
+    async getForecast(
+      lat: number,
+      lng: number,
+      hours = 24,
+      days = 7,
+      preferredProvider?: 'open-meteo' | 'openweathermap',
+    ): Promise<ForecastData> {
+      const params: Record<string, string> = {
+        lat: String(lat),
+        lng: String(lng),
+        hours: String(hours),
+        days: String(days),
+      };
+      if (preferredProvider) params.provider = preferredProvider;
+      const { forecast } = await request<{ forecast: ForecastData }>('/weather/forecast', { params });
+      return forecast;
+    },
+
+    async getRadarConfig(): Promise<RadarConfig> {
+      const { radar } = await request<{ radar: RadarConfig }>('/weather/radar/config');
+      return radar;
     },
 
     async getTraffic(lat: number, lng: number): Promise<TrafficResponse> {

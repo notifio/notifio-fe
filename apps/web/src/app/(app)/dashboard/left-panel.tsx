@@ -4,7 +4,7 @@ import { IconClock } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
 import { DEFAULT_LOCATION } from '@notifio/shared/geo';
-import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
+import { useNameday, useWeather } from '@notifio/shared/hooks';
 
 import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
@@ -33,10 +33,8 @@ export function LeftPanel({
   const t = useTranslations('map');
   const td = useTranslations('digest');
   const { weather, isLoading, error, refresh } = useWeather();
-  const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
-  const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
 
   return (
@@ -48,15 +46,6 @@ export function LeftPanel({
           error={error}
           locationLabel={isGps ? t('yourLocation') : t('defaultLocation')}
           onRetry={refresh}
-          airQuality={airQuality}
-          aqiLoading={aqiIsLoading}
-          pollen={pollenData ? {
-            level: pollenData.level,
-            dominant: pollenData.dominant ?? '',
-            value: pollenData.components[pollenData.dominant as keyof typeof pollenData.components] ?? 0,
-            unit: pollenData.unit,
-            components: { ...pollenData.components },
-          } : null}
         />
         <div className="mt-3">
           <WeatherWarningsBanner warnings={warnings} />
@@ -88,6 +77,7 @@ export function LeftPanel({
       )}
 
       <AlertList
+        center={userLocation ?? DEFAULT_LOCATION}
         selectedId={selectedAlertId}
         onSelect={onAlertSelect}
         isLoadingEvent={isLoadingEvent}

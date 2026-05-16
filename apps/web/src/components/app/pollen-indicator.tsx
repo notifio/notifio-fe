@@ -3,7 +3,13 @@
 import { IconPlant2, IconX } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 
-import type { PollenData } from './weather-card';
+export interface PollenData {
+  level: string;
+  dominant: string;
+  value: number;
+  unit: string;
+  components?: { [key: string]: number | null };
+}
 
 const MAX_BAR_VALUE = 100;
 

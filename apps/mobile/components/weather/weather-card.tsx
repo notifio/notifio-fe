@@ -1,35 +1,28 @@
 import type { Icon } from '@tabler/icons-react-native';
 import {
-  IconChevronDown,
-  IconChevronUp,
+  IconChevronRight,
   IconCloud,
   IconCloudFog,
   IconCloudRain,
   IconCloudStorm,
   IconDroplet,
   IconEye,
-  IconGauge,
   IconMist,
   IconMoon,
   IconSnowflake,
   IconSun,
-  IconSunrise,
   IconTemperature,
   IconWind,
 } from '@tabler/icons-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-// Use subpath imports to avoid barrel export pulling in h3-js (Hermes incompatible)
-import type { PollenResponse } from '@notifio/api-client';
 import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/format';
-import type { AirQualityData, WeatherData } from '@notifio/shared/types';
+import type { WeatherData } from '@notifio/shared/types';
 import { formatTemp, formatVisibility, formatWind, getWeatherStyle } from '@notifio/shared/weather';
 
-import { AqiIndicator } from './aqi-indicator';
-import { PollenChip, PollenDetailPanel } from './pollen-indicator';
 import { commonStyles } from '../../lib/common-styles';
 import { theme, withOpacity } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -45,13 +38,12 @@ const WEATHER_ICON_MAP: Record<string, Icon> = {
   Haze: IconMist,
   Wind: IconWind,
   Thermometer: IconTemperature,
+  Moon: IconMoon,
 };
 
 function getWeatherIcon(iconName: string): Icon {
   return WEATHER_ICON_MAP[iconName] ?? IconTemperature;
 }
-
-type ExpandedChip = 'aqi' | 'pollen' | null;
 
 interface WeatherCardProps {
   weather: WeatherData | null;
@@ -59,30 +51,24 @@ interface WeatherCardProps {
   error: string | null;
   locationLabel: string;
   onRetry?: () => void;
-  airQuality?: AirQualityData | null;
-  aqiLoading?: boolean;
-  pollen?: PollenResponse | null;
 }
 
+/**
+ * Compact dashboard weather card. Tap to open the dedicated weather
+ * page (`/weather`). AQI, pollen, forecast, pressure, sunrise/sunset,
+ * radar — all moved to the weather page, not rendered here.
+ */
 export function WeatherCard({
   weather,
   isLoading,
   error,
   locationLabel,
   onRetry,
-  airQuality,
-  aqiLoading = false,
-  pollen,
 }: WeatherCardProps) {
   const { colors } = useAppTheme();
-  const { t } = useTranslation();
-  const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
-  const [expanded, setExpanded] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const router = useRouter();
   const locale = i18n.language as RelativeTimeLocale;
-
-  const toggleChip = (chip: ExpandedChip) =>
-    setExpandedChip((prev) => (prev === chip ? null : chip));
 
   if (isLoading) {
     return <View style={[styles.skeleton, { backgroundColor: colors.surface }]} />;
@@ -117,126 +103,62 @@ export function WeatherCard({
   const color40 = withOpacity(style.textColor, 0.4);
 
   return (
-    <LinearGradient
-      colors={style.gradient}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradient}
+    <Pressable
+      onPress={() => router.push('/weather')}
+      style={({ pressed }) => [{ opacity: pressed ? 0.92 : 1 }]}
     >
-      <View style={commonStyles.rowBetween}>
-        <View>
-          <Text style={[styles.location, { color: color80 }]}>{locationLabel}</Text>
-          <Text style={[styles.conditionLabel, { color: color60 }]}>
-            {t(`weatherConditions.${weather.condition}`, { defaultValue: style.label })}
-          </Text>
-        </View>
-        <WeatherIcon size={36} color={color70} />
-      </View>
-
-      <View style={styles.tempContainer}>
-        <Text style={[styles.temperature, { color: style.textColor }]}>
-          {formatTemp(weather.temperature)}
-        </Text>
-        <Text style={[styles.feelsLike, { color: color70 }]}>
-          {t('weather.feelsLike')} {formatTemp(weather.feelsLike)}
-        </Text>
-      </View>
-
-      <View style={styles.detailsRow}>
-        <View style={commonStyles.row}>
-          <IconWind size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>
-            {formatWind(weather.windSpeed, weather.windDirection)}
-          </Text>
-        </View>
-        <View style={commonStyles.row}>
-          <IconDroplet size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
-        </View>
-        <View style={commonStyles.row}>
-          <IconEye size={14} color={color60} />
-          <Text style={[styles.detailText, { color: color60 }]}>
-            {formatVisibility(weather.visibility)}
-          </Text>
-        </View>
-      </View>
-
-      {(airQuality || aqiLoading || pollen) && (
-        <View style={[styles.aqiDivider, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.chipRow}>
-            {(airQuality || aqiLoading) && (
-              <AqiIndicator
-                airQuality={airQuality ?? null}
-                isLoading={aqiLoading}
-                textColor={style.textColor}
-              />
-            )}
-            {pollen && (
-              <PollenChip
-                pollen={pollen}
-                isExpanded={expandedChip === 'pollen'}
-                dimmed={expandedChip !== null && expandedChip !== 'pollen'}
-                onToggle={() => toggleChip('pollen')}
-              />
-            )}
-          </View>
-          {expandedChip === 'pollen' && pollen && (
-            <PollenDetailPanel pollen={pollen} onClose={() => setExpandedChip(null)} />
-          )}
-        </View>
-      )}
-
-      <Pressable
-        onPress={() => setExpanded((v) => !v)}
-        style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
+      <LinearGradient
+        colors={style.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
       >
-        <Text style={[styles.showMoreText, { color: color70 }]}>
-          {expanded ? t('weatherCard.showLess') : t('weatherCard.showMore')}
-        </Text>
-        {expanded ? (
-          <IconChevronUp size={14} color={color70} />
-        ) : (
-          <IconChevronDown size={14} color={color70} />
-        )}
-      </Pressable>
-
-      {expanded && (
-        <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-          <View style={styles.expandedRow}>
-            <IconGauge size={14} color={color60} />
-            <Text style={[styles.detailText, { color: color60 }]}>
-              {weather.pressure} hPa
+        <View style={commonStyles.rowBetween}>
+          <View>
+            <Text style={[styles.location, { color: color80 }]}>{locationLabel}</Text>
+            <Text style={[styles.conditionLabel, { color: color60 }]}>
+              {t(`weatherConditions.${weather.condition}`, { defaultValue: style.label })}
             </Text>
           </View>
-          {weather.sunrise && (
-            <View style={styles.expandedRow}>
-              <IconSunrise size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunrise).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
-          {weather.sunset && (
-            <View style={styles.expandedRow}>
-              <IconMoon size={14} color={color60} />
-              <Text style={[styles.detailText, { color: color60 }]}>
-                {new Date(weather.sunset).toLocaleTimeString(locale, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-            </View>
-          )}
+          <View style={styles.headerRight}>
+            <WeatherIcon size={36} color={color70} />
+            <IconChevronRight size={18} color={color60} />
+          </View>
         </View>
-      )}
 
-      <Text style={[styles.updatedAt, { color: color40 }]}>
-        {formatRelativeTime(weather.updatedAt, locale)}
-      </Text>
-    </LinearGradient>
+        <View style={styles.tempContainer}>
+          <Text style={[styles.temperature, { color: style.textColor }]}>
+            {formatTemp(weather.temperature)}
+          </Text>
+          <Text style={[styles.feelsLike, { color: color70 }]}>
+            {t('weather.feelsLike')} {formatTemp(weather.feelsLike)}
+          </Text>
+        </View>
+
+        <View style={styles.detailsRow}>
+          <View style={commonStyles.row}>
+            <IconWind size={14} color={color60} />
+            <Text style={[styles.detailText, { color: color60 }]}>
+              {formatWind(weather.windSpeed, weather.windDirection)}
+            </Text>
+          </View>
+          <View style={commonStyles.row}>
+            <IconDroplet size={14} color={color60} />
+            <Text style={[styles.detailText, { color: color60 }]}>{weather.humidity}%</Text>
+          </View>
+          <View style={commonStyles.row}>
+            <IconEye size={14} color={color60} />
+            <Text style={[styles.detailText, { color: color60 }]}>
+              {formatVisibility(weather.visibility)}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.updatedAt, { color: color40 }]}>
+          {formatRelativeTime(weather.updatedAt, locale)}
+        </Text>
+      </LinearGradient>
+    </Pressable>
   );
 }
 
@@ -270,6 +192,11 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xl,
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+  },
   location: {
     fontSize: theme.fontSize.md,
     ...theme.font.medium,
@@ -297,46 +224,9 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.sm,
     marginLeft: theme.spacing.xs,
   },
-  aqiDivider: {
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    gap: theme.spacing.sm,
-  },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
-  },
   updatedAt: {
     fontSize: theme.fontSize.xs,
     textAlign: 'right',
     marginTop: theme.spacing.md,
-  },
-  expandedBlock: {
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.lg,
-  },
-  expandedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
-  showMoreRow: {
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  showMoreText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
   },
 });
