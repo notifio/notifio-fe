@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { api } from '@/lib/api';
-import { getOrCreateDeviceId } from '@/lib/device-id';
+import { getRegisteredDeviceId } from '@/lib/device-id';
 
 const HEARTBEAT_MS = 5 * 60 * 1000;
 
@@ -24,7 +24,12 @@ export function useSessionTracking(): void {
     };
 
     const start = async () => {
-      const deviceId = getOrCreateDeviceId();
+      // Only call /analytics/session/start once a device row exists on the BE
+      // (i.e. push notifications have been registered via useWebPush). Without
+      // a registered id the FK on f_app_session.key_device would 404 the
+      // request with "Device not registered". Silently no-op until then;
+      // visibilitychange or a subsequent app mount will retry.
+      const deviceId = getRegisteredDeviceId();
       if (!deviceId) return;
       const result = await api.startSession(deviceId);
       if (cancelled || !result) return;

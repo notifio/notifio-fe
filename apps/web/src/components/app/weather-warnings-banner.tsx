@@ -1,10 +1,12 @@
 'use client';
 
 import { IconAlertTriangle, IconChevronDown, IconChevronUp } from '@tabler/icons-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import type { WeatherWarning, WeatherWarningSeverity } from '@notifio/api-client';
+
+import { formatWarningExpiry } from '@/lib/format-warning-date';
 
 const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
   red: 3,
@@ -24,21 +26,18 @@ const SEVERITY_TEXT: Record<WeatherWarningSeverity, string> = {
   yellow: '#78350F',
 };
 
-function formatTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } catch {
-    return '';
-  }
-}
-
 interface WeatherWarningsBannerProps {
   warnings: WeatherWarning[];
 }
 
 export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) {
   const t = useTranslations('weatherWarnings');
+  const tf = useTranslations('forecast');
+  const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
+
+  const formatExpiry = (iso: string) =>
+    formatWarningExpiry(iso, locale, tf('today'), tf('tomorrow'));
 
   if (warnings.length === 0) return null;
 
@@ -67,7 +66,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
           {top.headline}
         </p>
         <span className="shrink-0 text-xs opacity-80">
-          {formatTime(top.validUntil)}
+          {formatExpiry(top.validUntil)}
         </span>
         {sorted.length > 1 && (
           <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-medium">
@@ -84,7 +83,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
             <p className="text-xs opacity-80">{top.description}</p>
           )}
           <p className="mt-2 text-[11px] opacity-60">
-            {top.provider} · {t('validUntil')} {formatTime(top.validUntil)}
+            {top.provider} · {t('validUntil')} {formatExpiry(top.validUntil)}
           </p>
         </div>
       )}

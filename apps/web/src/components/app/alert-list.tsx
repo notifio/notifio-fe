@@ -4,10 +4,10 @@ import { IconBell } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { Fragment, useMemo, useState } from 'react';
 
-import type { NotificationHistoryItem } from '@notifio/api-client';
-import { isResolved } from '@notifio/shared';
+import type { EventFeedItem, NotificationHistoryItem } from '@notifio/api-client';
+import { materialityToSeverity } from '@notifio/shared/alert-card';
 
-import { useNotificationHistory } from '@/hooks/use-notification-history';
+import { useEventsFeed } from '@/hooks/use-events-feed';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 
 import { AdPlaceholder } from './ad-placeholder';
@@ -18,40 +18,52 @@ import { UpsellCard } from './upsell-card';
 type TabFilter = 'active' | 'ended' | 'all';
 
 interface AlertListProps {
+  center: { lat: number; lng: number } | null;
   selectedId?: string | null;
   onSelect?: (eventId: string) => void;
   isLoadingEvent?: boolean;
 }
 
-export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: AlertListProps) {
+/**
+ * Adapt an EventFeedItem (geo-proximity, what the map renders) into
+ * the NotificationHistoryItem shape AlertCard expects. The /notifications
+ * history page still consumes actual NotificationHistoryItem rows so
+ * AlertCard's contract stays. id is synthesized from the eventId UUID's
+ * leading hex chunk — only used as React key + onClick wiring, never
+ * sent back to BE.
+ */
+function eventToAlertCardItem(e: EventFeedItem): NotificationHistoryItem {
+  return {
+    id: parseInt(e.eventId.slice(0, 8), 16),
+    eventId: e.eventId,
+    status: 'sent',
+    trigger: 'system',
+    title: e.title ?? e.typeName,
+    body: e.description ?? '',
+    category: e.category,
+    severity: materialityToSeverity(e.materialityLevel),
+    sentAt: e.createdAt,
+    createdAt: e.createdAt,
+  } as unknown as NotificationHistoryItem;
+}
+
+export function AlertList({
+  center,
+  selectedId,
+  onSelect,
+  isLoadingEvent = false,
+}: AlertListProps) {
   const t = useTranslations();
   const [tab, setTab] = useState<TabFilter>('active');
-  const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory();
+  const { events, isLoading, isError, refetch } = useEventsFeed(center);
   const { fullyConfigured } = usePermissionStatus();
 
-  // Group by eventId — keep most recent, track count
-  const grouped = useMemo(() => {
-    const map = new Map<string, { item: NotificationHistoryItem; count: number }>();
-    for (const item of items) {
-      const existing = map.get(item.eventId);
-      if (existing) {
-        existing.count++;
-        if (new Date(item.createdAt) > new Date(existing.item.createdAt)) {
-          existing.item = item;
-        }
-      } else {
-        map.set(item.eventId, { item, count: 1 });
-      }
-    }
-    return Array.from(map.values());
-  }, [items]);
-
-  // Filter by tab
+  // /events exposes status directly so no isResolved heuristic needed.
   const filtered = useMemo(() => {
-    if (tab === 'all') return grouped;
-    if (tab === 'active') return grouped.filter((g) => !isResolved(g.item));
-    return grouped.filter((g) => isResolved(g.item));
-  }, [grouped, tab]);
+    if (tab === 'all') return events;
+    if (tab === 'active') return events.filter((e) => e.status === 'active');
+    return events.filter((e) => e.status === 'resolved');
+  }, [events, tab]);
 
   const tabs: { key: TabFilter; label: string }[] = [
     { key: 'active', label: t('alerts.active') },
@@ -85,11 +97,11 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
         </div>
       </div>
 
-      {error && (
+      {isError && (
         <div className="px-4 py-3">
-          <p className="text-xs text-danger">{error}</p>
+          <p className="text-xs text-danger">{t('common.retry')}</p>
           <button
-            onClick={refresh}
+            onClick={() => refetch()}
             className="mt-1 text-xs font-medium text-accent hover:underline"
           >
             {t('common.retry')}
@@ -97,7 +109,7 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
         </div>
       )}
 
-      {isLoading && items.length === 0 ? (
+      {isLoading && events.length === 0 ? (
         <div className="space-y-2 p-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-20 animate-pulse rounded-xl bg-card" />
@@ -116,28 +128,18 @@ export function AlertList({ selectedId, onSelect, isLoadingEvent = false }: Aler
         )
       ) : (
         <div className="space-y-2 p-4">
-          {filtered.map((g, index) => (
-            <Fragment key={g.item.id}>
+          {filtered.map((event, index) => (
+            <Fragment key={event.eventId}>
               <AlertCard
-                notification={g.item}
-                duplicateCount={g.count}
-                isSelected={selectedId === g.item.eventId}
-                isLoading={isLoadingEvent && selectedId === g.item.eventId}
-                onClick={() => onSelect?.(g.item.eventId)}
+                notification={eventToAlertCardItem(event)}
+                isSelected={selectedId === event.eventId}
+                isLoading={isLoadingEvent && selectedId === event.eventId}
+                onClick={() => onSelect?.(event.eventId)}
               />
               {index === 2 && <AdPlaceholder variant="inline" />}
               {index === 6 && <UpsellCard />}
             </Fragment>
           ))}
-          {hasMore && (
-            <button
-              onClick={loadMore}
-              disabled={isLoading}
-              className="w-full rounded-lg bg-background py-2 text-xs font-medium text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
-            >
-              {isLoading ? t('common.loading') : t('alerts.loadMore')}
-            </button>
-          )}
         </div>
       )}
     </div>

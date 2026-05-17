@@ -1,1 +1,12 @@
-{}
+{
+  "auth": {
+    "signInWith": "Bejelentkezés a következővel: {provider}"
+  },
+  "nav": {
+    "weather": "Időjárás"
+  },
+  "pollen": {
+    "title": "Pollen",
+    "noData": "Jelenleg nincsenek aktív pollenfajok."
+  }
+}

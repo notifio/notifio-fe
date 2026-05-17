@@ -10,13 +10,16 @@ import { useAppTheme } from '../../providers/theme-provider';
 interface ActionConfig {
   title: string;
   onPress: () => void;
+  loading?: boolean;
+  loadingTitle?: string;
+  disabled?: boolean;
 }
 
 interface OnboardingScreenProps {
   icon: TablerIcon;
   title: string;
   description: string;
-  primaryAction: ActionConfig;
+  primaryAction?: ActionConfig;
   secondaryAction?: ActionConfig;
   children?: React.ReactNode;
   /**
@@ -25,6 +28,13 @@ interface OnboardingScreenProps {
    * login screens turn this on; in-flow onboarding steps don't.
    */
   showBrand?: boolean;
+  /**
+   * Render only the brand mark (square N icon), not the wordmark.
+   * Used by the login screen to avoid the "N Notifio" double-branding
+   * effect — the user is already inside the app, the mark is enough.
+   * Size bumps to 64 when `markOnly` so it doesn't shrink visually.
+   */
+  brandMarkOnly?: boolean;
 }
 
 export function OnboardingScreen({
@@ -35,6 +45,7 @@ export function OnboardingScreen({
   secondaryAction,
   children,
   showBrand = false,
+  brandMarkOnly = false,
 }: OnboardingScreenProps) {
   const { colors } = useAppTheme();
 
@@ -42,7 +53,7 @@ export function OnboardingScreen({
     <ScreenLayout>
       {showBrand && (
         <View style={styles.brand}>
-          <BrandLogo size={48} />
+          <BrandLogo size={brandMarkOnly ? 64 : 48} markOnly={brandMarkOnly} />
         </View>
       )}
       <View style={styles.content}>
@@ -53,13 +64,27 @@ export function OnboardingScreen({
         <Text style={[styles.description, { color: colors.textMuted }]}>{description}</Text>
         {children && <View style={styles.childrenContainer}>{children}</View>}
       </View>
+      <View style={styles.spacer} />
       <View style={styles.actions}>
-        <PrimaryButton title={primaryAction.title} onPress={primaryAction.onPress} />
+        {primaryAction && (
+          <PrimaryButton
+            title={
+              primaryAction.loading
+                ? (primaryAction.loadingTitle ?? primaryAction.title)
+                : primaryAction.title
+            }
+            onPress={primaryAction.onPress}
+            loading={primaryAction.loading}
+            disabled={primaryAction.disabled}
+          />
+        )}
         {secondaryAction && (
           <PrimaryButton
             title={secondaryAction.title}
             onPress={secondaryAction.onPress}
             variant="ghost"
+            disabled={secondaryAction.disabled}
+            loading={secondaryAction.loading}
           />
         )}
       </View>
@@ -71,11 +96,15 @@ const styles = StyleSheet.create({
   brand: {
     alignItems: 'center',
     paddingTop: theme.spacing.xl,
+    marginBottom: theme.spacing.sm,
   },
+  // Was `flex: 1` + `justifyContent: 'center'` — that pushed the icon
+  // mid-screen, visually orphaning it from the brand at the top. Now
+  // content stacks naturally under the brand; the spacer below pushes
+  // actions to the bottom.
   content: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: theme.spacing['2xl'],
   },
   iconCircle: {
     width: 64,
@@ -92,6 +121,7 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xl,
     textAlign: 'center',
     fontSize: theme.fontSize.md,
     lineHeight: 24,
@@ -99,6 +129,9 @@ const styles = StyleSheet.create({
   childrenContainer: {
     marginTop: theme.spacing['2xl'],
     width: '100%',
+  },
+  spacer: {
+    flex: 1,
   },
   actions: {
     gap: theme.spacing.sm,

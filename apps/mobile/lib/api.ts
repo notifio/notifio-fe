@@ -17,10 +17,30 @@ const rawApi = createNotifioClient({
   locale: () => i18n.language || 'sk',
   getToken: async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token ?? null;
+    if (!session) return null;
+    // Proactively refresh if the access token expires in <60s (or is
+    // already expired). Without this, requests fired right after a
+    // foreground-resume race the token expiry and surface as 401 even
+    // though we hold a valid refresh token.
+    const expiresAtMs = (session.expires_at ?? 0) * 1000;
+    if (expiresAtMs - Date.now() < 60_000) {
+      const { data, error } = await supabase.auth.refreshSession();
+      if (error) return null;
+      return data.session?.access_token ?? null;
+    }
+    return session.access_token;
   },
-  onUnauthorized: () => {
-    supabase.auth.signOut();
+  onUnauthorized: async () => {
+    // Try to refresh first. The previous implementation called
+    // signOut() unconditionally, destroying a still-valid refresh
+    // token and forcing re-login on every resume after access-token
+    // TTL elapsed. Only sign out on genuine refresh failure.
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session) {
+      await supabase.auth.signOut();
+      return false;
+    }
+    return true;
   },
 });
 

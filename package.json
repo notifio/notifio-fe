@@ -30,7 +30,7 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
-    "@notifio/shared": "^1.5.0",
+    "@notifio/shared": "^1.11.0",
     "@tanstack/react-query": "^5.100.9",
     "date-fns": "^3.6.0"
   }

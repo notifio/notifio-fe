@@ -14,6 +14,14 @@ const AQI_HEALTH_KEYS: Record<string, string> = {
   very_poor: 'very_poor',
 };
 
+const AQI_LEVEL_KEY: Record<AirQualityData['level'], 'good' | 'fair' | 'moderate' | 'poor' | 'veryPoor'> = {
+  good: 'good',
+  fair: 'fair',
+  moderate: 'moderate',
+  poor: 'poor',
+  very_poor: 'veryPoor',
+};
+
 interface AqiChipProps {
   airQuality: AirQualityData | null;
   isLoading: boolean;
@@ -23,6 +31,8 @@ interface AqiChipProps {
 }
 
 export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }: AqiChipProps) {
+  const t = useTranslations('airQuality');
+
   if (isLoading) {
     return <div className="h-7 w-32 animate-pulse rounded-full bg-white/10" />;
   }
@@ -30,10 +40,18 @@ export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }:
   if (!airQuality) return null;
 
   const aqiStyle = getAqiStyle(airQuality.level);
+  const levelKey = AQI_LEVEL_KEY[airQuality.level];
 
   return (
     <button
-      onClick={onToggle}
+      onClick={(e) => {
+        // Stop bubble + prevent default — parent <Link href="/weather"> on
+        // the dashboard weather card would otherwise navigate when chips
+        // are clicked.
+        e.stopPropagation();
+        e.preventDefault();
+        onToggle();
+      }}
       style={{
         background: isExpanded ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
         border: `1px solid ${isExpanded ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.12)'}`,
@@ -53,7 +71,7 @@ export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }:
         className="inline-block size-2 shrink-0 rounded-full"
         style={{ backgroundColor: aqiStyle.color }}
       />
-      AQI {airQuality.aqi} {aqiStyle.label}
+      AQI {airQuality.aqi} · {t(levelKey)}
     </button>
   );
 }
@@ -79,7 +97,11 @@ export function AqiDetailPanel({ airQuality, onClose }: AqiDetailPanelProps) {
       <div className="flex items-start justify-between">
         <p className="text-[11px] opacity-65">{t(healthKey)}</p>
         <button
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onClose();
+          }}
           className="shrink-0 cursor-pointer opacity-50 transition-opacity hover:opacity-80"
           style={{ background: 'none', border: 'none', color: 'inherit', padding: 0 }}
         >

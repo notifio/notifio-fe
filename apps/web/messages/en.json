@@ -1,1 +1,12 @@
-{}
+{
+  "auth": {
+    "signInWith": "Sign in with {provider}"
+  },
+  "nav": {
+    "weather": "Weather"
+  },
+  "pollen": {
+    "title": "Pollen",
+    "noData": "No active pollen species right now."
+  }
+}

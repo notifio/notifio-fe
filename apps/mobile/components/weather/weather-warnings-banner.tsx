@@ -7,7 +7,7 @@ import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native
 import type { WeatherWarning, WeatherWarningSeverity } from '@notifio/api-client';
 import { sharedColors } from '@notifio/ui';
 
-import { formatTime } from '../../lib/format';
+import { formatWarningExpiry } from '../../lib/format-warning-date';
 import { theme, withOpacity } from '../../lib/theme';
 
 const SEVERITY_ORDER: Record<WeatherWarningSeverity, number> = {
@@ -74,7 +74,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
             {top.headline}
           </Text>
           <Text style={[styles.time, { color: textColor }]}>
-            {formatTime(top.validUntil, i18n.language)}
+            {formatWarningExpiry(top.validUntil, i18n.language, t('forecast.today'), t('forecast.tomorrow'))}
           </Text>
           {sorted.length > 1 && (
             <View style={styles.badge}>
@@ -95,7 +95,7 @@ export function WeatherWarningsBanner({ warnings }: WeatherWarningsBannerProps) 
               </Text>
             ) : null}
             <Text style={[styles.source, { color: textColor }]}>
-              {top.provider} · {t('weatherWarnings.validUntil')} {formatTime(top.validUntil, i18n.language)}
+              {top.provider} · {t('weatherWarnings.validUntil')} {formatWarningExpiry(top.validUntil, i18n.language, t('forecast.today'), t('forecast.tomorrow'))}
             </Text>
           </View>
         )}
