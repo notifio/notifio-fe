@@ -31,12 +31,10 @@ export default function OverviewScreen() {
   const { locations } = useLocations();
   const { profile } = useProfile();
 
-  // useWeather + useAirQuality from shared currently ignore location args
-  // (locked to DEFAULT_LOCATION). Tracked as a follow-up; the rest of the
-  // dashboard (warnings, events, pollen, nameday, header) honors the
-  // resolved location.
+  // useWeather + useAirQuality from shared currently lock to DEFAULT_LOCATION.
+  // Tracked follow-up. warnings/events/nameday/pollen honor resolved location.
   const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
-  const { airQuality, isLoading: aqiLoading } = useAirQuality();
+  const { airQuality } = useAirQuality();
   const { pollen } = usePollen(location);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(location);
   const { warnings } = useWeatherWarnings(location);
@@ -76,19 +74,18 @@ export default function OverviewScreen() {
           locationLabel={locationLabel}
           onRetry={refresh}
           airQuality={airQuality}
-          aqiLoading={aqiLoading}
           pollen={pollen}
         />
 
         {digestMode && <DigestBanner digestMode={digestMode} />}
-
-        <AlertsPreview events={events} />
 
         <NamedayCard
           todayNames={todayNames}
           upcomingNames={upcomingNames}
           isLoading={namedayLoading}
         />
+
+        <AlertsPreview events={events} />
 
         <UpsellCard />
         <AdPlaceholder variant="banner" />

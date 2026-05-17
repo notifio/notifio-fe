@@ -1,5 +1,12 @@
 {
   "auth": {
     "signInWith": "Přihlásit se přes {provider}"
+  },
+  "nav": {
+    "weather": "Počasí"
+  },
+  "pollen": {
+    "title": "Pyl",
+    "noData": "Aktuálně žádné aktivní druhy pylu."
   }
 }

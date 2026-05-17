@@ -1,5 +1,12 @@
 {
   "auth": {
     "signInWith": "Prihlásiť sa cez {provider}"
+  },
+  "nav": {
+    "weather": "Počasie"
+  },
+  "pollen": {
+    "title": "Peľ",
+    "noData": "Aktuálne žiadne aktívne druhy peľu."
   }
 }
