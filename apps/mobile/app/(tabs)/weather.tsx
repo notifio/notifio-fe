@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useAirQuality, usePollen, useWeather } from '@notifio/shared/hooks';
 
+import { ScreenLayout } from '../../components/ui/screen-layout';
 import { AqiCard } from '../../components/weather/aqi-card';
 import { DailyForecast } from '../../components/weather/daily-forecast';
 import { HourlyForecast } from '../../components/weather/hourly-forecast';
@@ -35,21 +36,18 @@ export default function WeatherScreen() {
 
   if (error && !weather) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScreenLayout>
         <View style={[styles.errorBox, { borderColor: colors.severity?.critical.border ?? '#FF3B30' }]}>
           <Text style={[styles.errorTitle, { color: colors.severity?.critical.text ?? '#FF3B30' }]}>
             {t('weatherPage.error.title')}
           </Text>
         </View>
-      </View>
+      </ScreenLayout>
     );
   }
 
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={styles.content}
-    >
+    <ScreenLayout scrollable>
       <View style={styles.hero}>
         {/* Same WeatherCard as the dashboard but simplified — only
             location + condition + temp + feels-like + icon. AQI and
@@ -73,19 +71,11 @@ export default function WeatherScreen() {
         {weather && <OtherStatsGrid weather={weather} />}
         {radarConfig && <RadarMini config={radarConfig} center={location} />}
       </View>
-    </ScrollView>
+    </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: theme.spacing.lg,
-  },
-  content: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing['4xl'],
-  },
   hero: {
     marginBottom: theme.spacing.md,
   },
