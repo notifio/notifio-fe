@@ -34,7 +34,12 @@ export function NamedayCard({ todayNames, upcomingNames, isLoading }: NamedayCar
   if (todayNames.length === 0) return null;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: colors.surface, borderColor: colors.border, borderLeftColor: colors.primary },
+      ]}
+    >
       <View style={styles.header}>
         <IconCake size={18} color={colors.primary} />
         <Text style={[styles.todayLabel, { color: colors.textSecondary }]}>
@@ -62,6 +67,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: theme.radius.xl,
     borderWidth: 1,
+    borderLeftWidth: 3,
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
   },

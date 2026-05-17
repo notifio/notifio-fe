@@ -79,13 +79,13 @@ export default function OverviewScreen() {
 
         {digestMode && <DigestBanner digestMode={digestMode} />}
 
-        <AlertsPreview events={events} />
-
         <NamedayCard
           todayNames={todayNames}
           upcomingNames={upcomingNames}
           isLoading={namedayLoading}
         />
+
+        <AlertsPreview events={events} />
 
         <UpsellCard />
         <AdPlaceholder variant="banner" />
