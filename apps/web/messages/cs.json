@@ -6,6 +6,7 @@
     "weather": "Počasí"
   },
   "pollen": {
-    "title": "Pyl"
+    "title": "Pyl",
+    "noData": "Aktuálně žádné aktivní druhy pylu."
   }
 }

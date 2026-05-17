@@ -14,6 +14,14 @@ const AQI_HEALTH_KEYS: Record<string, string> = {
   very_poor: 'very_poor',
 };
 
+const AQI_LEVEL_KEY: Record<AirQualityData['level'], 'good' | 'fair' | 'moderate' | 'poor' | 'veryPoor'> = {
+  good: 'good',
+  fair: 'fair',
+  moderate: 'moderate',
+  poor: 'poor',
+  very_poor: 'veryPoor',
+};
+
 interface AqiChipProps {
   airQuality: AirQualityData | null;
   isLoading: boolean;
@@ -23,6 +31,8 @@ interface AqiChipProps {
 }
 
 export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }: AqiChipProps) {
+  const t = useTranslations('airQuality');
+
   if (isLoading) {
     return <div className="h-7 w-32 animate-pulse rounded-full bg-white/10" />;
   }
@@ -30,6 +40,7 @@ export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }:
   if (!airQuality) return null;
 
   const aqiStyle = getAqiStyle(airQuality.level);
+  const levelKey = AQI_LEVEL_KEY[airQuality.level];
 
   return (
     <button
@@ -60,7 +71,7 @@ export function AqiChip({ airQuality, isLoading, isExpanded, dimmed, onToggle }:
         className="inline-block size-2 shrink-0 rounded-full"
         style={{ backgroundColor: aqiStyle.color }}
       />
-      AQI {airQuality.aqi} {aqiStyle.label}
+      AQI {airQuality.aqi} · {t(levelKey)}
     </button>
   );
 }

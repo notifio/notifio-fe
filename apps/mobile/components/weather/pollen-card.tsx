@@ -36,12 +36,26 @@ export function PollenCard({ pollen }: Props) {
     return <View style={[styles.skeleton, { backgroundColor: colors.surface }]} />;
   }
 
-  // Dynamic — every numeric field BE returns. Null fields skipped.
+  // Drop nulls (BE absent-this-region) AND zeros (off-season — no active
+  // grain) — both render as empty bars and clutter the card.
   const entries = Object.entries(pollen.components ?? {}).filter(
-    ([, value]) => typeof value === 'number',
+    ([, value]) => typeof value === 'number' && value > 0,
   ) as Array<[string, number]>;
 
-  if (entries.length === 0) return null;
+  const unit = t('pollen.unit', { defaultValue: pollen.unit });
+
+  if (entries.length === 0) {
+    return (
+      <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.title, { color: colors.text }]}>
+          {t('pollen.title', { defaultValue: 'Pollen' })}
+        </Text>
+        <Text style={[styles.empty, { color: colors.textMuted }]}>
+          {t('pollen.noData', { defaultValue: 'Aktuálne žiadne aktívne druhy peľu.' })}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -64,8 +78,8 @@ export function PollenCard({ pollen }: Props) {
                   ]}
                 />
               </View>
-              <Text style={[styles.value, { color: colors.textMuted }]}>
-                {Math.round(value)} {pollen.unit}
+              <Text style={[styles.value, { color: colors.textMuted }]} numberOfLines={1}>
+                {value.toFixed(1)} {unit}
               </Text>
             </View>
           );
@@ -90,7 +104,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: theme.spacing.sm,
   },
-  species: { width: 64, fontSize: theme.fontSize.sm },
+  species: { width: 72, fontSize: theme.fontSize.sm },
+  empty: { fontSize: theme.fontSize.sm },
   barTrack: {
     flex: 1,
     height: 6,
@@ -98,5 +113,5 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   barFill: { height: 6, borderRadius: 3 },
-  value: { width: 80, textAlign: 'right', fontSize: theme.fontSize.xs },
+  value: { width: 96, textAlign: 'right', fontSize: theme.fontSize.xs },
 });

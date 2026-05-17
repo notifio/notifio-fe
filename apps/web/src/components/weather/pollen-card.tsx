@@ -35,22 +35,33 @@ export function PollenCard({ pollen }: Props) {
     return <div className="h-32 animate-pulse rounded-2xl bg-card" />;
   }
 
-  // Dynamic — render every numeric field BE returns, in stable order.
-  // Null fields (BE absent-this-region) are skipped.
+  // Drop nulls (BE absent-this-region) AND zeros (off-season — no active
+  // grain) — both render as empty bars and clutter the card.
   const entries = Object.entries(pollen.components ?? {}).filter(
-    ([, value]) => typeof value === 'number',
+    ([, value]) => typeof value === 'number' && value > 0,
   ) as Array<[string, number]>;
 
+  const unit = t.has('unit') ? t('unit') : pollen.unit;
+
   if (entries.length === 0) {
-    return null;
+    return (
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <header className="pb-2">
+          <h3 className="text-sm font-semibold text-text-primary">{t('title')}</h3>
+        </header>
+        <p className="text-xs text-muted">
+          {t.has('noData')
+            ? t('noData')
+            : 'Aktuálne žiadne aktívne druhy peľu.'}
+        </p>
+      </section>
+    );
   }
 
   return (
     <section className="rounded-2xl border border-border bg-card p-4">
       <header className="pb-3">
-        <h3 className="text-sm font-semibold text-text-primary">
-          {t('title')}
-        </h3>
+        <h3 className="text-sm font-semibold text-text-primary">{t('title')}</h3>
       </header>
       <div className="flex flex-col gap-2">
         {entries.map(([species, value]) => {
@@ -59,7 +70,7 @@ export function PollenCard({ pollen }: Props) {
           const label = t.has(species) ? t(species) : species;
           return (
             <div key={species} className="flex items-center gap-3 text-sm">
-              <span className="w-16 shrink-0 text-text-primary">{label}</span>
+              <span className="w-20 shrink-0 text-text-primary">{label}</span>
               <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-border">
                 <span
                   className="absolute inset-y-0 left-0 rounded-full transition-all"
@@ -69,8 +80,8 @@ export function PollenCard({ pollen }: Props) {
                   }}
                 />
               </div>
-              <span className="w-16 shrink-0 text-right text-xs text-muted">
-                {Math.round(value)} {pollen.unit}
+              <span className="w-28 shrink-0 whitespace-nowrap text-right text-xs tabular-nums text-text-primary">
+                {value.toFixed(1)} <span className="text-muted">{unit}</span>
               </span>
             </div>
           );

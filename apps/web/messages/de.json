@@ -6,6 +6,7 @@
     "weather": "Wetter"
   },
   "pollen": {
-    "title": "Pollen"
+    "title": "Pollen",
+    "noData": "Derzeit keine aktiven Pollenarten."
   }
 }

@@ -11,7 +11,33 @@ import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
 import { WeatherWarningsBanner } from '@/components/app/weather-warnings-banner';
 import { useDigestMode } from '@/hooks/use-digest-mode';
+import { useLocations } from '@/hooks/use-locations';
 import { useWeatherWarnings } from '@/hooks/use-weather-warnings';
+
+/**
+ * Mirror of resolveLocationLabel in /weather/page.tsx — picks the
+ * nearest saved location label within ~1.5km of `center`, falls back
+ * to "GPS · lat, lng" for GPS, or the generic map default otherwise.
+ * Keeps dashboard + /weather card showing the same resolved name.
+ */
+function resolveLocationLabel(
+  center: { lat: number; lng: number },
+  isGps: boolean,
+  savedLocations: Array<{ lat: number; lng: number; customLabel: string | null; label: { name: string } }>,
+  fallback: string,
+): string {
+  const nearby = savedLocations.find(
+    (l) => Math.abs(l.lat - center.lat) < 0.015 && Math.abs(l.lng - center.lng) < 0.025,
+  );
+  if (nearby) {
+    const base = nearby.customLabel ?? nearby.label.name;
+    return isGps ? `${base} (GPS)` : base;
+  }
+  if (isGps) {
+    return `GPS · ${center.lat.toFixed(2)}, ${center.lng.toFixed(2)}`;
+  }
+  return fallback;
+}
 
 interface LeftPanelProps {
   userLocation: { lat: number; lng: number } | null;
@@ -38,6 +64,15 @@ export function LeftPanel({
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
   const { digestMode } = useDigestMode();
+  const { locations } = useLocations();
+
+  const center = userLocation ?? DEFAULT_LOCATION;
+  const locationLabel = resolveLocationLabel(
+    center,
+    isGps,
+    locations,
+    t('defaultLocation'),
+  );
 
   return (
     <div className="scrollbar-hidden h-full w-full shrink-0 overflow-y-auto md:h-1/2 md:border-b md:border-border lg:h-full lg:w-[480px] lg:border-b-0 lg:border-r">
@@ -46,7 +81,7 @@ export function LeftPanel({
           weather={weather}
           isLoading={isLoading}
           error={error}
-          locationLabel={isGps ? t('yourLocation') : t('defaultLocation')}
+          locationLabel={locationLabel}
           onRetry={refresh}
           airQuality={airQuality}
           aqiLoading={aqiIsLoading}

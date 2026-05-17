@@ -6,6 +6,7 @@
     "weather": "Weather"
   },
   "pollen": {
-    "title": "Pollen"
+    "title": "Pollen",
+    "noData": "No active pollen species right now."
   }
 }

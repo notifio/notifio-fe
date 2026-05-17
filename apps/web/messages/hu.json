@@ -6,6 +6,7 @@
     "weather": "Időjárás"
   },
   "pollen": {
-    "title": "Pollen"
+    "title": "Pollen",
+    "noData": "Jelenleg nincsenek aktív pollenfajok."
   }
 }

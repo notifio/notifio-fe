@@ -6,6 +6,7 @@
     "weather": "Počasie"
   },
   "pollen": {
-    "title": "Peľ"
+    "title": "Peľ",
+    "noData": "Aktuálne žiadne aktívne druhy peľu."
   }
 }
