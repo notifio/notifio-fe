@@ -104,15 +104,13 @@ export default function WeatherPage() {
         <div className="flex flex-col gap-4">
           {forecast && <HourlyForecast hourly={forecast.hourly} />}
           {forecast && <DailyForecast daily={forecast.daily} />}
+          {radarConfig && <RadarMini config={radarConfig} center={center} />}
         </div>
         <div className="flex flex-col gap-4">
           <AqiCard aqi={airQuality} />
           <PollenCard pollen={pollenData} />
           <SunMoonCard sunrise={weather?.sunrise} sunset={weather?.sunset} />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {weather && <OtherStatsGrid weather={weather} />}
-            {radarConfig && <RadarMini config={radarConfig} center={center} />}
-          </div>
+          {weather && <OtherStatsGrid weather={weather} />}
         </div>
       </div>
     </div>
