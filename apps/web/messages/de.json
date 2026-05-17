@@ -4,5 +4,8 @@
   },
   "nav": {
     "weather": "Wetter"
+  },
+  "pollen": {
+    "title": "Pollen"
   }
 }

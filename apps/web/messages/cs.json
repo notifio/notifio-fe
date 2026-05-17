@@ -4,5 +4,8 @@
   },
   "nav": {
     "weather": "Počasí"
+  },
+  "pollen": {
+    "title": "Pyl"
   }
 }

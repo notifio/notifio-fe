@@ -73,7 +73,7 @@ export default function WeatherPage() {
 
   if (weatherError && !weather) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8">
         <BackLink label={tcommon('back')} />
         <div className="mt-6 rounded-2xl border border-danger/30 bg-danger/10 p-6 text-center">
           <h2 className="text-base font-semibold text-danger">{twp('error.title')}</h2>
@@ -83,7 +83,7 @@ export default function WeatherPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 md:py-10">
+    <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
       <BackLink label={tcommon('back')} />
 
       <div className="mt-4">
@@ -109,8 +109,10 @@ export default function WeatherPage() {
           <AqiCard aqi={airQuality} />
           <PollenCard pollen={pollenData} />
           <SunMoonCard sunrise={weather?.sunrise} sunset={weather?.sunset} />
-          {weather && <OtherStatsGrid weather={weather} />}
-          {radarConfig && <RadarMini config={radarConfig} center={center} />}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {weather && <OtherStatsGrid weather={weather} />}
+            {radarConfig && <RadarMini config={radarConfig} center={center} />}
+          </div>
         </div>
       </div>
     </div>

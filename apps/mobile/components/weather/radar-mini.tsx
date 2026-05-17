@@ -1,12 +1,14 @@
 import { IconArrowsMaximize, IconX } from '@tabler/icons-react-native';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { UrlTile } from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { RadarConfig } from '@notifio/api-client';
 import { RADAR_PRECIPITATION_LEGEND } from '@notifio/shared/weather';
 
+import { DARK_MAP_STYLE } from '../../lib/map-style-dark';
 import { buildRadarTileUrl } from '../../lib/radar-url';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -20,7 +22,8 @@ interface Props {
 
 export function RadarMini({ config, center }: Props) {
   const { t } = useTranslation();
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
+  const androidDarkStyle = Platform.OS === 'android' && isDark ? DARK_MAP_STYLE : undefined;
   const [showForecast, setShowForecast] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -70,6 +73,8 @@ export function RadarMini({ config, center }: Props) {
           zoomEnabled={false}
           rotateEnabled={false}
           pitchEnabled={false}
+          userInterfaceStyle={isDark ? 'dark' : 'light'}
+          customMapStyle={androidDarkStyle}
         >
           <UrlTile urlTemplate={tileUrl} maximumZ={config.bounds.maxZoom} opacity={0.7} />
         </MapView>
@@ -95,7 +100,10 @@ export function RadarMini({ config, center }: Props) {
         animationType="slide"
         onRequestClose={() => setExpanded(false)}
       >
-        <View style={[styles.overlay, { backgroundColor: colors.background }]}>
+        <SafeAreaView
+          edges={['top', 'bottom']}
+          style={[styles.overlay, { backgroundColor: colors.background }]}
+        >
           <View style={[styles.overlayHeader, { borderBottomColor: colors.border }]}>
             <Text style={[styles.title, { color: colors.text }]}>{t('radar.title')}</Text>
             <Pressable onPress={() => setExpanded(false)} hitSlop={12}>
@@ -110,13 +118,15 @@ export function RadarMini({ config, center }: Props) {
               latitudeDelta: 2,
               longitudeDelta: 2,
             }}
+            userInterfaceStyle={isDark ? 'dark' : 'light'}
+            customMapStyle={androidDarkStyle}
           >
             <UrlTile urlTemplate={tileUrl} maximumZ={config.bounds.maxZoom} opacity={0.75} />
           </MapView>
           <Text style={[styles.attribution, { padding: theme.spacing.md, color: colors.textMuted }]}>
             {config.attribution}
           </Text>
-        </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );

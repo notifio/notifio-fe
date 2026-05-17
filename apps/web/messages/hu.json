@@ -4,5 +4,8 @@
   },
   "nav": {
     "weather": "Időjárás"
+  },
+  "pollen": {
+    "title": "Pollen"
   }
 }

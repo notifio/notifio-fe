@@ -1,19 +1,14 @@
 import type { Icon } from '@tabler/icons-react-native';
 import {
-  IconChevronDown,
-  IconChevronUp,
   IconCloud,
   IconCloudFog,
   IconCloudRain,
   IconCloudStorm,
   IconDroplet,
   IconEye,
-  IconGauge,
   IconMist,
-  IconMoon,
   IconSnowflake,
   IconSun,
-  IconSunrise,
   IconTemperature,
   IconWind,
 } from '@tabler/icons-react-native';
@@ -82,7 +77,6 @@ export function WeatherCard({
   const { t } = useTranslation();
   const router = useRouter();
   const [expandedChip, setExpandedChip] = useState<ExpandedChip>(null);
-  const [expanded, setExpanded] = useState(false);
   const { i18n } = useTranslation();
   const locale = i18n.language as RelativeTimeLocale;
 
@@ -195,53 +189,6 @@ export function WeatherCard({
             </View>
           )}
 
-          <Pressable
-            onPress={() => setExpanded((v) => !v)}
-            style={[styles.showMoreRow, { borderTopColor: withOpacity(style.textColor, 0.1) }]}
-          >
-            <Text style={[styles.showMoreText, { color: color70 }]}>
-              {expanded ? t('weatherCard.showLess') : t('weatherCard.showMore')}
-            </Text>
-            {expanded ? (
-              <IconChevronUp size={14} color={color70} />
-            ) : (
-              <IconChevronDown size={14} color={color70} />
-            )}
-          </Pressable>
-
-          {expanded && (
-            <View style={[styles.expandedBlock, { borderTopColor: withOpacity(style.textColor, 0.1) }]}>
-              <View style={styles.expandedRow}>
-                <IconGauge size={14} color={color60} />
-                <Text style={[styles.detailText, { color: color60 }]}>
-                  {weather.pressure} hPa
-                </Text>
-              </View>
-              {weather.sunrise && (
-                <View style={styles.expandedRow}>
-                  <IconSunrise size={14} color={color60} />
-                  <Text style={[styles.detailText, { color: color60 }]}>
-                    {new Date(weather.sunrise).toLocaleTimeString(locale, {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Text>
-                </View>
-              )}
-              {weather.sunset && (
-                <View style={styles.expandedRow}>
-                  <IconMoon size={14} color={color60} />
-                  <Text style={[styles.detailText, { color: color60 }]}>
-                    {new Date(weather.sunset).toLocaleTimeString(locale, {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-
           <Text style={[styles.updatedAt, { color: color40 }]}>
             {formatRelativeTime(weather.updatedAt, locale)}
           </Text>
@@ -328,31 +275,5 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.xs,
     textAlign: 'right',
     marginTop: theme.spacing.md,
-  },
-  expandedBlock: {
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.lg,
-  },
-  expandedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
-  showMoreRow: {
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  showMoreText: {
-    fontSize: theme.fontSize.sm,
-    ...theme.font.medium,
   },
 });

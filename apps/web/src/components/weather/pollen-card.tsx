@@ -49,7 +49,7 @@ export function PollenCard({ pollen }: Props) {
     <section className="rounded-2xl border border-border bg-card p-4">
       <header className="pb-3">
         <h3 className="text-sm font-semibold text-text-primary">
-          {t('title', { default: 'Pollen' })}
+          {t('title')}
         </h3>
       </header>
       <div className="flex flex-col gap-2">
