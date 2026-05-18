@@ -25,9 +25,6 @@ const CATEGORY_FILTERS: FilterDef[] = [
   { key: 'traffic', prefixes: ['traffic'] },
   { key: 'outages', prefixes: ['outage'] },
   { key: 'pollen', prefixes: ['pollen'] },
-  // 'events' chip dropped — duplicates the new top-level Events tab
-  // (user reports). The notificationsPage.filters.events i18n key
-  // becomes dead but kept for now (Step 11.5 cleanup).
 ];
 
 function matchesFilter(category: string, filter: string): boolean {
@@ -91,11 +88,12 @@ function groupByDay(
 
 export function HistorySection() {
   const t = useTranslations('notificationsPage');
+  const tNotif = useTranslations('notifications');
   const { fullyConfigured } = usePermissionStatus();
 
   type Lifecycle = 'active' | 'upcoming' | 'resolved' | 'all';
   const [lifecycle, setLifecycle] = useState<Lifecycle>('active');
-  const { items, isLoading, hasMore, loadMore } = useNotificationHistory({
+  const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory({
     limit: 30,
     status: lifecycle,
   });
@@ -158,7 +156,17 @@ export function HistorySection() {
 
       {/* Notification list */}
       <div className="mt-5">
-        {isLoading && items.length === 0 ? (
+        {error && items.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+            <p className="text-sm text-muted">{tNotif('error')}</p>
+            <button
+              onClick={refresh}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-accent/90"
+            >
+              {tNotif('retry')}
+            </button>
+          </div>
+        ) : isLoading && items.length === 0 ? (
           <div className="flex justify-center py-16">
             <IconLoader2 size={28} className="animate-spin text-accent" />
           </div>
@@ -183,22 +191,13 @@ export function HistorySection() {
                   <div className="space-y-1.5">
                     {group.grouped.map((g) => {
                       itemCount++;
-                      const isRead = g.item.status !== 'sent';
                       return (
                         <Fragment key={g.item.id}>
-                          <div
-                            className={cn(
-                              'relative rounded-xl',
-                              !isRead && 'bg-accent/[0.03]',
-                            )}
-                          >
+                          <div className="relative rounded-xl">
                             <AlertCard
                               notification={g.item}
                               duplicateCount={g.count}
                             />
-                            {!isRead && (
-                              <div className="absolute right-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent" />
-                            )}
                           </div>
                           {itemCount === 3 && <AdPlaceholder variant="inline" />}
                           {itemCount === 7 && <UpsellCard />}
@@ -217,7 +216,7 @@ export function HistorySection() {
                 className="mx-auto flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
               >
                 {isLoading && <IconLoader2 size={14} className="animate-spin" />}
-                {t('history.markAllRead')}
+                {tNotif('loadMore')}
               </button>
             )}
           </div>

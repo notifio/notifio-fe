@@ -13,12 +13,12 @@ import {
   COMMUNITY_CATEGORIES,
   SEVERITY_COLORS,
   hexToRgba,
-  isResolved,
 } from '@notifio/shared';
 
 import { RelativeTime } from '@/components/ui/relative-time';
 import { api } from '@/lib/api';
 import { getNotificationIcon } from '@/lib/notification-icons';
+import { normalizeSeverity } from '@/lib/severity';
 
 interface AlertCardProps {
   notification: NotificationHistoryItem;
@@ -45,11 +45,18 @@ export function AlertCard({
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === 'dark';
 
-  const resolved = isResolved(notification);
+  // Resolved derivation: drive from typed fields only. Delivery `status`
+  // and title prefixes are intentionally NOT consulted — they produced
+  // false positives (failed/filtered deliveries shown as "Ukončené",
+  // stale weather-warning all-clear titles after window extensions).
+  const resolved =
+    notification.notificationType === 'all_clear' ||
+    notification.eventStatus === 'resolved';
+  const severity = normalizeSeverity(notification.severity);
   const icon = getNotificationIcon(notification.category);
   const accentColor = resolved
     ? '#34C759'
-    : (ACCENT_COLORS[notification.severity] ?? '#3A86FF');
+    : (ACCENT_COLORS[severity] ?? '#3A86FF');
 
   const iconBgAlpha = isDark ? 0.15 : 0.1;
   const isCommunity = COMMUNITY_CATEGORIES.has(notification.category);
@@ -141,12 +148,12 @@ export function AlertCard({
                 className="rounded px-2 py-0.5 text-[10px] font-medium"
                 style={{
                   backgroundColor:
-                    SEVERITY_COLORS[notification.severity]?.bg ?? 'rgba(58,134,255,0.15)',
+                    SEVERITY_COLORS[severity]?.bg ?? 'rgba(58,134,255,0.15)',
                   color:
-                    SEVERITY_COLORS[notification.severity]?.text ?? '#3A86FF',
+                    SEVERITY_COLORS[severity]?.text ?? '#3A86FF',
                 }}
               >
-                {tsev(notification.severity)}
+                {tsev(severity)}
               </span>
             )}
 
