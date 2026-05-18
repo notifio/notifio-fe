@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react-native';
 
 import { getCategoryVisual } from '@notifio/shared/alert-card';
+import { categoryBeToShared } from '@notifio/shared/constants';
 
 const SLUG_TO_ICON: Record<string, Icon> = {
   'activity': IconActivity,
@@ -28,6 +29,7 @@ const SLUG_TO_ICON: Record<string, Icon> = {
 };
 
 export function getNotificationIcon(category: string): { Icon: Icon; color: string } {
-  const { iconSlug, color } = getCategoryVisual(category);
+  const shared = categoryBeToShared(category) ?? category;
+  const { iconSlug, color } = getCategoryVisual(shared);
   return { Icon: SLUG_TO_ICON[iconSlug] ?? IconInfoCircle, color };
 }

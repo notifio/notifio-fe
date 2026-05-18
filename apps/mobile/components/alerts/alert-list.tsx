@@ -15,7 +15,7 @@ import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
 import { TogglePill } from '../ui/toggle-pill';
 
-type TabFilter = 'active' | 'upcoming' | 'ended' | 'all';
+type TabFilter = 'active' | 'upcoming' | 'resolved' | 'all';
 
 // Category chip filters — mirrors web's CATEGORY_FILTERS in
 // apps/web/src/app/(app)/notifications/history-section.tsx. Same
@@ -54,15 +54,14 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
-  // Default status is `active` — count any non-default for the badge.
-  const activeFilterCount = tab === 'active' ? 0 : 1;
+  // Defaults: tab=active, category=all. Count any non-default.
+  const activeFilterCount =
+    (tab === 'active' ? 0 : 1) + (categoryFilter === 'all' ? 0 : 1);
 
-  // Server-side lifecycle filter so pagination + total stay correct. Map
-  // FE tab labels to BE's status enum: ended → resolved.
-  const status: 'upcoming' | 'active' | 'resolved' | 'all' =
-    tab === 'ended' ? 'resolved' : tab;
-  const { items, isLoading, hasMore, loadMore, refresh } = useNotificationHistory({
-    status,
+  // Internal tab value now matches BE's status enum directly — no
+  // remapping needed after `ended → resolved` rename.
+  const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory({
+    status: tab,
   });
 
   const filtered = useMemo(() => {
@@ -71,12 +70,20 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   }, [categoryFilter, items]);
 
   const renderItem = useCallback(
-    ({ item }: { item: NotificationHistoryItem }) => (
-      <AlertCard
-        item={notificationToCard(item as unknown as NotificationHistoryItemInput)}
-        onPress={onAlertPress ? () => onAlertPress(item) : undefined}
-      />
-    ),
+    ({ item }: { item: NotificationHistoryItem }) => {
+      // Bypass adapter's broken `resolved` derivation — compute inline
+      // from typed fields and override the adapter output. Delivery
+      // status and title prefixes intentionally NOT consulted.
+      const card = notificationToCard(item as unknown as NotificationHistoryItemInput);
+      const resolved =
+        item.notificationType === 'all_clear' || item.eventStatus === 'resolved';
+      return (
+        <AlertCard
+          item={{ ...card, resolved }}
+          onPress={onAlertPress ? () => onAlertPress(item) : undefined}
+        />
+      );
+    },
     [onAlertPress],
   );
 
@@ -128,7 +135,7 @@ export function AlertList({ onAlertPress }: AlertListProps) {
       <FlatList
         data={filtered}
         renderItem={renderItem}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => String(item.id)}
         ItemSeparatorComponent={ItemSeparator}
         contentContainerStyle={[styles.list, filtered.length === 0 && styles.emptyList]}
         showsVerticalScrollIndicator={false}
@@ -145,8 +152,10 @@ export function AlertList({ onAlertPress }: AlertListProps) {
         ListEmptyComponent={
           isLoading ? (
             <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+          ) : error ? (
+            <EmptyState icon={IconBell} message={t('notifications.error')} />
           ) : (
-            <EmptyState icon={IconBell} message={t('alerts.noNotifications')} />
+            <EmptyState icon={IconBell} message={t('notifications.empty')} />
           )
         }
       />

@@ -13,6 +13,7 @@ import { formatRelativeTime, type RelativeTimeLocale } from '@notifio/shared/for
 
 import { api } from '../../lib/api';
 import { getNotificationIcon } from '../../lib/category-icons';
+import { normalizeSeverity } from '../../lib/severity';
 import { theme } from '../../lib/theme';
 import { showToast } from '../../lib/toast';
 import { useAppTheme } from '../../providers/theme-provider';
@@ -29,7 +30,7 @@ export function AlertCard({ item, onPress }: AlertCardProps) {
   const locale = i18n.language as RelativeTimeLocale;
   const { Icon, color: iconColor } = getNotificationIcon(item.category);
 
-  const severityKey = item.severityCode ?? 'info';
+  const severityKey = normalizeSeverity(item.severityCode ?? 'info');
   const severityPill = SEVERITY_COLORS[severityKey] ?? {
     bg: 'rgba(58,134,255,0.15)',
     text: '#3A86FF',
