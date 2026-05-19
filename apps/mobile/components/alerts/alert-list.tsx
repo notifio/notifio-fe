@@ -13,15 +13,15 @@ import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
-import { TogglePill } from '../ui/toggle-pill';
 
 type TabFilter = 'active' | 'upcoming' | 'resolved' | 'all';
+
+const LIFECYCLE_OPTIONS: readonly TabFilter[] = ['active', 'upcoming', 'resolved', 'all'];
 
 // Category chip filters — mirrors web's CATEGORY_FILTERS in
 // apps/web/src/app/(app)/notifications/history-section.tsx. Same
 // prefix-matching against NotificationHistoryItem.category. 'events'
 // chip dropped from both apps (overlaps with the new top Events tab).
-// TODO Step 11.5: extract this + web's copy to shared.
 type CategoryFilter = 'all' | 'weather' | 'traffic' | 'outages' | 'pollen';
 
 const CATEGORY_FILTERS: ReadonlyArray<{ id: CategoryFilter; prefixes: string[] }> = [
@@ -89,47 +89,63 @@ export function AlertList({ onAlertPress }: AlertListProps) {
 
   return (
     <View style={styles.container}>
-      {/* Top filter row: Filter button (status → bottom sheet) +
-          inline category chips. Filter button shows active-count
-          badge when status filter is non-default. */}
+      {/* Top filter row: horizontal-scrollable lifecycle text-tabs on
+          the left; filter icon button on the right opens the category
+          bottom sheet. Lifecycle labels reuse the canonical
+          notificationsPage.lifecycle.* keys (full 6-locale coverage in
+          shared) — the old mobile `alerts.upcoming` key didn't exist
+          in any locale and was rendering as raw text. */}
       <View style={styles.filterTopRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.lifecycleRowContent}
+          style={styles.lifecycleRow}
+        >
+          {LIFECYCLE_OPTIONS.map((key) => {
+            const active = tab === key;
+            return (
+              <Pressable
+                key={key}
+                onPress={() => setTab(key)}
+                style={styles.lifecycleTab}
+              >
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.lifecycleText,
+                    {
+                      color: active ? colors.primary : colors.textMuted,
+                      fontWeight: active ? '600' : '500',
+                    },
+                  ]}
+                >
+                  {t(`notificationsPage.lifecycle.${key}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
         <Pressable
           onPress={() => setFilterSheetOpen(true)}
-          style={[styles.filterButton, { borderColor: colors.border }]}
+          style={[styles.filterIconButton, { borderColor: colors.border }]}
+          accessibilityLabel={t('alerts.filter')}
         >
-          <IconAdjustments size={14} color={colors.text} />
-          <Text style={[styles.filterButtonText, { color: colors.text }]}>
-            {t('alerts.filter')}
-          </Text>
+          <IconAdjustments size={16} color={colors.text} />
           {activeFilterCount > 0 && (
             <View style={[styles.filterBadge, { backgroundColor: colors.primary }]}>
               <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
             </View>
           )}
         </Pressable>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chipRowContent}
-          style={styles.chipRow}
-        >
-          {CATEGORY_FILTERS.map((filter) => (
-            <TogglePill
-              key={filter.id}
-              active={categoryFilter === filter.id}
-              label={t(`alerts.filters.${filter.id}`)}
-              onPress={() => setCategoryFilter(filter.id)}
-            />
-          ))}
-        </ScrollView>
       </View>
 
       <FilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
-        status={tab}
-        onStatusChange={setTab}
+        category={categoryFilter}
+        onCategoryChange={setCategoryFilter}
       />
 
       <FlatList
@@ -167,19 +183,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  chipRow: {
+  lifecycleRow: {
     // flexGrow: 0 — without this the horizontal ScrollView fills the
-    // parent's available height and chip Pressables stretch vertically.
+    // parent's available height and lifecycle Pressables stretch.
     flex: 1,
-    flexGrow: 0,
+    flexGrow: 1,
   },
-  chipRowContent: {
-    gap: 6,
+  lifecycleRowContent: {
+    gap: 4,
     alignItems: 'center',
-    // paddingLeft adds air after the parent row's gap so the first
-    // chip doesn't visually touch the Filter button.
-    paddingLeft: 4,
-    paddingRight: SPACING.screenH,
+    paddingHorizontal: 2,
+  },
+  lifecycleTab: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  lifecycleText: {
+    fontSize: 14,
   },
   filterTopRow: {
     flexDirection: 'row',
@@ -187,20 +207,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.screenH,
     paddingVertical: SPACING.subControlPadV,
     marginBottom: SPACING.subControlBottom,
-    gap: 12,
+    gap: 8,
   },
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+  filterIconButton: {
+    width: 32,
+    height: 32,
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 999,
-  },
-  filterButtonText: {
-    fontSize: theme.fontSize.xs,
-    ...theme.font.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
   filterBadge: {
     minWidth: 16,

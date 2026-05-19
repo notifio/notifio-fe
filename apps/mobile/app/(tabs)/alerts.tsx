@@ -9,15 +9,18 @@ import { AlertList } from '../../components/alerts/alert-list';
 import { MyEventsList } from '../../components/events/my-events-list';
 import { RemindersTabContent } from '../../components/reminders/reminders-tab-content';
 import { ProGate } from '../../components/ui/pro-gate';
-import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
 import { SPACING } from '../../lib/spacing';
 import { useAppTheme } from '../../providers/theme-provider';
 
 type TabKey = 'history' | 'events' | 'reminders';
 
+// Tab #1 label points at nav.notifications ("Notifikácie") instead of
+// reminders.tabs.history ("História") — same Slovak string in all 6
+// locales via shared, no new copy. The previous "História" sub-tab
+// clashed semantically with the "Aktívne" lifecycle filter below.
 const TABS: ReadonlyArray<{ id: TabKey; labelKey: string }> = [
-  { id: 'history', labelKey: 'reminders.tabs.history' },
+  { id: 'history', labelKey: 'nav.notifications' },
   { id: 'events', labelKey: 'reminders.tabs.events' },
   { id: 'reminders', labelKey: 'reminders.tabs.reminders' },
 ];
@@ -34,21 +37,16 @@ export default function FeedScreen() {
     }
   };
 
+  // ScreenHeader ("Upozornenia") dropped — bottom-tab "Notifikácie" +
+  // first sub-tab "Notifikácie" already establish the page identity;
+  // a separate header was visual noise above them.
   return (
-    <ScreenLayout
-      header={
-        <ScreenHeader
-          title={t('screens.alerts.title')}
-          subtitle={t('screens.alerts.subtitle')}
-          style={{ paddingTop: SPACING.headerTop, marginBottom: SPACING.headerToTabs }}
-        />
-      }
-    >
+    <ScreenLayout>
       {/* Tab bar — orange underline + orange text for active state
           (matches web). flex:1 per tab + adjustsFontSizeToFit so
           long Slovak labels like "Pripomienky" never wrap mid-word
           on iPhone 16e (~131pt per tab). */}
-      <View style={[styles.tabBar, { marginBottom: SPACING.tabsToContent }]}>
+      <View style={[styles.tabBar, { marginTop: SPACING.headerTop, marginBottom: SPACING.tabsToContent }]}>
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
