@@ -13,17 +13,21 @@ type Tab = 'history' | 'events' | 'reminders';
 
 export default function NotificationsPage() {
   const t = useTranslations('notificationsPage');
+  const tNav = useTranslations('nav');
   const [activeTab, setActiveTab] = useState<Tab>('history');
+
+  // Tab #1 ("history") was previously labeled "História" via
+  // notificationsPage.tabs.history. The label now reads "Notifikácie"
+  // by repointing only this slot at nav.notifications — same Slovak
+  // string in all 6 locales, no shared edit. Page h1 is dropped to
+  // avoid the duplicate-label conflict with the renamed tab.
+  const labelFor = (tab: Tab) =>
+    tab === 'history' ? tNav('notifications') : t(`tabs.${tab}`);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-8 md:py-10">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text-primary">{t('title')}</h1>
-      </div>
-
       {/* Tab bar */}
-      <div className="mt-6 flex border-b border-border">
+      <div className="flex border-b border-border">
         {(['history', 'events', 'reminders'] as const).map((tab) => (
           <button
             key={tab}
@@ -35,7 +39,7 @@ export default function NotificationsPage() {
                 : 'text-text-secondary hover:text-text-primary',
             )}
           >
-            {t(`tabs.${tab}`)}
+            {labelFor(tab)}
             {activeTab === tab && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-accent" />
             )}
