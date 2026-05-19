@@ -96,10 +96,24 @@ export function AlertCard({
     ? tcb(notification.category)
     : null;
 
+  // Outer container is intentionally a div role="button" instead of a
+  // native <button>. The vote actions inside this card are <button>s
+  // (community events), and nesting <button> inside <button> is invalid
+  // HTML — Next 15's React 19 reconciler throws a hydration error.
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      className={`flex w-full cursor-pointer text-left rounded-xl ${isSelected ? 'border-l-[5px]' : 'border-l-[3px]'} bg-card transition-colors duration-150 hover:bg-card/80 ${isLoading ? 'animate-pulse' : ''}`}
+      onKeyDown={handleKeyDown}
+      className={`flex w-full cursor-pointer text-left rounded-xl ${isSelected ? 'border-l-[5px]' : 'border-l-[3px]'} bg-card transition-colors duration-150 hover:bg-card/80 focus-visible:outline-2 focus-visible:outline-accent ${isLoading ? 'animate-pulse' : ''}`}
       style={{ borderLeftColor: accentColor, opacity: resolved ? 0.55 : 1 }}
     >
       <div className="flex min-w-0 flex-1 gap-3 p-3">
@@ -207,6 +221,6 @@ export function AlertCard({
           )}
         </div>
       </div>
-    </button>
+    </div>
   );
 }
