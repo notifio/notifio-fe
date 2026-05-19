@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Пилок",
     "noData": "Наразі немає активних видів пилку."
+  },
+  "localTabs": {
+    "hlasenia": "Звіти"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "Немає звітів",
+      "subtitle": "Додайте звіт з мапи",
+      "openMap": "Відкрити мапу"
+    }
   }
 }

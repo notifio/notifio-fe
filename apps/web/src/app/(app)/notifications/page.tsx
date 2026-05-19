@@ -14,15 +14,24 @@ type Tab = 'history' | 'events' | 'reminders';
 export default function NotificationsPage() {
   const t = useTranslations('notificationsPage');
   const tNav = useTranslations('nav');
+  // TODO: migrate localTabs.hlasenia + localEmpty.* to @notifio/shared
+  // in next shared bump and drop the local-namespace overrides in
+  // apps/web/messages/*.json. Shared wins on overlap (i18n/request.ts),
+  // so once shared has "Hlásenia" the local entry becomes a no-op.
+  const tLocalTabs = useTranslations('localTabs');
   const [activeTab, setActiveTab] = useState<Tab>('history');
 
   // Tab #1 ("history") was previously labeled "História" via
   // notificationsPage.tabs.history. The label now reads "Notifikácie"
-  // by repointing only this slot at nav.notifications — same Slovak
-  // string in all 6 locales, no shared edit. Page h1 is dropped to
-  // avoid the duplicate-label conflict with the renamed tab.
-  const labelFor = (tab: Tab) =>
-    tab === 'history' ? tNav('notifications') : t(`tabs.${tab}`);
+  // by repointing only this slot at nav.notifications. Tab #2 ("events")
+  // was "Udalosti" via notificationsPage.tabs.events; it now reads
+  // "Hlásenia" via the local override (no shared edit possible since
+  // shared wins on overlap with notificationsPage.tabs.events).
+  const labelFor = (tab: Tab) => {
+    if (tab === 'history') return tNav('notifications');
+    if (tab === 'events') return tLocalTabs('hlasenia');
+    return t(`tabs.${tab}`);
+  };
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-8 md:py-10">

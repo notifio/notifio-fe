@@ -1,22 +1,30 @@
 'use client';
 
 import {
-  IconAlertTriangle,
   IconCheck,
   IconLoader2,
+  IconMapPin,
   IconTrash,
 } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useUserEvents } from '@notifio/shared/hooks';
 
 import { useToast } from '@/components/ui/toast';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
+
+type Lifecycle = 'active' | 'resolved' | 'all';
+const LIFECYCLE_OPTIONS: readonly Lifecycle[] = ['active', 'resolved', 'all'];
 
 export function EventsSection() {
   const t = useTranslations('profile');
   const te = useTranslations('events');
+  const tnp = useTranslations('notificationsPage');
+  // TODO: migrate localEmpty.* to @notifio/shared in next shared bump.
+  const tLocalEmpty = useTranslations('localEmpty');
   const toast = useToast();
   const {
     events,
@@ -24,6 +32,17 @@ export function EventsSection() {
     updateEvent,
     refresh: refetch,
   } = useUserEvents();
+
+  // Lifecycle filter: BE has no `?status=` on /events/mine. UserEvent
+  // carries only `isResolved: boolean` (2-state), so the strip exposes
+  // Active / Resolved / All — no `upcoming` (user-reported events
+  // don't have an upcoming state today). Filter is client-side only.
+  const [lifecycle, setLifecycle] = useState<Lifecycle>('active');
+  const filteredEvents = useMemo(() => {
+    if (lifecycle === 'all') return events;
+    if (lifecycle === 'active') return events.filter((e) => !e.isResolved);
+    return events.filter((e) => e.isResolved);
+  }, [events, lifecycle]);
 
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -60,9 +79,28 @@ export function EventsSection() {
 
   return (
     <section>
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
-        {t('myEvents.title')}
-      </h2>
+      {/* Lifecycle strip — Active / Resolved / All. Mirrors the
+          segmented control on the Notifikácie sub-tab. No filter sheet
+          on Hlásenia until BE adds scope (Mine/All) or category
+          filters; the strip alone covers the practical use cases for
+          user-reported events. The previous "MOJE HLÁSENIA" h2 is
+          dropped — the tab label "Hlásenia" already provides context. */}
+      <div className="inline-flex rounded-lg border border-border bg-card p-1">
+        {LIFECYCLE_OPTIONS.map((key) => (
+          <button
+            key={key}
+            onClick={() => setLifecycle(key)}
+            className={cn(
+              'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+              lifecycle === key
+                ? 'bg-accent text-white'
+                : 'text-text-secondary hover:text-text-primary',
+            )}
+          >
+            {tnp(`lifecycle.${key}`)}
+          </button>
+        ))}
+      </div>
 
       <div className="mt-4">
         {eventsLoading ? (
@@ -71,14 +109,26 @@ export function EventsSection() {
               <div key={i} className="h-14 animate-pulse rounded-xl bg-card" />
             ))}
           </div>
-        ) : events.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-8 text-center">
-            <IconAlertTriangle size={32} className="mx-auto text-muted" />
-            <p className="mt-2 text-sm text-muted">{t('myEvents.empty')}</p>
+        ) : filteredEvents.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+            <IconMapPin size={36} className="mx-auto text-muted" />
+            <p className="mt-3 text-sm font-medium text-text-primary">
+              {tLocalEmpty('noReports.title')}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              {tLocalEmpty('noReports.subtitle')}
+            </p>
+            <Link
+              href="/map"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-accent/90"
+            >
+              <IconMapPin size={14} />
+              {tLocalEmpty('noReports.openMap')}
+            </Link>
           </div>
         ) : (
           <div className="space-y-2">
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <div key={event.eventId} className="flex items-center gap-3 rounded-xl bg-card px-4 py-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">

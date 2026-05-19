@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Peľ",
     "noData": "Aktuálne žiadne aktívne druhy peľu."
+  },
+  "localTabs": {
+    "hlasenia": "Hlásenia"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "Žiadne hlásenia",
+      "subtitle": "Pridaj nové hlásenie z mapy",
+      "openMap": "Otvoriť mapu"
+    }
   }
 }
