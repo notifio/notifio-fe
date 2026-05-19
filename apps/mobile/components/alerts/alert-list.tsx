@@ -1,7 +1,7 @@
 import { IconAdjustments, IconBell } from '@tabler/icons-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 import { notificationToCard, type NotificationHistoryItemInput } from '@notifio/shared/alert-card';
@@ -89,19 +89,14 @@ export function AlertList({ onAlertPress }: AlertListProps) {
 
   return (
     <View style={styles.container}>
-      {/* Top filter row: horizontal-scrollable lifecycle text-tabs on
-          the left; filter icon button on the right opens the category
-          bottom sheet. Lifecycle labels reuse the canonical
-          notificationsPage.lifecycle.* keys (full 6-locale coverage in
-          shared) — the old mobile `alerts.upcoming` key didn't exist
-          in any locale and was rendering as raw text. */}
+      {/* Top filter row: 4 equal-width lifecycle text-tabs on the left
+          (mirrors the sub-tab strip in alerts.tsx — proven pattern),
+          filter icon button on the right opens the category sheet.
+          Equal-width replaces horizontal-scroll because the 4 known
+          labels would otherwise overflow the row on iPhone SE-class
+          widths and clip the last tab ("Všetky") behind the icon. */}
       <View style={styles.filterTopRow}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.lifecycleRowContent}
-          style={styles.lifecycleRow}
-        >
+        <View style={styles.lifecycleRow}>
           {LIFECYCLE_OPTIONS.map((key) => {
             const active = tab === key;
             return (
@@ -112,6 +107,8 @@ export function AlertList({ onAlertPress }: AlertListProps) {
               >
                 <Text
                   numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.85}
                   style={[
                     styles.lifecycleText,
                     {
@@ -125,7 +122,7 @@ export function AlertList({ onAlertPress }: AlertListProps) {
               </Pressable>
             );
           })}
-        </ScrollView>
+        </View>
 
         <Pressable
           onPress={() => setFilterSheetOpen(true)}
@@ -184,18 +181,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   lifecycleRow: {
-    // flexGrow: 0 — without this the horizontal ScrollView fills the
-    // parent's available height and lifecycle Pressables stretch.
     flex: 1,
-    flexGrow: 1,
-  },
-  lifecycleRowContent: {
-    gap: 4,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 2,
   },
   lifecycleTab: {
-    paddingHorizontal: 10,
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
     paddingVertical: 6,
   },
   lifecycleText: {
@@ -204,7 +197,6 @@ const styles = StyleSheet.create({
   filterTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SPACING.screenH,
     paddingVertical: SPACING.subControlPadV,
     marginBottom: SPACING.subControlBottom,
     gap: 8,
@@ -232,7 +224,6 @@ const styles = StyleSheet.create({
     ...theme.font.semibold,
   },
   list: {
-    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {

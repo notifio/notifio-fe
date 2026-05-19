@@ -96,7 +96,6 @@ export default function FeedScreen() {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    paddingHorizontal: SPACING.screenH,
   },
   tabButton: {
     flex: 1,
