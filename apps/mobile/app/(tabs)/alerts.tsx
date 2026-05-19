@@ -16,12 +16,15 @@ import { useAppTheme } from '../../providers/theme-provider';
 type TabKey = 'history' | 'events' | 'reminders';
 
 // Tab #1 label points at nav.notifications ("Notifikácie") instead of
-// reminders.tabs.history ("História") — same Slovak string in all 6
-// locales via shared, no new copy. The previous "História" sub-tab
-// clashed semantically with the "Aktívne" lifecycle filter below.
+// reminders.tabs.history ("História"). Tab #2 label now uses the
+// local-override localTabs.hlasenia ("Hlásenia") instead of
+// reminders.tabs.events ("Udalosti") — shared doesn't own localTabs.*
+// so the override in lib/i18n.ts MOBILE_OVERRIDES passes through.
+// TODO: migrate localTabs.hlasenia to @notifio/shared in next shared
+// bump and revert this entry back to a shared key.
 const TABS: ReadonlyArray<{ id: TabKey; labelKey: string }> = [
   { id: 'history', labelKey: 'nav.notifications' },
-  { id: 'events', labelKey: 'reminders.tabs.events' },
+  { id: 'events', labelKey: 'localTabs.hlasenia' },
   { id: 'reminders', labelKey: 'reminders.tabs.reminders' },
 ];
 
