@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   toggleRow: {
-    paddingHorizontal: SPACING.screenH,
     paddingVertical: SPACING.subControlPadV,
     marginBottom: SPACING.subControlBottom,
   },

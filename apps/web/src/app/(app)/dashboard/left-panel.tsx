@@ -58,8 +58,8 @@ export function LeftPanel({
 }: LeftPanelProps) {
   const t = useTranslations('map');
   const td = useTranslations('digest');
-  const { weather, isLoading, error, refresh } = useWeather();
-  const { airQuality, isLoading: aqiIsLoading } = useAirQuality();
+  const { weather, isLoading, error, refresh } = useWeather(userLocation ?? DEFAULT_LOCATION);
+  const { airQuality, isLoading: aqiIsLoading } = useAirQuality(userLocation ?? DEFAULT_LOCATION);
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);

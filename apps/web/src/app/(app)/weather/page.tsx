@@ -58,8 +58,8 @@ export default function WeatherPage() {
   const center = userLocation ?? DEFAULT_LOCATION;
   const { locations } = useLocations();
 
-  const { weather, isLoading: weatherLoading, error: weatherError, refresh } = useWeather();
-  const { airQuality } = useAirQuality();
+  const { weather, isLoading: weatherLoading, error: weatherError, refresh } = useWeather(center);
+  const { airQuality } = useAirQuality(center);
   const { pollen: pollenData } = usePollen(center);
   const { forecast } = useForecast(center);
   const { config: radarConfig } = useRadarConfig();

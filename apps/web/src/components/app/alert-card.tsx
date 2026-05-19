@@ -13,12 +13,12 @@ import {
   COMMUNITY_CATEGORIES,
   SEVERITY_COLORS,
   hexToRgba,
-  isResolved,
 } from '@notifio/shared';
 
 import { RelativeTime } from '@/components/ui/relative-time';
 import { api } from '@/lib/api';
 import { getNotificationIcon } from '@/lib/notification-icons';
+import { normalizeSeverity } from '@/lib/severity';
 
 interface AlertCardProps {
   notification: NotificationHistoryItem;
@@ -45,11 +45,18 @@ export function AlertCard({
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === 'dark';
 
-  const resolved = isResolved(notification);
+  // Resolved derivation: drive from typed fields only. Delivery `status`
+  // and title prefixes are intentionally NOT consulted — they produced
+  // false positives (failed/filtered deliveries shown as "Ukončené",
+  // stale weather-warning all-clear titles after window extensions).
+  const resolved =
+    notification.notificationType === 'all_clear' ||
+    notification.eventStatus === 'resolved';
+  const severity = normalizeSeverity(notification.severity);
   const icon = getNotificationIcon(notification.category);
   const accentColor = resolved
     ? '#34C759'
-    : (ACCENT_COLORS[notification.severity] ?? '#3A86FF');
+    : (ACCENT_COLORS[severity] ?? '#3A86FF');
 
   const iconBgAlpha = isDark ? 0.15 : 0.1;
   const isCommunity = COMMUNITY_CATEGORIES.has(notification.category);
@@ -89,10 +96,24 @@ export function AlertCard({
     ? tcb(notification.category)
     : null;
 
+  // Outer container is intentionally a div role="button" instead of a
+  // native <button>. The vote actions inside this card are <button>s
+  // (community events), and nesting <button> inside <button> is invalid
+  // HTML — Next 15's React 19 reconciler throws a hydration error.
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      className={`flex w-full cursor-pointer text-left rounded-xl ${isSelected ? 'border-l-[5px]' : 'border-l-[3px]'} bg-card transition-colors duration-150 hover:bg-card/80 ${isLoading ? 'animate-pulse' : ''}`}
+      onKeyDown={handleKeyDown}
+      className={`flex w-full cursor-pointer text-left rounded-xl ${isSelected ? 'border-l-[5px]' : 'border-l-[3px]'} bg-card transition-colors duration-150 hover:bg-card/80 focus-visible:outline-2 focus-visible:outline-accent ${isLoading ? 'animate-pulse' : ''}`}
       style={{ borderLeftColor: accentColor, opacity: resolved ? 0.55 : 1 }}
     >
       <div className="flex min-w-0 flex-1 gap-3 p-3">
@@ -141,12 +162,12 @@ export function AlertCard({
                 className="rounded px-2 py-0.5 text-[10px] font-medium"
                 style={{
                   backgroundColor:
-                    SEVERITY_COLORS[notification.severity]?.bg ?? 'rgba(58,134,255,0.15)',
+                    SEVERITY_COLORS[severity]?.bg ?? 'rgba(58,134,255,0.15)',
                   color:
-                    SEVERITY_COLORS[notification.severity]?.text ?? '#3A86FF',
+                    SEVERITY_COLORS[severity]?.text ?? '#3A86FF',
                 }}
               >
-                {tsev(notification.severity)}
+                {tsev(severity)}
               </span>
             )}
 
@@ -200,6 +221,6 @@ export function AlertCard({
           )}
         </div>
       </div>
-    </button>
+    </div>
   );
 }

@@ -31,10 +31,9 @@ export default function OverviewScreen() {
   const { locations } = useLocations();
   const { profile } = useProfile();
 
-  // useWeather + useAirQuality from shared currently lock to DEFAULT_LOCATION.
-  // Tracked follow-up. warnings/events/nameday/pollen honor resolved location.
-  const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
-  const { airQuality } = useAirQuality();
+  const coords = { lat: location.lat, lng: location.lng };
+  const { weather, isLoading: weatherLoading, error, refresh } = useWeather(coords);
+  const { airQuality } = useAirQuality(coords);
   const { pollen } = usePollen(location);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(location);
   const { warnings } = useWeatherWarnings(location);

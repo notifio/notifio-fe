@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Pollen",
     "noData": "Derzeit keine aktiven Pollenarten."
+  },
+  "localTabs": {
+    "hlasenia": "Meldungen"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "Keine Meldungen",
+      "subtitle": "Füge eine Meldung über die Karte hinzu",
+      "openMap": "Karte öffnen"
+    }
   }
 }

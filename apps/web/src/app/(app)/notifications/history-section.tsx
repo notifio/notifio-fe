@@ -1,8 +1,14 @@
 'use client';
 
-import { IconBell, IconLoader2 } from '@tabler/icons-react';
+import {
+  IconAdjustmentsHorizontal,
+  IconBell,
+  IconCheck,
+  IconChevronDown,
+  IconLoader2,
+} from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 
@@ -13,6 +19,8 @@ import { UpsellCard } from '@/components/app/upsell-card';
 import { useNotificationHistory } from '@/hooks/use-notification-history';
 import { usePermissionStatus } from '@/hooks/use-permission-status';
 import { cn } from '@/lib/utils';
+
+import { NotificationFilterSheet, type Lifecycle } from './notification-filter-sheet';
 
 // ── Filter config ────────────────────────────────────────────────────
 interface FilterDef {
@@ -25,9 +33,6 @@ const CATEGORY_FILTERS: FilterDef[] = [
   { key: 'traffic', prefixes: ['traffic'] },
   { key: 'outages', prefixes: ['outage'] },
   { key: 'pollen', prefixes: ['pollen'] },
-  // 'events' chip dropped — duplicates the new top-level Events tab
-  // (user reports). The notificationsPage.filters.events i18n key
-  // becomes dead but kept for now (Step 11.5 cleanup).
 ];
 
 function matchesFilter(category: string, filter: string): boolean {
@@ -89,24 +94,45 @@ function groupByDay(
     .map((l) => ({ label: l, grouped: groupByEventId(dayBuckets.get(l)!) }));
 }
 
+const LIFECYCLE_OPTIONS: readonly Lifecycle[] = ['active', 'upcoming', 'resolved', 'all'];
+const CATEGORY_OPTIONS: readonly string[] = ['all', ...CATEGORY_FILTERS.map((f) => f.key)];
+
 export function HistorySection() {
   const t = useTranslations('notificationsPage');
+  const tNotif = useTranslations('notifications');
   const { fullyConfigured } = usePermissionStatus();
 
-  type Lifecycle = 'active' | 'upcoming' | 'resolved' | 'all';
   const [lifecycle, setLifecycle] = useState<Lifecycle>('active');
-  const { items, isLoading, hasMore, loadMore } = useNotificationHistory({
+  const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory({
     limit: 30,
     status: lifecycle,
   });
   const [activeFilter, setActiveFilter] = useState('all');
+
+  // Sheet drives the small-viewport (<640px) UI; categoryPopoverOpen
+  // drives the desktop inline-dropdown trigger.
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [categoryPopoverOpen, setCategoryPopoverOpen] = useState(false);
+  const categoryPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!categoryPopoverOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!categoryPopoverRef.current?.contains(e.target as Node)) {
+        setCategoryPopoverOpen(false);
+      }
+    };
+    window.addEventListener('mousedown', onClick);
+    return () => window.removeEventListener('mousedown', onClick);
+  }, [categoryPopoverOpen]);
 
   const filteredItems = useMemo(
     () => items.filter((n) => matchesFilter(n.category, activeFilter)),
     [items, activeFilter],
   );
 
-  const LIFECYCLE_OPTIONS: Lifecycle[] = ['active', 'upcoming', 'resolved', 'all'];
+  const activeFilterCount =
+    (lifecycle === 'active' ? 0 : 1) + (activeFilter === 'all' ? 0 : 1);
 
   const dayGroups = useMemo(
     () =>
@@ -120,45 +146,110 @@ export function HistorySection() {
 
   return (
     <div className="mt-6">
-      {/* Lifecycle chips (active / upcoming / resolved / all) */}
-      <div className="mb-2 flex flex-wrap gap-1.5">
-        {LIFECYCLE_OPTIONS.map((key) => (
+      {/* Desktop filter row (≥640px): segmented control + category dropdown trigger.
+          Small-viewport (<640px) collapses to a single Filter button that opens
+          the bottom slide-up sheet. */}
+      <div className="flex items-center gap-3">
+        {/* Segmented lifecycle control (sm+) */}
+        <div className="hidden rounded-lg border border-border bg-card p-1 sm:inline-flex">
+          {LIFECYCLE_OPTIONS.map((key) => (
+            <button
+              key={key}
+              onClick={() => setLifecycle(key)}
+              className={cn(
+                'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                lifecycle === key
+                  ? 'bg-accent text-white'
+                  : 'text-text-secondary hover:text-text-primary',
+              )}
+            >
+              {t(`lifecycle.${key}`)}
+            </button>
+          ))}
+        </div>
+
+        {/* Category dropdown trigger (sm+) */}
+        <div className="relative hidden sm:block" ref={categoryPopoverRef}>
           <button
-            key={key}
-            onClick={() => setLifecycle(key)}
+            onClick={() => setCategoryPopoverOpen((v) => !v)}
             className={cn(
-              'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
-              lifecycle === key
-                ? 'bg-accent text-white'
-                : 'border border-border text-text-secondary hover:text-text-primary',
+              'inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium transition-colors',
+              categoryPopoverOpen
+                ? 'bg-card text-text-primary'
+                : 'text-text-primary hover:bg-card',
             )}
+            aria-expanded={categoryPopoverOpen}
           >
-            {t(`lifecycle.${key}`)}
+            <IconAdjustmentsHorizontal size={14} />
+            <span>{t(`filters.${activeFilter}`)}</span>
+            <IconChevronDown
+              size={14}
+              className={cn('transition-transform', categoryPopoverOpen && 'rotate-180')}
+            />
           </button>
-        ))}
+          {categoryPopoverOpen && (
+            <div className="absolute left-0 z-20 mt-2 min-w-[180px] rounded-lg border border-border bg-background py-1 shadow-lg">
+              {CATEGORY_OPTIONS.map((key) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setActiveFilter(key);
+                    setCategoryPopoverOpen(false);
+                  }}
+                  className={cn(
+                    'flex w-full items-center justify-between px-3 py-2 text-xs transition-colors hover:bg-card',
+                    activeFilter === key
+                      ? 'text-accent font-medium'
+                      : 'text-text-primary',
+                  )}
+                >
+                  <span>{t(`filters.${key}`)}</span>
+                  {activeFilter === key && <IconCheck size={14} />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Small-viewport: single Filter button opening the bottom sheet */}
+        <button
+          onClick={() => setSheetOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-text-primary transition-colors hover:bg-card sm:hidden"
+        >
+          <IconAdjustmentsHorizontal size={14} />
+          <span>{t(`filters.${activeFilter}`)} · {t(`lifecycle.${lifecycle}`)}</span>
+          {activeFilterCount > 0 && (
+            <span className="ml-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Category pills */}
-      <div className="flex flex-wrap gap-1.5">
-        {['all', ...CATEGORY_FILTERS.map((f) => f.key)].map((key) => (
-          <button
-            key={key}
-            onClick={() => setActiveFilter(key)}
-            className={cn(
-              'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
-              activeFilter === key
-                ? 'bg-accent text-white'
-                : 'border border-border text-text-secondary hover:text-text-primary',
-            )}
-          >
-            {t(`filters.${key}`)}
-          </button>
-        ))}
-      </div>
+      <NotificationFilterSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        lifecycle={lifecycle}
+        onLifecycleChange={setLifecycle}
+        category={activeFilter}
+        onCategoryChange={setActiveFilter}
+        lifecycleOptions={LIFECYCLE_OPTIONS}
+        categoryOptions={CATEGORY_OPTIONS}
+      />
 
       {/* Notification list */}
       <div className="mt-5">
-        {isLoading && items.length === 0 ? (
+        {error && items.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-10 text-center">
+            <p className="text-sm text-muted">{tNotif('error')}</p>
+            <button
+              onClick={refresh}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-accent/90"
+            >
+              {tNotif('retry')}
+            </button>
+          </div>
+        ) : isLoading && items.length === 0 ? (
           <div className="flex justify-center py-16">
             <IconLoader2 size={28} className="animate-spin text-accent" />
           </div>
@@ -183,22 +274,13 @@ export function HistorySection() {
                   <div className="space-y-1.5">
                     {group.grouped.map((g) => {
                       itemCount++;
-                      const isRead = g.item.status !== 'sent';
                       return (
                         <Fragment key={g.item.id}>
-                          <div
-                            className={cn(
-                              'relative rounded-xl',
-                              !isRead && 'bg-accent/[0.03]',
-                            )}
-                          >
+                          <div className="relative rounded-xl">
                             <AlertCard
                               notification={g.item}
                               duplicateCount={g.count}
                             />
-                            {!isRead && (
-                              <div className="absolute right-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent" />
-                            )}
                           </div>
                           {itemCount === 3 && <AdPlaceholder variant="inline" />}
                           {itemCount === 7 && <UpsellCard />}
@@ -217,7 +299,7 @@ export function HistorySection() {
                 className="mx-auto flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-card disabled:opacity-50"
               >
                 {isLoading && <IconLoader2 size={14} className="animate-spin" />}
-                {t('history.markAllRead')}
+                {tNotif('loadMore')}
               </button>
             )}
           </div>

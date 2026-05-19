@@ -9,16 +9,22 @@ import { AlertList } from '../../components/alerts/alert-list';
 import { MyEventsList } from '../../components/events/my-events-list';
 import { RemindersTabContent } from '../../components/reminders/reminders-tab-content';
 import { ProGate } from '../../components/ui/pro-gate';
-import { ScreenHeader } from '../../components/ui/screen-header';
 import { ScreenLayout } from '../../components/ui/screen-layout';
 import { SPACING } from '../../lib/spacing';
 import { useAppTheme } from '../../providers/theme-provider';
 
 type TabKey = 'history' | 'events' | 'reminders';
 
+// Tab #1 label points at nav.notifications ("Notifikácie") instead of
+// reminders.tabs.history ("História"). Tab #2 label now uses the
+// local-override localTabs.hlasenia ("Hlásenia") instead of
+// reminders.tabs.events ("Udalosti") — shared doesn't own localTabs.*
+// so the override in lib/i18n.ts MOBILE_OVERRIDES passes through.
+// TODO: migrate localTabs.hlasenia to @notifio/shared in next shared
+// bump and revert this entry back to a shared key.
 const TABS: ReadonlyArray<{ id: TabKey; labelKey: string }> = [
-  { id: 'history', labelKey: 'reminders.tabs.history' },
-  { id: 'events', labelKey: 'reminders.tabs.events' },
+  { id: 'history', labelKey: 'nav.notifications' },
+  { id: 'events', labelKey: 'localTabs.hlasenia' },
   { id: 'reminders', labelKey: 'reminders.tabs.reminders' },
 ];
 
@@ -34,21 +40,16 @@ export default function FeedScreen() {
     }
   };
 
+  // ScreenHeader ("Upozornenia") dropped — bottom-tab "Notifikácie" +
+  // first sub-tab "Notifikácie" already establish the page identity;
+  // a separate header was visual noise above them.
   return (
-    <ScreenLayout
-      header={
-        <ScreenHeader
-          title={t('screens.alerts.title')}
-          subtitle={t('screens.alerts.subtitle')}
-          style={{ paddingTop: SPACING.headerTop, marginBottom: SPACING.headerToTabs }}
-        />
-      }
-    >
+    <ScreenLayout>
       {/* Tab bar — orange underline + orange text for active state
           (matches web). flex:1 per tab + adjustsFontSizeToFit so
           long Slovak labels like "Pripomienky" never wrap mid-word
           on iPhone 16e (~131pt per tab). */}
-      <View style={[styles.tabBar, { marginBottom: SPACING.tabsToContent }]}>
+      <View style={[styles.tabBar, { marginTop: SPACING.headerTop, marginBottom: SPACING.tabsToContent }]}>
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -98,7 +99,6 @@ export default function FeedScreen() {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    paddingHorizontal: SPACING.screenH,
   },
   tabButton: {
     flex: 1,

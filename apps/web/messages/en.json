@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Pollen",
     "noData": "No active pollen species right now."
+  },
+  "localTabs": {
+    "hlasenia": "Reports"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "No reports yet",
+      "subtitle": "Add a new report from the map",
+      "openMap": "Open map"
+    }
   }
 }

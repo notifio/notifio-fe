@@ -1,3 +1,4 @@
+import { IconCheck } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -5,61 +6,58 @@ import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { BottomSheet } from '../ui/bottom-sheet';
 
-type StatusFilter = 'active' | 'upcoming' | 'ended' | 'all';
+type CategoryFilter = 'all' | 'weather' | 'traffic' | 'outages' | 'pollen';
 
-const STATUS_OPTIONS: ReadonlyArray<{ id: StatusFilter; labelKey: string }> = [
-  { id: 'active', labelKey: 'alerts.active' },
-  { id: 'upcoming', labelKey: 'alerts.upcoming' },
-  { id: 'ended', labelKey: 'alerts.ended' },
-  { id: 'all', labelKey: 'alerts.all' },
+const CATEGORY_OPTIONS: ReadonlyArray<{ id: CategoryFilter; labelKey: string }> = [
+  { id: 'all', labelKey: 'alerts.filters.all' },
+  { id: 'weather', labelKey: 'alerts.filters.weather' },
+  { id: 'traffic', labelKey: 'alerts.filters.traffic' },
+  { id: 'outages', labelKey: 'alerts.filters.outages' },
+  { id: 'pollen', labelKey: 'alerts.filters.pollen' },
 ];
 
 interface FilterSheetProps {
   open: boolean;
   onClose: () => void;
-  status: StatusFilter;
-  onStatusChange: (status: StatusFilter) => void;
+  category: CategoryFilter;
+  onCategoryChange: (category: CategoryFilter) => void;
 }
 
-export function FilterSheet({ open, onClose, status, onStatusChange }: FilterSheetProps) {
+// Category-only bottom sheet. Lifecycle moved out to inline scroll-tabs
+// in alert-list (option-3 redesign). Selection applies on tap; the
+// "Done" button just closes — no draft state to commit.
+export function FilterSheet({ open, onClose, category, onCategoryChange }: FilterSheetProps) {
   const { colors } = useAppTheme();
   const { t } = useTranslation();
 
   return (
     <BottomSheet visible={open} onClose={onClose} title={t('alerts.filter')}>
       <View style={styles.body}>
-        <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>
-          {t('alerts.status')}
-        </Text>
-
-        <View style={styles.optionRow}>
-          {STATUS_OPTIONS.map((opt) => {
-            const active = status === opt.id;
-            return (
-              <Pressable
-                key={opt.id}
-                onPress={() => onStatusChange(opt.id)}
+        {CATEGORY_OPTIONS.map((opt) => {
+          const active = category === opt.id;
+          return (
+            <Pressable
+              key={opt.id}
+              onPress={() => onCategoryChange(opt.id)}
+              style={[
+                styles.option,
+                {
+                  backgroundColor: active ? `${colors.primary}1A` : 'transparent',
+                },
+              ]}
+            >
+              <Text
                 style={[
-                  styles.option,
-                  {
-                    backgroundColor: active ? colors.primary : 'transparent',
-                    borderColor: active ? colors.primary : colors.border,
-                  },
+                  styles.optionText,
+                  { color: active ? colors.primary : colors.text },
                 ]}
               >
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    styles.optionText,
-                    { color: active ? '#FFFFFF' : colors.textMuted },
-                  ]}
-                >
-                  {t(opt.labelKey)}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+                {t(opt.labelKey)}
+              </Text>
+              {active && <IconCheck size={18} color={colors.primary} />}
+            </Pressable>
+          );
+        })}
 
         <Pressable
           onPress={onClose}
@@ -75,33 +73,24 @@ export function FilterSheet({ open, onClose, status, onStatusChange }: FilterShe
 const styles = StyleSheet.create({
   body: {
     paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
     paddingBottom: theme.spacing['3xl'],
   },
-  sectionLabel: {
-    fontSize: theme.fontSize.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    ...theme.font.semibold,
-    marginBottom: theme.spacing.sm,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.lg,
-  },
   option: {
-    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-    borderRadius: 999,
-    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    marginBottom: 4,
   },
   optionText: {
-    fontSize: theme.fontSize.sm,
+    fontSize: theme.fontSize.md,
     ...theme.font.medium,
   },
   doneButton: {
+    marginTop: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
     borderRadius: theme.radius.lg,
     alignItems: 'center',
