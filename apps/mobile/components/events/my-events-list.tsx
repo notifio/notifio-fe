@@ -1,6 +1,6 @@
-import { IconAlertTriangle, IconCheck, IconTrash } from '@tabler/icons-react-native';
+import { IconCheck, IconMapPin, IconTrash } from '@tabler/icons-react-native';
 import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
@@ -12,7 +12,9 @@ import { formatDateTime } from '../../lib/format';
 import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
-import { EmptyState } from '../ui/empty-state';
+
+type Lifecycle = 'active' | 'resolved' | 'all';
+const LIFECYCLE_OPTIONS: readonly Lifecycle[] = ['active', 'resolved', 'all'];
 
 function ItemSeparator() {
   return <View style={styles.separator} />;
@@ -23,6 +25,17 @@ export function MyEventsList() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { events, isLoading, error, refresh, updateEvent, deleteEvent } = useUserEvents();
+
+  // Lifecycle filter: BE has no `?status=` on /events/mine. UserEvent
+  // carries only `isResolved: boolean` (2-state), so the strip exposes
+  // Active / Resolved / All — no `upcoming` (user-reported events
+  // don't have an upcoming state today). Client-side filter.
+  const [lifecycle, setLifecycle] = useState<Lifecycle>('active');
+  const filteredEvents = useMemo(() => {
+    if (lifecycle === 'all') return events;
+    if (lifecycle === 'active') return events.filter((e) => !e.isResolved);
+    return events.filter((e) => e.isResolved);
+  }, [events, lifecycle]);
 
   const handlePress = useCallback(
     (event: UserEvent) => {
@@ -136,39 +149,140 @@ export function MyEventsList() {
     );
   }
 
+  // Empty state has a CTA → map tab (reports are created from map,
+  // not from this tab). Used as ListEmptyComponent below.
+  const renderEmpty = () =>
+    isLoading ? (
+      <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+    ) : (
+      <View style={styles.empty}>
+        <IconMapPin size={40} color={colors.textMuted} strokeWidth={1.6} />
+        <Text style={[styles.emptyTitle, { color: colors.text }]}>
+          {t('localEmpty.noReports.title')}
+        </Text>
+        <Text style={[styles.emptySubtitle, { color: colors.textMuted }]}>
+          {t('localEmpty.noReports.subtitle')}
+        </Text>
+        <Pressable
+          onPress={() => router.push('/(tabs)/map')}
+          style={[styles.emptyCta, { backgroundColor: colors.primary }]}
+        >
+          <IconMapPin size={16} color="#FFFFFF" />
+          <Text style={styles.emptyCtaText}>{t('localEmpty.noReports.openMap')}</Text>
+        </Pressable>
+      </View>
+    );
+
   return (
-    <FlatList
-      data={events}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.eventId}
-      ItemSeparatorComponent={ItemSeparator}
-      contentContainerStyle={[styles.list, events.length === 0 && styles.emptyList]}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={isLoading && events.length > 0}
-          onRefresh={refresh}
-          tintColor={colors.primary}
-        />
-      }
-      ListEmptyComponent={
-        isLoading ? (
-          <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
-        ) : (
-          <EmptyState icon={IconAlertTriangle} message={t('reminders.tabs.eventsEmpty')} />
-        )
-      }
-    />
+    <View style={styles.container}>
+      {/* Lifecycle strip — Active / Resolved / All. Equal-width row
+          mirrors the AlertList sub-tab pattern (post-b3e6197). No
+          filter sheet here — BE has no scope/category params and the
+          user-reported event set is small enough that lifecycle alone
+          covers the practical use cases. */}
+      <View style={styles.lifecycleRow}>
+        {LIFECYCLE_OPTIONS.map((key) => {
+          const active = lifecycle === key;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => setLifecycle(key)}
+              style={styles.lifecycleTab}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.85}
+                style={[
+                  styles.lifecycleText,
+                  {
+                    color: active ? colors.primary : colors.textMuted,
+                    fontWeight: active ? '600' : '500',
+                  },
+                ]}
+              >
+                {t(`notificationsPage.lifecycle.${key}`)}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <FlatList
+        data={filteredEvents}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.eventId}
+        ItemSeparatorComponent={ItemSeparator}
+        contentContainerStyle={[styles.list, filteredEvents.length === 0 && styles.emptyList]}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading && events.length > 0}
+            onRefresh={refresh}
+            tintColor={colors.primary}
+          />
+        }
+        ListEmptyComponent={renderEmpty}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  lifecycleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.subControlPadV,
+    marginBottom: SPACING.subControlBottom,
+  },
+  lifecycleTab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+  },
+  lifecycleText: {
+    fontSize: 14,
+  },
   list: {
-    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {
     flex: 1,
+  },
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: theme.spacing.xl,
+    gap: theme.spacing.sm,
+  },
+  emptyTitle: {
+    fontSize: theme.fontSize.md,
+    ...theme.font.semibold,
+    marginTop: theme.spacing.sm,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: theme.fontSize.sm,
+    textAlign: 'center',
+  },
+  emptyCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.lg,
+    marginTop: theme.spacing.md,
+  },
+  emptyCtaText: {
+    color: '#FFFFFF',
+    fontSize: theme.fontSize.sm,
+    ...theme.font.semibold,
   },
   separator: {
     height: SPACING.cardGap,

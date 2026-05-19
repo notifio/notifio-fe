@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   list: {
-    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {

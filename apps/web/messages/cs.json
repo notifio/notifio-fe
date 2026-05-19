@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Pyl",
     "noData": "Aktuálně žádné aktivní druhy pylu."
+  },
+  "localTabs": {
+    "hlasenia": "Hlášení"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "Žádná hlášení",
+      "subtitle": "Přidej hlášení z mapy",
+      "openMap": "Otevřít mapu"
+    }
   }
 }

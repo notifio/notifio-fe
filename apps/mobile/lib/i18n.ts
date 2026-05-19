@@ -21,13 +21,100 @@ import {
 
 type SupportedLocale = (typeof supportedLocales)[number];
 
-// Build i18next resources directly from shared. The former picker-temp
-// merge step (mobile-local fallback for the picker namespace) was
-// removed once shared 0.39.0 folded the picker namespace upstream with
-// full 6-locale translations — see PR #131 / web's #125.
+// Mobile-only override layer. Keys live under namespaces that shared
+// does not own (`localTabs.*`, `localEmpty.*`), so the merge below
+// passes them through with no risk of shared overriding them. Mirrors
+// the web-local `apps/web/messages/*.json` augmentation pattern.
+//
+// TODO: migrate these to @notifio/shared in the next shared bump and
+// delete this MOBILE_OVERRIDES block + the override merge step.
+type DeepStringRecord = { [key: string]: string | DeepStringRecord };
+const MOBILE_OVERRIDES: Record<SupportedLocale, DeepStringRecord> = {
+  sk: {
+    localTabs: { hlasenia: 'Hlásenia' },
+    localEmpty: {
+      noReports: {
+        title: 'Žiadne hlásenia',
+        subtitle: 'Pridaj nové hlásenie z mapy',
+        openMap: 'Otvoriť mapu',
+      },
+    },
+  },
+  en: {
+    localTabs: { hlasenia: 'Reports' },
+    localEmpty: {
+      noReports: {
+        title: 'No reports yet',
+        subtitle: 'Add a new report from the map',
+        openMap: 'Open map',
+      },
+    },
+  },
+  cs: {
+    localTabs: { hlasenia: 'Hlášení' },
+    localEmpty: {
+      noReports: {
+        title: 'Žádná hlášení',
+        subtitle: 'Přidej hlášení z mapy',
+        openMap: 'Otevřít mapu',
+      },
+    },
+  },
+  de: {
+    localTabs: { hlasenia: 'Meldungen' },
+    localEmpty: {
+      noReports: {
+        title: 'Keine Meldungen',
+        subtitle: 'Füge eine Meldung über die Karte hinzu',
+        openMap: 'Karte öffnen',
+      },
+    },
+  },
+  hu: {
+    localTabs: { hlasenia: 'Bejelentések' },
+    localEmpty: {
+      noReports: {
+        title: 'Nincsenek bejelentések',
+        subtitle: 'Adj hozzá bejelentést a térképről',
+        openMap: 'Térkép megnyitása',
+      },
+    },
+  },
+  uk: {
+    localTabs: { hlasenia: 'Звіти' },
+    localEmpty: {
+      noReports: {
+        title: 'Немає звітів',
+        subtitle: 'Додайте звіт з мапи',
+        openMap: 'Відкрити мапу',
+      },
+    },
+  },
+};
+
+function deepMerge<T extends Record<string, unknown>>(target: T, source: DeepStringRecord): T {
+  const out: Record<string, unknown> = { ...target };
+  for (const [key, value] of Object.entries(source)) {
+    const existing = out[key];
+    if (
+      value && typeof value === 'object' && !Array.isArray(value) &&
+      existing && typeof existing === 'object' && !Array.isArray(existing)
+    ) {
+      out[key] = deepMerge(existing as Record<string, unknown>, value as DeepStringRecord);
+    } else {
+      out[key] = value;
+    }
+  }
+  return out as T;
+}
+
+// Build i18next resources from shared + mobile overrides. Overrides
+// win on collision, but the new namespaces (`localTabs`, `localEmpty`)
+// don't currently exist in shared so there are no collisions today.
 const resources = supportedLocales.reduce<Record<string, { translation: Record<string, unknown> }>>(
   (acc, loc) => {
-    acc[loc] = { translation: getSharedMessages(loc) as Record<string, unknown> };
+    const shared = getSharedMessages(loc) as Record<string, unknown>;
+    acc[loc] = { translation: deepMerge(shared, MOBILE_OVERRIDES[loc]) };
     return acc;
   },
   {},

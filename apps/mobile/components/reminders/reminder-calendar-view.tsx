@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   calendar: {

@@ -23,11 +23,9 @@ export default function WeatherScreen() {
   const { colors } = useAppTheme();
   const { location } = useResolvedLocation();
 
-  // useWeather + useAirQuality from shared currently lock to
-  // DEFAULT_LOCATION. Tracked follow-up. Pollen + forecast honor
-  // resolved location.
-  const { weather, isLoading: weatherLoading, error, refresh } = useWeather();
-  const { airQuality } = useAirQuality();
+  const coords = { lat: location.lat, lng: location.lng };
+  const { weather, isLoading: weatherLoading, error, refresh } = useWeather(coords);
+  const { airQuality } = useAirQuality(coords);
   const { pollen } = usePollen(location);
   const { forecast } = useForecast(location);
   const { config: radarConfig } = useRadarConfig();

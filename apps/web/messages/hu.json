@@ -8,5 +8,15 @@
   "pollen": {
     "title": "Pollen",
     "noData": "Jelenleg nincsenek aktív pollenfajok."
+  },
+  "localTabs": {
+    "hlasenia": "Bejelentések"
+  },
+  "localEmpty": {
+    "noReports": {
+      "title": "Nincsenek bejelentések",
+      "subtitle": "Adj hozzá bejelentést a térképről",
+      "openMap": "Térkép megnyitása"
+    }
   }
 }

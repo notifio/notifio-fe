@@ -1,7 +1,7 @@
 import { IconAdjustments, IconBell } from '@tabler/icons-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import type { NotificationHistoryItem } from '@notifio/api-client';
 import { notificationToCard, type NotificationHistoryItemInput } from '@notifio/shared/alert-card';
@@ -13,15 +13,15 @@ import { SPACING } from '../../lib/spacing';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { EmptyState } from '../ui/empty-state';
-import { TogglePill } from '../ui/toggle-pill';
 
-type TabFilter = 'active' | 'upcoming' | 'ended' | 'all';
+type TabFilter = 'active' | 'upcoming' | 'resolved' | 'all';
+
+const LIFECYCLE_OPTIONS: readonly TabFilter[] = ['active', 'upcoming', 'resolved', 'all'];
 
 // Category chip filters — mirrors web's CATEGORY_FILTERS in
 // apps/web/src/app/(app)/notifications/history-section.tsx. Same
 // prefix-matching against NotificationHistoryItem.category. 'events'
 // chip dropped from both apps (overlaps with the new top Events tab).
-// TODO Step 11.5: extract this + web's copy to shared.
 type CategoryFilter = 'all' | 'weather' | 'traffic' | 'outages' | 'pollen';
 
 const CATEGORY_FILTERS: ReadonlyArray<{ id: CategoryFilter; prefixes: string[] }> = [
@@ -54,15 +54,14 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
-  // Default status is `active` — count any non-default for the badge.
-  const activeFilterCount = tab === 'active' ? 0 : 1;
+  // Defaults: tab=active, category=all. Count any non-default.
+  const activeFilterCount =
+    (tab === 'active' ? 0 : 1) + (categoryFilter === 'all' ? 0 : 1);
 
-  // Server-side lifecycle filter so pagination + total stay correct. Map
-  // FE tab labels to BE's status enum: ended → resolved.
-  const status: 'upcoming' | 'active' | 'resolved' | 'all' =
-    tab === 'ended' ? 'resolved' : tab;
-  const { items, isLoading, hasMore, loadMore, refresh } = useNotificationHistory({
-    status,
+  // Internal tab value now matches BE's status enum directly — no
+  // remapping needed after `ended → resolved` rename.
+  const { items, isLoading, error, hasMore, loadMore, refresh } = useNotificationHistory({
+    status: tab,
   });
 
   const filtered = useMemo(() => {
@@ -71,64 +70,85 @@ export function AlertList({ onAlertPress }: AlertListProps) {
   }, [categoryFilter, items]);
 
   const renderItem = useCallback(
-    ({ item }: { item: NotificationHistoryItem }) => (
-      <AlertCard
-        item={notificationToCard(item as unknown as NotificationHistoryItemInput)}
-        onPress={onAlertPress ? () => onAlertPress(item) : undefined}
-      />
-    ),
+    ({ item }: { item: NotificationHistoryItem }) => {
+      // Bypass adapter's broken `resolved` derivation — compute inline
+      // from typed fields and override the adapter output. Delivery
+      // status and title prefixes intentionally NOT consulted.
+      const card = notificationToCard(item as unknown as NotificationHistoryItemInput);
+      const resolved =
+        item.notificationType === 'all_clear' || item.eventStatus === 'resolved';
+      return (
+        <AlertCard
+          item={{ ...card, resolved }}
+          onPress={onAlertPress ? () => onAlertPress(item) : undefined}
+        />
+      );
+    },
     [onAlertPress],
   );
 
   return (
     <View style={styles.container}>
-      {/* Top filter row: Filter button (status → bottom sheet) +
-          inline category chips. Filter button shows active-count
-          badge when status filter is non-default. */}
+      {/* Top filter row: 4 equal-width lifecycle text-tabs on the left
+          (mirrors the sub-tab strip in alerts.tsx — proven pattern),
+          filter icon button on the right opens the category sheet.
+          Equal-width replaces horizontal-scroll because the 4 known
+          labels would otherwise overflow the row on iPhone SE-class
+          widths and clip the last tab ("Všetky") behind the icon. */}
       <View style={styles.filterTopRow}>
+        <View style={styles.lifecycleRow}>
+          {LIFECYCLE_OPTIONS.map((key) => {
+            const active = tab === key;
+            return (
+              <Pressable
+                key={key}
+                onPress={() => setTab(key)}
+                style={styles.lifecycleTab}
+              >
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.85}
+                  style={[
+                    styles.lifecycleText,
+                    {
+                      color: active ? colors.primary : colors.textMuted,
+                      fontWeight: active ? '600' : '500',
+                    },
+                  ]}
+                >
+                  {t(`notificationsPage.lifecycle.${key}`)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
         <Pressable
           onPress={() => setFilterSheetOpen(true)}
-          style={[styles.filterButton, { borderColor: colors.border }]}
+          style={[styles.filterIconButton, { borderColor: colors.border }]}
+          accessibilityLabel={t('alerts.filter')}
         >
-          <IconAdjustments size={14} color={colors.text} />
-          <Text style={[styles.filterButtonText, { color: colors.text }]}>
-            {t('alerts.filter')}
-          </Text>
+          <IconAdjustments size={16} color={colors.text} />
           {activeFilterCount > 0 && (
             <View style={[styles.filterBadge, { backgroundColor: colors.primary }]}>
               <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
             </View>
           )}
         </Pressable>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chipRowContent}
-          style={styles.chipRow}
-        >
-          {CATEGORY_FILTERS.map((filter) => (
-            <TogglePill
-              key={filter.id}
-              active={categoryFilter === filter.id}
-              label={t(`alerts.filters.${filter.id}`)}
-              onPress={() => setCategoryFilter(filter.id)}
-            />
-          ))}
-        </ScrollView>
       </View>
 
       <FilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
-        status={tab}
-        onStatusChange={setTab}
+        category={categoryFilter}
+        onCategoryChange={setCategoryFilter}
       />
 
       <FlatList
         data={filtered}
         renderItem={renderItem}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => String(item.id)}
         ItemSeparatorComponent={ItemSeparator}
         contentContainerStyle={[styles.list, filtered.length === 0 && styles.emptyList]}
         showsVerticalScrollIndicator={false}
@@ -145,8 +165,10 @@ export function AlertList({ onAlertPress }: AlertListProps) {
         ListEmptyComponent={
           isLoading ? (
             <ActivityIndicator size="large" color={colors.primary} style={styles.loading} />
+          ) : error ? (
+            <EmptyState icon={IconBell} message={t('notifications.error')} />
           ) : (
-            <EmptyState icon={IconBell} message={t('alerts.noNotifications')} />
+            <EmptyState icon={IconBell} message={t('notifications.empty')} />
           )
         }
       />
@@ -158,40 +180,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  chipRow: {
-    // flexGrow: 0 — without this the horizontal ScrollView fills the
-    // parent's available height and chip Pressables stretch vertically.
+  lifecycleRow: {
     flex: 1,
-    flexGrow: 0,
-  },
-  chipRowContent: {
-    gap: 6,
+    flexDirection: 'row',
     alignItems: 'center',
-    // paddingLeft adds air after the parent row's gap so the first
-    // chip doesn't visually touch the Filter button.
-    paddingLeft: 4,
-    paddingRight: SPACING.screenH,
+  },
+  lifecycleTab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+  },
+  lifecycleText: {
+    fontSize: 14,
   },
   filterTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SPACING.screenH,
     paddingVertical: SPACING.subControlPadV,
     marginBottom: SPACING.subControlBottom,
-    gap: 12,
+    gap: 8,
   },
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+  filterIconButton: {
+    width: 32,
+    height: 32,
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 999,
-  },
-  filterButtonText: {
-    fontSize: theme.fontSize.xs,
-    ...theme.font.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
   filterBadge: {
     minWidth: 16,
@@ -207,7 +224,6 @@ const styles = StyleSheet.create({
     ...theme.font.semibold,
   },
   list: {
-    paddingHorizontal: SPACING.screenH,
     paddingBottom: theme.spacing['4xl'],
   },
   emptyList: {

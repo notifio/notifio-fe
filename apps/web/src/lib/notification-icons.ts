@@ -12,7 +12,7 @@ import {
   type Icon,
 } from '@tabler/icons-react';
 
-import { getCategoryVisual } from '@notifio/shared';
+import { categoryBeToShared, getCategoryVisual } from '@notifio/shared';
 
 const SLUG_TO_ICON: Record<string, Icon> = {
   'activity': IconActivity,
@@ -28,6 +28,7 @@ const SLUG_TO_ICON: Record<string, Icon> = {
 };
 
 export function getNotificationIcon(category: string): { icon: Icon; color: string } {
-  const { iconSlug, color } = getCategoryVisual(category);
+  const shared = categoryBeToShared(category) ?? category;
+  const { iconSlug, color } = getCategoryVisual(shared);
   return { icon: SLUG_TO_ICON[iconSlug] ?? IconInfoCircle, color };
 }
