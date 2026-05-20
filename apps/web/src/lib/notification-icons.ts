@@ -1,34 +1,11 @@
-import {
-  IconActivity,
-  IconBolt,
-  IconCalendarEvent,
-  IconCar,
-  IconCarCrash,
-  IconCloud,
-  IconDroplet,
-  IconFlame,
-  IconFlameOff,
-  IconInfoCircle,
-  type Icon,
-} from '@tabler/icons-react';
+import type { Icon } from '@tabler/icons-react';
 
 import { categoryBeToShared, getCategoryVisual } from '@notifio/shared';
 
-const SLUG_TO_ICON: Record<string, Icon> = {
-  'activity': IconActivity,
-  'bolt': IconBolt,
-  'calendar-event': IconCalendarEvent,
-  'car': IconCar,
-  'car-crash': IconCarCrash,
-  'cloud': IconCloud,
-  'droplet': IconDroplet,
-  'flame': IconFlame,
-  'flame-off': IconFlameOff,
-  'info-circle': IconInfoCircle,
-};
+import { getIconByName } from './icon-registry';
 
 export function getNotificationIcon(category: string): { icon: Icon; color: string } {
   const shared = categoryBeToShared(category) ?? category;
-  const { iconSlug, color } = getCategoryVisual(shared);
-  return { icon: SLUG_TO_ICON[iconSlug] ?? IconInfoCircle, color };
+  const { iconName, color } = getCategoryVisual(shared);
+  return { icon: getIconByName(iconName), color };
 }

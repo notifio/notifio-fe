@@ -1,6 +1,6 @@
 'use client';
 
-import { IconAdjustments, IconInfoCircle, IconLock, IconX } from '@tabler/icons-react';
+import { IconAdjustments, IconLock, IconX } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   MAP_FILTER_SOURCES,
   SOURCE_REQUIRED_TIER,
+  TRAFFIC_ICON_MAP,
   TRAFFIC_SUBCATEGORIES,
   TRAFFIC_TYPE_COLORS,
   type MapPin,
@@ -15,7 +16,8 @@ import {
   type MapPinTrafficType,
 } from '@notifio/shared/map';
 
-import { MAP_PIN_STYLES, TRAFFIC_ICON_MAP } from '@/lib/map-pin-config';
+import { getIconByName } from '@/lib/icon-registry';
+import { MAP_PIN_STYLES } from '@/lib/map-pin-config';
 
 import { AdPlaceholder } from './ad-placeholder';
 import { CategoryIcon } from './category-icon';
@@ -156,6 +158,7 @@ export function MapFilterBar({
               width: '8px',
               height: '8px',
               borderRadius: '50%',
+              // TODO: tokenize — `--accent` = #FF7A2F; inline style needs refactor to className.
               backgroundColor: '#FF7A2F',
               flexShrink: 0,
             }}
@@ -325,6 +328,7 @@ export function MapFilterBar({
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
+                // TODO: tokenize — `--accent` = #FF7A2F; inline style needs refactor to className.
                 color: '#FF7A2F',
                 fontSize: '12px',
                 fontWeight: 600,
@@ -417,7 +421,7 @@ export function MapFilterBar({
                       {trafficSubsWithData.map((type) => {
                         const subCount = trafficTypeCounts.get(type) ?? 0;
                         const subActive = activeTrafficTypes.has(type);
-                        const SubIcon = TRAFFIC_ICON_MAP[type] ?? IconInfoCircle;
+                        const SubIcon = getIconByName(TRAFFIC_ICON_MAP[type] ?? 'IconInfoCircle');
                         const subColor = TRAFFIC_TYPE_COLORS[type] ?? '#6B7A99';
 
                         return (

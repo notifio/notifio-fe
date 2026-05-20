@@ -1,6 +1,6 @@
 "use client";
 
-import { IconBell, IconLayoutDashboard, IconMapPin } from "@tabler/icons-react";
+import { IconBell, IconLayoutDashboard, IconMap } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -23,7 +23,7 @@ export function BottomTabBar({ badgeCount }: BottomTabBarProps) {
 
   const tabs: TabItem[] = [
     { label: t("dashboard"), href: "/dashboard", icon: IconLayoutDashboard },
-    { label: t("map"), href: "/map", icon: IconMapPin },
+    { label: t("map"), href: "/map", icon: IconMap },
     { label: t("notifications"), href: "/notifications", icon: IconBell },
   ];
 

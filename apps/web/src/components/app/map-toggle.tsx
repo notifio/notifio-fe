@@ -29,6 +29,7 @@ export function MapToggle({
         width: `${w}px`,
         height: `${h}px`,
         borderRadius: `${h / 2}px`,
+        // TODO: tokenize — `--accent` CSS var = #FF7A2F; inline style needs `var(--accent)` or refactor to className.
         backgroundColor: on
           ? '#FF7A2F'
           : isDark
