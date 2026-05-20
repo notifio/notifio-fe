@@ -1,17 +1,7 @@
 import type { Icon } from '@tabler/icons-react';
 
 import { hexToRgba } from '@notifio/shared';
-
-// Darker shades for light-mode icons
-const LIGHT_ICON_COLORS: Record<string, string> = {
-  '#EAB308': '#B8930A',
-  '#3A86FF': '#2B6BCC',
-  '#FF3B30': '#CC2E25',
-  '#8B5CF6': '#6D48C4',
-  '#FF7A2F': '#CC6125',
-  '#991B1B': '#7A1515',
-  '#6B7A99': '#55627A',
-};
+import { getLightModeColor } from '@notifio/shared/map';
 
 interface CategoryIconProps {
   icon: Icon;
@@ -30,7 +20,7 @@ export function CategoryIcon({
   iconSize,
   radius,
 }: CategoryIconProps) {
-  const strokeColor = isDark ? color : (LIGHT_ICON_COLORS[color] ?? color);
+  const strokeColor = isDark ? color : getLightModeColor(color);
   const bgAlpha = isDark ? 0.15 : 0.12;
 
   return (

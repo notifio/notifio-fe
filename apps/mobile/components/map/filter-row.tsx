@@ -1,9 +1,10 @@
-import { IconInfoCircle, IconLock } from '@tabler/icons-react-native';
+import { IconLock } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import {
   SOURCE_REQUIRED_TIER,
+  TRAFFIC_ICON_MAP,
   TRAFFIC_TYPE_COLORS,
   type MapPinSource,
   type MapPinTrafficType,
@@ -11,10 +12,8 @@ import {
 
 import { CategoryIcon } from './category-icon';
 import { MapToggle } from './map-toggle';
-import {
-  MAP_PIN_STYLES,
-  TRAFFIC_ICON_MAP,
-} from '../../lib/map-pin-config';
+import { getIconByName } from '../../lib/icon-registry';
+import { MAP_PIN_STYLES } from '../../lib/map-pin-config';
 import { theme } from '../../lib/theme';
 import { useAppTheme } from '../../providers/theme-provider';
 import { TierBadge } from '../ui/tier-badge';
@@ -103,7 +102,7 @@ export function FilterRow({
           {trafficSubsWithData.map((type) => {
             const subCount = trafficTypeCounts.get(type) ?? 0;
             const subActive = activeTrafficTypes.has(type);
-            const SubIcon = TRAFFIC_ICON_MAP[type] ?? IconInfoCircle;
+            const SubIcon = getIconByName(TRAFFIC_ICON_MAP[type] ?? 'IconInfoCircle');
             const subColor = TRAFFIC_TYPE_COLORS[type] ?? '#6B7A99';
 
             return (

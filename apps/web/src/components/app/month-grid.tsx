@@ -185,12 +185,10 @@ export function MonthGrid({
                 disabled
                   ? 'pointer-events-none opacity-40'
                   : sel
-                    ? onDarkSurface
-                      ? 'bg-[#FF7A2F] font-semibold text-white'
-                      : 'bg-accent text-white'
+                    ? 'bg-accent font-semibold text-white'
                     : todayHl
                       ? onDarkSurface
-                        ? 'font-semibold text-[#FF7A2F]'
+                        ? 'font-semibold text-accent'
                         : 'bg-accent/10 font-semibold text-accent'
                       : onDarkSurface
                         ? 'text-white/85 hover:bg-white/[0.06]'
