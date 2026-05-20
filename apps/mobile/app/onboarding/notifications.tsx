@@ -9,8 +9,14 @@ import { CATEGORY_GROUPS } from '@notifio/shared/map';
 import { NotificationCategoryList } from '../../components/notifications/notification-category-list';
 import { OnboardingScreen } from '../../components/ui/onboarding-screen';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import type { AlertType } from '../../lib/alert-config';
 import { NotificationContext } from '../../providers/notification-provider';
+
+// Codes persisted to AsyncStorage for post-auth sync to BE preferences.
+// Was previously `keyof typeof ALERT_TYPE_CONFIG` in lib/alert-config.ts;
+// the icon+color values that file also exported were never rendered —
+// the file is deleted in the icon-consolidation batch and this 5-string
+// literal is the only surviving consumer of its shape.
+type AlertType = 'weather' | 'traffic' | 'air_quality' | 'utility_outage' | 'event';
 
 const ONBOARDING_ALERT_TYPES_KEY = 'onboarding_alert_types';
 

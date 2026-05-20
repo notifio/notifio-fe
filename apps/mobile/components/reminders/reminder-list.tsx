@@ -1,4 +1,4 @@
-import { IconClock } from '@tabler/icons-react-native';
+import { IconAlarm } from '@tabler/icons-react-native';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -141,7 +141,7 @@ export function ReminderList() {
         }
         ListEmptyComponent={
           <EmptyState
-            icon={IconClock}
+            icon={IconAlarm}
             title={t('reminders.empty')}
             message={t('reminders.emptyMessage')}
           />

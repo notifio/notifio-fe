@@ -1,4 +1,4 @@
-import { IconClock } from '@tabler/icons-react-native';
+import { IconAlarm } from '@tabler/icons-react-native';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -97,7 +97,7 @@ export function ReminderCalendarView({
         {remindersOnSelectedDate.length === 0 ? (
           <EmptyState
             variant="compact"
-            icon={IconClock}
+            icon={IconAlarm}
             message={t('reminders.calendar.emptyInline')}
           />
         ) : (
