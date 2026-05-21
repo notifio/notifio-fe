@@ -10,7 +10,7 @@ import { AlertList } from '@/components/app/alert-list';
 import { NamedayCard } from '@/components/app/nameday-card';
 import { WeatherCard } from '@/components/app/weather-card';
 import { WeatherWarningsBanner } from '@/components/app/weather-warnings-banner';
-import { useDigestMode } from '@/hooks/use-digest-mode';
+import { useDigestPreferences } from '@/hooks/use-digest-preferences';
 import { useLocations } from '@/hooks/use-locations';
 import { useWeatherWarnings } from '@/hooks/use-weather-warnings';
 
@@ -63,7 +63,7 @@ export function LeftPanel({
   const { warnings } = useWeatherWarnings(userLocation ?? DEFAULT_LOCATION);
   const { todayNames, upcomingNames, isLoading: namedayLoading } = useNameday(userLocation ?? DEFAULT_LOCATION);
   const { pollen: pollenData } = usePollen(userLocation ?? DEFAULT_LOCATION);
-  const { digestMode } = useDigestMode();
+  const { prefs: digestPrefs } = useDigestPreferences();
   const { locations } = useLocations();
 
   const center = userLocation ?? DEFAULT_LOCATION;
@@ -100,13 +100,13 @@ export function LeftPanel({
           <NamedayCard todayNames={todayNames} upcomingNames={upcomingNames} loading={namedayLoading} />
         </div>
 
-        {digestMode !== 'REAL_TIME' && (
+        {(digestPrefs.morning || digestPrefs.evening) && (
           <div className="mt-3 flex items-center gap-2.5 rounded-xl bg-card px-4 py-2.5">
             <IconClock size={14} className="shrink-0 text-muted" />
             <p className="flex-1 text-xs text-text-secondary">
-              {digestMode === 'MORNING' && td("dashboardBanner")}
-              {digestMode === 'EVENING' && td("dashboardBannerEvening")}
-              {digestMode === 'BOTH' && td("dashboardBannerBoth")}
+              {digestPrefs.morning && !digestPrefs.evening && td("dashboardBanner")}
+              {!digestPrefs.morning && digestPrefs.evening && td("dashboardBannerEvening")}
+              {digestPrefs.morning && digestPrefs.evening && td("dashboardBannerBoth")}
             </p>
             <a href="/settings" className="shrink-0 text-xs font-medium text-accent hover:underline">
               {td("change")}

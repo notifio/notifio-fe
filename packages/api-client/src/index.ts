@@ -39,7 +39,7 @@ import type {
   SetWeatherThresholdBody,
   SourcePreference,
   SetSourcePreferenceBody,
-  DigestMode,
+  DigestPreferences,
   PollenResponse,
   CheckoutBody,
   CheckoutResponse,
@@ -125,7 +125,7 @@ export type {
   SetWeatherThresholdBody,
   SourcePreference,
   SetSourcePreferenceBody,
-  DigestMode,
+  DigestPreferences,
   PollenResponse,
   PollenComponents,
   PaymentPlan,
@@ -419,7 +419,7 @@ export function createNotifioClient(config: NotifioClientConfig) {
       return request<UserProfile>('/me');
     },
 
-    async updateProfile(data: { countryCode?: string; digestMode?: DigestMode; locale?: string | null }): Promise<UserProfile> {
+    async updateProfile(data: { countryCode?: string; digestPreferences?: DigestPreferences; locale?: string | null }): Promise<UserProfile> {
       return request<UserProfile>('/me', { method: 'PATCH', body: data });
     },
 

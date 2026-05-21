@@ -180,11 +180,8 @@ export type {
   SetSourcePreferenceBody,
 } from '@notifio/shared';
 
-// Digest mode — legacy alias. Shared 1.0.0 replaced DigestModeSchema
-// with DigestPreferencesSchema (multi-channel: realTime/morning/evening).
-// Kept here as a local string alias until consumers migrate to the new
-// shape (tracked in CLAUDE.md BE follow-ups).
-export type DigestMode = 'REAL_TIME' | 'MORNING' | 'EVENING' | 'BOTH';
+// Digest preferences — multi-channel shape shipped in shared 1.0.0.
+export type { DigestPreferences } from '@notifio/shared';
 
 // Payment types
 export type {
