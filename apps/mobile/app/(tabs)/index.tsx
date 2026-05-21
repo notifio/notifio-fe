@@ -2,7 +2,7 @@ import { IconMapPin } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { DigestMode } from '@notifio/api-client';
+import type { DigestPreferences } from '@notifio/api-client';
 import { useAirQuality, useNameday, usePollen, useWeather } from '@notifio/shared/hooks';
 
 import { AlertsPreview } from '../../components/dashboard/alerts-preview';
@@ -39,7 +39,7 @@ export default function OverviewScreen() {
   const { warnings } = useWeatherWarnings(location);
   const { events } = useEventsFeed(location);
 
-  const digestMode = (profile as unknown as { digestMode?: DigestMode } | null)?.digestMode;
+  const digestPreferences = (profile as unknown as { digestPreferences?: DigestPreferences } | null)?.digestPreferences;
 
   const baseLabel = location.label ?? t('overview.currentLocation');
   const locationLabel =
@@ -76,7 +76,7 @@ export default function OverviewScreen() {
           pollen={pollen}
         />
 
-        {digestMode && <DigestBanner digestMode={digestMode} />}
+        {digestPreferences && <DigestBanner digestPreferences={digestPreferences} />}
 
         <NamedayCard
           todayNames={todayNames}

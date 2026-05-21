@@ -3,23 +3,23 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { DigestMode } from '@notifio/api-client';
+import type { DigestPreferences } from '@notifio/api-client';
 import { hexToRgba } from '@notifio/shared/alert-card';
 
 import { useAppTheme } from '../../providers/theme-provider';
 
 interface DigestBannerProps {
-  digestMode: DigestMode;
+  digestPreferences: DigestPreferences;
 }
 
 const BLUE = '#3A86FF';
 
-export function DigestBanner({ digestMode }: DigestBannerProps) {
+export function DigestBanner({ digestPreferences }: DigestBannerProps) {
   const { t } = useTranslation();
   const { colors } = useAppTheme();
   const router = useRouter();
 
-  if (digestMode === 'REAL_TIME') return null;
+  if (!digestPreferences.morning && !digestPreferences.evening) return null;
 
   return (
     <Pressable
